@@ -7299,6 +7299,61 @@ function tttMove(i){
  setTimeout(()=>{if(!tttActive)return;const move=tttBestMove(ttt,"O");if(move>=0)ttt[move]="O";w=tttWinner(ttt);tttRender();if(w)tttFinish(w);else document.getElementById("tttStatus").textContent="Твой ход — ❌"},420);
 }
 
+
+/* POOL MATCH: cue, aim, collision physics and bot */
+let poolMatch=null,poolAim=0,poolPointerReady=false;
+function poolStart(){
+ const bet=gameBet("poolBet");if(!bet){alert("Нужна ставка от 100 и достаточно средств");return}
+ state.balance-=bet;save();poolMatch={bet,turn:"player",moving:false,over:false,leftPlayer:3,leftBot:3};
+ poolBodies=[
+ {x:.25,y:.5,vx:0,vy:0,color:"#f5f0df",kind:"cue",active:true},
+ {x:.65,y:.5,vx:0,vy:0,color:"#e8c743",kind:"player",active:true},
+ {x:.69,y:.477,vx:0,vy:0,color:"#2875bb",kind:"bot",active:true},
+ {x:.69,y:.523,vx:0,vy:0,color:"#c63c36",kind:"player",active:true},
+ {x:.73,y:.455,vx:0,vy:0,color:"#e8c743",kind:"bot",active:true},
+ {x:.73,y:.5,vx:0,vy:0,color:"#15171a",kind:"eight",active:true},
+ {x:.73,y:.545,vx:0,vy:0,color:"#2875bb",kind:"player",active:true},
+ {x:.77,y:.477,vx:0,vy:0,color:"#c63c36",kind:"bot",active:true}
+ ];
+ poolAim=0;document.getElementById("poolHitBtn").disabled=false;
+ document.getElementById("poolResult").textContent="Твой ход. Забей три сплошных шара, затем чёрную восьмёрку.";
+ if(!poolPointerReady){const cv=document.getElementById("poolCanvas");cv.addEventListener("pointerdown",e=>{if(!poolMatch||poolMatch.over||poolMatch.moving||poolMatch.turn!=="player")return;const r=cv.getBoundingClientRect(),x=(e.clientX-r.left)/r.width,y=(e.clientY-r.top)/r.height,q=poolBodies[0];poolAim=(Math.atan2(-(y-q.y),x-q.x)*180/Math.PI+360)%360;document.getElementById("poolAngle").value=Math.round(poolAim);drawPoolScene()});document.getElementById("poolAngle").addEventListener("input",e=>{poolAim=+e.target.value;drawPoolScene()});poolPointerReady=true}
+ drawPoolScene();
+}
+function drawPoolScene(){
+ const z=sceneCanvas("poolCanvas");if(!z)return;const {x:c,w,h}=z,x=w*.07,y=h*.09,tw=w*.86,th=h*.82,r=tw*.021;
+ c.fillStyle="#111923";c.fillRect(0,0,w,h);c.fillStyle="#57351e";c.beginPath();c.roundRect(x-13,y-13,tw+26,th+26,16);c.fill();
+ const felt=c.createLinearGradient(x,y,x+tw,y+th);felt.addColorStop(0,"#168b55");felt.addColorStop(1,"#03432b");c.fillStyle=felt;c.fillRect(x,y,tw,th);
+ [[0,0],[.5,0],[1,0],[0,1],[.5,1],[1,1]].forEach(([a,b])=>{c.fillStyle="#020607";c.beginPath();c.arc(x+a*tw,y+b*th,r*1.55,0,Math.PI*2);c.fill()});
+ (poolBodies||[]).forEach(b=>{if(!b.active)return;const bx=x+b.x*tw,by=y+b.y*th,g=c.createRadialGradient(bx-r*.4,by-r*.45,1,bx,by,r);g.addColorStop(0,"#fff");g.addColorStop(.3,b.color);g.addColorStop(1,"#101318");c.fillStyle="#0008";c.beginPath();c.ellipse(bx+2,by+4,r,r*.5,0,0,Math.PI*2);c.fill();c.fillStyle=g;c.beginPath();c.arc(bx,by,r,0,Math.PI*2);c.fill();if(b.kind==="bot"){c.fillStyle="#eee";c.beginPath();c.arc(bx,by,r*.48,0,Math.PI*2);c.fill()}if(b.kind==="eight"){c.fillStyle="#fff";c.font="bold 10px Arial";c.textAlign="center";c.fillText("8",bx,by+3)}});
+ const q=poolBodies&&poolBodies[0];if(q&&q.active&&poolMatch&&!poolMatch.over&&!poolMatch.moving&&poolMatch.turn==="player"){const a=(+document.getElementById("poolAngle").value)*Math.PI/180,dx=Math.cos(a),dy=-Math.sin(a),bx=x+q.x*tw,by=y+q.y*th;c.setLineDash([5,5]);c.strokeStyle="#fff";c.beginPath();c.moveTo(bx,by);c.lineTo(bx+dx*tw*.2,by+dy*tw*.2);c.stroke();c.setLineDash([]);c.strokeStyle="#c89a62";c.lineWidth=tw*.012;c.beginPath();c.moveTo(bx-dx*tw*.18,by+dy*tw*.18);c.lineTo(bx-dx*r*1.5,by+dy*r*1.5);c.stroke()}
+}
+function poolShot(){if(!poolMatch||poolMatch.over||poolMatch.moving||poolMatch.turn!=="player")return;const q=poolBodies[0],a=(+document.getElementById("poolAngle").value)*Math.PI/180,p=+document.getElementById("poolPower").value;q.vx=Math.cos(a)*(.0025+p*.000105);q.vy=-Math.sin(a)*(.0025+p*.000105);document.getElementById("poolHitBtn").disabled=true;poolRunMatch("player")}
+function poolRunMatch(shooter){
+ poolMatch.moving=true;let frame=0,potted=[];
+ const step=()=>{const r=.021;
+ poolBodies.forEach((a,i)=>{if(!a.active)return;a.x+=a.vx;a.y+=a.vy;
+ if(a.x<r||a.x>1-r){a.x=Math.max(r,Math.min(1-r,a.x));a.vx*=-.88}
+ if(a.y<r||a.y>1-r){a.y=Math.max(r,Math.min(1-r,a.y));a.vy*=-.88}
+ for(let j=i+1;j<poolBodies.length;j++){const b=poolBodies[j];if(!b.active)continue;const dx=(b.x-a.x)*.86,dy=b.y-a.y,d=Math.hypot(dx,dy);if(d>0&&d<r*2){const nx=dx/d,ny=dy/d,v=(a.vx-b.vx)*nx*.86+(a.vy-b.vy)*ny;if(v>0){a.vx-=v*nx*.96/.86;a.vy-=v*ny*.96;b.vx+=v*nx*.96/.86;b.vy+=v*ny*.96}const o=(r*2-d)/2;a.x-=nx*o/.86;a.y-=ny*o;b.x+=nx*o/.86;b.y+=ny*o}}
+ if([[.035,.05],[.5,.05],[.965,.05],[.035,.95],[.5,.95],[.965,.95]].some(([x,y])=>Math.hypot((a.x-x)*.86,a.y-y)<.035)){a.active=false;potted.push(a)}
+ a.vx*=.991;a.vy*=.991;if(Math.hypot(a.vx,a.vy)<.00022)a.vx=a.vy=0
+ });
+ drawPoolScene();frame++;if(frame<1100&&poolBodies.some(b=>b.active&&Math.hypot(b.vx,b.vy)>.00022)){requestAnimationFrame(step);return}
+ poolMatch.moving=false;poolResolveMatch(potted,shooter);
+ };requestAnimationFrame(step)
+}
+function poolResolveMatch(p,who){
+ if(p.some(b=>b.kind==="cue"))Object.assign(poolBodies[0],{x:.25,y:.5,vx:0,vy:0,active:true});
+ p.forEach(b=>{if(b.kind==="player")poolMatch.leftPlayer--;if(b.kind==="bot")poolMatch.leftBot--});
+ if(p.some(b=>b.kind==="eight")){poolEndMatch((who==="player"?poolMatch.leftPlayer:poolMatch.leftBot)===0?who:(who==="player"?"bot":"player"));return}
+ const own=p.some(b=>b.kind===who);poolMatch.turn=own?who:(who==="player"?"bot":"player");
+ document.getElementById("poolResult").textContent=(p.length?"Забито шаров: "+p.length+". ":"Без забитых шаров. ")+(poolMatch.turn==="player"?"Твой ход.":"Ход бота…");
+ if(poolMatch.turn==="bot")setTimeout(poolBotMove,650);else document.getElementById("poolHitBtn").disabled=false;
+}
+function poolEndMatch(who){poolMatch.over=true;document.getElementById("poolHitBtn").disabled=true;if(who==="player"){const prize=gamePay(poolMatch.bet,1.8);document.getElementById("poolResult").textContent="Победа! Выплата "+prize+" 🪙"}else{save();document.getElementById("poolResult").textContent="Бот выиграл партию. Начни новую игру."}}
+function poolBotMove(){if(!poolMatch||poolMatch.over)return;const q=poolBodies[0],t=poolBodies.filter(b=>b.active&&b.kind==="bot").sort((a,b)=>Math.hypot(a.x-q.x,a.y-q.y)-Math.hypot(b.x-q.x,b.y-q.y))[0];if(!t){poolEndMatch("player");return}const a=Math.atan2(-(t.y-q.y),t.x-q.x)+(Math.random()-.5)*.16;q.vx=Math.cos(a)*.007;q.vy=-Math.sin(a)*.007;poolRunMatch("bot")}
+
 /* =========================
    START
 ========================= */
