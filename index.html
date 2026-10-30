@@ -1110,8 +1110,6 @@ SKEBOB <span>CASINO</span>
 
 <div class="header-actions">
 
-<button id="casinoMusicToggle" onclick="toggleCasinoMusic()">🎵 МУЗЫКА: ВЫКЛ</button>
-
 <button onclick="openPromoPage()">
 🎟 ПРОМО
 </button>
@@ -2324,6 +2322,20 @@ onchange="toggleTheme()"
 
 <span class="switch-slider"></span>
 
+</label>
+
+</div>
+
+<div class="setting-row">
+
+<div>
+<b id="musicSettingTitle">🎵 Музыка</b>
+<div class="small">Фоновая музыка казино на всех игровых страницах</div>
+</div>
+
+<label class="switch">
+<input type="checkbox" id="casinoMusicToggle" onchange="toggleCasinoMusic()">
+<span class="switch-slider"></span>
 </label>
 
 </div>
@@ -5928,19 +5940,25 @@ function casinoMusicTick(){
   casinoMusicStep++;
 }
 async function toggleCasinoMusic(){
-  const btn=document.getElementById("casinoMusicToggle");
-  if(casinoMusicTimer){
-    clearInterval(casinoMusicTimer);casinoMusicTimer=null;
+  const toggle=document.getElementById("casinoMusicToggle");
+  const enabled=!!(toggle&&toggle.checked);
+  localStorage.setItem("skebobCasinoMusic",enabled?"on":"off");
+  if(!enabled){
+    if(casinoMusicTimer){clearInterval(casinoMusicTimer);casinoMusicTimer=null;}
     if(casinoAudio){await casinoAudio.close();casinoAudio=null;}
-    btn.textContent="🎵 МУЗЫКА: ВЫКЛ";return;
+    return;
   }
+  if(casinoMusicTimer)return;
   const AudioCtx=window.AudioContext||window.webkitAudioContext;
-  if(!AudioCtx){btn.textContent="🔇 НЕТ ЗВУКА";return;}
+  if(!AudioCtx){if(toggle)toggle.checked=false;return;}
   casinoAudio=new AudioCtx();
   if(casinoAudio.state==="suspended")await casinoAudio.resume();
   casinoMusicStep=0;casinoMusicTick();
   casinoMusicTimer=setInterval(casinoMusicTick,375);
-  btn.textContent="🎵 МУЗЫКА: ВКЛ";
+}
+function loadCasinoMusicSetting(){
+  const toggle=document.getElementById("casinoMusicToggle");
+  if(toggle)toggle.checked=localStorage.getItem("skebobCasinoMusic")==="on";
 }
 
 /* =========================
@@ -6234,6 +6252,7 @@ showPage(
 ========================= */
 
 loadTheme();
+loadCasinoMusicSetting();
 
 renderCases();
 
