@@ -1289,12 +1289,11 @@ class="daily-timer"
 <section id="secretDrop" class="secret-drop" aria-live="polite">
 <div class="secret-icon">🕵️‍♂️💎</div>
 <h2>???</h2>
-<div style="font-weight:900;font-size:21px;color:#f0d8ff">СЕКРЕТНЫЙ ПРИЗ</div>
-<p class="small" style="color:#eadcf8">Редкая возможность. Только один короткий шанс.</p>
+<div style="font-weight:900;font-size:21px;color:#f0d8ff">СЕКРЕТНЫЙ КЕЙС</div>
+<p class="small" style="color:#eadcf8">Появился неизвестный кейс. Успей открыть, пока он не исчез!</p>
 <div class="secret-timer" id="secretDropTimer">05:00</div>
 <div style="font-size:18px;font-weight:900;color:#ffe08a">500 000 🪙</div>
-<button class="goldbtn" id="secretDropButton" onclick="openSecretDrop()">ИСПЫТАТЬ УДАЧУ</button>
-<div id="secretDropResult" style="margin-top:12px;font-weight:900"></div>
+<button class="goldbtn" id="secretDropButton" onclick="openSecretDrop()">ОТКРЫТЬ СЕКРЕТНЫЙ КЕЙС</button>
 </section>
 
 <h2>📦 ОБЫЧНЫЕ КЕЙСЫ</h2>
@@ -3891,7 +3890,7 @@ document.getElementById(
 ).innerHTML=
 
 cases.map(
-(c,i)=>`
+(c,i)=>c.secret?"":`
 
 <div class="case">
 
@@ -4055,6 +4054,12 @@ function openCase(){
 
 if(caseOpeningBusy)return;
 
+const secretOpening=!!cases[selectedCase].secret;
+if(secretOpening){
+ const period=Math.floor(Date.now()/SECRET_DROP_PERIOD),elapsed=Date.now()%SECRET_DROP_PERIOD;
+ if(elapsed>=SECRET_DROP_WINDOW||Number(state.secretDropUsedPeriod)===period){alert("Секретный кейс уже исчез или попытка использована!");closeCase();return;}
+ qty=1;
+}
 const cost=
 cases[selectedCase].price*
 qty;
@@ -4073,7 +4078,7 @@ return;
 }
 
 state.balance-=cost;
-
+if(secretOpening)state.secretDropUsedPeriod=Math.floor(Date.now()/SECRET_DROP_PERIOD);
 addTurnover(cost);
 
 state.stats.casesOpened+=qty;
@@ -6533,6 +6538,12 @@ const SECRET_DROP_PRIZES=[
  {name:"Космический артефакт",icon:"🛸",value:2500000},
  {name:"Абсолютный джекпот",icon:"🌌",value:5000000}
 ];
+let secretCaseIndex=-1;
+function initSecretCase(){
+ SECRET_DROP_PRIZES.forEach(p=>prizes.push({...p}));
+ secretCaseIndex=cases.length;
+ cases.push({name:"???",icon:"🕵️‍♂️",price:SECRET_DROP_COST,desc:"Секретный кейс. Содержимое неизвестно.",items:SECRET_DROP_PRIZES.map((_,i)=>prizes.length-SECRET_DROP_PRIZES.length+i),secret:true});
+}
 function updateSecretDrop(){
  const box=document.getElementById("secretDrop");if(!box)return;
  const now=Date.now(),period=Math.floor(now/SECRET_DROP_PERIOD),elapsed=now%SECRET_DROP_PERIOD;
@@ -6544,26 +6555,16 @@ function updateSecretDrop(){
  if(timer)timer.textContent=String(Math.floor(left/60000)).padStart(2,"0")+":"+String(Math.floor((left%60000)/1000)).padStart(2,"0");
  const used=Number(state.secretDropUsedPeriod);
  const button=document.getElementById("secretDropButton");
- if(button){button.disabled=used===period;button.textContent=used===period?"✓ ПОПЫТКА ИСПОЛЬЗОВАНА":"ИСПЫТАТЬ УДАЧУ";}
+ if(button){button.disabled=used===period;button.textContent=used===period?"✓ КЕЙС УЖЕ ОТКРЫТ":"ОТКРЫТЬ СЕКРЕТНЫЙ КЕЙС";}
 }
 function openSecretDrop(){
  const now=Date.now(),period=Math.floor(now/SECRET_DROP_PERIOD),elapsed=now%SECRET_DROP_PERIOD;
  if(elapsed>=SECRET_DROP_WINDOW){updateSecretDrop();return;}
- if(Number(state.secretDropUsedPeriod)===period){alert("Ты уже использовал попытку в этом появлении!");return;}
+ if(Number(state.secretDropUsedPeriod)===period){alert("Ты уже открывал секретный кейс в это появление!");return;}
  if(state.balance<SECRET_DROP_COST){alert("Нужно 500 000 монет!");return;}
- state.balance-=SECRET_DROP_COST;state.secretDropUsedPeriod=period;
- addTurnover(SECRET_DROP_COST);
- const won=Math.floor(Math.random()*SECRET_DROP_ODDS)===0;
- const result=document.getElementById("secretDropResult");
- if(won){
-  const prize={...SECRET_DROP_PRIZES[Math.floor(Math.random()*SECRET_DROP_PRIZES.length)],id:Date.now()};
-  state.inventory.push(prize);registerWin(prize.value);
-  result.innerHTML="🎉 НЕВЕРОЯТНО! <b>"+prize.icon+" "+prize.name+"</b><br>Стоимость: "+prize.value.toLocaleString("ru-RU")+" 🪙 — приз добавлен в инвентарь!";
- }else{
-  result.textContent="💨 На этот раз мимо... Секрет исчезает, попробуй в следующий раз.";
- }
- save();updateSecretDrop();
+ selectCase(secretCaseIndex);
 }
+
 
 /* =========================
    START
@@ -6590,6 +6591,7 @@ initRace();
 
 initBattles();
 
+initSecretCase();
 updateDailyCase();
 updateSecretDrop();
 
