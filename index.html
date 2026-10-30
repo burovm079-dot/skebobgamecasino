@@ -1115,6 +1115,26 @@ padding:14px;
 
 .profile-card-value{font-size:19px}
 }
+/* CASE BATTLES */
+.battle-panel{background:var(--panel3);border:1px solid var(--border);border-radius:18px;padding:15px;margin:12px 0}
+.battle-options{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.battle-choice{background:var(--panel2);border:1px solid var(--border2);border-radius:12px;padding:12px}
+.battle-choice label{display:block;color:var(--muted);font-size:11px;font-weight:800;margin-bottom:5px}
+.battle-choice select{margin:0}
+.battle-mode{display:flex;gap:8px;margin:9px 0}
+.battle-mode button{flex:1;background:var(--panel2);color:var(--text);border:1px solid var(--border2);border-radius:10px;padding:12px}
+.battle-mode button.active{background:#493819;color:#ffda7c;border-color:var(--gold)}
+.battle-arena{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin:14px 0}
+.battle-player{background:var(--panel2);border:1px solid var(--border2);border-radius:13px;padding:10px 5px;text-align:center;min-width:0}
+.battle-player .avatar{font-size:30px}.battle-player strong{display:block;font-size:11px;margin:5px 0}
+.battle-player .battle-total{color:var(--gold);font-size:17px;font-weight:900}
+.battle-drop{font-size:10px;color:var(--muted);line-height:1.5;min-height:32px;overflow-wrap:anywhere}
+.battle-round{background:var(--panel);border:1px solid var(--border2);border-radius:12px;padding:10px;margin:8px 0}
+.battle-round-title{font-weight:900;color:var(--gold);margin-bottom:7px}
+.battle-log{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:5px}
+.battle-log div{background:var(--panel2);border-radius:8px;padding:7px 3px;text-align:center;font-size:10px}
+.battle-result{padding:15px;border:1px solid var(--gold);border-radius:14px;text-align:center;margin-top:12px;background:linear-gradient(130deg,#49381966,transparent)}
+@media(max-width:440px){.battle-options{grid-template-columns:1fr}.battle-arena{gap:5px}.battle-player{padding:8px 2px}}
 </style>
 </head>
 
@@ -1186,6 +1206,7 @@ SKEBOB <span>CASINO</span>
 </button>
 <button onclick="showPage('race',this)">🏁 RACE</button>
 <button onclick="showPage('crash',this)">📈 КРАШ</button>
+<button onclick="showPage('battles',this)">⚔️ БАТЛЫ</button>
 
 <button onclick="showPage('inventory',this)">
 🎒 INVENTORY
@@ -1337,6 +1358,26 @@ onclick="openCase()"
 
 </section>
 
+<!-- CASE BATTLES -->
+<section id="battles" class="hidden">
+<h2>⚔️ БАТЛЫ КЕЙСОВ</h2>
+<p class="small">Открывай одинаковые кейсы с ботами. Победитель забирает все предметы батла!</p>
+<div class="battle-panel">
+<h3>🎮 Настройки батла</h3>
+<div class="battle-options">
+<div class="battle-choice"><label>ВЫБЕРИ КЕЙС</label><select id="battleCase"></select></div>
+<div class="battle-choice"><label>КОЛИЧЕСТВО ОТКРЫТИЙ</label><select id="battleRounds"><option value="1">1 раунд</option><option value="2">2 раунда</option><option value="3" selected>3 раунда</option><option value="5">5 раундов</option></select></div>
+</div>
+<label class="small">ФОРМАТ</label>
+<div class="battle-mode"><button id="battleMode2" class="active" onclick="setBattleMode(2)">👤 1 на 1</button><button id="battleMode3" onclick="setBattleMode(3)">👤 1 на 1 на 1</button></div>
+<label class="small">ПРАВИЛО ПОБЕДЫ</label>
+<div class="battle-mode"><button id="battleRuleHigh" class="active" onclick="setBattleRule('high')">📈 КТО БОЛЬШЕ</button><button id="battleRuleLow" onclick="setBattleRule('low')">📉 КТО МЕНЬШЕ</button></div>
+<div class="game-stats"><div class="game-stat"><span>СТАВКА</span><strong id="battleCost">—</strong></div><div class="game-stat"><span>ТВОЙ БАЛАНС</span><strong id="battleBalance">—</strong></div><div class="game-stat"><span>БОТОВ</span><strong id="battleBots">1</strong></div></div>
+<button class="game-main" id="battleStart" onclick="startCaseBattle()">⚔️ НАЧАТЬ БАТЛ</button>
+<p class="small">Ты оплачиваешь все открытия своего кейса. Боты участвуют бесплатно. Если победишь — получишь все предметы, выпавшие всем участникам. При ничьей победитель выбирается случайно среди лидеров.</p>
+</div>
+<div id="battleArena" class="battle-panel hidden"><h3>🏟️ АРЕНА</h3><div class="battle-arena" id="battlePlayers"></div><div id="battleRoundsLog"></div><div id="battleOutcome"></div></div>
+</section>
 <!-- UPGRADE -->
 
 <section
@@ -6055,6 +6096,48 @@ for(let tick=0;tick<45;tick++){for(let i=0;i<4;i++){progress[i]=Math.min(100,pro
 track.classList.remove("running");const won=winner===raceChoice,reward=won?bet*2:0;if(won){state.balance+=reward;state.stats.raceWins++;registerWin(reward)}save();result.style.color=won?"#24cf78":"#e34b55";result.innerHTML=won?"🏆 ПОБЕДА! "+RACE_RUNNERS[winner].icon+" <b>+"+reward.toLocaleString("ru-RU")+" 🪙</b>":"😢 Победил "+RACE_RUNNERS[winner].icon+" "+RACE_RUNNERS[winner].name+". Ставка проиграна.";raceTone(won?880:130,.35,.06);raceBusy=false;updateRaceControls()}
 function initRace(){renderRaceLanes();updateRaceControls();selectRace(0,document.querySelector(".race-picks button"))}
  
+/* CASE BATTLES */
+let battleMode=2,battleRule="high",battleBusy=false;
+function initBattles(){
+ const sel=document.getElementById("battleCase");if(!sel)return;
+ sel.innerHTML=cases.map((c,i)=>'<option value="'+i+'">'+c.icon+' '+c.name+' — '+c.price.toLocaleString("ru-RU")+' 🪙</option>').join("");
+ sel.addEventListener("change",updateBattleInfo);document.getElementById("battleRounds").addEventListener("change",updateBattleInfo);updateBattleInfo();
+}
+function setBattleMode(n){if(battleBusy)return;battleMode=n;document.getElementById("battleMode2").classList.toggle("active",n===2);document.getElementById("battleMode3").classList.toggle("active",n===3);document.getElementById("battleBots").textContent=n-1;}
+function setBattleRule(rule){if(battleBusy)return;battleRule=rule;document.getElementById("battleRuleHigh").classList.toggle("active",rule==="high");document.getElementById("battleRuleLow").classList.toggle("active",rule==="low");}
+function updateBattleInfo(){const c=cases[Number(document.getElementById("battleCase").value)||0],rounds=Number(document.getElementById("battleRounds").value)||1;document.getElementById("battleCost").textContent=(c.price*rounds).toLocaleString("ru-RU")+" 🪙";document.getElementById("battleBalance").textContent=Math.floor(state.balance).toLocaleString("ru-RU")+" 🪙";document.getElementById("battleStart").disabled=battleBusy||c.price*rounds>state.balance;}
+function battleWait(ms){return new Promise(resolve=>setTimeout(resolve,ms));}
+async function startCaseBattle(){
+ if(battleBusy)return;
+ const caseIndex=Number(document.getElementById("battleCase").value),rounds=Number(document.getElementById("battleRounds").value),c=cases[caseIndex],cost=c.price*rounds;
+ if(!Number.isInteger(rounds)||cost>state.balance){alert("Не хватает монет для этого батла!");return;}
+ battleBusy=true;state.balance-=cost;addTurnover(cost);save();updateBattleInfo();
+ const players=[{name:"ТЫ",icon:"😎",total:0,drops:[]},{name:"БОТ MAX",icon:"🤖",total:0,drops:[]}];
+ if(battleMode===3)players.push({name:"БОТ PRO",icon:"👾",total:0,drops:[]});
+ const arena=document.getElementById("battleArena"),playersBox=document.getElementById("battlePlayers"),log=document.getElementById("battleRoundsLog"),out=document.getElementById("battleOutcome");
+ arena.classList.remove("hidden");out.innerHTML="";log.innerHTML="";playersBox.innerHTML=players.map((p,i)=>'<div class="battle-player" id="battlePlayer'+i+'"><div class="avatar">'+p.icon+'</div><strong>'+p.name+'</strong><div class="battle-total" id="battleTotal'+i+'">0 🪙</div><div class="battle-drop" id="battleDrops'+i+'">Готовится...</div></div>').join("");
+ for(let round=0;round<rounds;round++){
+  const row=document.createElement("div");row.className="battle-round";row.innerHTML='<div class="battle-round-title">🎁 РАУНД '+(round+1)+' / '+rounds+'</div><div class="battle-log"></div>';log.appendChild(row);
+  const roundLog=row.querySelector(".battle-log");
+  for(let i=0;i<players.length;i++){
+   const itemIndex=c.items[Math.floor(Math.random()*c.items.length)],prize=prizes[itemIndex],drop={...prize,id:Date.now()+round*10+i};
+   players[i].drops.push(drop);players[i].total+=Number(prize.value)||0;
+   const cell=document.createElement("div");cell.innerHTML='<div style="font-size:23px">'+players[i].icon+'</div><b>'+prize.icon+' '+prize.name+'</b><br><span style="color:var(--gold)">'+prize.value.toLocaleString("ru-RU")+' 🪙</span>';roundLog.appendChild(cell);
+   document.getElementById("battleTotal"+i).textContent=players[i].total.toLocaleString("ru-RU")+" 🪙";document.getElementById("battleDrops"+i).textContent=players[i].drops.length+" предмет(ов)";
+   await battleWait(360);
+  }
+ }
+ const best=Math[battleRule==="high"?"max":"min"](...players.map(p=>p.total)),leaders=players.filter(p=>p.total===best),winner=leaders[Math.floor(Math.random()*leaders.length)],pool=players.flatMap(p=>p.drops),poolValue=pool.reduce((sum,p)=>sum+(Number(p.value)||0),0);
+ if(winner===players[0]){
+  state.inventory.push(...pool.map((p,i)=>({...p,id:Date.now()+i+100})));registerWin(poolValue);
+  out.innerHTML='<div class="battle-result"><div style="font-size:42px">🏆</div><h2>ТЫ ПОБЕДИЛ!</h2><p>Ты забираешь все '+pool.length+' предметов батла на сумму <b class="orange">'+poolValue.toLocaleString("ru-RU")+' 🪙</b></p></div>';
+ }else{
+  state.inventory.push(...players[0].drops.map((p,i)=>({...p,id:Date.now()+i+300})));
+  out.innerHTML='<div class="battle-result"><div style="font-size:42px">🤖</div><h2>'+winner.name+' ПОБЕДИЛ</h2><p>Бот забирает общий банк. Твои предметы возвращены тебе.</p><p>Твой результат: '+players[0].total.toLocaleString("ru-RU")+' 🪙 · Победитель: '+best.toLocaleString("ru-RU")+' 🪙</p></div>';
+ }
+ if(leaders.length>1)out.innerHTML+='<p class="small">🤝 Ничья по сумме! Победитель выбран случайно среди лидеров.</p>';
+ save();battleBusy=false;updateBattleInfo();
+}
 /* CRASH GAME */
 let crashActive=false,crashBet=100,crashPoint=0,crashStartedAt=0,crashTimer=null,crashMultiplier=1;
 function updateCrashControls(){
@@ -6403,6 +6486,8 @@ initPickaxe();
 initPlinko();
 
 initRace();
+
+initBattles();
 
 updateDailyCase();
 
