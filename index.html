@@ -748,53 +748,74 @@ padding:14px;
 position:relative;
 display:grid;
 grid-template-columns:repeat(5,1fr);
-gap:4px;
-background:#101219;
-border:2px solid #292e3d;
+gap:5px;
+background:linear-gradient(180deg,#18202b,#101219 55%,#090c12);
+border:2px solid #42404a;
 border-radius:22px;
-padding:8px;
+padding:9px;
 overflow:hidden;
 margin:14px 0;
+box-shadow:inset 0 12px 28px #0008,0 8px 24px #0005;
 }
 
 .pick-block{
+position:relative;
 aspect-ratio:1;
-border-radius:7px;
-background:#6e4b2e;
-box-shadow:inset 0 5px #ffffff0d,inset 0 -6px #00000028;
+border-radius:8px;
+background:linear-gradient(145deg,#91623a,#69452c 62%,#4c3427);
+border:1px solid #b18a5b55;
+box-shadow:inset 0 5px #ffffff18,inset 0 -7px #00000035,0 2px 2px #0008;
 display:flex;
 align-items:center;
 justify-content:center;
+flex-direction:column;
 text-align:center;
-font-size:11px;
+font-size:clamp(17px,4vw,25px);
 font-weight:900;
 color:white;
-transition:.16s;
+transition:background .16s,transform .16s,opacity .2s,filter .16s;
+overflow:hidden;
 }
 
-.pick-block.layer-1{background:#765034}
-.pick-block.layer-2{background:#686b70}
-.pick-block.layer-3{background:#555960}
-.pick-block.layer-4{background:#484c54}
-.pick-block.layer-5{background:#3e424b}
+.pick-block:after{
+content:"";
+position:absolute;
+inset:3px;
+border:1px solid #ffffff12;
+border-radius:5px;
+pointer-events:none;
+}
+
+.pick-block.layer-1{background:linear-gradient(145deg,#987047,#68472d)}
+.pick-block.layer-2{background:linear-gradient(145deg,#7d8185,#555a61)}
+.pick-block.layer-3{background:linear-gradient(145deg,#696d76,#414650)}
+.pick-block.layer-4{background:linear-gradient(145deg,#555a65,#343944)}
+.pick-block.layer-5{background:linear-gradient(145deg,#474c58,#282d37)}
 
 .pick-block.hit{
-transform:scale(.8);
-background:#2d313a;
+transform:translateY(4px) scale(.88) rotate(2deg);
+filter:brightness(1.5);
 }
 
 .pick-block.broken{
 opacity:.12;
-transform:scale(.55);
+transform:scale(.55) rotate(-8deg);
+filter:grayscale(1);
 }
 
 .pick-block.prize{
-background:#70551f;
-border:2px solid #ffb323;
-box-shadow:0 0 15px #ffae1988;
+background:radial-gradient(circle at 50% 35%,#9b752b,#473315 78%);
+border:2px solid #ffcb55;
+box-shadow:0 0 17px #ffae1988,inset 0 0 12px #ffd86a44;
 opacity:1;
-transform:scale(.95);
+transform:scale(.97);
 }
+
+.pick-block.ore-coal{background:linear-gradient(145deg,#62666b,#272b31);border-color:#aeb4bb66}
+.pick-block.ore-iron{background:linear-gradient(145deg,#b47d61,#604638);border-color:#e1a98a}
+.pick-block.ore-gold{background:linear-gradient(145deg,#e6bd4c,#76531b);border-color:#ffe28a}
+.pick-block.ore-diamond{background:linear-gradient(145deg,#66d9e7,#17647b);border-color:#b6f8ff;box-shadow:0 0 18px #39d5f088}
+.pick-block.ore-chest{background:linear-gradient(145deg,#f1c45c,#754319);border:2px solid #ffe28a;box-shadow:0 0 22px #ffbd42aa}
 
 .pick-tool{
 position:absolute;
@@ -803,10 +824,37 @@ font-size:38px;
 pointer-events:none;
 transition:left .22s,top .22s,transform .12s;
 filter:drop-shadow(0 3px 5px #000);
+transform-origin:75% 80%;
 }
 
-.pick-tool.swing{
-transform:rotate(-55deg) scale(1.15);
+.pick-tool.jump{animation:pickJump .34s cubic-bezier(.2,.8,.3,1)}
+.pick-tool.swing{transform:rotate(-68deg) scale(1.28) translateY(5px)}
+@keyframes pickJump{
+0%{transform:translateY(0) rotate(0)}
+48%{transform:translateY(-28px) rotate(-24deg)}
+100%{transform:translateY(0) rotate(0)}
+}
+
+.pick-board.impact{animation:pickBoardShake .22s}
+@keyframes pickBoardShake{
+0%,100%{transform:translateX(0)}
+25%{transform:translateX(-4px)}
+50%{transform:translateX(4px)}
+75%{transform:translateX(-2px)}
+}
+
+.pick-particle{
+position:absolute;
+z-index:12;
+width:7px;height:7px;
+border-radius:2px;
+background:#c58a4b;
+pointer-events:none;
+animation:pickDust .62s ease-out forwards;
+}
+@keyframes pickDust{
+from{opacity:1;transform:translate(0,0) scale(1)}
+to{opacity:0;transform:translate(var(--dx),var(--dy)) scale(.15)}
 }
 
 /* INVENTORY */
@@ -5887,6 +5935,85 @@ pool.length
 
 }
 
+function getPickaxeLoot(mult,row,bet){
+
+if(mult<=0)return null;
+
+if(row>=2&&Math.random()<.09){
+
+return{
+type:"chest",
+icon:"🧰",
+name:"СУНДУК",
+multiplier:Math.max(.5,mult*2)
+};
+
+}
+
+if(mult>=1){
+
+return{
+type:"diamond",
+icon:"💎",
+name:"АЛМАЗ",
+multiplier:mult
+};
+
+}
+
+if(mult>=.5){
+
+return{
+type:"gold",
+icon:"🥇",
+name:"ЗОЛОТО",
+multiplier:mult
+};
+
+}
+
+if(mult>=.2){
+
+return{
+type:"iron",
+icon:"⛓️",
+name:"ЖЕЛЕЗО",
+multiplier:mult
+};
+
+}
+
+return{
+type:"coal",
+icon:"⚫",
+name:"УГОЛЬ",
+multiplier:mult
+};
+
+}
+
+function pickaxeParticles(block,kind){
+
+const board=document.getElementById("pickaxeBoard");
+const br=board.getBoundingClientRect();
+const r=block.getBoundingClientRect();
+const colors={
+dirt:"#b77a43",coal:"#92979e",iron:"#c58c70",
+gold:"#f3c64e",diamond:"#73e8f3",chest:"#ffd36a"
+};
+for(let i=0;i<9;i++){
+const p=document.createElement("i");
+p.className="pick-particle";
+p.style.left=(r.left-br.left+r.width/2)+"px";
+p.style.top=(r.top-br.top+r.height/2)+"px";
+p.style.background=colors[kind]||colors.dirt;
+p.style.setProperty("--dx",(Math.random()*76-38)+"px");
+p.style.setProperty("--dy",(Math.random()*-62-8)+"px");
+board.appendChild(p);
+setTimeout(()=>p.remove(),700);
+}
+}
+
 async function startPickaxeGame(){
 
 if(pickaxeBusy)return;
@@ -6070,78 +6197,36 @@ br.top-
 )+
 "px";
 
-await pickaxeWait(
-220
-);
+tool.classList.add("jump");
+await pickaxeWait(340);
+tool.classList.remove("jump");
+tool.classList.add("swing");
+block.classList.add("hit");
+await pickaxeWait(145);
+tool.classList.remove("swing");
+board.classList.remove("impact");
+void board.offsetWidth;
+board.classList.add("impact");
 
-tool.classList.add(
-"swing"
-);
+const mult=getPickaxePrize(row);
+const loot=getPickaxeLoot(mult,row,bet);
+pickaxeParticles(block,loot?loot.type:"dirt");
 
-block.classList.add(
-"hit"
-);
+if(loot){
 
-await pickaxeWait(
-130
-);
-
-tool.classList.remove(
-"swing"
-);
-
-const mult=
-getPickaxePrize(
-row
-);
-
-if(mult>0){
-
-const prize=
-Math.max(
-1,
-Math.floor(
-bet*
-mult
-)
-);
-
+const prize=Math.max(1,Math.floor(bet*loot.multiplier));
 pickaxeCurrentWin+=prize;
-
-block.classList.remove(
-"hit"
-);
-
-block.classList.add(
-"prize"
-);
-
-block.innerHTML=
-"🪙<br>+"+
-prize;
-
-status.innerHTML=
-"💰 Найдено <b>+"+
-prize.toLocaleString(
-"ru-RU"
-)+
-" 🪙</b>";
+block.classList.remove("hit");
+block.classList.add("prize","ore-"+loot.type);
+block.innerHTML=loot.icon+"<small style='font-size:9px;display:block'>+"+prize.toLocaleString("ru-RU")+"</small>";
+status.innerHTML="⛏ Найдено: <b>"+loot.name+"</b> · <b>+"+prize.toLocaleString("ru-RU")+" 🪙</b>";
 
 }else{
 
-block.classList.remove(
-"hit"
-);
-
-block.classList.add(
-"broken"
-);
-
-block.textContent="";
-
-status.textContent=
-"⛏ Пусто...";
-
+block.classList.remove("hit");
+block.classList.add("broken");
+block.innerHTML="💨";
+status.textContent="⛏ Камень раскрошился — копаем дальше";
 }
 
 pickaxeHits++;
