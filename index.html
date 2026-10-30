@@ -1160,6 +1160,23 @@ padding:14px;
 .secret-drop .goldbtn{background:linear-gradient(110deg,#9b59d0,#e3b7ff)}
 @keyframes secretPulse{to{box-shadow:0 0 32px #c084fc99}}
 
+
+/* DICE ARENA */
+.dice-arena{display:grid;grid-template-columns:repeat(auto-fit,minmax(115px,1fr));gap:10px;margin:18px 0}.dice-seat{background:linear-gradient(145deg,#252b39,#11151e);border:1px solid #647087;border-radius:14px;padding:14px 8px;text-align:center;min-height:112px}.dice-avatar{font-size:28px}.dice-name{font-weight:900;margin:5px}.dice-cubes{font-size:25px;letter-spacing:3px;min-height:34px}.dice-total{color:#f5cf70;font-size:20px;font-weight:900}.dice-seat.winner{border:2px solid #f4c75e;box-shadow:0 0 22px #f4c75e66;transform:translateY(-3px)}.dice-pot,.dice-result{text-align:center;padding:13px;font-weight:900;color:var(--gold);font-size:18px}
+/* PREMIUM CLAW CABINET */
+.claw-machine{max-width:560px;margin:16px auto;padding:14px;border-radius:24px;background:linear-gradient(135deg,#e4b94f,#5b3514 22%,#17151a 42%,#090b11 75%,#b57b25);box-shadow:0 18px 45px #000a,inset 0 0 0 3px #f5d77c55,inset 0 0 18px #000;border:2px solid #d8ae52}
+.claw-marquee{text-align:center;padding:12px 5px 14px;color:#ffe69a;text-shadow:0 0 12px #ffbd35;font-weight:1000;letter-spacing:3px;font-size:20px}.claw-marquee small{display:block;font-size:9px;letter-spacing:4px;color:#d9c9a2;margin-top:5px}
+.claw-glass{height:330px;position:relative;overflow:hidden;border:5px solid #9a8d75;border-radius:12px;background:radial-gradient(ellipse at 50% 20%,#52617455,transparent 65%),linear-gradient(180deg,#162333cc,#27334399 65%,#111722);box-shadow:inset 0 0 35px #000b,0 0 0 2px #fff3}
+.claw-glass:before{content:"";position:absolute;inset:0;background:linear-gradient(112deg,#ffffff30 0%,#ffffff08 19%,transparent 38%,transparent 75%,#ffffff12);pointer-events:none;z-index:5}.claw-reflection{position:absolute;inset:0;background:linear-gradient(110deg,transparent 20%,#ffffff0c 21%,transparent 42%);z-index:4;pointer-events:none}
+.claw-rail{height:9px;position:absolute;top:23px;left:12px;right:12px;background:linear-gradient(#ddd,#454545 45%,#111 60%,#aaa);border-radius:6px;box-shadow:0 3px 5px #000}
+.claw-carriage{position:absolute;top:18px;left:50%;width:54px;height:24px;transform:translateX(-50%);transition:left .45s cubic-bezier(.2,.8,.2,1);z-index:3}.claw-carriage:before{content:"";position:absolute;top:0;left:8px;width:38px;height:17px;border-radius:5px;background:linear-gradient(90deg,#555,#ddd 30%,#555 70%,#222);box-shadow:0 2px 4px #000}
+.claw-cable{position:absolute;top:15px;left:25px;width:4px;height:85px;background:linear-gradient(90deg,#555,#ddd,#444);height:78px;transition:height 1s cubic-bezier(.4,0,.7,1)}
+.claw-head{position:absolute;top:87px;left:5px;width:44px;height:25px;transition:top 1s cubic-bezier(.4,0,.7,1)}.claw-head:before{content:"";position:absolute;left:15px;top:0;width:14px;height:13px;background:linear-gradient(90deg,#555,#eee,#666);border-radius:3px}.claw-jaw{position:absolute;top:10px;width:4px;height:22px;background:linear-gradient(90deg,#777,#eee,#555);border-radius:3px;transform-origin:top;transition:transform .35s}.claw-jaw.left{left:15px;transform:rotate(24deg)}.claw-jaw.right{right:15px;transform:rotate(-24deg)}.claw-finger{position:absolute;left:18px;top:29px;width:8px;height:4px;background:#ddd;border-radius:4px}
+.claw-prizes{position:absolute;bottom:12px;left:4%;right:4%;height:125px;display:flex;align-items:flex-end;justify-content:space-around;flex-wrap:wrap;gap:0 2px;padding:10px 5px 0;background:linear-gradient(transparent,#0005);font-size:38px;text-shadow:0 5px 4px #000;filter:drop-shadow(0 2px 2px #000)}.claw-prizes span{width:19%;text-align:center;line-height:1.2;transition:transform .3s}.claw-prizes span:nth-child(3n){font-size:43px}.claw-prizes span:nth-child(2n){transform:rotate(-8deg)}
+.claw-chute{position:absolute;bottom:0;right:8px;width:85px;height:28px;background:linear-gradient(#555,#111);border:2px solid #aaa;border-bottom:0;border-radius:8px 8px 0 0;text-align:center;color:#bbb;font-size:8px;letter-spacing:1px;padding-top:7px}
+.claw-controls{padding:14px 5px 4px;text-align:center}.claw-position{font-size:11px;letter-spacing:2px;color:#f4d78b;margin:3px 0 10px}.claw-arrows{display:flex;justify-content:center;gap:20px}.claw-arrows button{width:72px;height:45px;border:1px solid #d8b75f;border-radius:12px;background:linear-gradient(#4a4a50,#17171b);color:#ffe6a0;font-size:22px;box-shadow:0 4px 0 #090909}.claw-drop{width:100%;margin-top:14px;padding:15px;border:1px solid #ffe4a0;border-radius:12px;background:linear-gradient(110deg,#a66b18,#f5d77c,#a66b18);font-weight:1000;color:#241606;letter-spacing:1px;box-shadow:0 4px 0 #59370e}.claw-result{text-align:center;min-height:38px;padding:12px;color:#ffe08a;font-weight:900}.claw-foot{display:flex;justify-content:space-between;gap:5px;font-size:8px;letter-spacing:1px;color:#b9a77c;border-top:1px solid #a88b4b55;padding:10px 2px 0}.claw-machine.grabbing .claw-jaw.left{transform:rotate(-8deg)}.claw-machine.grabbing .claw-jaw.right{transform:rotate(8deg)}.claw-machine.lifting .claw-head{top:87px}.claw-machine.lifting .claw-cable{height:78px}
+@media(max-width:430px){.claw-glass{height:300px}.claw-prizes{font-size:31px}.claw-marquee{font-size:16px}.claw-foot{font-size:7px}}
+
 </style>
 </head>
 
@@ -1236,6 +1253,8 @@ SKEBOB <span>CASINO</span>
 <button onclick="showPage('battles',this)">⚔️ БАТЛЫ</button>
 <button onclick="showPage('slots',this)">🎰 СЛОТЫ</button>
 <button onclick="showPage('blackjack',this)">🃏 BLACKJACK</button>
+<button onclick="showPage('dice',this)">🎲 КОСТИ</button>
+<button onclick="showPage('claw',this)">🕹️ КРАН</button>
 
 
 
@@ -2384,6 +2403,34 @@ id="profileBalance"
  <div class="bj-actions"><button class="game-main" id="bjDeal" onclick="startBlackjack()">🃏 РАЗДАТЬ КАРТЫ</button><button class="secondary" id="bjHit" onclick="bjHit()" disabled>ЕЩЁ КАРТУ</button><button class="secondary" id="bjStand" onclick="bjStand()" disabled>ХВАТИТ</button><button class="secondary" id="bjDouble" onclick="bjDouble()" disabled>УДВОИТЬ</button></div>
  <div class="game-status" id="bjStatus">Сделай ставку и начинай игру.</div>
  <div class="small">Победа — x2 · Блэкджек — x2.5 · Ничья — возврат. Удвоение доступно на первых двух картах: ставка ×2, ровно одна карта и автоматическое завершение хода. Если у дилера блэкджек, раунд завершается сразу. Дилер берёт карты до 17.</div>
+</div>
+</section>
+
+
+<section id="dice" class="hidden">
+<h2>🎲 КОСТИ — ТУРНИР</h2>
+<p class="small">Ты против случайных ботов. Каждый раунд собирает от 2 до 4 соперников (всего до 5 игроков). Все ставят одинаково — победитель забирает банк.</p>
+<div class="dice-table panel">
+ <div class="dice-arena" id="dicePlayers"><div class="dice-seat">🎲 Игроки появятся здесь</div></div>
+ <div class="dice-pot" id="dicePot">БАНК: —</div>
+ <div class="dice-result" id="diceResult">Выбери ставку и бросай кости!</div>
+ <div class="game-control"><label>СТАВКА КАЖДОГО ИГРОКА</label><div class="bet-main"><button onclick="changeDiceBet(-1)">−</button><input id="diceBet" type="number" min="10" step="10" value="100" oninput="updateDiceBet()"><button onclick="changeDiceBet(1)">+</button></div><div class="bet-presets"><button onclick="setDiceBet(100)">100</button><button onclick="setDiceBet(500)">500</button><button onclick="setDiceBet(1000)">1K</button><button onclick="setDiceBet(5000)">5K</button><button onclick="setDiceBet('max')">MAX</button></div></div>
+ <button class="game-main" id="dicePlay" onclick="playDice()">🎲 БРОСИТЬ КОСТИ</button>
+ <div class="small">У каждого игрока два кубика. Побеждает наибольшая сумма; при равенстве победитель выбирается случайно среди лидеров.</div>
+</div>
+</section>
+<section id="claw" class="hidden">
+<h2>🕹️ CLAW MACHINE</h2><p class="small">Настоящий аркадный автомат: двигай каретку, опускай клешню и попробуй вытащить приз. Одна попытка — 100 монет.</p>
+<div class="claw-machine">
+ <div class="claw-marquee"><span>★ SKEBOB PRIZE ARCADE ★</span><small>EST. 2026 · LUCKY YOU</small></div>
+ <div class="claw-glass">
+  <div class="claw-reflection"></div><div class="claw-rail"><div class="claw-carriage" id="clawCarriage"><div class="claw-cable" id="clawCable"></div><div class="claw-head" id="clawHead"><div class="claw-jaw left"></div><div class="claw-jaw right"></div><div class="claw-finger"></div></div></div></div>
+  <div class="claw-prizes" id="clawPrizes"><span>🧸</span><span>💎</span><span>🐻</span><span>🎁</span><span>👑</span><span>🦄</span><span>🏎️</span><span>🎮</span><span>💍</span><span>🐸</span><span>🪙</span><span>🚀</span><span>🧸</span><span>💎</span><span>🎁</span></div>
+  <div class="claw-chute"><span>PRIZE EXIT</span></div>
+ </div>
+ <div class="claw-controls"><div class="claw-position" id="clawPosition">КАРЕТКА: ЦЕНТР</div><div class="claw-arrows"><button onclick="moveClaw(-1)" id="clawLeft">◀</button><button onclick="moveClaw(1)" id="clawRight">▶</button></div><button class="claw-drop" id="clawDrop" onclick="dropClaw()">⬇ ОПУСТИТЬ КЛЕШНЮ · 100 🪙</button></div>
+ <div class="claw-result" id="clawResult">Выбери позицию и попробуй поймать игрушку!</div>
+ <div class="claw-foot"><span>● POWER ON</span><span>GRIP STRENGTH: 72%</span><span>1 CREDIT = 100 COINS</span></div>
 </div>
 </section>
 
@@ -6861,6 +6908,46 @@ function openSecretDrop(){
  selectCase(secretCaseIndex);
 }
 
+
+
+/* DICE TABLE */
+const diceNames=["TurboMax","Zefir","DarkWolf","PixelKing","Bober","NoMercy","Vortex","Lime","MisterX","Banana","Shadow","Keks"];
+const diceFaces=["⚀","⚁","⚂","⚃","⚄","⚅"];
+let diceBusy=false;
+function diceBetValue(){const e=document.getElementById("diceBet");return Math.max(10,Math.floor(Number(e.value)||10))}
+function updateDiceBet(){const e=document.getElementById("diceBet");e.value=diceBetValue()}
+function setDiceBet(v){const e=document.getElementById("diceBet");e.value=v==="max"?Math.max(10,Math.floor(state.balance)):v;updateDiceBet()}
+function changeDiceBet(d){const e=document.getElementById("diceBet");e.value=Math.max(10,diceBetValue()+d*10);updateDiceBet()}
+async function playDice(){
+ if(diceBusy)return;const bet=diceBetValue(),count=2+Math.floor(Math.random()*4);
+ if(state.balance<bet){document.getElementById("diceResult").textContent="Недостаточно монет для ставки.";return}
+ diceBusy=true;state.balance-=bet;save();render();
+ const players=[{name:"ТЫ",avatar:"😎",you:true},...Array.from({length:count},()=>({name:diceNames[Math.floor(Math.random()*diceNames.length)],avatar:["🤖","🐸","👽","🥷","🦊","🐻"][Math.floor(Math.random()*6)]}))];
+ const arena=document.getElementById("dicePlayers");document.getElementById("dicePot").textContent="БАНК: "+(bet*players.length).toLocaleString("ru-RU")+" 🪙";
+ arena.innerHTML=players.map((p,i)=>'<div class="dice-seat" id="diceSeat'+i+'"><div class="dice-avatar">'+p.avatar+'</div><div class="dice-name">'+p.name+'</div><div class="dice-cubes" id="diceCubes'+i+'">🎲 🎲</div><div class="dice-total" id="diceTotal'+i+'">?</div></div>').join("");
+ document.getElementById("diceResult").textContent="Кости летят...";
+ for(let t=0;t<12;t++){players.forEach((p,i)=>{const el=document.getElementById("diceCubes"+i);el.textContent=diceFaces[Math.floor(Math.random()*6)]+" "+diceFaces[Math.floor(Math.random()*6)]});await new Promise(r=>setTimeout(r,85))}
+ players.forEach((p,i)=>{p.a=1+Math.floor(Math.random()*6);p.b=1+Math.floor(Math.random()*6);p.total=p.a+p.b;document.getElementById("diceCubes"+i).textContent=diceFaces[p.a-1]+" "+diceFaces[p.b-1];document.getElementById("diceTotal"+i).textContent=p.total});
+ const max=Math.max(...players.map(p=>p.total)),winners=players.filter(p=>p.total===max),winner=winners[Math.floor(Math.random()*winners.length)],pool=bet*players.length;
+ document.getElementById("diceSeat"+players.indexOf(winner)).classList.add("winner");if(winner.you)state.balance+=pool;
+ save();render();document.getElementById("diceResult").textContent=(winner.you?"🏆 ТЫ ПОБЕДИЛ!":"🤖 Победитель: "+winner.name)+" · "+max+" очков · "+(winner.you?"+"+pool.toLocaleString("ru-RU"):"банк забран")+" 🪙";
+ diceBusy=false;
+}
+/* CLAW MACHINE */
+let clawPosition=2,clawBusy=false;
+const clawLoot=[["🧸","Плюшевый мишка",80],["💎","Кристалл",500],["🐻","Мягкий медведь",120],["🎁","Подарок",250],["👑","Золотая корона",1500],["🦄","Единорог",300],["🏎️","Мини-суперкар",700],["🎮","Игровая приставка",900],["💍","Алмазное кольцо",1200],["🐸","Лягушка",100],["🪙","Золотая монета",400],["🚀","Ракета",600],["🧸","Плюшевый мишка",80],["💎","Кристалл",500],["🎁","Подарок",250]];
+function moveClaw(d){if(clawBusy)return;clawPosition=Math.max(0,Math.min(4,clawPosition+d));document.getElementById("clawCarriage").style.left=(10+clawPosition*20)+"%";document.getElementById("clawPosition").textContent="КАРЕТКА: "+["КРАЙ СЛЕВА","ЛЕВО","ЦЕНТР","ПРАВО","КРАЙ СПРАВА"][clawPosition]}
+async function dropClaw(){
+ if(clawBusy)return;const cost=100;if(state.balance<cost){document.getElementById("clawResult").textContent="Не хватает 100 монет.";return}
+ clawBusy=true;state.balance-=cost;save();render();const machine=document.querySelector(".claw-machine"),head=document.getElementById("clawHead"),cable=document.getElementById("clawCable"),pos=clawPosition;
+ document.getElementById("clawDrop").disabled=true;document.getElementById("clawResult").textContent="Клешня опускается...";
+ machine.classList.add("grabbing");head.style.top="260px";cable.style.height="251px";await new Promise(r=>setTimeout(r,1100));
+ const success=Math.random()<.58;const idx=Math.min(14,Math.max(0,Math.round(pos*3+Math.random()*2-1)));const prize=clawLoot[idx];const spans=document.querySelectorAll("#clawPrizes span");
+ if(success){spans[idx].style.opacity="0";spans[idx].style.transform="translateY(-120px) scale(.5)";document.getElementById("clawResult").textContent="🤏 Захват! "+prize[0]+" "+prize[1]+" поднят!";head.innerHTML='<div class="claw-jaw left"></div><div class="claw-jaw right"></div><div class="claw-finger"></div><span style="position:absolute;top:34px;left:9px;font-size:24px">'+prize[0]+'</span>'}else document.getElementById("clawResult").textContent="Клешня разжалась... игрушка выскользнула 😭";
+ machine.classList.remove("grabbing");machine.classList.add("lifting");head.style.top="87px";cable.style.height="78px";await new Promise(r=>setTimeout(r,1100));
+ if(success){state.balance+=prize[2];state.inventory.push({name:prize[1],icon:prize[0],value:prize[2],id:Date.now()});save();render();document.getElementById("clawResult").textContent="🎉 "+prize[0]+" "+prize[1]+" · +" +prize[2].toLocaleString("ru-RU")+" 🪙 добавлено в инвентарь!"}
+ machine.classList.remove("lifting");head.innerHTML='<div class="claw-jaw left"></div><div class="claw-jaw right"></div><div class="claw-finger"></div>';head.style.top="87px";cable.style.height="78px";document.getElementById("clawDrop").disabled=false;clawBusy=false;
+}
 
 /* =========================
    START
