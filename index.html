@@ -7354,6 +7354,33 @@ function poolResolveMatch(p,who){
 function poolEndMatch(who){poolMatch.over=true;document.getElementById("poolHitBtn").disabled=true;if(who==="player"){const prize=gamePay(poolMatch.bet,1.8);document.getElementById("poolResult").textContent="Победа! Выплата "+prize+" 🪙"}else{save();document.getElementById("poolResult").textContent="Бот выиграл партию. Начни новую игру."}}
 function poolBotMove(){if(!poolMatch||poolMatch.over)return;const q=poolBodies[0],t=poolBodies.filter(b=>b.active&&b.kind==="bot").sort((a,b)=>Math.hypot(a.x-q.x,a.y-q.y)-Math.hypot(b.x-q.x,b.y-q.y))[0];if(!t){poolEndMatch("player");return}const a=Math.atan2(-(t.y-q.y),t.x-q.x)+(Math.random()-.5)*.16;q.vx=Math.cos(a)*.007;q.vy=-Math.sin(a)*.007;poolRunMatch("bot")}
 
+
+/* DARTS: deterministic board scoring from the actual throw coordinates */
+function dartThrow(){
+ const bet=gameBet("dartBet");if(!bet){alert("Нужна ставка от 100");return}
+ state.balance-=bet;
+ const aim=+document.getElementById("dartAim").value,power=+document.getElementById("dartPower").value;
+ const dx=(aim-50)/50*.43,dy=(power-60)/55*.38;
+ const radius=Math.hypot(dx,dy),score=radius<.075?50:radius<.17?25:radius<.29?10:radius<.43?5:0;
+ const mult=score===50?3:score===25?1.5:score===10?0.5:0,win=mult?gamePay(bet,mult):0;if(!mult)save();
+ const tx=Math.max(.04,Math.min(.96,.5+dx)),ty=Math.max(.04,Math.min(.96,.5+dy));
+ let n=0;const fly=()=>{n++;const t=n/24,e=1-Math.pow(1-t,2);drawDartScene(.5+(tx-.5)*e,.5+(ty-.5)*e,true);if(n<24)requestAnimationFrame(fly);else document.getElementById("dartResult").textContent="🎯 Попадание: "+score+" очков · "+(win?"Выплата "+win+" 🪙":"Мимо или слабое попадание")};
+ requestAnimationFrame(fly);
+}
+/* BOWLING: repeatable pin count based on lane aim and throw power */
+function bowlThrow(){
+ const bet=gameBet("bowlBet");if(!bet){alert("Нужна ставка от 100");return}
+ state.balance-=bet;const aim=+document.getElementById("bowlAim").value,power=+document.getElementById("bowlPower").value;
+ const lateral=Math.abs(aim-50),speedError=Math.abs(power-82);
+ const pins=Math.max(0,Math.min(10,Math.round(10-lateral/6.5-speedError/13)));
+ const mult=pins===10?3:pins>=8?2:pins>=6?1:0,win=mult?gamePay(bet,mult):0;if(!mult)save();
+ bowlKnockState=Array.from({length:10},(_,i)=>i<pins?.58+i*.018:2);
+ let n=0;const tick=()=>{n++;drawBowlingScene(n/32,pins);if(n<32)requestAnimationFrame(tick);else drawBowlingScene(1,pins)};
+ requestAnimationFrame(tick);
+ document.getElementById("bowlPins").textContent=(pins===10?"STRIKE":"СБИТО КЕГЛЕЙ: "+pins)+" / 10";
+ document.getElementById("bowlResult").textContent=(pins===10?"STRIKE! ":"Сбито кеглей: "+pins+" · ")+(win?"Выплата "+win+" 🪙":"Без выигрыша");
+}
+
 /* =========================
    START
 ========================= */
