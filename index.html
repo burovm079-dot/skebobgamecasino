@@ -2451,20 +2451,7 @@ id="profileBalance"
  <div class="small">У каждого игрока два кубика. Побеждает наибольшая сумма; при равенстве победитель выбирается случайно среди лидеров.</div>
 </div>
 </section>
-<section id="claw" class="hidden">
-<h2>🕹️ CLAW MACHINE</h2><p class="small">Настоящий аркадный автомат: двигай каретку, опускай клешню и попробуй вытащить приз. Одна попытка — 100 монет.</p>
-<div class="claw-machine">
- <div class="claw-marquee"><span>★ SKEBOB PRIZE ARCADE ★</span><small>EST. 2026 · LUCKY YOU</small></div>
- <div class="claw-glass">
-  <div class="claw-reflection"></div><div class="claw-side-depth left"></div><div class="claw-side-depth right"></div><div class="claw-rail"><div class="claw-carriage" id="clawCarriage"><div class="claw-cable" id="clawCable"></div><div class="claw-head" id="clawHead"><div class="claw-jaw left"></div><div class="claw-jaw right"></div><div class="claw-finger"></div></div></div></div>
-  <div class="claw-prizes" id="clawPrizes"></div><div class="claw-floor"></div>
-  <div class="claw-chute"><span>PRIZE EXIT</span></div><div class="claw-clear-ramp"></div><div class="claw-exit-hole"></div><div class="claw-collection-tray">ТВОЙ ПРИЗ</div><div class="claw-delivery" id="clawDelivery"></div>
- </div>
- <div class="claw-refresh" id="clawRefresh">Новая коллекция призов через 30:00</div><div class="claw-controls"><div class="claw-position" id="clawPosition">КАРЕТКА: ЦЕНТР</div><div class="claw-count" id="clawCount">🎁 ВНУТРИ 100 ПРИЗОВ</div><div id="clawBrokenNotice" style="display:none;margin:10px auto;padding:12px 16px;max-width:420px;border:2px solid #e05252;border-radius:12px;background:rgba(130,20,20,.22);color:#ff7777;font-weight:900;text-align:center;letter-spacing:.5px">🔧 АВТОМАТ СЛОМАН</div><div class="claw-lever-wrap" id="clawLever" onpointerdown="startClawLever(event)" onpointermove="moveClawLever(event)" onpointerup="stopClawLever(event)" onpointercancel="stopClawLever(event)"><div class="claw-lever-base"><div class="claw-lever-stick" id="clawLeverStick"><div class="claw-lever-knob"></div></div></div><div class="claw-lever-hint">🎮 ДВИГАЙ РЫЧАГ ВЛЕВО И ВПРАВО</div></div><button type="button" class="claw-drop" id="clawDrop" >⬇ ОПУСТИТЬ КЛЕШНЮ · 100 🪙</button></div>
- <div class="claw-result" id="clawResult">Выбери позицию и попробуй поймать игрушку!</div>
- <div class="claw-statusline"><span>● POWER ON</span><span>GRIP STRENGTH: 72%</span><span>1 CREDIT = 100 COINS</span></div><div class="claw-foot"><span>MECHANICAL CLAW SYSTEM</span><span>PRIZE ARCADE · SKEBOB</span></div>
-</div>
-</section>
+
 
 <!-- PROMO -->
 
@@ -6971,78 +6958,8 @@ let arcadeAudio=null;
 function arcadeCtx(){try{if(!arcadeAudio)arcadeAudio=new(window.AudioContext||window.webkitAudioContext)();if(arcadeAudio.state==="suspended")arcadeAudio.resume();return arcadeAudio}catch(e){return null}}
 function arcadeTone(freq,duration,type="sine",volume=.035,endFreq=null){const c=arcadeCtx();if(!c)return;const o=c.createOscillator(),g=c.createGain(),now=c.currentTime;o.type=type;o.frequency.setValueAtTime(freq,now);if(endFreq)o.frequency.exponentialRampToValueAtTime(Math.max(1,endFreq),now+duration);g.gain.setValueAtTime(.0001,now);g.gain.exponentialRampToValueAtTime(volume,now+.012);g.gain.exponentialRampToValueAtTime(.0001,now+duration);o.connect(g);g.connect(c.destination);o.start(now);o.stop(now+duration+.02)}
 function arcadeNoise(duration=.12,volume=.045,filter=1100){const c=arcadeCtx();if(!c)return;const n=Math.max(1,Math.floor(c.sampleRate*duration)),b=c.createBuffer(1,n,c.sampleRate),d=b.getChannelData(0);for(let i=0;i<n;i++)d[i]=(Math.random()*2-1)*(1-i/n);const src=c.createBufferSource(),f=c.createBiquadFilter(),g=c.createGain();f.type="lowpass";f.frequency.value=filter;g.gain.setValueAtTime(volume,c.currentTime);g.gain.exponentialRampToValueAtTime(.0001,c.currentTime+duration);src.buffer=b;src.connect(f);f.connect(g);g.connect(c.destination);src.start();src.stop(c.currentTime+duration)}
-function clawMotorSound(){arcadeTone(92,.65,"sawtooth",.025,68);arcadeTone(184,.6,"triangle",.012,130)}
-function clawServoSound(){arcadeTone(420,.16,"square",.018,250);setTimeout(()=>arcadeTone(310,.13,"square",.015,190),110)}
-function clawGrabSound(){arcadeNoise(.22,.075,700);arcadeTone(115,.24,"triangle",.06,62);setTimeout(()=>arcadeTone(740,.09,"metallic",.018,390),80)}
-function clawLiftSound(){arcadeTone(160,.4,"sawtooth",.022,260);arcadeNoise(.1,.025,1500)}
 function diceRattleSound(){arcadeNoise(.16,.055,2600);arcadeTone(720,.045,"square",.012,520)}
 function diceImpactSound(){arcadeNoise(.095,.085,950);arcadeTone(180,.12,"triangle",.045,95)}
-
-/* CLAW MACHINE */
-let clawPosition=2,clawBusy=false;
-const CLAW_COLLECTIONS=[
- [["🧸","Мишка",80],["💎","Кристалл",500],["🐻","Медведь",120],["🎁","Сюрприз",250],["👑","Корона",1500],["🦄","Единорог",300],["🏎️","Суперкар",700],["🎮","Консоль",900],["💍","Кольцо",1200],["🐸","Лягушка",100],["🪙","Монета",400],["🚀","Ракета",600],["🐼","Панда",350],["🎧","Наушники",650],["🦖","Динозавр",220]],
- [["🐙","Осьминог",180],["💠","Сапфир",650],["🦊","Лис",260],["🎀","Бант",90],["🏆","Кубок",1800],["🐲","Дракон",950],["🚗","Ретро авто",750],["📱","Смартфон",1100],["⌚","Часы",1300],["🍀","Клевер",140],["💰","Мешок монет",500],["🛸","НЛО",800],["🐨","Коала",300],["📷","Камера",700],["🦄","Мини единорог",320]],
- [["🐯","Тигр",300],["🔮","Шар",550],["🐧","Пингвин",180],["🧩","Пазл",120],["💎","Большой алмаз",2000],["🦈","Акула",800],["🏍️","Мотоцикл",900],["💻","Ноутбук",1400],["💖","Сердце",420],["🌈","Радуга",260],["🪙","Золотой слиток",650],["🤖","Робот",750],["🐹","Хомяк",100],["🎸","Гитара",620],["🦋","Бабочка",210]]
-];
-let clawLoot=[],clawCollectionPeriod=-1,clawRemaining=100;
-let clawBrokenUntil=Number(localStorage.getItem("skebobClawBrokenUntil")||0);
-function updateClawRepairState(){const btn=document.getElementById("clawDrop"),result=document.getElementById("clawResult"),notice=document.getElementById("clawBrokenNotice");const left=clawBrokenUntil-Date.now();if(left>0){const h=Math.floor(left/3600000),m=Math.floor(left%3600000/60000),sec=Math.floor(left%60000/1000);const timer="Осталось "+String(h).padStart(2,"0")+":"+String(m).padStart(2,"0")+":"+String(sec).padStart(2,"0");if(btn)btn.disabled=true;if(notice){notice.style.display="block";notice.textContent="🔧 АВТОМАТ СЛОМАН · ИДЁТ РЕМОНТ · "+timer;}if(result)result.textContent="🔧 Автомат сломан! Играть нельзя. "+timer;}else{if(clawBrokenUntil){clawBrokenUntil=0;localStorage.removeItem("skebobClawBrokenUntil");}if(notice){notice.style.display="none";notice.textContent="";}if(btn&&!clawBusy)btn.disabled=false;}}
-function refreshClawCollection(){
- const period=Math.floor(Date.now()/1800000);if(period===clawCollectionPeriod)return;
- clawCollectionPeriod=period;clawRemaining=100;const source=CLAW_COLLECTIONS[((period%CLAW_COLLECTIONS.length)+CLAW_COLLECTIONS.length)%CLAW_COLLECTIONS.length];clawLoot=source.map(x=>[...x]);
- const box=document.getElementById("clawPrizes");if(box){box.innerHTML=Array.from({length:100},(_,n)=>{const i=n%15,p=clawLoot[i];return '<span data-prize="'+i+'" title="'+p[1]+'">'+p[0]+'</span>'}).join('')}updateClawCount();
-}
-function updateClawCount(){const el=document.getElementById("clawCount");if(el)el.textContent="🎁 ВНУТРИ "+clawRemaining+" ПРИЗОВ";}
-function updateClawRefresh(){refreshClawCollection();const left=1800000-(Date.now()%1800000),el=document.getElementById("clawRefresh");if(el)el.textContent="СЛЕДУЮЩАЯ КОЛЛЕКЦИЯ ЧЕРЕЗ "+String(Math.floor(left/60000)).padStart(2,"0")+":"+String(Math.floor(left%60000/1000)).padStart(2,"0");}
- updateClawRepairState();
- 
-// Надёжный делегированный обработчик: кнопка работает даже после обновления интерфейса.
-window.dropClaw=dropClaw;
-document.addEventListener("click",function(event){
- const button=event.target.closest("#clawDrop");
- if(!button)return;
- event.preventDefault();
- event.stopPropagation();
- const result=document.getElementById("clawResult");
- if(typeof window.dropClaw!=="function"){if(result)result.textContent="⚠️ Ошибка: функция клешни не загрузилась.";return;}
- if(result)result.textContent="⏳ Запускаем клешню...";
- Promise.resolve().then(()=>window.dropClaw()).catch(error=>{
-  console.error("Claw machine error:",error);
-  clawBusy=false;
-  if(result)result.textContent="⚠️ Ошибка клешни: "+(error&&error.message?error.message:"неизвестная ошибка");
-  updateClawRepairState();
- });
-},true);
-updateClawRepairState();
-
-let clawLeverPointer=null,clawLeverStartX=0,clawLeverStartPosition=2;function startClawLever(e){if(clawBusy)return;e.preventDefault();clawLeverPointer=e.pointerId;clawLeverStartX=e.clientX;clawLeverStartPosition=clawPosition;try{e.currentTarget.setPointerCapture(e.pointerId)}catch(x){}e.currentTarget.classList.add('active');moveClawLever(e)}function moveClawLever(e){if(clawLeverPointer!==e.pointerId||clawBusy)return;const delta=e.clientX-clawLeverStartX,steps=Math.max(-2,Math.min(2,Math.round(delta/38))),next=Math.max(0,Math.min(4,clawLeverStartPosition+steps)),stick=document.getElementById('clawLeverStick');if(stick)stick.style.transform='translateX(-50%) rotate('+Math.max(-48,Math.min(48,delta*.8))+'deg)';if(next!==clawPosition){clawPosition=next;document.getElementById('clawCarriage').style.left=(10+clawPosition*20)+'%';document.getElementById('clawPosition').textContent='КАРЕТКА: '+['КРАЙ СЛЕВА','ЛЕВО','ЦЕНТР','ПРАВО','КРАЙ СПРАВА'][clawPosition]}}function stopClawLever(e){if(clawLeverPointer!==e.pointerId)return;clawLeverPointer=null;document.getElementById('clawLever').classList.remove('active');document.getElementById('clawLeverStick').style.transform='translateX(-50%) rotate(0deg)'}
-let clawMoveTimer=null,clawMoveDirection=0,clawMoveLast=0;
-function startClawMove(direction,event){
- if(clawBusy)return;
- if(event){event.preventDefault();try{event.currentTarget.setPointerCapture(event.pointerId)}catch(e){}}
- stopClawMove();clawMoveDirection=direction;clawMoveLast=Date.now();
- const btn=document.getElementById(direction<0?"clawLeft":"clawRight");if(btn)btn.classList.add("moving");
- moveClaw(direction);
- clawMoveTimer=setInterval(()=>{if(!clawBusy)moveClaw(clawMoveDirection)},180);
-}
-function stopClawMove(){
- if(clawMoveTimer){clearInterval(clawMoveTimer);clawMoveTimer=null}
- document.querySelectorAll(".claw-arrows button").forEach(b=>b.classList.remove("moving"));
- clawMoveDirection=0;
-}
-function moveClaw(d){if(clawBusy)return;clawPosition=Math.max(0,Math.min(4,clawPosition+d));document.getElementById("clawCarriage").style.left=(10+clawPosition*20)+"%";document.getElementById("clawPosition").textContent="КАРЕТКА: "+["КРАЙ СЛЕВА","ЛЕВО","ЦЕНТР","ПРАВО","КРАЙ СПРАВА"][clawPosition]}
-async function dropClaw(){
- if(clawBusy)return;updateClawRepairState();if(clawBrokenUntil>Date.now())return;refreshClawCollection();const cost=100;if(state.balance<cost){document.getElementById("clawResult").textContent="Не хватает 100 монет.";return}
- clawBusy=true;state.balance-=cost;save();render();clawMotorSound();const machine=document.querySelector(".claw-machine"),head=document.getElementById("clawHead"),cable=document.getElementById("clawCable"),pos=clawPosition;
- document.getElementById("clawDrop").disabled=true;document.getElementById("clawResult").textContent="Клешня опускается...";
- machine.classList.add("grabbing");clawServoSound();head.style.top="260px";cable.style.height="251px";await new Promise(r=>setTimeout(r,1100));
- const success=Math.random()<.58;clawGrabSound();const idx=Math.min(14,Math.max(0,Math.round(pos*3+Math.random()*2-1)));const prize=clawLoot[idx];const spans=document.querySelectorAll("#clawPrizes span");
-  let prizeDropped=false;if(success){const target=Array.from(spans).find(el=>el.getAttribute("data-prize")===String(idx)&&el.style.opacity!=="0");if(target){target.style.opacity="0";target.style.transform="translateY(-120px) scale(.5)";clawRemaining=Math.max(0,clawRemaining-1);updateClawCount();}document.getElementById("clawResult").textContent="🤏 Захват! "+prize[0]+" "+prize[1]+" поднят!";head.innerHTML='<div class="claw-jaw left"></div><div class="claw-jaw right"></div><div class="claw-finger"></div><span style="position:absolute;top:34px;left:9px;font-size:24px">'+prize[0]+'</span>'}else document.getElementById("clawResult").textContent="Клешня разжалась... игрушка выскользнула 😭";
- machine.classList.remove("grabbing");machine.classList.add("lifting");clawLiftSound();head.style.top="87px";cable.style.height="78px";await new Promise(r=>setTimeout(r,1100));
-  if(success){document.getElementById("clawResult").textContent="🚋 Клешня с игрушкой едет к отверстию...";const carriage=document.getElementById("clawCarriage");carriage.style.left="88%";await new Promise(r=>setTimeout(r,950));prizeDropped=Math.random()<.10;if(prizeDropped){document.getElementById("clawResult").textContent="💨 Игрушка сорвалась во время переноса к отверстию!";head.querySelector("span")?.remove();await new Promise(r=>setTimeout(r,450));}else{document.getElementById("clawResult").textContent="⬇ Опускаем игрушку прямо над выходом...";head.style.top="190px";cable.style.height="181px";await new Promise(r=>setTimeout(r,800));machine.classList.remove("grabbing");document.getElementById("clawResult").textContent="🎁 Клешня раскрылась — игрушка падает в отверстие!";head.querySelector("span").style.transition="transform .55s ease-in,opacity .55s";head.querySelector("span").style.transform="translateY(45px) scale(.65)";head.querySelector("span").style.opacity="0";await new Promise(r=>setTimeout(r,600));state.balance+=prize[2];state.inventory.push({name:prize[1],icon:prize[0],value:prize[2],id:Date.now()});save();render();document.getElementById("clawResult").textContent="🎉 "+prize[0]+" "+prize[1]+" выпал в отверстие и получен! · +"+prize[2].toLocaleString("ru-RU")+" 🪙";}}
- if(success&&prizeDropped){head.querySelector("span")?.remove();document.getElementById("clawResult").textContent="💨 Игрушка сорвалась по дороге! Попробуй ещё раз.";}if(Math.random()<.05){clawBrokenUntil=Date.now()+5*60*60*1000;localStorage.setItem("skebobClawBrokenUntil",String(clawBrokenUntil));document.getElementById("clawResult").textContent="💥 Клешня сломалась! Автомат будет чиниться 5 часов.";}machine.classList.remove("lifting");head.innerHTML='<div class="claw-jaw left"></div><div class="claw-jaw right"></div><div class="claw-finger"></div>';head.style.top="87px";cable.style.height="78px";clawBusy=false;updateClawRefresh();
-}
 
 /* =========================
    START
@@ -7074,8 +6991,6 @@ updateSlotsControls();
 
 initSecretCase();
 
-refreshClawCollection();updateClawRefresh();
-setInterval(updateClawRefresh,1000);
 updateDailyCase();
 updateSecretDrop();
 
