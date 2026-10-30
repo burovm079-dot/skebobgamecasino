@@ -5820,16 +5820,18 @@ async function startPlinkoGame(){
  const activeBall=document.getElementById("plinkoBall");
  document.getElementById("plinkoResult").textContent="🔴 Шарик в игре...";
  document.getElementById("plinkoReturn").textContent="В ПОЛЁТЕ";
- let position=6;
+ let position=0;
  for(let row=0;row<PLINKO_ROWS;row++){
-  position+=Math.random()<.5?-1:1;
-  position=Math.max(0,Math.min(row+1,position));
-  activeBall.style.left=((position/(row+1))*((row+1)/PLINKO_ROWS*100)+(100-(row+1)/PLINKO_ROWS*100)/2)+"%";
+  if(row>0)position+=Math.random()<.5?0:1;
+  const rowWidth=(row+1)/PLINKO_ROWS*100;
+  const leftOffset=(100-rowWidth)/2;
+  const within=row===0?50:(position/row)*rowWidth;
+  activeBall.style.left=(leftOffset+within)+"%";
   activeBall.style.top=((row+1)/(PLINKO_ROWS+1)*100)+"%";
   await plinkoWait(145);
  }
- // One final unbiased bin selection across the 13 landing pockets.
- const landing=position;
+ // The final deflection selects one of 13 payout pockets.
+ const landing=position+(Math.random()<.5?0:1);
  const multiplier=PLINKO_MULTIPLIERS[plinkoRisk][landing];
  const slot=document.getElementById("plinkoSlot"+landing);
  if(slot)slot.classList.add("hit");
