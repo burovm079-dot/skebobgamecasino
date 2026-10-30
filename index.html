@@ -799,6 +799,9 @@ line-height:1.6;
 .plinko-last{background:var(--panel);border:1px solid var(--border2);border-radius:12px;text-align:center;padding:13px;margin:12px 0;color:var(--muted);font-size:13px;min-height:46px}
 .plinko-info{color:var(--muted);font-size:12px;line-height:1.6;margin:8px 2px}
 @media(max-width:390px){.plinko-board{height:300px}.plinko-peg{width:6px;height:6px}.plinko-slot{padding:7px 0;font-size:8px}}
+/* BLACKJACK */
+.bj-table{background:radial-gradient(ellipse at center,#176b49,#073d2e 68%,#05271f);border:5px solid #9b7138;border-radius:24px;padding:18px;margin:16px 0;color:white;box-shadow:inset 0 0 30px #0008,0 8px 24px #0005;min-height:300px}
+.bj-dealer,.bj-you{text-align:center;padding:8px}.bj-seat-name{font-weight:900;letter-spacing:1px;margin-bottom:8px}.bj-cards{display:flex;justify-content:center;gap:7px;flex-wrap:wrap;min-height:82px;align-items:center}.bj-card{width:53px;height:76px;border-radius:8px;background:#fff;color:#181818;display:grid;place-items:center;font-size:22px;font-weight:900;box-shadow:0 3px 8px #0007;border:1px solid #ddd}.bj-card.red{color:#d3263e}.bj-divider{text-align:center;color:#e9d39b;font-size:11px;letter-spacing:4px;border-top:1px solid #ffffff40;border-bottom:1px solid #ffffff40;padding:8px;margin:6px 0}.bj-players{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:8px}.bj-bot{background:#0003;border:1px solid #ffffff35;border-radius:12px;padding:8px;text-align:center;color:white}.bj-bot .bj-cards{min-height:70px}.bj-bot .bj-card{width:40px;height:58px;font-size:17px}.bj-actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}.bj-actions>*{flex:1;min-width:110px}
 /* SLOTS */
 .slots-machine{display:flex;justify-content:center;gap:10px;margin:22px auto;padding:15px;background:linear-gradient(145deg,#392713,#14131a);border:3px solid #b98732;border-radius:18px;max-width:420px;box-shadow:0 0 24px #f4c75e22}
 .slots-reel{display:grid;place-items:center;width:30%;height:105px;background:linear-gradient(180deg,#fff8dc,#d6c18b 48%,#fff8dc);border:3px solid #8c672c;border-radius:12px;color:#21180b;font-size:clamp(42px,12vw,64px);text-shadow:0 2px 2px #fff;box-shadow:inset 0 0 12px #5c3b12}
@@ -1224,6 +1227,7 @@ SKEBOB <span>CASINO</span>
 <button onclick="showPage('crash',this)">📈 КРАШ</button>
 <button onclick="showPage('battles',this)">⚔️ БАТЛЫ</button>
 <button onclick="showPage('slots',this)">🎰 СЛОТЫ</button>
+<button onclick="showPage('blackjack',this)">🃏 BLACKJACK</button>
 
 <button onclick="showPage('inventory',this)">
 🎒 INVENTORY
@@ -2360,6 +2364,26 @@ id="profileBalance"
 <button class="game-main" id="slotsSpin" onclick="spinSlots()">🎰 КРУТИТЬ БАРАБАНЫ</button>
 <div class="panel small" style="text-align:left"><b>ТАБЛИЦА ВЫПЛАТ</b><br>💎💎💎 — x8 · 👑👑👑 — x15<br>🍋🍋🍋 — x5 · 🍒🍒🍒 — x3<br>Любые две одинаковые — x1.2</div>
 </div></section>
+
+
+<!-- BLACKJACK -->
+<section id="blackjack" class="hidden">
+<h2>🃏 BLACKJACK</h2>
+<p class="small">Ты против дилера. За столом могут появиться до трёх случайных ботов. Цель — набрать ближе к 21, не перебрав.</p>
+<div class="bj-table">
+ <div class="bj-dealer"><div class="bj-seat-name">🎩 ДИЛЕР</div><div class="bj-cards" id="bjDealerCards"><span class="bj-card">?</span></div><div class="small" id="bjDealerScore">Ожидает игроков</div></div>
+ <div class="bj-divider">BLACKJACK TABLE</div>
+ <div class="bj-players" id="bjPlayers"></div>
+ <div class="bj-you"><div class="bj-seat-name">😎 ТЫ</div><div class="bj-cards" id="bjYourCards"><span class="bj-card">?</span></div><div class="small" id="bjYourScore">Твои карты появятся здесь</div></div>
+</div>
+<div class="panel">
+ <div class="game-control"><label>СТАВКА</label><div class="bet-main"><button onclick="changeBjBet(-1)">−</button><input id="bjBet" type="number" min="10" step="10" value="100" oninput="updateBjControls()"><button onclick="changeBjBet(1)">+</button></div>
+ <div class="bet-presets"><button onclick="setBjBet(100)">100</button><button onclick="setBjBet(500)">500</button><button onclick="setBjBet(1000)">1K</button><button onclick="setBjBet(5000)">5K</button><button onclick="setBjBet('max')">MAX</button></div></div>
+ <div class="bj-actions"><button class="game-main" id="bjDeal" onclick="startBlackjack()">🃏 РАЗДАТЬ КАРТЫ</button><button class="secondary" id="bjHit" onclick="bjHit()" disabled>ЕЩЁ КАРТУ</button><button class="secondary" id="bjStand" onclick="bjStand()" disabled>ХВАТИТ</button></div>
+ <div class="game-status" id="bjStatus">Сделай ставку и начинай игру.</div>
+ <div class="small">Победа — x2 ставки · Блэкджек (21 за 2 карты) — x2.5 · Ничья — возврат ставки.</div>
+</div>
+</section>
 
 <!-- PROMO -->
 
@@ -6214,6 +6238,62 @@ async function spinSlots(){
  document.getElementById("slotsBestStat").textContent="x"+slotsBest;
  document.getElementById("slotsMessage").textContent=reward?"🎉 "+result.join(" ")+" — ВЫИГРЫШ x"+mult+"!":"😢 "+result.join(" ")+" — в следующий раз повезёт!";
  save();slotsBusy=false;updateSlotsControls()
+}
+ 
+/* BLACKJACK */
+let bjRound=null,bjBusy=false;
+const BJ_SUITS=["♠","♥","♦","♣"],BJ_RANKS=["A","2","3","4","5","6","7","8","9","10","J","Q","K"];
+const BJ_NAMES=["LuckyFox","NeonCat","Mr_Potato","Shadow","Keksik","TurboMax","Bober","PixelKing","NoMercy","Lime","Vortex","MisterX","Zefir","DarkWolf","Banana"];
+function bjCard(){return {rank:BJ_RANKS[Math.floor(Math.random()*BJ_RANKS.length)],suit:BJ_SUITS[Math.floor(Math.random()*4)]}}
+function bjValue(hand){let total=0,aces=0;hand.forEach(c=>{if(c.rank==="A"){total+=11;aces++}else total+=["J","Q","K"].includes(c.rank)?10:Number(c.rank)});while(total>21&&aces){total-=10;aces--}return total}
+function bjCardHTML(c,hidden=false){if(hidden)return '<span class="bj-card">🂠</span>';const red=c.suit==="♥"||c.suit==="♦";return '<span class="bj-card '+(red?"red":"")+'">'+c.rank+c.suit+'</span>'}
+function bjHandHTML(hand,hideLast=false){return hand.map((c,i)=>bjCardHTML(c,hideLast&&i===1)).join("")}
+function bjDraw(hand){hand.push(bjCard())}
+function updateBjControls(){
+ const input=document.getElementById("bjBet"),deal=document.getElementById("bjDeal");if(!input)return;
+ const bet=Math.max(10,Math.floor(Number(input.value)||10));input.value=bet;
+ const active=!!bjRound&&!bjRound.finished;deal.disabled=active||bjBusy||bet>state.balance;
+ deal.textContent=active?"РАУНД ИДЁТ":"🃏 РАЗДАТЬ ЗА "+bet.toLocaleString("ru-RU")+" 🪙";
+ document.getElementById("bjHit").disabled=!active||bjRound.turn!=="you"||bjBusy;
+ document.getElementById("bjStand").disabled=!active||bjRound.turn!=="you"||bjBusy;
+}
+function setBjBet(v){if(bjBusy||bjRound&&!bjRound.finished)return;document.getElementById("bjBet").value=v==="max"?Math.max(10,Math.floor(state.balance)):v;updateBjControls()}
+function changeBjBet(d){if(bjBusy||bjRound&&!bjRound.finished)return;const e=document.getElementById("bjBet"),n=Math.max(10,Math.floor(Number(e.value)||10));e.value=Math.max(10,n+(d>0?10:-10));updateBjControls()}
+function renderBj(){
+ if(!bjRound)return;
+ const r=bjRound,hide=r.turn==="you"&&!r.finished;
+ document.getElementById("bjDealerCards").innerHTML=bjHandHTML(r.dealer,hide);
+ document.getElementById("bjDealerScore").textContent=hide?"Вторая карта закрыта":("Очки: "+bjValue(r.dealer));
+ document.getElementById("bjYourCards").innerHTML=bjHandHTML(r.you);
+ document.getElementById("bjYourScore").textContent="Очки: "+bjValue(r.you);
+ document.getElementById("bjPlayers").innerHTML=r.bots.map(b=>'<div class="bj-bot"><div class="bj-seat-name">🤖 '+b.name+'</div><div class="bj-cards">'+bjHandHTML(b.cards,!r.finished)+'</div><div class="small">'+(r.finished?"Очки: "+bjValue(b.cards):"Играет...")+'</div></div>').join("");
+ updateBjControls();
+}
+function startBlackjack(){
+ if(bjBusy||bjRound&&!bjRound.finished)return;
+ const bet=Math.floor(Number(document.getElementById("bjBet").value));
+ if(!Number.isFinite(bet)||bet<10||bet>state.balance){alert("Недостаточно монет или неверная ставка.");return}
+ state.balance-=bet;addTurnover(bet);state.stats.blackjackGames=(state.stats.blackjackGames||0)+1;save();
+ const count=Math.floor(Math.random()*4),pool=[...BJ_NAMES].sort(()=>Math.random()-.5);
+ const bots=Array.from({length:count},(_,i)=>({name:pool[i],cards:[]}));const deck={};
+ bjRound={bet,you:[],dealer:[],bots,turn:"you",finished:false};
+ bjDraw(bjRound.you);bjDraw(bjRound.dealer);bjDraw(bjRound.you);bots.forEach(b=>{bjDraw(b.cards);bjDraw(b.cards)});
+ renderBj();document.getElementById("bjStatus").textContent=count?"За столом "+count+" бот(а). Твой ход!":"Сегодня ты играешь один на один с дилером.";
+ if(bjValue(bjRound.you)===21){bjFinish();return}
+}
+function bjHit(){if(!bjRound||bjRound.finished||bjRound.turn!=="you"||bjBusy)return;bjDraw(bjRound.you);renderBj();if(bjValue(bjRound.you)>=21){if(bjValue(bjRound.you)>21)bjFinish();else bjStand()}}
+function bjStand(){if(!bjRound||bjRound.finished||bjRound.turn!=="you"||bjBusy)return;bjRound.turn="dealer";bjBusy=true;renderBj();setTimeout(()=>{bjRound.bots.forEach(b=>{while(bjValue(b.cards)<17)bjDraw(b.cards)});while(bjValue(bjRound.dealer)<17)bjDraw(bjRound.dealer);bjRound.turn="done";bjBusy=false;bjFinish()},550)}
+function bjFinish(){
+ if(!bjRound||bjRound.finished)return;
+ const r=bjRound;r.finished=true;r.turn="done";const you=bjValue(r.you),dealer=bjValue(r.dealer);
+ let reward=0,message="";
+ if(you>21){message="Перебор! Ты проиграл."}
+ else if(dealer>21||you>dealer){reward=you===21&&r.you.length===2?Math.floor(r.bet*2.5):r.bet*2;message="🎉 Ты победил дилера!";}
+ else if(you===dealer){reward=r.bet;message="Ничья! Ставка возвращена."}
+ else message="Дилер победил. В следующий раз повезёт!";
+ if(reward){state.balance+=reward;if(reward>r.bet){registerWin(reward);state.stats.blackjackWins=(state.stats.blackjackWins||0)+1}}
+ document.getElementById("bjStatus").textContent=message+(reward?" Выплата: "+reward.toLocaleString("ru-RU")+" 🪙":"");
+ renderBj();save();updateBjControls();
 }
  
 /* CRASH GAME */
