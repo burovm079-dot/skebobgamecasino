@@ -7014,7 +7014,7 @@ function stopClawMove(){
  clawMoveDirection=0;
 }
 function moveClaw(d){if(clawBusy)return;clawPosition=Math.max(0,Math.min(4,clawPosition+d));document.getElementById("clawCarriage").style.left=(10+clawPosition*20)+"%";document.getElementById("clawPosition").textContent="КАРЕТКА: "+["КРАЙ СЛЕВА","ЛЕВО","ЦЕНТР","ПРАВО","КРАЙ СПРАВА"][clawPosition]}
-async async function dropClaw(){
+async function dropClaw(){
  if(clawBusy)return;updateClawRepairState();if(clawBrokenUntil>Date.now())return;refreshClawCollection();const cost=100;if(state.balance<cost){document.getElementById("clawResult").textContent="Не хватает 100 монет.";return}
  clawBusy=true;state.balance-=cost;save();render();clawMotorSound();const machine=document.querySelector(".claw-machine"),head=document.getElementById("clawHead"),cable=document.getElementById("clawCable"),pos=clawPosition;
  document.getElementById("clawDrop").disabled=true;document.getElementById("clawResult").textContent="Клешня опускается...";
