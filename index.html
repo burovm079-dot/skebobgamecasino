@@ -1,0 +1,1010 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>SKEBOB CASINO</title>
+
+<style>
+*{box-sizing:border-box}
+body{margin:0;background:#0b0c11;color:#f5f5f5;font-family:Arial,sans-serif}
+header{padding:18px;display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid #393022}
+.logo{font-weight:900;font-size:22px}
+.logo span{color:#e9bd55}
+button{cursor:pointer;font-weight:bold}
+button:disabled{opacity:.5;cursor:not-allowed}
+header button,.nav button,.secondary{background:#22232b;color:#eee;border:1px solid #51432a;border-radius:10px;padding:11px}
+.balance{margin:14px;padding:15px;background:#211d16;border:1px solid #594725;border-radius:14px;display:flex;justify-content:space-between;align-items:center}
+.balance strong{font-size:25px;color:#f4c75e}
+main{padding:10px 15px 50px;max-width:800px;margin:auto}
+.nav{display:grid;grid-template-columns:repeat(4,1fr);gap:7px;margin:15px 0 22px}
+.nav button{font-size:11px;padding:13px 2px;color:#aaa}
+.nav button.active{background:#493819;color:#ffda7c}
+section.hidden,.hidden{display:none!important}
+h2{font-size:20px}
+.panel,.case{background:#191a20;border:1px solid #594725;border-radius:15px;padding:15px;margin:12px 0}
+.cases{display:grid;grid-template-columns:repeat(2,1fr);gap:12px}
+.case{text-align:center;margin:0}
+.case .pic{font-size:43px;margin:10px}
+.case h3,.price{color:#f4c75e}
+.goldbtn{background:linear-gradient(110deg,#d7a83f,#f5d77c);border:0;color:#17120a;font-weight:900;border-radius:10px;padding:13px;width:100%;margin-top:9px}
+.secondary{padding:10px}
+.small{color:#aaa;font-size:12px;line-height:1.5}
+input,select{background:#22232a;color:white;border:1px solid #5b4b2c;border-radius:9px;padding:12px;width:100%;margin:7px 0}
+.back{background:none;border:0;color:#e9bd55;padding:10px 0}
+.prize-grid,.results{display:grid;grid-template-columns:repeat(2,1fr);gap:9px;margin:15px 0}
+.prize-card,.result{background:#22232a;border:1px solid #51432a;border-radius:12px;padding:12px;text-align:center}
+.prize-icon,.prizepic{font-size:35px}
+.quantity,.multiplier-grid{display:flex;gap:7px;margin:12px 0;flex-wrap:wrap}
+.quantity button,.multiplier-grid button{flex:1;min-width:48px;background:#24242b;color:#ddd;border:1px solid #594725;border-radius:8px;padding:11px 4px}
+.quantity button.active,.multiplier-grid button.active{background:#493819;color:#ffda7c}
+.item{display:flex;align-items:center;gap:12px;background:#1b1c22;border:1px solid #403725;border-radius:12px;padding:12px;margin:9px 0}
+.item .info{flex:1}
+
+/* CASE ROULETTE */
+
+.roulette-row{margin:18px 0}
+.roulette-title{color:#f4c75e;font-weight:bold;margin-bottom:8px}
+.roulette-box{position:relative;overflow:hidden;width:100%;height:125px;background:#101116;border:1px solid #594725;border-radius:12px;margin:12px 0}
+.roulette-box:before{content:"";position:absolute;z-index:3;left:50%;top:0;bottom:0;width:3px;background:#f4c75e;box-shadow:0 0 12px #f4c75e;transform:translateX(-50%)}
+.roulette-box:after{content:"▼";position:absolute;z-index:4;left:50%;top:0;color:#ffe18a;transform:translateX(-50%);font-size:16px}
+.roulette-track{display:flex;align-items:center;gap:8px;height:100%;width:max-content;padding:0 10px;transform:translateX(0)}
+.roulette-item{flex:0 0 90px;width:90px;height:90px;background:#24242d;border:1px solid #594725;border-radius:10px;display:flex;flex-direction:column;justify-content:center;align-items:center;gap:5px}
+.roulette-item .icon{font-size:34px}
+.roulette-item .name{font-size:10px;color:#ddd;text-align:center}
+.roulette-item.winner{background:#493819;border:2px solid #f4c75e;box-shadow:0 0 15px #d7a83f}
+.roulette-result{background:#191a20;border:1px solid #594725;border-radius:12px;padding:12px;text-align:center;margin:12px 0}
+
+/* UPGRADE */
+
+.upgrade-circle{width:min(75vw,340px);aspect-ratio:1;margin:35px auto;border-radius:50%;background:conic-gradient(#24cf78 var(--chance,50%),#252a39 0);display:grid;place-items:center;position:relative}
+.upgrade-circle:before{content:"";position:absolute;inset:9%;background:#0d0f15;border-radius:50%}
+.upgrade-center{z-index:2;text-align:center}
+.upgrade-center strong{display:block;font-size:44px}
+.upgrade-center span{color:#aaa;font-size:13px}
+.upgrade-arrow{position:absolute;z-index:5;width:100%;height:100%;inset:0;pointer-events:none;transform:rotate(0deg)}
+.upgrade-arrow:before{content:"";position:absolute;top:-14px;left:50%;transform:translateX(-50%);width:0;height:0;border-left:13px solid transparent;border-right:13px solid transparent;border-bottom:27px solid #ffe18a;filter:drop-shadow(0 0 7px #e9bd55)}
+.upgrade-arrow.spinning{transition:transform 5s cubic-bezier(.12,.7,.15,1)}
+
+/* MINES */
+
+.mines-stats{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin:15px 0}
+.mines-stat{background:#191c26;border:2px solid #292e3d;border-radius:15px;padding:15px 5px;text-align:center}
+.mines-stat span{display:block;color:#858ba0;font-size:12px;margin-bottom:8px}
+.mines-stat strong{font-size:23px;color:#e9ebf5}
+.mines-stat .orange{color:#ffae19}
+.mines-board{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:12px;background:#191c26;border:2px solid #292e3d;border-radius:27px;padding:18px;margin:18px 0 27px}
+.mine-cell{width:100%;aspect-ratio:1;min-width:0;border:0;border-radius:20px;background:#222635;color:white;font-size:27px;transition:background .15s,transform .15s}
+.mine-cell:not(:disabled):active{transform:scale(.94)}
+.mine-cell.safe{background:#173c35;border:2px solid #24cf78}
+.mine-cell.bomb{background:#57272d;border:2px solid #e34b55}
+.mine-cell:disabled{opacity:1}
+.mines-play{width:100%;min-height:85px;border:0;border-radius:25px;background:#ffad19;color:#080808;font-size:26px;font-weight:900;margin:0 0 25px}
+.mines-control{background:#191c26;border:2px solid #292e3d;border-radius:25px;padding:20px;margin:18px 0}
+.bet-main{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:20px}
+.bet-main button,.mine-count-stepper button{width:48px;height:48px;flex-shrink:0;border:0;border-radius:50%;background:#222635;color:#ffae19;font-size:30px}
+.bet-main input{background:transparent;border:0;color:#e9ebf5;text-align:center;font-size:30px;font-weight:900;min-width:0;margin:0}
+.bet-presets{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:7px}
+.bet-presets button{border:0;border-radius:30px;padding:13px 3px;background:#222635;color:#e9ebf5;font-size:14px;font-weight:bold;white-space:nowrap}
+.bet-presets button.selected{background:#ffae19;color:#090909}
+.mine-count-main{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:18px;color:#9298aa}
+.mine-count-stepper{display:flex;align-items:center;gap:15px}
+.mine-count-stepper strong{color:#e9ebf5;font-size:27px;min-width:20px;text-align:center}
+.mine-count-stepper button{color:#e9ebf5}
+.mines-description{color:#9298aa;font-size:15px;line-height:1.6;margin:25px 0}
+.mines-status{color:#ffbd42;text-align:center;margin:15px 0;font-size:14px}
+
+/* ADMIN */
+
+.admin-actions{display:grid;grid-template-columns:repeat(2,1fr);gap:9px;margin:12px 0}
+.admin-btn{border:0;border-radius:11px;padding:13px;color:white;font-size:14px}
+.green{background:#39964c}
+.red{background:#d84343}
+.blue{background:#168fd0}
+.purple{background:#9226a8}
+.admin-full{grid-column:1/-1}
+
+@media(max-width:420px){
+.mines-board{gap:8px;padding:12px}
+.mine-cell{border-radius:14px}
+.mines-play{font-size:22px}
+.bet-presets button{font-size:12px}
+.mines-stat strong{font-size:19px}
+.cases{gap:8px}
+.case{padding:10px}
+}
+</style>
+</head>
+
+<body>
+
+<header>
+<div class="logo">SKEBOB <span>CASINO</span></div>
+<button onclick="showPage('settings')">⚙ Настройки</button>
+</header>
+
+<div class="balance">
+<div>
+<small>ТВОЙ БАЛАНС</small><br>
+<strong id="balance">1000</strong> 🪙
+</div>
+<div class="small">Виртуальные монеты</div>
+</div>
+
+<main>
+
+<div class="nav">
+<button class="active" onclick="showPage('cases',this)">CASES</button>
+<button onclick="showPage('upgrade',this)">UPGRADE</button>
+<button onclick="showPage('mines',this)">MINES</button>
+<button onclick="showPage('inventory',this)">INVENTORY</button>
+</div>
+
+<!-- CASES -->
+
+<section id="cases">
+<h2>🎁 КЕЙСЫ</h2>
+<div class="cases" id="caseList"></div>
+
+<div id="caseDetail" class="hidden">
+<button class="back" onclick="closeCase()">← Назад</button>
+<div class="panel">
+<h2 id="detailName"></h2>
+<p class="small" id="detailDescription"></p>
+<p>Цена: <b class="price" id="detailPrice"></b> 🪙</p>
+<h3>Возможные призы</h3>
+<div class="prize-grid" id="prizePreview"></div>
+<h3>Количество</h3>
+<div class="quantity">
+<button class="active" onclick="setQty(1,this)">x1</button>
+<button onclick="setQty(2,this)">x2</button>
+<button onclick="setQty(3,this)">x3</button>
+<button onclick="setQty(5,this)">x5</button>
+</div>
+<p class="small" id="totalPrice"></p>
+<button class="goldbtn" id="openCaseButton" onclick="openCase()">ОТКРЫТЬ КЕЙС</button>
+</div>
+<div id="results"></div>
+</div>
+</section>
+
+<!-- UPGRADE -->
+
+<section id="upgrade" class="hidden">
+<h2>🎯 MONEY UPGRADE</h2>
+<div class="panel">
+<div class="upgrade-circle" id="upgradeCircle">
+<div class="upgrade-arrow" id="upgradeArrow"></div>
+<div class="upgrade-center">
+<strong id="chanceText">50%</strong>
+<span id="upgradeValues">100 → 200 🪙</span>
+</div>
+</div>
+<p class="small">СУММА</p>
+<input type="number" id="upgradeStake" value="100" min="1" oninput="updateUpgradeInfo()">
+<p class="small" id="commissionText"></p>
+<p class="small">МНОЖИТЕЛЬ</p>
+<div class="multiplier-grid">
+<button onclick="setMultiplier(1.2,this)">x1.2</button>
+<button onclick="setMultiplier(1.5,this)">x1.5</button>
+<button class="active" onclick="setMultiplier(2,this)">x2</button>
+<button onclick="setMultiplier(3,this)">x3</button>
+<button onclick="setMultiplier(5,this)">x5</button>
+<button onclick="setMultiplier(10,this)">x10</button>
+</div>
+<button class="goldbtn" id="upgradeButton" onclick="spinUpgrade()">АПГРЕЙД</button>
+<div id="upgradeStatus" class="small"></div>
+</div>
+</section>
+
+<!-- MINES -->
+
+<section id="mines" class="hidden">
+<h2>💣 MINES</h2>
+
+<div class="mines-stats">
+<div class="mines-stat">
+<span>Открыто</span>
+<strong id="mineOpened">—</strong>
+</div>
+<div class="mines-stat">
+<span>Множитель</span>
+<strong class="orange" id="mineMultiplier">x1,00</strong>
+</div>
+<div class="mines-stat">
+<span>Шанс клетки</span>
+<strong id="mineChance">88%</strong>
+</div>
+</div>
+
+<div class="mines-board" id="mineGrid"></div>
+
+<button class="mines-play" id="minePlayButton" onclick="mineMainAction()">
+Играть за 1 000 🪙
+</button>
+
+<div class="mines-control">
+<div class="bet-main">
+<button onclick="changeMineBet(-1)">−</button>
+<input id="mineBet" type="number" value="1000" min="1" oninput="updateMineControls()">
+<button onclick="changeMineBet(1)">+</button>
+</div>
+<div class="bet-presets">
+<button onclick="setMineBet(10)">10</button>
+<button onclick="setMineBet(100)">100</button>
+<button class="selected" onclick="setMineBet(1000)">1 000</button>
+<button onclick="setMineBet(10000)">10 000</button>
+<button onclick="setMineBet('max')">МАКС</button>
+</div>
+</div>
+
+<div class="mines-control">
+<div class="mine-count-main">
+<span>Мин на поле</span>
+<div class="mine-count-stepper">
+<button onclick="changeMineCount(-1)">−</button>
+<strong id="mineCountValue">3</strong>
+<button onclick="changeMineCount(1)">+</button>
+</div>
+</div>
+<div class="bet-presets mine-presets">
+<button onclick="setMineCount(1)">1</button>
+<button class="selected" onclick="setMineCount(3)">3</button>
+<button onclick="setMineCount(5)">5</button>
+<button onclick="setMineCount(10)">10</button>
+<button onclick="setMineCount(24)">24</button>
+</div>
+</div>
+
+<p class="mines-description">
+Под клетками прячутся мины. Каждая открытая пустая клетка
+поднимает множитель — забрать выигрыш можно в любой момент.
+Мина — ставка сгорела. Чем больше мин, тем быстрее растёт множитель.
+</p>
+
+<div id="mineStatus" class="mines-status">
+Выбери ставку и количество мин, чтобы начать игру.
+</div>
+</section>
+
+<!-- INVENTORY -->
+
+<section id="inventory" class="hidden">
+<h2>🎒 INVENTORY</h2>
+<div id="inventoryList"></div>
+</section>
+
+<!-- SETTINGS -->
+
+<section id="settings" class="hidden">
+<h2>⚙️ НАСТРОЙКИ</h2>
+<div class="panel">
+<p class="small">Игровые данные сохраняются в браузере.</p>
+<button class="secondary" onclick="showPage('adminLogin')">🔐 АДМИН-ПАНЕЛЬ</button>
+<br><br>
+<button class="secondary" onclick="resetGame()">СБРОСИТЬ ИГРУ</button>
+</div>
+</section>
+
+<!-- ADMIN LOGIN -->
+
+<section id="adminLogin" class="hidden">
+<button class="back" onclick="showPage('settings')">← Назад</button>
+<div class="panel">
+<h2>🔐 ВХОД АДМИНИСТРАТОРА</h2>
+<input type="password" id="adminPassword" placeholder="Код доступа">
+<button class="goldbtn" onclick="checkAdminCode()">ВОЙТИ</button>
+<p id="adminError" class="small"></p>
+</div>
+</section>
+
+<!-- ADMIN PANEL -->
+
+<section id="adminPanel" class="hidden">
+<button class="back" onclick="showPage('settings')">← Выйти</button>
+<h2>🛠 ADMIN PANEL</h2>
+<div class="panel">
+<h3>💰 Управление балансом</h3>
+<p>Текущий баланс: <b id="adminBalance"></b> 🪙</p>
+<input id="adminAmount" type="number" min="0" placeholder="Сумма">
+<div class="admin-actions">
+<button class="admin-btn green" onclick="adminChange(1)">Зачислить</button>
+<button class="admin-btn red" onclick="adminChange(-1)">Списать</button>
+<button class="admin-btn blue admin-full" onclick="adminSet()">Установить баланс</button>
+</div>
+<h3>🎁 Выдать предмет</h3>
+<select id="adminItem">
+<option value="0">👕 Футболка</option>
+<option value="1">👟 Кроссовки</option>
+<option value="2">📿 Золотая цепь</option>
+<option value="3">🧢 Кепка</option>
+<option value="4">🎧 Наушники</option>
+<option value="5">🎨 Редкий скин</option>
+</select>
+<button class="admin-btn purple" style="width:100%" onclick="adminGive()">ВЫДАТЬ</button>
+<h3>⏰ Игровое время</h3>
+<p>Игровой день: <b id="adminDay">1</b></p>
+<button class="admin-btn blue" style="width:100%" onclick="skipDay()">ПРОПУСТИТЬ ДЕНЬ</button>
+</div>
+</section>
+
+</main>
+
+<script>
+
+/* DATA */
+
+const ADMIN_CODE="PASITO3_lirika";
+
+const prizes=[
+{name:"Футболка",icon:"👕",value:80},
+{name:"Кроссовки",icon:"👟",value:180},
+{name:"Золотая цепь",icon:"📿",value:350},
+{name:"Кепка",icon:"🧢",value:100},
+{name:"Наушники",icon:"🎧",value:500},
+{name:"Редкий скин",icon:"🎨",value:900},
+{name:"Монеты",icon:"🪙",value:250},
+{name:"Сюрприз",icon:"🎁",value:1200}
+];
+
+const cases=[
+{name:"STARTER CASE",icon:"📦",price:100,desc:"Начальный кейс",items:[0,3,6,1]},
+{name:"GOLD CASE",icon:"🥇",price:250,desc:"Золотые награды",items:[1,2,4,6]},
+{name:"DIAMOND CASE",icon:"💎",price:500,desc:"Редкие предметы",items:[2,4,5,7]},
+{name:"ROYAL CASE",icon:"👑",price:1000,desc:"Особые награды",items:[4,5,6,7]}
+];
+
+let state={balance:1000,inventory:[],day:1};
+
+try{
+let saved=JSON.parse(localStorage.getItem("skebobSave"));
+if(saved)state={...state,...saved};
+}catch(e){}
+
+/* GLOBAL VARIABLES */
+
+let selectedCase=0;
+let qty=1;
+let caseOpeningBusy=false;
+let pendingPrizes=[];
+
+let multiplier=2;
+let upgradeBusy=false;
+
+let mineActive=false;
+let mineBet=0;
+let mineFound=0;
+let mineCount=3;
+let mines=[];
+let mineMultiplier=1;
+
+/* SAVE */
+
+function save(){
+localStorage.setItem("skebobSave",JSON.stringify(state));
+render();
+}
+
+function render(){
+document.getElementById("balance").textContent=
+Math.floor(state.balance).toLocaleString("ru-RU");
+
+document.getElementById("adminBalance").textContent=
+Math.floor(state.balance).toLocaleString("ru-RU");
+
+document.getElementById("adminDay").textContent=state.day;
+
+renderInventory();
+}
+
+/* NAVIGATION */
+
+function showPage(id,button){
+document.querySelectorAll("main section").forEach(s=>s.classList.add("hidden"));
+document.getElementById(id).classList.remove("hidden");
+
+document.querySelectorAll(".nav button").forEach(b=>b.classList.remove("active"));
+if(button)button.classList.add("active");
+}
+
+/* CASES */
+
+function renderCases(){
+document.getElementById("caseList").innerHTML=cases.map((c,i)=>`
+<div class="case">
+<div class="pic">${c.icon}</div>
+<h3>${c.name}</h3>
+<p class="price">${c.price} 🪙</p>
+<button class="goldbtn" onclick="selectCase(${i})">ПОСМОТРЕТЬ</button>
+</div>`).join("");
+}
+
+function selectCase(i){
+if(caseOpeningBusy)return;
+
+selectedCase=i;
+qty=1;
+
+document.getElementById("caseList").classList.add("hidden");
+document.getElementById("caseDetail").classList.remove("hidden");
+
+let c=cases[i];
+
+document.getElementById("detailName").textContent=c.icon+" "+c.name;
+document.getElementById("detailDescription").textContent=c.desc;
+document.getElementById("detailPrice").textContent=c.price;
+
+document.getElementById("prizePreview").innerHTML=
+c.items.map(n=>`
+<div class="prize-card">
+<div class="prize-icon">${prizes[n].icon}</div>
+<h4>${prizes[n].name}</h4>
+<p class="price">${prizes[n].value} 🪙</p>
+</div>`).join("");
+
+document.getElementById("results").innerHTML="";
+setQty(1,document.querySelector(".quantity button"));
+}
+
+function closeCase(){
+if(caseOpeningBusy)return;
+document.getElementById("caseList").classList.remove("hidden");
+document.getElementById("caseDetail").classList.add("hidden");
+}
+
+function setQty(n,b){
+if(caseOpeningBusy)return;
+
+qty=n;
+
+document.querySelectorAll(".quantity button").forEach(x=>x.classList.remove("active"));
+b.classList.add("active");
+
+document.getElementById("totalPrice").textContent=
+"Итого: "+(cases[selectedCase].price*qty)+" 🪙";
+}
+
+/* CASE ROULETTE */
+
+function openCase(){
+if(caseOpeningBusy)return;
+
+let cost=cases[selectedCase].price*qty;
+
+if(state.balance<cost)return alert("Недостаточно виртуальных монет!");
+
+caseOpeningBusy=true;
+document.getElementById("openCaseButton").disabled=true;
+
+state.balance-=cost;
+save();
+
+let results=document.getElementById("results");
+results.innerHTML="";
+
+let won=[];
+let caseItems=cases[selectedCase].items;
+
+for(let i=0;i<qty;i++){
+
+let prize=prizes[caseItems[Math.floor(Math.random()*caseItems.length)]];
+won.push({...prize,id:Date.now()+i});
+
+let strip=[];
+
+for(let j=0;j<30;j++){
+strip.push(prizes[caseItems[Math.floor(Math.random()*caseItems.length)]]);
+}
+
+strip[24]=prize;
+
+let row=document.createElement("div");
+row.className="roulette-row";
+
+row.innerHTML=`
+<div class="roulette-title">🎁 КЕЙС ${i+1} ИЗ ${qty}</div>
+<div class="roulette-box">
+<div class="roulette-track">
+${strip.map(p=>`
+<div class="roulette-item">
+<div class="icon">${p.icon}</div>
+<div class="name">${p.name}</div>
+</div>`).join("")}
+</div>
+</div>
+<div class="roulette-result small">🎰 Открываем кейс...</div>`;
+
+results.appendChild(row);
+}
+
+pendingPrizes=won.map(p=>({...p}));
+
+let rows=results.querySelectorAll(".roulette-row");
+let completed=0;
+
+requestAnimationFrame(()=>{
+rows.forEach((row,i)=>{
+
+let box=row.querySelector(".roulette-box");
+let track=row.querySelector(".roulette-track");
+
+let target=10+24*98+45-box.clientWidth/2;
+
+track.style.transition="none";
+track.style.transform="translateX(0px)";
+void track.offsetWidth;
+
+let duration=4500+Math.random()*1000;
+
+track.style.transition=
+`transform ${duration}ms cubic-bezier(.08,.75,.12,1)`;
+
+track.style.transform=`translateX(-${target}px)`;
+
+setTimeout(()=>{
+
+let winnerItem=track.children[24];
+winnerItem.classList.add("winner");
+
+let result=row.querySelector(".roulette-result");
+
+result.className="roulette-result";
+result.innerHTML=`
+<div class="prizepic">${won[i].icon}</div>
+<h3>${won[i].name}</h3>
+<p class="price">${won[i].value} 🪙</p>
+<button class="goldbtn" onclick="claimPrize(${i})">ЗАБРАТЬ</button>`;
+
+completed++;
+
+if(completed===qty){
+caseOpeningBusy=false;
+document.getElementById("openCaseButton").disabled=false;
+}
+
+},duration+50);
+
+});
+});
+}
+
+function claimPrize(i){
+if(!pendingPrizes[i])return;
+
+state.inventory.push(pendingPrizes[i]);
+pendingPrizes[i]=null;
+
+save();
+
+let results=document.querySelectorAll(".roulette-row .roulette-result");
+
+if(results[i]){
+results[i].innerHTML="<h3 style='color:#24cf78'>✓ ПРЕДМЕТ ЗАБРАН!</h3>";
+}
+}
+
+/* INVENTORY */
+
+function renderInventory(){
+let el=document.getElementById("inventoryList");
+
+if(!state.inventory.length){
+el.innerHTML='<p class="small">Инвентарь пока пуст.</p>';
+return;
+}
+
+el.innerHTML=state.inventory.map((p,i)=>`
+<div class="item">
+<div style="font-size:32px">${p.icon}</div>
+<div class="info">
+<b>${p.name}</b>
+<div class="small">${p.value} 🪙</div>
+</div>
+<button class="secondary" onclick="sellItem(${i})">Продать</button>
+</div>`).join("");
+}
+
+function sellItem(i){
+let p=state.inventory.splice(i,1)[0];
+if(!p)return;
+state.balance+=p.value;
+save();
+}
+
+/* UPGRADE */
+
+function setMultiplier(m,b){
+if(upgradeBusy)return;
+
+multiplier=m;
+
+document.querySelectorAll(".multiplier-grid button").forEach(x=>x.classList.remove("active"));
+b.classList.add("active");
+
+updateUpgradeInfo();
+}
+
+function updateUpgradeInfo(){
+let stake=Math.max(0,Number(document.getElementById("upgradeStake").value)||0);
+let chance=Math.min(90,Math.max(5,Math.floor(90/multiplier)));
+
+document.getElementById("chanceText").textContent=chance+"%";
+document.getElementById("upgradeValues").textContent=
+stake+" → "+Math.floor(stake*multiplier)+" 🪙";
+
+document.getElementById("upgradeCircle").style.setProperty("--chance",chance+"%");
+document.getElementById("commissionText").textContent=
+"Шанс успеха: "+chance+"%. Игровая симуляция.";
+}
+
+function spinUpgrade(){
+if(upgradeBusy)return;
+
+let stake=Math.floor(Number(document.getElementById("upgradeStake").value));
+
+if(!Number.isFinite(stake)||stake<=0)return alert("Введите корректную сумму.");
+if(stake>state.balance)return alert("Недостаточно монет.");
+
+upgradeBusy=true;
+
+let chance=Math.min(90,Math.max(5,Math.floor(90/multiplier)));
+let landingAngle=Math.random()*360;
+let won=landingAngle<chance*3.6;
+let rotations=8+Math.floor(Math.random()*5);
+let finalRotation=rotations*360+landingAngle;
+
+state.balance-=stake;
+save();
+
+let arrow=document.getElementById("upgradeArrow");
+
+arrow.classList.remove("spinning");
+arrow.style.transition="none";
+arrow.style.transform="rotate(0deg)";
+void arrow.offsetWidth;
+
+arrow.classList.add("spinning");
+arrow.style.transition="transform 5s cubic-bezier(.12,.7,.15,1)";
+arrow.style.transform=`rotate(${finalRotation}deg)`;
+
+document.getElementById("upgradeButton").disabled=true;
+document.getElementById("upgradeStatus").textContent="🎰 Рулетка вращается...";
+
+setTimeout(()=>{
+if(won){
+let reward=Math.floor(stake*multiplier);
+state.balance+=reward;
+document.getElementById("upgradeStatus").textContent=
+"🟢 ПОБЕДА! Ты выиграл "+reward+" виртуальных монет!";
+}else{
+document.getElementById("upgradeStatus").textContent=
+"⚪ ПРОИГРЫШ! Стрелка остановилась на сером секторе.";
+}
+
+save();
+upgradeBusy=false;
+document.getElementById("upgradeButton").disabled=false;
+arrow.classList.remove("spinning");
+},5000);
+}
+
+/* MINES */
+
+function updateMineControls(){
+let input=document.getElementById("mineBet");
+let value=Math.max(1,Math.floor(Number(input.value)||1));
+
+let button=document.getElementById("minePlayButton");
+
+if(mineActive){
+button.textContent=mineFound>0
+?"ЗАБРАТЬ "+Math.floor(mineBet*mineMultiplier).toLocaleString("ru-RU")+" 🪙"
+:"ОТКРОЙ БЕЗОПАСНУЮ КЛЕТКУ";
+
+button.disabled=mineFound===0;
+}else{
+button.textContent="Играть за "+value.toLocaleString("ru-RU")+" 🪙";
+button.disabled=false;
+}
+}
+
+function setMineBet(value){
+if(mineActive)return;
+
+let input=document.getElementById("mineBet");
+
+if(value==="max"){
+input.value=Math.max(1,Math.floor(state.balance));
+}else{
+input.value=value;
+}
+
+document.querySelectorAll(".bet-presets:not(.mine-presets) button").forEach(b=>{
+b.classList.remove("selected");
+
+if((value!=="max"&&Number(b.textContent.replace(/\s/g,""))===value)||
+(value==="max"&&b.textContent==="МАКС")){
+b.classList.add("selected");
+}
+});
+
+updateMineControls();
+}
+
+function changeMineBet(direction){
+if(mineActive)return;
+
+let input=document.getElementById("mineBet");
+let current=Math.max(1,Math.floor(Number(input.value)||1));
+
+let next=direction>0?current+100:Math.max(1,current-100);
+
+input.value=Math.min(next,Math.max(1,Math.floor(state.balance)));
+
+document.querySelectorAll(".bet-presets:not(.mine-presets) button").forEach(b=>b.classList.remove("selected"));
+
+updateMineControls();
+}
+
+function setMineCount(value){
+if(mineActive)return;
+
+mineCount=Math.max(1,Math.min(24,value));
+
+document.getElementById("mineCountValue").textContent=mineCount;
+
+document.querySelectorAll(".mine-presets button").forEach(b=>{
+b.classList.toggle("selected",Number(b.textContent)===mineCount);
+});
+
+updateMineStats();
+}
+
+function changeMineCount(direction){
+if(mineActive)return;
+setMineCount(mineCount+direction);
+}
+
+/* Множитель учитывает вероятность безопасных клеток */
+
+function getMineMultiplier(){
+let probability=1;
+
+for(let i=0;i<mineFound;i++){
+probability*=(25-mineCount-i)/(25-i);
+}
+
+return probability>0?0.97/probability:0;
+}
+
+function updateMineStats(){
+let chance=(25-mineCount)/25*100;
+
+mineMultiplier=mineFound>0?getMineMultiplier():1;
+
+document.getElementById("mineOpened").textContent=
+mineActive?mineFound:"—";
+
+document.getElementById("mineMultiplier").textContent=
+"x"+mineMultiplier.toFixed(2).replace(".",",");
+
+document.getElementById("mineChance").textContent=
+Math.round(chance)+"%";
+
+updateMineControls();
+}
+
+/* Начало игры */
+
+function startMines(){
+if(mineActive){
+cashOut();
+return;
+}
+
+let bet=Math.floor(Number(document.getElementById("mineBet").value));
+
+if(!Number.isFinite(bet)||bet<1)return alert("Введите корректную ставку.");
+if(bet>state.balance)return alert("Недостаточно виртуальных монет.");
+
+mineBet=bet;
+mineFound=0;
+mineActive=true;
+mineMultiplier=1;
+
+/* Перемешиваем клетки */
+
+let positions=Array.from({length:25},(_,i)=>i);
+
+for(let i=positions.length-1;i>0;i--){
+let j=Math.floor(Math.random()*(i+1));
+[positions[i],positions[j]]=[positions[j],positions[i]];
+}
+
+mines=positions.slice(0,mineCount);
+
+state.balance-=bet;
+save();
+
+let grid=document.getElementById("mineGrid");
+grid.innerHTML="";
+
+for(let i=0;i<25;i++){
+let button=document.createElement("button");
+
+button.className="mine-cell";
+button.textContent="";
+button.setAttribute("aria-label","Закрытая клетка");
+button.onclick=()=>openMine(i,button);
+
+grid.appendChild(button);
+}
+
+document.getElementById("mineStatus").textContent=
+"Игра началась! Выбирай клетки.";
+
+updateMineStats();
+}
+
+/* Открытие клетки */
+
+function openMine(index,button){
+if(!mineActive||button.disabled)return;
+
+button.disabled=true;
+
+if(mines.includes(index)){
+button.textContent="💣";
+button.classList.add("bomb");
+
+mineActive=false;
+
+document.querySelectorAll(".mine-cell").forEach((cell,i)=>{
+cell.disabled=true;
+
+if(mines.includes(i)){
+cell.textContent="💣";
+cell.classList.add("bomb");
+}
+});
+
+document.getElementById("mineStatus").textContent=
+"💥 МИНА! Ставка сгорела.";
+
+document.getElementById("minePlayButton").disabled=false;
+
+updateMineStats();
+return;
+}
+
+/* Безопасная клетка */
+
+button.textContent="💎";
+button.classList.add("safe");
+
+mineFound++;
+mineMultiplier=getMineMultiplier();
+
+let reward=Math.floor(mineBet*mineMultiplier);
+
+document.getElementById("mineStatus").textContent=
+"💎 Отлично! Текущий выигрыш: "+reward.toLocaleString("ru-RU")+" 🪙";
+
+updateMineStats();
+}
+
+/* Забрать выигрыш */
+
+function cashOut(){
+if(!mineActive||mineFound===0)return;
+
+let reward=Math.floor(mineBet*mineMultiplier);
+
+state.balance+=reward;
+mineActive=false;
+
+document.querySelectorAll(".mine-cell").forEach(cell=>{
+cell.disabled=true;
+});
+
+document.getElementById("mineStatus").textContent=
+"🏆 Ты забрал "+reward.toLocaleString("ru-RU")+" 🪙!";
+
+save();
+updateMineStats();
+}
+
+function mineMainAction(){
+if(mineActive){
+cashOut();
+}else{
+startMines();
+}
+}
+
+function initMines(){
+let grid=document.getElementById("mineGrid");
+
+grid.innerHTML="";
+
+for(let i=0;i<25;i++){
+let cell=document.createElement("button");
+cell.className="mine-cell";
+cell.disabled=true;
+grid.appendChild(cell);
+}
+
+updateMineStats();
+}
+
+/* ADMIN */
+
+function checkAdminCode(){
+if(document.getElementById("adminPassword").value===ADMIN_CODE){
+document.getElementById("adminPassword").value="";
+document.getElementById("adminError").textContent="";
+showPage("adminPanel");
+}else{
+document.getElementById("adminError").textContent="Неверный код.";
+}
+}
+
+function adminChange(sign){
+let n=Math.floor(Number(document.getElementById("adminAmount").value));
+
+if(!Number.isFinite(n)||n<0)return alert("Введите сумму.");
+
+state.balance=Math.max(0,state.balance+sign*n);
+save();
+}
+
+function adminSet(){
+let n=Math.floor(Number(document.getElementById("adminAmount").value));
+
+if(!Number.isFinite(n)||n<0)return alert("Введите сумму.");
+
+state.balance=n;
+save();
+}
+
+function adminGive(){
+let p=prizes[Number(document.getElementById("adminItem").value)];
+
+state.inventory.push({...p,id:Date.now()});
+save();
+
+alert("Предмет добавлен!");
+}
+
+function skipDay(){
+state.day++;
+save();
+alert("Игровой день пропущен.");
+}
+
+/* RESET */
+
+function resetGame(){
+if(!confirm("Сбросить весь прогресс?"))return;
+
+state={balance:1000,inventory:[],day:1};
+
+mineActive=false;
+mineFound=0;
+mines=[];
+
+save();
+initMines();
+showPage("cases");
+}
+
+/* START */
+
+renderCases();
+render();
+updateUpgradeInfo();
+initMines();
+
+</script>
+</body>
+  </html>
