@@ -7068,33 +7068,42 @@ let chBetValue=0,chMult=1,chActive=false,chStepCount=0,chAnim=0,chCrash=false;
 function chRoundRect(c,x,y,w,h,r){c.beginPath();c.roundRect(x,y,w,h,r);c.fill()}
 function chDraw(){
  const cv=document.getElementById("chCanvas");if(!cv)return;const w=cv.clientWidth||700,h=cv.clientHeight||300,dpr=Math.min(devicePixelRatio||1,2);if(cv.width!==Math.round(w*dpr)||cv.height!==Math.round(h*dpr)){cv.width=Math.round(w*dpr);cv.height=Math.round(h*dpr)}const c=cv.getContext("2d");c.setTransform(dpr,0,0,dpr,0,0);
- c.fillStyle="#6c9b4c";c.fillRect(0,0,w,h);
- // Top-down crossing: traffic lanes run horizontally; chicken crosses vertically.
+ const grass=c.createLinearGradient(0,0,w,h);grass.addColorStop(0,"#315d35");grass.addColorStop(.5,"#527c3b");grass.addColorStop(1,"#203e2b");c.fillStyle=grass;c.fillRect(0,0,w,h);
+ for(let i=0;i<170;i++){const x=(i*97)%w,y=(i*53)%h;c.strokeStyle=i%2?"#b7d17a22":"#091b1028";c.lineWidth=1;c.beginPath();c.moveTo(x,y);c.lineTo(x+3,y-5);c.stroke()}
  const roadTop=h*.08,roadBottom=h*.91,roadH=roadBottom-roadTop,laneH=roadH/5;
- c.fillStyle="#303438";c.fillRect(0,roadTop,w,roadH);
- c.fillStyle="#454a4e";for(let y=roadTop+laneH;y<roadBottom;y+=laneH){c.fillRect(0,y-2,w,4)}
- c.fillStyle="#d9d4b8";c.fillRect(0,roadTop,w,3);c.fillRect(0,roadBottom-3,w,3);
+ const asphalt=c.createLinearGradient(0,roadTop,0,roadBottom);asphalt.addColorStop(0,"#454b50");asphalt.addColorStop(.5,"#292f34");asphalt.addColorStop(1,"#3c4246");c.fillStyle=asphalt;c.fillRect(0,roadTop,w,roadH);
+ c.fillStyle="#d7d1b5";c.fillRect(0,roadTop,w,3);c.fillRect(0,roadBottom-3,w,3);
+ for(let i=1;i<5;i++){let y=roadTop+i*laneH;c.setLineDash([w*.035,w*.025]);c.strokeStyle="#e9e5d2a0";c.lineWidth=2;c.beginPath();c.moveTo(0,y);c.lineTo(w,y);c.stroke()}c.setLineDash([]);
+ for(let i=0;i<150;i++){const x=(i*67)%w,y=roadTop+((i*41)%roadH);c.fillStyle=i%3?"#ffffff0b":"#0000000c";c.fillRect(x,y,2,1)}
  for(let i=0;i<5;i++){
-  const y=roadTop+i*laneH+laneH*.5,dir=i%2?1:-1,speed=.9+i*.22,carW=Math.max(48,w*.105),carH=laneH*.62;
-  for(let j=0;j<3;j++){let raw=(j*(w/3)+chAnim*speed*dir*2.2)%(w+carW);if(raw<0)raw+=w+carW;let x=dir>0?raw-carW: w-raw;
-   c.save();c.translate(x,y);c.fillStyle="#0005";c.beginPath();c.ellipse(carW/2,carH*.58,carW*.48,carH*.24,0,0,Math.PI*2);c.fill();
-   c.fillStyle=["#d74638","#e6b73e","#3984b9","#e9e9e2","#525d68"][(i*3+j)%5];c.beginPath();c.roundRect(0,-carH/2,carW,carH,carH*.22);c.fill();
-   c.fillStyle="#a9d7e8";c.beginPath();c.roundRect(carW*.25,-carH*.34,carW*.48,carH*.68,4);c.fill();
-   c.fillStyle="#fff1bd";c.fillRect(dir>0?carW-5:0,-carH*.3,5,carH*.2);c.fillRect(dir>0?carW-5:0,carH*.1,5,carH*.2);
-   c.fillStyle="#17191b";c.fillRect(carW*.18,-carH*.55,carW*.18,4);c.fillRect(carW*.65,-carH*.55,carW*.18,4);c.fillRect(carW*.18,carH*.42,carW*.18,4);c.fillRect(carW*.65,carH*.42,carW*.18,4);c.restore();
+  const y=roadTop+i*laneH+laneH*.5,dir=i%2?1:-1,speed=.9+i*.22,carW=Math.max(58,w*.13),carH=laneH*.64;
+  for(let j=0;j<3;j++){let raw=(j*(w/3)+chAnim*speed*dir*2.2)%(w+carW);if(raw<0)raw+=w+carW;let x=dir>0?raw-carW:w-raw;
+   c.save();c.translate(x,y);
+   c.fillStyle="#0008";c.beginPath();c.ellipse(carW*.52,carH*.65,carW*.53,carH*.36,0,0,Math.PI*2);c.fill();
+   const colors=["#b83c32","#c89b35","#34749a","#d6d8d3","#47525d"],paint=c.createLinearGradient(0,-carH/2,0,carH/2);paint.addColorStop(0,"#ffffff66");paint.addColorStop(.22,colors[(i*3+j)%5]);paint.addColorStop(.72,colors[(i*3+j)%5]);paint.addColorStop(1,"#111820");
+   c.fillStyle=paint;c.beginPath();c.roundRect(0,-carH/2,carW,carH,carH*.22);c.fill();
+   c.fillStyle="#10191f";c.beginPath();c.roundRect(carW*.24,-carH*.37,carW*.48,carH*.74,5);c.fill();
+   c.fillStyle="#8db6c9";c.beginPath();c.roundRect(carW*.29,-carH*.31,carW*.39,carH*.62,4);c.fill();
+   c.fillStyle="#d9e7e8aa";c.fillRect(carW*.32,-carH*.28,carW*.08,carH*.56);
+   c.fillStyle="#171a1c";for(const wy of [-1,1]){c.beginPath();c.roundRect(carW*.18,wy*(carH*.43)-3,carW*.2,6,2);c.fill();c.beginPath();c.roundRect(carW*.66,wy*(carH*.43)-3,carW*.2,6,2);c.fill()}
+   c.fillStyle="#ffe9b5";c.fillRect(dir>0?carW-3:0,-carH*.29,3,carH*.18);c.fillRect(dir>0?carW-3:0,carH*.11,3,carH*.18);
+   c.fillStyle="#bd3029";c.fillRect(dir>0?0:carW-3,-carH*.28,3,carH*.16);c.fillRect(dir>0?0:carW-3,carH*.12,3,carH*.16);
+   c.restore();
   }
  }
- // Chicken advances straight up, crossing one complete traffic lane per successful step.
- const progress=Math.min(chStepCount,12),startY=h*.96,endY=h*.025,cy=startY-(startY-endY)*(progress/12),cx=w*.5,scale=.72+progress/12*.22;
+ const progress=Math.min(chStepCount,12),startY=h*.96,endY=h*.025,cy=startY-(startY-endY)*(progress/12),cx=w*.5,scale=.8+progress/12*.18;
  c.save();c.translate(cx,cy);c.scale(scale,scale);
- c.fillStyle="#0006";c.beginPath();c.ellipse(0,18,20,6,0,0,Math.PI*2);c.fill();
- c.strokeStyle="#d58b22";c.lineWidth=4;c.beginPath();c.moveTo(-6,11);c.lineTo(-8,22);c.moveTo(6,11);c.lineTo(8,22);c.stroke();
- c.fillStyle="#f4eee0";c.beginPath();c.ellipse(0,0,15,18,0,0,Math.PI*2);c.fill();
- c.fillStyle="#fff";c.beginPath();c.arc(0,-17,12,0,Math.PI*2);c.fill();
- c.fillStyle="#d83e32";c.beginPath();c.arc(-5,-28,5,0,Math.PI*2);c.arc(1,-30,5,0,Math.PI*2);c.arc(7,-27,4,0,Math.PI*2);c.fill();
- c.fillStyle="#e5a52e";c.beginPath();c.moveTo(10,-17);c.lineTo(22,-13);c.lineTo(10,-10);c.closePath();c.fill();
- c.fillStyle="#222";c.beginPath();c.arc(4,-20,1.8,0,Math.PI*2);c.fill();
- c.fillStyle="#e8e2d5";c.beginPath();c.ellipse(-13,1,7,12,-.5,0,Math.PI*2);c.fill();c.restore();
+ c.fillStyle="#0007";c.beginPath();c.ellipse(0,18,22,7,0,0,Math.PI*2);c.fill();
+ c.strokeStyle="#b77a28";c.lineWidth=4;c.beginPath();c.moveTo(-7,10);c.lineTo(-9,22);c.moveTo(7,10);c.lineTo(9,22);c.stroke();
+ c.strokeStyle="#e7a72f";c.lineWidth=3;c.beginPath();c.moveTo(-9,22);c.lineTo(-14,22);c.moveTo(9,22);c.lineTo(14,22);c.stroke();
+ const feather=c.createRadialGradient(-5,-7,2,0,0,23);feather.addColorStop(0,"#fffef3");feather.addColorStop(.65,"#e9e3d5");feather.addColorStop(1,"#aaa99e");
+ c.fillStyle=feather;c.beginPath();c.ellipse(0,0,15,19,-.12,0,Math.PI*2);c.fill();
+ c.fillStyle="#f7f2e6";for(let k=0;k<5;k++){c.beginPath();c.ellipse(-13+k*5,2+k%2*3,5,9,-.7+k*.25,0,Math.PI*2);c.fill()}
+ c.fillStyle="#fffaf0";c.beginPath();c.arc(1,-17,12,0,Math.PI*2);c.fill();
+ c.fillStyle="#c33b32";c.beginPath();c.arc(-6,-27,4.5,0,Math.PI*2);c.arc(0,-30,5,0,Math.PI*2);c.arc(7,-27,4,0,Math.PI*2);c.fill();
+ c.fillStyle="#e7a52d";c.beginPath();c.moveTo(10,-17);c.lineTo(22,-13);c.lineTo(10,-10);c.closePath();c.fill();
+ c.fillStyle="#171717";c.beginPath();c.arc(5,-20,2,0,Math.PI*2);c.fill();c.fillStyle="#fff";c.beginPath();c.arc(5.5,-20.7,.7,0,Math.PI*2);c.fill();
+ c.restore();
  if(chCrash){c.fillStyle="#0009";c.fillRect(0,0,w,h);c.fillStyle="#fff";c.font="900 26px sans-serif";c.textAlign="center";c.fillText("СТОЛКНОВЕНИЕ",w/2,h/2)}
 }
 function chAnimate(){chAnim+=1;chDraw()}setInterval(chAnimate,45);
@@ -7104,7 +7113,7 @@ function chickenCash(){if(!chActive)return;chActive=false;const w=gamePay(chBetV
 
 
 /* Detailed arcade scene renderers */
-function sceneCanvas(id){const c=document.getElementById(id);if(!c)return null;const w=c.clientWidth||640,h=Math.round(w*(id==="poolCanvas"?.5625:.625)),d=Math.min(window.devicePixelRatio||1,2);c.width=Math.round(w*d);c.height=Math.round(h*d);const x=c.getContext("2d");x.setTransform(d,0,0,d,0,0);return {c,x,w,h}}
+function sceneCanvas(id){const c=document.getElementById(id);if(!c)return null;const w=c.clientWidth||640,h=Math.round(w*(id==="poolCanvas" ? .5625 : .625)),d=Math.min(window.devicePixelRatio||1,2);c.width=Math.round(w*d);c.height=Math.round(h*d);const x=c.getContext("2d");x.setTransform(d,0,0,d,0,0);return {c,x,w,h}}
 function drawDartScene(px=.5,py=.5,show=false){
  const z=sceneCanvas("dartCanvas");if(!z)return;const {x:c,w,h}=z,ox=w/2,oy=h/2,r=Math.min(w,h)*.405;
  const bg=c.createLinearGradient(0,0,w,h);bg.addColorStop(0,"#26323b");bg.addColorStop(1,"#0c141b");c.fillStyle=bg;c.fillRect(0,0,w,h);
