@@ -778,6 +778,22 @@ line-height:1.6;
 .pick-depth-label{position:absolute;z-index:4;right:7px;top:7px;background:#101820cc;color:#fff;padding:5px 8px;border-radius:7px;font-size:10px}
 .pick-description{font-size:12px;line-height:1.5;color:var(--muted);margin-top:9px}
 @media(max-width:480px){.pick-mine-window{min-height:440px}.pick-mine-grid{grid-auto-rows:32px}.pick-mine-hud{gap:5px}}
+/* PLINKO */
+.plinko-panel{background:var(--panel3);border:1px solid var(--border2);border-radius:22px;padding:12px}
+.plinko-risk{display:grid;grid-template-columns:repeat(3,1fr);gap:7px;margin:14px 0}
+.plinko-risk button{border:1px solid var(--border2);border-radius:10px;background:var(--panel2);color:var(--text);padding:11px 3px;font-size:11px}
+.plinko-risk button.active{border-color:var(--gold);background:#493819;color:#ffda7c}
+.plinko-board-wrap{background:radial-gradient(ellipse at top,#253957,#101722 75%);border:1px solid #3b4b63;border-radius:17px;padding:16px 8px 10px;overflow:hidden}
+.plinko-board{height:340px;position:relative;display:flex;flex-direction:column;justify-content:space-between;align-items:center;max-width:460px;margin:auto}
+.plinko-peg-row{height:19px;display:grid;align-items:center;flex:none}
+.plinko-peg{width:7px;height:7px;border-radius:50%;background:#dce8f6;box-shadow:0 0 6px #9ecbff99;margin:auto}
+.plinko-ball{position:absolute;z-index:5;left:50%;top:-4px;transform:translate(-50%,-50%);font-size:24px;filter:drop-shadow(0 2px 4px #000);transition:left .13s linear,top .13s linear;pointer-events:none}
+.plinko-slots{display:grid;grid-template-columns:repeat(13,minmax(0,1fr));gap:3px;margin:8px auto 0;max-width:460px}
+.plinko-slot{min-width:0;text-align:center;border-radius:6px;padding:8px 1px;background:#263246;border:1px solid #45566d;color:#dceaff;font-size:clamp(8px,2.5vw,11px);font-weight:900}
+.plinko-slot.hit{background:#f4c75e;color:#17120a;border-color:#fff0a8;box-shadow:0 0 12px #f4c75e}
+.plinko-last{background:var(--panel);border:1px solid var(--border2);border-radius:12px;text-align:center;padding:13px;margin:12px 0;color:var(--muted);font-size:13px;min-height:46px}
+.plinko-info{color:var(--muted);font-size:12px;line-height:1.6;margin:8px 2px}
+@media(max-width:390px){.plinko-board{height:300px}.plinko-peg{width:6px;height:6px}.plinko-slot{padding:7px 0;font-size:8px}}
 /* INVENTORY */
 
 .inventory-summary{
@@ -1131,6 +1147,10 @@ SKEBOB <span>CASINO</span>
 
 <button onclick="showPage('pickaxe',this)">
 ⛏ КИРКА
+</button>
+
+<button onclick="showPage('plinko',this)">
+🔴 PLINKO
 </button>
 
 <button onclick="showPage('inventory',this)">
@@ -1843,6 +1863,50 @@ class="game-status"
 
 </div>
 
+</section>
+
+<!-- PLINKO -->
+<section id="plinko" class="hidden">
+<h2>🔴 PLINKO</h2>
+<div class="plinko-panel">
+ <div class="game-stats">
+  <div class="game-stat"><span>СТАВКА</span><strong id="plinkoBetStat">100 🪙</strong></div>
+  <div class="game-stat"><span>РИСК</span><strong id="plinkoRiskStat">СРЕДНИЙ</strong></div>
+  <div class="game-stat"><span>ВОЗВРАТ</span><strong class="orange" id="plinkoReturn">—</strong></div>
+ </div>
+ <div class="plinko-risk">
+  <button class="active" onclick="setPlinkoRisk('low',this)">🟢 НИЗКИЙ</button>
+  <button onclick="setPlinkoRisk('medium',this)">🟡 СРЕДНИЙ</button>
+  <button onclick="setPlinkoRisk('high',this)">🔴 ВЫСОКИЙ</button>
+ </div>
+ <div class="plinko-board-wrap">
+  <div class="plinko-board" id="plinkoBoard">
+   <div class="plinko-ball" id="plinkoBall">🔴</div>
+  </div>
+  <div class="plinko-slots" id="plinkoSlots"></div>
+ </div>
+ <div class="plinko-last" id="plinkoResult">Выбери ставку и запусти шарик!</div>
+ <button class="game-main" id="plinkoPlayButton" onclick="startPlinkoGame()">🔴 БРОСИТЬ ШАР ЗА 100 🪙</button>
+ <div class="game-control">
+  <div class="small" style="text-align:center">СТАВКА</div>
+  <div class="bet-main">
+   <button onclick="changePlinkoBet(-1)">−</button>
+   <input id="plinkoBet" type="number" value="100" min="10" oninput="updatePlinkoControls()">
+   <button onclick="changePlinkoBet(1)">+</button>
+  </div>
+  <div class="bet-presets plinko-presets">
+   <button onclick="setPlinkoBet(10,this)">10</button>
+   <button class="selected" onclick="setPlinkoBet(100,this)">100</button>
+   <button onclick="setPlinkoBet(500,this)">500</button>
+   <button onclick="setPlinkoBet(1000,this)">1 000</button>
+   <button onclick="setPlinkoBet('max',this)">МАКС</button>
+  </div>
+ </div>
+ <div class="plinko-info">
+  <b>КАК ИГРАТЬ</b><br>
+  Шарик автоматически падает через поле с штырьками. Внизу его ждёт случайный множитель. Чем выше риск, тем больше возможный выигрыш — и тем выше шанс маленького возврата.
+ </div>
+</div>
 </section>
 
 <!-- INVENTORY -->
@@ -2627,6 +2691,10 @@ planeWins:0,
 pickaxeGames:0,
 
 pickaxeWins:0,
+
+plinkoGames:0,
+
+plinkoWins:0,
 
 turnover:0
 
@@ -5686,6 +5754,99 @@ async function startPickaxeGame(){
  status.innerHTML=win?"🏆 ДОБЫТО <b>"+win.toLocaleString("ru-RU")+" 🪙</b>":"😢 В этой шахте ничего ценного не попалось.";
 }
 /* =========================
+   PLINKO
+========================= */
+const PLINKO_ROWS=12;
+const PLINKO_MULTIPLIERS={
+ low:[8,4,2,1.5,1.2,1.1,1,1.1,1.2,1.5,2,4,8],
+ medium:[15,6,3,2,1.3,1,0.5,1,1.3,2,3,6,15],
+ high:[50,12,5,2,0.8,0.3,0.2,0.3,0.8,2,5,12,50]
+};
+let plinkoBusy=false,plinkoBet=100,plinkoRisk="medium";
+function plinkoWait(ms){return new Promise(resolve=>setTimeout(resolve,ms));}
+function renderPlinkoBoard(){
+ const board=document.getElementById("plinkoBoard");
+ board.innerHTML='<div class="plinko-ball" id="plinkoBall">🔴</div>';
+ for(let row=0;row<PLINKO_ROWS;row++){
+  const line=document.createElement("div");
+  line.className="plinko-peg-row";
+  line.style.width=((row+1)/PLINKO_ROWS*100)+"%";
+  line.style.gridTemplateColumns="repeat("+(row+1)+",1fr)";
+  for(let i=0;i<=row;i++){const peg=document.createElement("i");peg.className="plinko-peg";line.appendChild(peg);}
+  board.appendChild(line);
+ }
+ renderPlinkoSlots();
+}
+function renderPlinkoSlots(){
+ const slots=document.getElementById("plinkoSlots");
+ slots.innerHTML="";
+ PLINKO_MULTIPLIERS[plinkoRisk].forEach((m,i)=>{
+  const el=document.createElement("div");el.className="plinko-slot";el.id="plinkoSlot"+i;
+  el.textContent="x"+m.toLocaleString("ru-RU");slots.appendChild(el);
+ });
+ document.getElementById("plinkoRiskStat").textContent=({low:"НИЗКИЙ",medium:"СРЕДНИЙ",high:"ВЫСОКИЙ"})[plinkoRisk];
+}
+function setPlinkoRisk(risk,button){
+ if(plinkoBusy)return;plinkoRisk=risk;
+ document.querySelectorAll(".plinko-risk button").forEach(b=>b.classList.remove("active"));
+ if(button)button.classList.add("active");
+ renderPlinkoSlots();
+}
+function updatePlinkoControls(){
+ const input=document.getElementById("plinkoBet"),button=document.getElementById("plinkoPlayButton");
+ const value=Math.max(10,Math.floor(Number(input.value)||10));input.value=value;plinkoBet=value;
+ input.disabled=plinkoBusy;button.disabled=plinkoBusy;
+ document.getElementById("plinkoBetStat").textContent=value.toLocaleString("ru-RU")+" 🪙";
+ button.textContent=plinkoBusy?"🔴 ШАРИК ПАДАЕТ...":"🔴 БРОСИТЬ ШАР ЗА "+value.toLocaleString("ru-RU")+" 🪙";
+}
+function setPlinkoBet(value,button){
+ if(plinkoBusy)return;document.getElementById("plinkoBet").value=value==="max"?Math.max(10,Math.floor(state.balance)):value;
+ document.querySelectorAll(".plinko-presets button").forEach(b=>b.classList.remove("selected"));
+ if(button)button.classList.add("selected");updatePlinkoControls();
+}
+function changePlinkoBet(direction){
+ if(plinkoBusy)return;const input=document.getElementById("plinkoBet");
+ const current=Math.max(10,Math.floor(Number(input.value)||10)),step=current<100?10:100;
+ input.value=direction>0?current+step:Math.max(10,current-step);updatePlinkoControls();
+}
+async function startPlinkoGame(){
+ if(plinkoBusy)return;
+ const bet=Math.floor(Number(document.getElementById("plinkoBet").value));
+ if(!Number.isFinite(bet)||bet<10||bet>state.balance){alert("Недостаточно монет или неверная ставка.");return;}
+ plinkoBusy=true;plinkoBet=bet;state.balance-=bet;addTurnover(bet);state.stats.plinkoGames++;save();
+ updatePlinkoControls();
+ const board=document.getElementById("plinkoBoard"),ball=document.getElementById("plinkoBall");
+ renderPlinkoBoard();
+ const activeBall=document.getElementById("plinkoBall");
+ document.getElementById("plinkoResult").textContent="🔴 Шарик в игре...";
+ document.getElementById("plinkoReturn").textContent="В ПОЛЁТЕ";
+ let position=6;
+ for(let row=0;row<PLINKO_ROWS;row++){
+  position+=Math.random()<.5?-1:1;
+  position=Math.max(0,Math.min(row+1,position));
+  activeBall.style.left=((position/(row+1))*((row+1)/PLINKO_ROWS*100)+(100-(row+1)/PLINKO_ROWS*100)/2)+"%";
+  activeBall.style.top=((row+1)/(PLINKO_ROWS+1)*100)+"%";
+  await plinkoWait(145);
+ }
+ // One final unbiased bin selection across the 13 landing pockets.
+ const landing=position;
+ const multiplier=PLINKO_MULTIPLIERS[plinkoRisk][landing];
+ const slot=document.getElementById("plinkoSlot"+landing);
+ if(slot)slot.classList.add("hit");
+ activeBall.style.left=(((landing+.5)/13)*100)+"%";
+ activeBall.style.top="101%";
+ await plinkoWait(450);
+ const reward=Math.floor(bet*multiplier);
+ state.balance+=reward;
+ if(reward>bet){state.stats.plinkoWins++;registerWin(reward);}
+ save();
+ document.getElementById("plinkoReturn").textContent="x"+multiplier.toLocaleString("ru-RU");
+ document.getElementById("plinkoResult").innerHTML=reward>bet?"🏆 ВЫИГРЫШ: <b>+"+reward.toLocaleString("ru-RU")+" 🪙</b>":"🎯 Выпало x"+multiplier.toLocaleString("ru-RU")+" · возврат "+reward.toLocaleString("ru-RU")+" 🪙";
+ plinkoBusy=false;updatePlinkoControls();
+}
+function initPlinko(){renderPlinkoBoard();updatePlinkoControls();}
+
+/* =========================
    ADMIN
 ========================= */
 
@@ -5956,6 +6117,8 @@ initMines();
 initPlane();
 
 initPickaxe();
+
+initPlinko();
 
 updateDailyCase();
 
