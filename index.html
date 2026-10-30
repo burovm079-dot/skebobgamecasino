@@ -799,6 +799,12 @@ line-height:1.6;
 .plinko-last{background:var(--panel);border:1px solid var(--border2);border-radius:12px;text-align:center;padding:13px;margin:12px 0;color:var(--muted);font-size:13px;min-height:46px}
 .plinko-info{color:var(--muted);font-size:12px;line-height:1.6;margin:8px 2px}
 @media(max-width:390px){.plinko-board{height:300px}.plinko-peg{width:6px;height:6px}.plinko-slot{padding:7px 0;font-size:8px}}
+/* SLOTS */
+.slots-machine{display:flex;justify-content:center;gap:10px;margin:22px auto;padding:15px;background:linear-gradient(145deg,#392713,#14131a);border:3px solid #b98732;border-radius:18px;max-width:420px;box-shadow:0 0 24px #f4c75e22}
+.slots-reel{display:grid;place-items:center;width:30%;height:105px;background:linear-gradient(180deg,#fff8dc,#d6c18b 48%,#fff8dc);border:3px solid #8c672c;border-radius:12px;color:#21180b;font-size:clamp(42px,12vw,64px);text-shadow:0 2px 2px #fff;box-shadow:inset 0 0 12px #5c3b12}
+.slots-reel.spinning{animation:slotShake .12s infinite alternate}
+@keyframes slotShake{from{transform:translateY(-3px)}to{transform:translateY(3px)}}
+#slotsMessage{min-height:34px;margin:12px;color:var(--gold);font-weight:800}
 /* CRASH */
 .crash-panel{background:var(--panel3);border:1px solid var(--border2);border-radius:22px;padding:13px}
 .crash-screen{height:290px;position:relative;overflow:hidden;border:1px solid #254e49;border-radius:18px;background:radial-gradient(ellipse at 15% 90%,#174d43 0%,#102a2d 48%,#101a29 100%);margin:12px 0 18px}
@@ -1217,6 +1223,7 @@ SKEBOB <span>CASINO</span>
 <button onclick="showPage('race',this)">🏁 RACE</button>
 <button onclick="showPage('crash',this)">📈 КРАШ</button>
 <button onclick="showPage('battles',this)">⚔️ БАТЛЫ</button>
+<button onclick="showPage('slots',this)">🎰 СЛОТЫ</button>
 
 <button onclick="showPage('inventory',this)">
 🎒 INVENTORY
@@ -2334,6 +2341,25 @@ id="profileBalance"
 </div>
 
 </section>
+
+
+<!-- SLOTS -->
+<section id="slots" class="hidden">
+<h2>🎰 SKEBOB SLOTS</h2>
+<p class="small">Крути барабаны, собирай комбинации и забирай множители!</p>
+<div class="panel" style="text-align:center">
+<div class="game-stats">
+<div class="game-stat"><span>СТАВКА</span><strong id="slotsBetStat">100 🪙</strong></div>
+<div class="game-stat"><span>ВЫИГРЫШ</span><strong id="slotsWinStat">—</strong></div>
+<div class="game-stat"><span>ЛУЧШИЙ МНОЖИТЕЛЬ</span><strong id="slotsBestStat">x0</strong></div>
+</div>
+<div class="slots-machine"><div class="slots-reel" id="slotReel0">🍒</div><div class="slots-reel" id="slotReel1">🍋</div><div class="slots-reel" id="slotReel2">💎</div></div>
+<div id="slotsMessage">Выставь ставку и нажми КРУТИТЬ!</div>
+<div class="game-control"><label>ТВОЯ СТАВКА</label><div class="bet-main"><button onclick="changeSlotsBet(-1)">−</button><input id="slotsBet" type="number" min="10" step="10" value="100" oninput="updateSlotsControls()"><button onclick="changeSlotsBet(1)">+</button></div>
+<div class="bet-presets"><button onclick="setSlotsBet(100)">100</button><button onclick="setSlotsBet(500)">500</button><button onclick="setSlotsBet(1000)">1K</button><button onclick="setSlotsBet(5000)">5K</button><button onclick="setSlotsBet('max')">MAX</button></div></div>
+<button class="game-main" id="slotsSpin" onclick="spinSlots()">🎰 КРУТИТЬ БАРАБАНЫ</button>
+<div class="panel small" style="text-align:left"><b>ТАБЛИЦА ВЫПЛАТ</b><br>💎💎💎 — x8 · 👑👑👑 — x15<br>🍋🍋🍋 — x5 · 🍒🍒🍒 — x3<br>Любые две одинаковые — x1.2</div>
+</div></section>
 
 <!-- PROMO -->
 
@@ -6163,6 +6189,33 @@ async function startCaseBattle(){
  if(leaders.length>1)out.innerHTML+='<p class="small">🤝 Ничья по сумме! Победитель выбран случайно среди лидеров.</p>';
  save();battleBusy=false;updateBattleInfo();
 }
+/* SLOT MACHINE */
+const SLOT_SYMBOLS=["🍒","🍋","🍇","🔔","💎","👑"];
+let slotsBusy=false,slotsBest=0;
+function updateSlotsControls(){
+ const input=document.getElementById("slotsBet"),btn=document.getElementById("slotsSpin");if(!input)return;
+ const bet=Math.max(10,Math.floor(Number(input.value)||10));input.value=bet;
+ document.getElementById("slotsBetStat").textContent=bet.toLocaleString("ru-RU")+" 🪙";
+ btn.disabled=slotsBusy||bet>state.balance;btn.textContent=slotsBusy?"🎰 КРУТЯТСЯ...":"🎰 КРУТИТЬ ЗА "+bet.toLocaleString("ru-RU")+" 🪙";
+}
+function setSlotsBet(v){if(slotsBusy)return;document.getElementById("slotsBet").value=v==="max"?Math.max(10,Math.floor(state.balance)):v;updateSlotsControls()}
+function changeSlotsBet(d){if(slotsBusy)return;const x=document.getElementById("slotsBet"),v=Math.max(10,Math.floor(Number(x.value)||10));x.value=Math.max(10,v+(d>0?10:-10));updateSlotsControls()}
+function slotPayout(a){const counts={};a.forEach(x=>counts[x]=(counts[x]||0)+1);if(a.every(x=>x===a[0]))return a[0]==="👑"?15:a[0]==="💎"?8:a[0]==="🍋"?5:a[0]==="🍒"?3:2;return Object.values(counts).includes(2)?1.2:0}
+async function spinSlots(){
+ if(slotsBusy)return;const bet=Math.floor(Number(document.getElementById("slotsBet").value));
+ if(!Number.isFinite(bet)||bet<10||bet>state.balance){alert("Недостаточно монет или неверная ставка.");return}
+ slotsBusy=true;state.balance-=bet;addTurnover(bet);state.stats.slotsGames=(state.stats.slotsGames||0)+1;save();updateSlotsControls();
+ const reels=[0,1,2].map(i=>document.getElementById("slotReel"+i));reels.forEach(e=>e.classList.add("spinning"));
+ const result=Array.from({length:3},()=>SLOT_SYMBOLS[Math.floor(Math.random()*SLOT_SYMBOLS.length)]);
+ for(let i=0;i<3;i++){await new Promise(resolve=>setTimeout(resolve,650+i*450));reels[i].textContent=result[i];reels[i].classList.remove("spinning")}
+ const mult=slotPayout(result),reward=Math.floor(bet*mult);
+ if(reward){state.balance+=reward;registerWin(reward);state.stats.slotsWins=(state.stats.slotsWins||0)+1;slotsBest=Math.max(slotsBest,mult)}
+ document.getElementById("slotsWinStat").textContent=reward?"+"+reward.toLocaleString("ru-RU")+" 🪙":"0 🪙";
+ document.getElementById("slotsBestStat").textContent="x"+slotsBest;
+ document.getElementById("slotsMessage").textContent=reward?"🎉 "+result.join(" ")+" — ВЫИГРЫШ x"+mult+"!":"😢 "+result.join(" ")+" — в следующий раз повезёт!";
+ save();slotsBusy=false;updateSlotsControls()
+}
+ 
 /* CRASH GAME */
 let crashActive=false,crashBet=100,crashPoint=0,crashStartedAt=0,crashTimer=null,crashMultiplier=1;
 function updateCrashControls(){
@@ -6590,6 +6643,8 @@ initPlinko();
 initRace();
 
 initBattles();
+
+updateSlotsControls();
 
 initSecretCase();
 updateDailyCase();
