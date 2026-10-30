@@ -7244,6 +7244,61 @@ function bowlThrow(){
  document.getElementById("bowlResult").textContent=pins===10?"STRIKE! Выплата "+win+" 🪙":"Сбито кеглей: "+pins+" · "+(win?"Выплата "+win+" 🪙":"Без выигрыша");
 }
 
+
+/* FINAL SIX: smarter opponent and fleet placement */
+function bsBuildFleet(){
+ const fleet=[],occupied=new Set(),sizes=[3,2,2,1,1];
+ for(const size of sizes){let placed=false,tries=0;while(!placed&&tries++<300){
+  const horizontal=Math.random()<.5,row=Math.floor(Math.random()*6),col=Math.floor(Math.random()*6);
+  const cells=Array.from({length:size},(_,k)=>(row+(horizontal?0:k))*6+col+(horizontal?k:0));
+  if(cells.some(n=>Math.floor(n/6)>5||n%6>5||occupied.has(n)))continue;
+  cells.forEach(n=>occupied.add(n));fleet.push(cells);placed=true;
+ }}
+ return fleet.flat();
+}
+function bsStart(){
+ const b=gameBet("bsBet");if(!b){alert("Нужна ставка от 100 и достаточно средств");return}
+ state.balance-=b;bsStake=b;bsShips=bsBuildFleet();bsHits=0;bsShots=[];bsActive=true;save();bsRender();
+ document.getElementById("bsStatus").textContent="Флот противника скрыт. Найди 9 палуб на поле 6×6.";
+}
+function bsRender(){
+ const g=document.getElementById("bsGrid");g.innerHTML="";
+ for(let i=0;i<36;i++){const hit=bsShots.includes(i),ship=bsShips.includes(i),b=document.createElement("button");
+  b.textContent=hit?(ship?"💥":"〰️"):"";b.setAttribute("aria-label",hit?(ship?"Попадание":"Вода"):"Неизвестная клетка");
+  b.style.cssText="aspect-ratio:1;border:1px solid "+(hit?(ship?"#ff8b55":"#78b8d8"):"var(--border)")+";border-radius:7px;background:"+(hit?(ship?"radial-gradient(circle,#ffcf77,#9b3826)":"linear-gradient(#438bb0,#174c70)"):"linear-gradient(145deg,#287da0,#104260)")+";font-size:20px;box-shadow:inset 0 2px 5px #ffffff22,0 2px 4px #0005;transition:transform .12s";
+  b.disabled=!bsActive||hit;b.onclick=()=>bsFire(i);g.appendChild(b);
+ }
+}
+function bsFire(i){
+ if(!bsActive||bsShots.includes(i))return;bsShots.push(i);const hit=bsShips.includes(i);if(hit)bsHits++;
+ const status=document.getElementById("bsStatus");
+ if(bsHits===9){bsActive=false;const w=gamePay(bsStake,2);status.textContent="🏆 Весь флот потоплен! 9/9 палуб · "+bsShots.length+" выстрелов · Выплата "+w.toLocaleString("ru-RU")+" 🪙";}
+ else if(bsShots.length>=28){bsActive=false;status.textContent="Поражение. Найдено палуб: "+bsHits+"/9.";save()}
+ else status.textContent=(hit?"💥 Попадание!":"🌊 Мимо — вода.")+" Палубы: "+bsHits+"/9 · Выстрелы: "+bsShots.length;
+ bsRender();
+}
+function tttBestMove(board,player){
+ const lines=[[0,1,2],[3,4,5],[6,7,8],[0,3,6],[1,4,7],[2,5,8],[0,4,8],[2,4,6]];
+ const winner=a=>{for(const [x,y,z] of lines)if(a[x]&&a[x]===a[y]&&a[y]===a[z])return a[x];return a.every(Boolean)?"draw":""};
+ const minimax=(a,p)=>{const w=winner(a);if(w==="O")return {score:10};if(w==="X")return {score:-10};if(w==="draw")return {score:0};let best={score:p==="O"?-Infinity:Infinity,index:-1};
+  for(let i=0;i<9;i++)if(!a[i]){a[i]=p;const score=minimax(a,p==="O"?"X":"O").score;a[i]="";if((p==="O"&&score>best.score)||(p==="X"&&score<best.score))best={score,index:i}}
+  return best;
+ };
+ return minimax(board.slice(),player).index;
+}
+function tttRender(){
+ const g=document.getElementById("tttGrid");g.innerHTML="";
+ ttt.forEach((v,i)=>{const b=document.createElement("button");b.textContent=v||"";
+  b.style.cssText="aspect-ratio:1;font-size:clamp(32px,7vw,48px);font-weight:900;border-radius:13px;background:linear-gradient(145deg,#263746,#101a25);color:"+(v==="X"?"#66d9ff":"#ffb45c")+";border:1px solid #ffffff25;box-shadow:inset 0 2px 8px #ffffff12,0 4px 8px #0007;text-shadow:0 0 12px currentColor;transition:transform .15s";
+  b.disabled=!!v||!tttActive;b.onclick=()=>tttMove(i);g.appendChild(b)
+ });
+}
+function tttMove(i){
+ if(!tttActive||ttt[i])return;ttt[i]="X";let w=tttWinner(ttt);tttRender();if(w){tttFinish(w);return}
+ document.getElementById("tttStatus").textContent="🤖 Бот анализирует позицию…";
+ setTimeout(()=>{if(!tttActive)return;const move=tttBestMove(ttt,"O");if(move>=0)ttt[move]="O";w=tttWinner(ttt);tttRender();if(w)tttFinish(w);else document.getElementById("tttStatus").textContent="Твой ход — ❌"},420);
+}
+
 /* =========================
    START
 ========================= */
