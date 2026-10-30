@@ -6337,13 +6337,13 @@ function changeBjBet(d){if(bjBusy||bjRound&&!bjRound.finished)return;const e=doc
 let bjRenderedCounts={};
 function bjAnimatedHandHTML(hand,key,hideLast=false){
  const previous=bjRenderedCounts[key]||0;
- const html=hand.map((c,i)=>bjCardHTML(c,hideLast&&i===1)+(i>=previous&&i===hand.length-1?'').join('')).join("");
+ let html=hand.map((c,i)=>bjCardHTML(c,hideLast&&i===1)).join("");
  bjRenderedCounts[key]=hand.length;
  if(!hand.length||hand.length<=previous)return html;
  const last=html.lastIndexOf('<span class="bj-card');
  if(last<0)return html;
  const close=html.indexOf('>',last);
- return html.slice(0,close).replace('class="bj-card','class="bj-card bj-new')+html.slice(close);
+ return html.slice(0,last)+html.slice(last,close).replace('class="bj-card','class="bj-card bj-new')+html.slice(close);
 }
 function renderBj(){
  if(!bjRound)return;
