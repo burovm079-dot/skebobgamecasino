@@ -1328,11 +1328,11 @@ SKEBOB <span>CASINO</span>
 <section id="billiards" class="hidden">
 <h2>🎱 БИЛЬЯРД</h2><div class="panel">
 <p class="small">Тренировочный режим пула против бота появится здесь: настрой направление и силу, прицелься по шару и сыграй полноценную партию 8-ball.</p>
-<label>Ставка</label><input id="poolBet" type="number" min="100" step="100" value="100">
-<label>Угол удара</label><input id="poolAngle" type="range" min="0" max="180" value="90">
+<label>Ставка за матч</label><input id="poolBet" type="number" min="100" step="100" value="100">
+<label>Угол прицеливания</label><input id="poolAngle" type="range" min="0" max="359" value="0">
 <label>Сила удара</label><input id="poolPower" type="range" min="1" max="100" value="55">
-<canvas id="poolCanvas" class="real-game-canvas pool-scene" aria-label="Бильярдный стол с шарами"></canvas>
-<button class="goldbtn" onclick="poolShot()">УДАРИТЬ ПО ШАРУ</button><div id="poolResult" class="small"></div>
+<canvas id="poolCanvas" class="real-game-canvas pool-scene" aria-label="Бильярдный стол: нажми на стол для прицеливания"></canvas>
+<div class="game-actions"><button class="goldbtn" onclick="poolStart()">НОВАЯ ПАРТИЯ</button><button class="goldbtn" id="poolHitBtn" onclick="poolShot()" disabled>УДАРИТЬ КИЕМ</button></div><div id="poolResult" class="small">Начни партию, затем нажми на стол для прицеливания.</div>
 </div></section>
 <section id="bowling" class="hidden">
 <h2>🎳 БОУЛИНГ</h2><div class="panel">
