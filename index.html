@@ -1175,6 +1175,8 @@ SKEBOB <span>CASINO</span>
 👤 ПРОФИЛЬ
 </button>
 
+<button onclick="showPage('tasks')">📋 ЗАДАНИЯ</button>
+
 <button onclick="showPage('settings')">
 ⚙
 </button>
@@ -2433,6 +2435,14 @@ class="game-status"
 
 </section>
 
+<!-- DAILY TASKS -->
+<section id="tasks" class="hidden">
+<button class="back" onclick="showPage('cases')">← Назад</button>
+<h2>📋 ЕЖЕДНЕВНЫЕ ЗАДАНИЯ</h2>
+<p class="small">Задания обновляются каждые 24 часа автоматически, даже если ты не заходил в игру.</p>
+<div class="panel"><div class="game-stats"><div class="game-stat"><span>ОБНОВЛЕНИЕ ЧЕРЕЗ</span><strong id="tasksTimer">24:00:00</strong></div><div class="game-stat"><span>ВЫПОЛНЕНО</span><strong id="tasksDone">0/3</strong></div><div class="game-stat"><span>НАГРАДА</span><strong>🪙</strong></div></div><div id="dailyTasksList"></div></div>
+</section>
+
 <!-- SETTINGS -->
 
 <section
@@ -3013,6 +3023,7 @@ let dailyOpening=false;
 
 function save(){
 
+updateDailyTasks(false);
 localStorage.setItem(
 "skebobSave",
 JSON.stringify(state)
@@ -3137,6 +3148,34 @@ description:"Начальный уровень казино"
 
 }
 
+/* DAILY TASKS — rolling 24-hour cycle */
+const DAILY_TASK_DURATION=24*60*60*1000;
+const DAILY_TASK_DEFS=[
+ {id:"cases",title:"Открой 10 кейсов",description:"Прокрути любые 10 кейсов",target:10,reward:1500,icon:"🎁"},
+ {id:"blackjack",title:"Выиграй 3 раза в Blackjack",description:"Победи дилера в трёх раундах",target:3,reward:2000,icon:"🃏"},
+ {id:"sales",title:"Продай 5 предметов",description:"Продай любые пять предметов из инвентаря",target:5,reward:1200,icon:"💰"}
+];
+function updateDailyTasks(shouldSave=true){
+ const now=Date.now();
+ if(!state.dailyTasks||!Number.isFinite(state.dailyTasks.startedAt)||now-state.dailyTasks.startedAt>=DAILY_TASK_DURATION){
+  state.dailyTasks={startedAt:now,progress:{cases:0,blackjack:0,sales:0},claimed:[]};
+ }
+ state.dailyTasks.progress=state.dailyTasks.progress||{cases:0,blackjack:0,sales:0};
+ state.dailyTasks.claimed=state.dailyTasks.claimed||[];
+ if(shouldSave)localStorage.setItem("skebobSave",JSON.stringify(state));
+}
+function claimDailyTask(id){
+ updateDailyTasks();const task=DAILY_TASK_DEFS.find(t=>t.id===id);if(!task)return;
+ const d=state.dailyTasks;if((d.progress[id]||0)<task.target||d.claimed.includes(id))return;
+ d.claimed.push(id);state.balance+=task.reward;save();renderDailyTasks();
+}
+function renderDailyTasks(){
+ updateDailyTasks();const list=document.getElementById("dailyTasksList");if(!list)return;
+ list.innerHTML=DAILY_TASK_DEFS.map(t=>{const progress=Math.min(t.target,state.dailyTasks.progress[t.id]||0),done=progress>=t.target,claimed=state.dailyTasks.claimed.includes(t.id);return '<div class="panel"><div style="display:flex;gap:12px;align-items:center"><div style="font-size:32px">'+t.icon+'</div><div style="flex:1"><b>'+t.title+'</b><div class="small">'+t.description+'</div></div><b style="color:var(--gold)">+'+t.reward.toLocaleString("ru-RU")+' 🪙</b></div><div style="height:9px;background:var(--panel2);border-radius:9px;margin:13px 0 7px;overflow:hidden"><div style="height:100%;width:'+(progress/t.target*100)+'%;background:linear-gradient(90deg,#24cf78,#b8ed75)"></div></div><div style="display:flex;justify-content:space-between;align-items:center"><span class="small">'+progress+'/'+t.target+'</span><button class="secondary" '+(!done||claimed?'disabled':'')+' onclick="claimDailyTask(\''+t.id+'\')">'+(claimed?'✓ ЗАБРАНО':done?'ЗАБРАТЬ':'В ПРОЦЕССЕ')+'</button></div></div>'}).join("");
+ const left=Math.max(0,DAILY_TASK_DURATION-(Date.now()-state.dailyTasks.startedAt));const h=Math.floor(left/3600000),m=Math.floor(left%3600000/60000),sec=Math.floor(left%60000/1000);document.getElementById("tasksTimer").textContent=[h,m,sec].map(v=>String(v).padStart(2,"0")).join(":");document.getElementById("tasksDone").textContent=DAILY_TASK_DEFS.filter(t=>(state.dailyTasks.progress[t.id]||0)>=t.target).length+"/3";
+}
+setInterval(()=>{updateDailyTasks();if(!document.getElementById("tasks").classList.contains("hidden"))renderDailyTasks()},1000);
+
 /* =========================
    RENDER
 ========================= */
@@ -3170,6 +3209,7 @@ renderAdminSettings();
 ========================= */
 
 function showPage(id,button){
+if(id==="tasks")renderDailyTasks();
 
 document
 .querySelectorAll(
@@ -4132,6 +4172,7 @@ if(secretOpening)state.secretDropUsedPeriod=Math.floor(Date.now()/SECRET_DROP_PE
 addTurnover(cost);
 
 state.stats.casesOpened+=qty;
+state.dailyTasks.progress.cases+=qty;
 
 save();
 
@@ -4492,6 +4533,7 @@ p.value||0
 state.balance+=value;
 
 state.stats.itemsSold++;
+state.dailyTasks.progress.sales++;
 
 state.stats.soldValue+=value;
 
@@ -4531,6 +4573,7 @@ total.toLocaleString(
 state.balance+=total;
 
 state.stats.itemsSold+=count;
+state.dailyTasks.progress.sales+=count;
 
 state.stats.soldValue+=total;
 
@@ -6291,7 +6334,7 @@ function bjFinish(){
  else if(dealer>21||you>dealer){reward=you===21&&r.you.length===2?Math.floor(r.bet*2.5):r.bet*2;message="🎉 Ты победил дилера!";}
  else if(you===dealer){reward=r.bet;message="Ничья! Ставка возвращена."}
  else message="Дилер победил. В следующий раз повезёт!";
- if(reward){state.balance+=reward;if(reward>r.bet){registerWin(reward);state.stats.blackjackWins=(state.stats.blackjackWins||0)+1}}
+ if(reward){state.balance+=reward;if(reward>r.bet){registerWin(reward);state.stats.blackjackWins=(state.stats.blackjackWins||0)+1;state.dailyTasks.progress.blackjack++}}
  document.getElementById("bjStatus").textContent=message+(reward?" Выплата: "+reward.toLocaleString("ru-RU")+" 🪙":"");
  renderBj();save();updateBjControls();
 }
@@ -6703,6 +6746,7 @@ function openSecretDrop(){
    START
 ========================= */
 
+updateDailyTasks();
 loadTheme();
 loadCasinoMusicSetting();
 
