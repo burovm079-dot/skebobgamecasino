@@ -7044,14 +7044,33 @@ let chBetValue=0,chMult=1,chActive=false,chStepCount=0,chAnim=0,chCrash=false;
 function chRoundRect(c,x,y,w,h,r){c.beginPath();c.roundRect(x,y,w,h,r);c.fill()}
 function chDraw(){
  const cv=document.getElementById("chCanvas");if(!cv)return;const w=cv.clientWidth||700,h=cv.clientHeight||300,dpr=Math.min(devicePixelRatio||1,2);if(cv.width!==Math.round(w*dpr)||cv.height!==Math.round(h*dpr)){cv.width=Math.round(w*dpr);cv.height=Math.round(h*dpr)}const c=cv.getContext("2d");c.setTransform(dpr,0,0,dpr,0,0);
- const sky=c.createLinearGradient(0,0,0,h*.55);sky.addColorStop(0,"#7db8d8");sky.addColorStop(1,"#d6e5c3");c.fillStyle=sky;c.fillRect(0,0,w,h);c.fillStyle="#547c3c";c.fillRect(0,h*.38,w,h*.62);
- for(let i=0;i<35;i++){let x=(i*83+chAnim*.12)%(w+30)-15,y=h*.4+(i*37%(h*.58));c.fillStyle=i%2?"#315d31":"#72964b";c.beginPath();c.arc(x,y,2+(i%4),0,Math.PI*2);c.fill()}
- const top=h*.34,bottom=h*.98,roadTop=w*.27,roadBottom=w*.98;c.fillStyle="#34383b";c.beginPath();c.moveTo(w/2-roadTop/2,top);c.lineTo(w/2+roadTop/2,top);c.lineTo(w/2+roadBottom/2,bottom);c.lineTo(w/2-roadBottom/2,bottom);c.closePath();c.fill();
- c.strokeStyle="#e9e4cb";c.lineWidth=2;c.beginPath();c.moveTo(w/2-roadTop/2,top);c.lineTo(w/2-roadBottom/2,bottom);c.moveTo(w/2+roadTop/2,top);c.lineTo(w/2+roadBottom/2,bottom);c.stroke();
- for(let lane=1;lane<3;lane++){let xt=w/2-roadTop/2+roadTop*lane/3,xb=w/2-roadBottom/2+roadBottom*lane/3;c.strokeStyle="#e7e1c9";c.lineWidth=1.5;c.setLineDash([12,10]);c.beginPath();c.moveTo(xt,top);c.lineTo(xb,bottom);c.stroke();c.setLineDash([])}
- for(let i=0;i<7;i++){let y=top+((i*49+chAnim*.9)%(h*.62)),p=(y-top)/(bottom-top),rw=roadTop+(roadBottom-roadTop)*p,x=w/2-rw/2+rw*(.16+((i*37)%68)/100),scale=.35+p*.8;c.save();c.translate(x,y);c.scale(scale,scale);c.fillStyle="#1118";c.beginPath();c.ellipse(0,13,25,7,0,0,Math.PI*2);c.fill();c.fillStyle=["#c83b32","#e5b83f","#397db5","#eeeeea","#4e555b"][i%5];chRoundRect(c,-18,-18,36,34,7);c.fillStyle="#a8d7e8";chRoundRect(c,-13,-14,26,11,4);c.fillStyle="#222";c.fillRect(-15,10,8,7);c.fillRect(7,10,8,7);c.fillStyle="#ffe8a0";c.fillRect(-15,-16,6,4);c.fillRect(9,-16,6,4);c.restore()}
- const p=Math.min(chStepCount,12)/12,cy=h*.84-p*h*.48,cx=w/2;
- c.save();c.translate(cx,cy);c.scale(1+p*.28,1+p*.28);c.fillStyle="#0005";c.beginPath();c.ellipse(0,19,20,6,0,0,Math.PI*2);c.fill();c.strokeStyle="#d58b22";c.lineWidth=4;c.beginPath();c.moveTo(-5,13);c.lineTo(-8,23);c.moveTo(5,13);c.lineTo(8,23);c.stroke();c.fillStyle="#f4eee0";c.beginPath();c.ellipse(0,0,15,18,-.12,0,Math.PI*2);c.fill();c.fillStyle="#fff";c.beginPath();c.arc(0,-17,12,0,Math.PI*2);c.fill();c.fillStyle="#d83e32";c.beginPath();c.arc(-5,-29,5,0,Math.PI*2);c.arc(1,-31,5,0,Math.PI*2);c.arc(7,-28,4,0,Math.PI*2);c.fill();c.fillStyle="#e5a52e";c.beginPath();c.moveTo(10,-17);c.lineTo(22,-13);c.lineTo(10,-10);c.closePath();c.fill();c.fillStyle="#252525";c.beginPath();c.arc(4,-20,1.8,0,Math.PI*2);c.fill();c.fillStyle="#e8e2d5";c.beginPath();c.ellipse(-13,1,7,12,-.5,0,Math.PI*2);c.fill();c.restore();
+ c.fillStyle="#6c9b4c";c.fillRect(0,0,w,h);
+ // Top-down crossing: traffic lanes run horizontally; chicken crosses vertically.
+ const roadTop=h*.08,roadBottom=h*.91,roadH=roadBottom-roadTop,laneH=roadH/5;
+ c.fillStyle="#303438";c.fillRect(0,roadTop,w,roadH);
+ c.fillStyle="#454a4e";for(let y=roadTop+laneH;y<roadBottom;y+=laneH){c.fillRect(0,y-2,w,4)}
+ c.fillStyle="#d9d4b8";c.fillRect(0,roadTop,w,3);c.fillRect(0,roadBottom-3,w,3);
+ for(let i=0;i<5;i++){
+  const y=roadTop+i*laneH+laneH*.5,dir=i%2?1:-1,speed=.9+i*.22,carW=Math.max(48,w*.105),carH=laneH*.62;
+  for(let j=0;j<3;j++){let raw=(j*(w/3)+chAnim*speed*dir*2.2)%(w+carW);if(raw<0)raw+=w+carW;let x=dir>0?raw-carW: w-raw;
+   c.save();c.translate(x,y);c.fillStyle="#0005";c.beginPath();c.ellipse(carW/2,carH*.58,carW*.48,carH*.24,0,0,Math.PI*2);c.fill();
+   c.fillStyle=["#d74638","#e6b73e","#3984b9","#e9e9e2","#525d68"][(i*3+j)%5];c.beginPath();c.roundRect(0,-carH/2,carW,carH,carH*.22);c.fill();
+   c.fillStyle="#a9d7e8";c.beginPath();c.roundRect(carW*.25,-carH*.34,carW*.48,carH*.68,4);c.fill();
+   c.fillStyle="#fff1bd";c.fillRect(dir>0?carW-5:0,-carH*.3,5,carH*.2);c.fillRect(dir>0?carW-5:0,carH*.1,5,carH*.2);
+   c.fillStyle="#17191b";c.fillRect(carW*.18,-carH*.55,carW*.18,4);c.fillRect(carW*.65,-carH*.55,carW*.18,4);c.fillRect(carW*.18,carH*.42,carW*.18,4);c.fillRect(carW*.65,carH*.42,carW*.18,4);c.restore();
+  }
+ }
+ // Chicken advances straight up, crossing one complete traffic lane per successful step.
+ const progress=Math.min(chStepCount,12),startY=h*.96,endY=h*.025,cy=startY-(startY-endY)*(progress/12),cx=w*.5,scale=.72+progress/12*.22;
+ c.save();c.translate(cx,cy);c.scale(scale,scale);
+ c.fillStyle="#0006";c.beginPath();c.ellipse(0,18,20,6,0,0,Math.PI*2);c.fill();
+ c.strokeStyle="#d58b22";c.lineWidth=4;c.beginPath();c.moveTo(-6,11);c.lineTo(-8,22);c.moveTo(6,11);c.lineTo(8,22);c.stroke();
+ c.fillStyle="#f4eee0";c.beginPath();c.ellipse(0,0,15,18,0,0,Math.PI*2);c.fill();
+ c.fillStyle="#fff";c.beginPath();c.arc(0,-17,12,0,Math.PI*2);c.fill();
+ c.fillStyle="#d83e32";c.beginPath();c.arc(-5,-28,5,0,Math.PI*2);c.arc(1,-30,5,0,Math.PI*2);c.arc(7,-27,4,0,Math.PI*2);c.fill();
+ c.fillStyle="#e5a52e";c.beginPath();c.moveTo(10,-17);c.lineTo(22,-13);c.lineTo(10,-10);c.closePath();c.fill();
+ c.fillStyle="#222";c.beginPath();c.arc(4,-20,1.8,0,Math.PI*2);c.fill();
+ c.fillStyle="#e8e2d5";c.beginPath();c.ellipse(-13,1,7,12,-.5,0,Math.PI*2);c.fill();c.restore();
  if(chCrash){c.fillStyle="#0009";c.fillRect(0,0,w,h);c.fillStyle="#fff";c.font="900 26px sans-serif";c.textAlign="center";c.fillText("СТОЛКНОВЕНИЕ",w/2,h/2)}
 }
 function chAnimate(){chAnim+=1;chDraw()}setInterval(chAnimate,45);
