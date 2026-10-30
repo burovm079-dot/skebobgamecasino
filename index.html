@@ -2654,7 +2654,10 @@ const prizes=[
 {name:"Суперкар",icon:"🏎️",value:45000},
 {name:"Королевский кубок",icon:"🏆",value:70000},
 {name:"Золотой дракон",icon:"🐉",value:110000},
-{name:"Легендарный джекпот",icon:"💎",value:200000}
+{name:"Легендарный джекпот",icon:"💎",value:200000},
+{name:"Космический корабль",icon:"🛸",value:300000},
+{name:"Императорский трон",icon:"🪑",value:450000},
+{name:"Золотой феникс",icon:"🔥",value:650000}
 
 ];
 
@@ -3696,8 +3699,6 @@ track.children[24]
 "winner"
 );
 
-if(i===rows.length-1)playCaseSound(true);
-
 state.balance+=prize;
 
 /*
@@ -4113,6 +4114,8 @@ track.children[24]
 .classList.add(
 "winner"
 );
+
+if(i===rows.length-1)playCaseSound(true);
 
 row.querySelector(
 ".roulette-result"
