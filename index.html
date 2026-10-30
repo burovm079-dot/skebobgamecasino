@@ -4156,8 +4156,8 @@ caseOpeningBusy=false;
 const sellButton=document.createElement("button");
 sellButton.className="goldbtn";
 sellButton.style.cssText="width:100%;margin:16px 0;padding:16px;font-weight:900";
-sellButton.textContent="💰 ПРОДАТЬ ВСЁ ИЗ ЭТОГО ОТКРЫТИЯ";
-sellButton.onclick=sellPendingCasePrizes;
+sellButton.textContent="🎁 ЗАБРАТЬ ВСЁ ИЗ ЭТОГО ОТКРЫТИЯ";
+sellButton.onclick=claimAllPendingCasePrizes;
 results.appendChild(sellButton);
 
 }
@@ -4169,27 +4169,22 @@ results.appendChild(sellButton);
 
 }
 
-function sellPendingCasePrizes(){
+function claimAllPendingCasePrizes(){
 
 const items=pendingPrizes.filter(Boolean);
 if(!items.length)return;
 
-const total=items.reduce((sum,p)=>sum+Number(p.value||0),0);
-if(!confirm("Продать все призы из этого открытия за "+total.toLocaleString("ru-RU")+" 🪙?"))return;
-
-state.balance+=total;
-state.stats.itemsSold+=items.length;
-state.stats.soldValue+=total;
+items.forEach(item=>state.inventory.push(item));
 pendingPrizes=pendingPrizes.map(()=>null);
 
-document.querySelectorAll(".roulette-result").forEach(el=>{
+document.querySelectorAll(".roulette-row .roulette-result").forEach(el=>{
 if(el.querySelector("button")||el.textContent.includes("ЗАБРАНО")){
-el.innerHTML="<b style='color:#24cf78'>✓ ПРОДАНО</b>";
+el.innerHTML="<b style='color:#24cf78'>✓ ЗАБРАНО</b>";
 }
 });
 
 const button=document.querySelector("#results button[style*='width:100%']");
-if(button){button.textContent="✓ ВСЕ ПРИЗЫ ПРОДАНЫ";button.disabled=true;}
+if(button){button.textContent="✓ ВСЕ ПРИЗЫ ЗАБРАНЫ";button.disabled=true;}
 
 save();
 }
