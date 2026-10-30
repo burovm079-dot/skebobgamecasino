@@ -577,6 +577,15 @@ border-radius:22px;
 padding:14px;
 }
 
+.plane-flight-hud{
+ position:absolute;z-index:15;left:10px;right:10px;top:10px;
+ display:flex;justify-content:space-between;gap:8px;pointer-events:none;
+}
+.plane-flight-hud span{
+ background:#101a2bdc;border:1px solid #ffffff35;border-radius:9px;
+ padding:7px 9px;color:#dceeff;font-size:9px;font-weight:800;
+}
+.plane-flight-hud b{display:block;color:#fff;font-size:14px;margin-top:3px}
 .plane-world{
 height:390px;
 position:relative;
@@ -1576,6 +1585,11 @@ x1,00
 
 <div class="plane-world">
 
+<div class="plane-flight-hud">
+ <span>ДИСТАНЦИЯ <b id="planeDistance">0 м</b></span>
+ <span>ВЫСОТА <b id="planeAltitude">2,5 м</b></span>
+</div>
+
 <div class="plane-sun"></div>
 
 <div class="cloud cloud1">
@@ -1699,9 +1713,8 @@ class="game-status"
 
 <div class="plane-description">
 
-Самолёт стартует с ×1,00.
-Во время полёта коэффициент может увеличиваться.
-В конце самолёт пытается приземлиться.
+Самолёт летит автоматически. По пути собирает случайные множители и преодолевает опасности.
+В конце полёта случайно определяется, попадёт ли он на платформу. Управлять самолётом не нужно.
 
 </div>
 
@@ -5141,6 +5154,10 @@ document.getElementById(
 );
 
 planeMultiplier=1;
+const distance=document.getElementById("planeDistance");
+const altitude=document.getElementById("planeAltitude");
+if(distance)distance.textContent="0 м";
+if(altitude)altitude.textContent="2,5 м";
 
 document.getElementById(
 "planeStage"
@@ -5364,24 +5381,16 @@ i<events;
 i++
 ){
 
-plane.style.left=
-(
-30+
-(i/events)*45
-)+
-"%";
+const progress=(i+1)/events;
+const distance=Math.round(200+progress*1800);
+const altitude=(2.5+Math.random()*8.5).toFixed(1).replace(".",",");
+document.getElementById("planeDistance").textContent=distance+" м";
+document.getElementById("planeAltitude").textContent=altitude+" м";
 
-plane.style.bottom=
-(
-45+
-Math.random()*24
-)+
-"%";
+plane.style.left=(30+progress*43)+"%";
+plane.style.bottom=(43+Math.random()*27)+"%";
 
-await planeWait(
-600
-);
-
+await planeWait(600);
 await randomPlaneEvent();
 
 status.innerHTML=
@@ -5426,27 +5435,13 @@ await planeEvent(
 "🛬 ПОСАДКА..."
 );
 
-let chance=
-.78-
-(
-planeMultiplier-1
-)*
-.018;
-
-chance=
-Math.max(
-.38,
-Math.min(
-.82,
-chance
-)
-);
-
+// Исход посадки — отдельный случайный бросок.
+ // Множитель влияет только на выплату, но не на шанс попадания.
+const landingChance=0.55;
 const landed=
 state.admin.alwaysWin
 ||
-Math.random()<
-chance;
+Math.random()<landingChance;
 
 if(landed){
 
