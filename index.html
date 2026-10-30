@@ -6958,13 +6958,26 @@ async function playDice(){
  const arena=document.getElementById("dicePlayers");document.getElementById("dicePot").textContent="БАНК: "+(bet*players.length).toLocaleString("ru-RU")+" 🪙";
  arena.innerHTML=players.map((p,i)=>'<div class="dice-seat" id="diceSeat'+i+'"><div class="dice-avatar">'+p.avatar+'</div><div class="dice-name">'+p.name+'</div><div class="dice-cubes" id="diceCubes'+i+'">🎲 🎲</div><div class="dice-total" id="diceTotal'+i+'">?</div></div>').join("");
  document.getElementById("diceResult").textContent="Кости летят...";
- for(let t=0;t<18;t++){players.forEach((p,i)=>{const el=document.getElementById("diceCubes"+i);el.innerHTML='<span class="dice-cube rolling">'+diceFaces[Math.floor(Math.random()*6)]+'</span><span class="dice-cube rolling">'+diceFaces[Math.floor(Math.random()*6)]+'</span>'});await new Promise(r=>setTimeout(r,75+t*9))}
- for(let i=0;i<players.length;i++){const p=players[i];p.a=1+Math.floor(Math.random()*6);p.b=1+Math.floor(Math.random()*6);p.total=p.a+p.b;const el=document.getElementById("diceCubes"+i);el.innerHTML='<span class="dice-cube">'+diceFaces[p.a-1]+'</span><span class="dice-cube">'+diceFaces[p.b-1]+'</span>';document.getElementById("diceTotal"+i).textContent=p.total;await new Promise(r=>setTimeout(r,180))}
+ for(let t=0;t<18;t++){if(t%2===0)diceRattleSound();players.forEach((p,i)=>{const el=document.getElementById("diceCubes"+i);el.innerHTML='<span class="dice-cube rolling">'+diceFaces[Math.floor(Math.random()*6)]+'</span><span class="dice-cube rolling">'+diceFaces[Math.floor(Math.random()*6)]+'</span>'});await new Promise(r=>setTimeout(r,75+t*9))}
+ for(let i=0;i<players.length;i++){diceImpactSound();const p=players[i];p.a=1+Math.floor(Math.random()*6);p.b=1+Math.floor(Math.random()*6);p.total=p.a+p.b;const el=document.getElementById("diceCubes"+i);el.innerHTML='<span class="dice-cube">'+diceFaces[p.a-1]+'</span><span class="dice-cube">'+diceFaces[p.b-1]+'</span>';document.getElementById("diceTotal"+i).textContent=p.total;await new Promise(r=>setTimeout(r,180))}
  const max=Math.max(...players.map(p=>p.total)),winners=players.filter(p=>p.total===max),winner=winners[Math.floor(Math.random()*winners.length)],pool=bet*players.length;
  document.getElementById("diceSeat"+players.indexOf(winner)).classList.add("winner");if(winner.you)state.balance+=pool;
  save();render();document.getElementById("diceResult").textContent=(winner.you?"🏆 ТЫ ПОБЕДИЛ!":"🤖 Победитель: "+winner.name)+" · "+max+" очков · "+(winner.you?"+"+pool.toLocaleString("ru-RU"):"банк забран")+" 🪙";
  diceBusy=false;
 }
+
+/* ARCADE SOUND FX — generated locally with Web Audio */
+let arcadeAudio=null;
+function arcadeCtx(){try{if(!arcadeAudio)arcadeAudio=new(window.AudioContext||window.webkitAudioContext)();if(arcadeAudio.state==="suspended")arcadeAudio.resume();return arcadeAudio}catch(e){return null}}
+function arcadeTone(freq,duration,type="sine",volume=.035,endFreq=null){const c=arcadeCtx();if(!c)return;const o=c.createOscillator(),g=c.createGain(),now=c.currentTime;o.type=type;o.frequency.setValueAtTime(freq,now);if(endFreq)o.frequency.exponentialRampToValueAtTime(Math.max(1,endFreq),now+duration);g.gain.setValueAtTime(.0001,now);g.gain.exponentialRampToValueAtTime(volume,now+.012);g.gain.exponentialRampToValueAtTime(.0001,now+duration);o.connect(g);g.connect(c.destination);o.start(now);o.stop(now+duration+.02)}
+function arcadeNoise(duration=.12,volume=.045,filter=1100){const c=arcadeCtx();if(!c)return;const n=Math.max(1,Math.floor(c.sampleRate*duration)),b=c.createBuffer(1,n,c.sampleRate),d=b.getChannelData(0);for(let i=0;i<n;i++)d[i]=(Math.random()*2-1)*(1-i/n);const src=c.createBufferSource(),f=c.createBiquadFilter(),g=c.createGain();f.type="lowpass";f.frequency.value=filter;g.gain.setValueAtTime(volume,c.currentTime);g.gain.exponentialRampToValueAtTime(.0001,c.currentTime+duration);src.buffer=b;src.connect(f);f.connect(g);g.connect(c.destination);src.start();src.stop(c.currentTime+duration)}
+function clawMotorSound(){arcadeTone(92,.65,"sawtooth",.025,68);arcadeTone(184,.6,"triangle",.012,130)}
+function clawServoSound(){arcadeTone(420,.16,"square",.018,250);setTimeout(()=>arcadeTone(310,.13,"square",.015,190),110)}
+function clawGrabSound(){arcadeNoise(.22,.075,700);arcadeTone(115,.24,"triangle",.06,62);setTimeout(()=>arcadeTone(740,.09,"metallic",.018,390),80)}
+function clawLiftSound(){arcadeTone(160,.4,"sawtooth",.022,260);arcadeNoise(.1,.025,1500)}
+function diceRattleSound(){arcadeNoise(.16,.055,2600);arcadeTone(720,.045,"square",.012,520)}
+function diceImpactSound(){arcadeNoise(.095,.085,950);arcadeTone(180,.12,"triangle",.045,95)}
+
 /* CLAW MACHINE */
 let clawPosition=2,clawBusy=false;
 const CLAW_COLLECTIONS=[
@@ -6998,12 +7011,12 @@ function stopClawMove(){
 function moveClaw(d){if(clawBusy)return;clawPosition=Math.max(0,Math.min(4,clawPosition+d));document.getElementById("clawCarriage").style.left=(10+clawPosition*20)+"%";document.getElementById("clawPosition").textContent="КАРЕТКА: "+["КРАЙ СЛЕВА","ЛЕВО","ЦЕНТР","ПРАВО","КРАЙ СПРАВА"][clawPosition]}
 async function dropClaw(){
  if(clawBusy)return;refreshClawCollection();const cost=100;if(state.balance<cost){document.getElementById("clawResult").textContent="Не хватает 100 монет.";return}
- clawBusy=true;state.balance-=cost;save();render();const machine=document.querySelector(".claw-machine"),head=document.getElementById("clawHead"),cable=document.getElementById("clawCable"),pos=clawPosition;
+ clawBusy=true;state.balance-=cost;save();render();clawMotorSound();const machine=document.querySelector(".claw-machine"),head=document.getElementById("clawHead"),cable=document.getElementById("clawCable"),pos=clawPosition;
  document.getElementById("clawDrop").disabled=true;document.getElementById("clawResult").textContent="Клешня опускается...";
- machine.classList.add("grabbing");head.style.top="260px";cable.style.height="251px";await new Promise(r=>setTimeout(r,1100));
- const success=Math.random()<.58;const idx=Math.min(14,Math.max(0,Math.round(pos*3+Math.random()*2-1)));const prize=clawLoot[idx];const spans=document.querySelectorAll("#clawPrizes span");
+ machine.classList.add("grabbing");clawServoSound();head.style.top="260px";cable.style.height="251px";await new Promise(r=>setTimeout(r,1100));
+ const success=Math.random()<.58;clawGrabSound();const idx=Math.min(14,Math.max(0,Math.round(pos*3+Math.random()*2-1)));const prize=clawLoot[idx];const spans=document.querySelectorAll("#clawPrizes span");
  if(success){spans[idx].style.opacity="0";spans[idx].style.transform="translateY(-120px) scale(.5)";document.getElementById("clawResult").textContent="🤏 Захват! "+prize[0]+" "+prize[1]+" поднят!";head.innerHTML='<div class="claw-jaw left"></div><div class="claw-jaw right"></div><div class="claw-finger"></div><span style="position:absolute;top:34px;left:9px;font-size:24px">'+prize[0]+'</span>'}else document.getElementById("clawResult").textContent="Клешня разжалась... игрушка выскользнула 😭";
- machine.classList.remove("grabbing");machine.classList.add("lifting");head.style.top="87px";cable.style.height="78px";await new Promise(r=>setTimeout(r,1100));
+ machine.classList.remove("grabbing");machine.classList.add("lifting");clawLiftSound();head.style.top="87px";cable.style.height="78px";await new Promise(r=>setTimeout(r,1100));
  if(success){state.balance+=prize[2];state.inventory.push({name:prize[1],icon:prize[0],value:prize[2],id:Date.now()});save();render();document.getElementById("clawResult").textContent="🎉 "+prize[0]+" "+prize[1]+" · +" +prize[2].toLocaleString("ru-RU")+" 🪙 добавлено в инвентарь!"}
  machine.classList.remove("lifting");head.innerHTML='<div class="claw-jaw left"></div><div class="claw-jaw right"></div><div class="claw-finger"></div>';head.style.top="87px";cable.style.height="78px";document.getElementById("clawDrop").disabled=false;clawBusy=false;updateClawRefresh();
 }
