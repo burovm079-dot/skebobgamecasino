@@ -801,7 +801,7 @@ line-height:1.6;
 @media(max-width:390px){.plinko-board{height:300px}.plinko-peg{width:6px;height:6px}.plinko-slot{padding:7px 0;font-size:8px}}
 /* BLACKJACK */
 .bj-table{background:radial-gradient(ellipse at center,#176b49,#073d2e 68%,#05271f);border:5px solid #9b7138;border-radius:24px;padding:18px;margin:16px 0;color:white;box-shadow:inset 0 0 30px #0008,0 8px 24px #0005;min-height:300px}
-.bj-dealer,.bj-you{text-align:center;padding:8px}.bj-seat-name{font-weight:900;letter-spacing:1px;margin-bottom:8px}.bj-cards{display:flex;justify-content:center;gap:7px;flex-wrap:wrap;min-height:82px;align-items:center}.bj-card{width:53px;height:76px;border-radius:8px;background:#fff;color:#181818;display:grid;place-items:center;font-size:22px;font-weight:900;box-shadow:0 3px 8px #0007;border:1px solid #ddd}.bj-card.red{color:#d3263e}.bj-divider{text-align:center;color:#e9d39b;font-size:11px;letter-spacing:4px;border-top:1px solid #ffffff40;border-bottom:1px solid #ffffff40;padding:8px;margin:6px 0}.bj-players{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:8px}.bj-bot{background:#0003;border:1px solid #ffffff35;border-radius:12px;padding:8px;text-align:center;color:white}.bj-bot .bj-cards{min-height:70px}.bj-bot .bj-card{width:40px;height:58px;font-size:17px}.bj-actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}.bj-actions>*{flex:1;min-width:110px}
+.bj-dealer,.bj-you{text-align:center;padding:8px}.bj-seat-name{font-weight:900;letter-spacing:1px;margin-bottom:8px}.bj-cards{display:flex;justify-content:center;gap:7px;flex-wrap:wrap;min-height:82px;align-items:center}.bj-card{width:53px;height:76px;border-radius:8px;background:#fff;color:#181818;display:grid;place-items:center;font-size:22px;font-weight:900;box-shadow:0 3px 8px #0007;border:1px solid #ddd}.bj-card.red{color:#d3263e}.bj-card.bj-new{animation:bjCardFly .48s cubic-bezier(.18,.78,.25,1) both;transform-origin:center;will-change:transform,opacity}@keyframes bjCardFly{0%{opacity:0;transform:translate(115px,-155px) rotate(24deg) scale(.72);filter:brightness(1.35)}65%{opacity:1;transform:translate(-8px,7px) rotate(-5deg) scale(1.04)}82%{transform:translate(3px,-2px) rotate(2deg) scale(.99)}100%{opacity:1;transform:translate(0,0) rotate(0) scale(1);filter:none}}.bj-bot .bj-card.bj-new{animation-name:bjBotCardFly}.bj-dealer .bj-card.bj-new{animation-name:bjDealerCardFly}@keyframes bjBotCardFly{0%{opacity:0;transform:translate(70px,-95px) rotate(20deg) scale(.7)}70%{opacity:1;transform:translate(-4px,4px) rotate(-3deg)}100%{transform:none}}@keyframes bjDealerCardFly{0%{opacity:0;transform:translate(0,-150px) rotate(18deg) scale(.7)}70%{opacity:1;transform:translate(0,5px) rotate(-3deg)}100%{transform:none}}.bj-divider{text-align:center;color:#e9d39b;font-size:11px;letter-spacing:4px;border-top:1px solid #ffffff40;border-bottom:1px solid #ffffff40;padding:8px;margin:6px 0}.bj-players{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:8px}.bj-bot{background:#0003;border:1px solid #ffffff35;border-radius:12px;padding:8px;text-align:center;color:white}.bj-bot .bj-cards{min-height:70px}.bj-bot .bj-card{width:40px;height:58px;font-size:17px}.bj-actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}.bj-actions>*{flex:1;min-width:110px}
 /* SLOTS */
 .slots-machine{display:flex;justify-content:center;gap:10px;margin:22px auto;padding:15px;background:linear-gradient(145deg,#392713,#14131a);border:3px solid #b98732;border-radius:18px;max-width:420px;box-shadow:0 0 24px #f4c75e22}
 .slots-reel{position:relative;display:grid;place-items:center;width:30%;height:105px;overflow:hidden;background:linear-gradient(180deg,#fff8dc,#d6c18b 48%,#fff8dc);border:3px solid #8c672c;border-radius:12px;color:#21180b;font-size:clamp(42px,12vw,64px);text-shadow:0 2px 2px #fff;box-shadow:inset 0 0 12px #5c3b12,inset 0 12px 12px #fff8,inset 0 -12px 12px #5c3b1244}
@@ -6334,30 +6334,64 @@ function updateBjControls(){
 }
 function setBjBet(v){if(bjBusy||bjRound&&!bjRound.finished)return;document.getElementById("bjBet").value=v==="max"?Math.max(10,Math.floor(state.balance)):v;updateBjControls()}
 function changeBjBet(d){if(bjBusy||bjRound&&!bjRound.finished)return;const e=document.getElementById("bjBet"),n=Math.max(10,Math.floor(Number(e.value)||10));e.value=Math.max(10,n+(d>0?10:-10));updateBjControls()}
+let bjRenderedCounts={};
+function bjAnimatedHandHTML(hand,key,hideLast=false){
+ const previous=bjRenderedCounts[key]||0;
+ const html=hand.map((c,i)=>bjCardHTML(c,hideLast&&i===1)+(i>=previous&&i===hand.length-1?'').join('')).join("");
+ bjRenderedCounts[key]=hand.length;
+ if(!hand.length||hand.length<=previous)return html;
+ const last=html.lastIndexOf('<span class="bj-card');
+ if(last<0)return html;
+ const close=html.indexOf('>',last);
+ return html.slice(0,close).replace('class="bj-card','class="bj-card bj-new')+html.slice(close);
+}
 function renderBj(){
  if(!bjRound)return;
  const r=bjRound,hide=r.turn==="you"&&!r.finished;
- document.getElementById("bjDealerCards").innerHTML=bjHandHTML(r.dealer,hide);
+ document.getElementById("bjDealerCards").innerHTML=bjAnimatedHandHTML(r.dealer,"dealer",hide);
  document.getElementById("bjDealerScore").textContent=hide?"Вторая карта закрыта":("Очки: "+bjValue(r.dealer));
- document.getElementById("bjYourCards").innerHTML=bjHandHTML(r.you);
+ document.getElementById("bjYourCards").innerHTML=bjAnimatedHandHTML(r.you,"you");
  document.getElementById("bjYourScore").textContent="Очки: "+bjValue(r.you);
- document.getElementById("bjPlayers").innerHTML=r.bots.map(b=>'<div class="bj-bot"><div class="bj-seat-name">🤖 '+b.name+'</div><div class="bj-cards">'+bjHandHTML(b.cards,!r.finished)+'</div><div class="small">'+(r.finished?"Очки: "+bjValue(b.cards):"Играет...")+'</div></div>').join("");
+ document.getElementById("bjPlayers").innerHTML=r.bots.map((b,i)=>'<div class="bj-bot"><div class="bj-seat-name">🤖 '+b.name+'</div><div class="bj-cards">'+bjAnimatedHandHTML(b.cards,"bot"+i,!r.finished)+'</div><div class="small">'+(r.finished?"Очки: "+bjValue(b.cards):(r.turn==="bots"&&r.activeBot===i?"Ходит...":"Ожидает хода"))+'</div></div>').join("");
  updateBjControls();
 }
-function startBlackjack(){
+const bjDelay=ms=>new Promise(resolve=>setTimeout(resolve,ms));
+async function startBlackjack(){
  if(bjBusy||bjRound&&!bjRound.finished)return;
  const bet=Math.floor(Number(document.getElementById("bjBet").value));
  if(!Number.isFinite(bet)||bet<10||bet>state.balance){alert("Недостаточно монет или неверная ставка.");return}
- state.balance-=bet;addTurnover(bet);state.stats.blackjackGames=(state.stats.blackjackGames||0)+1;save();
+ bjBusy=true;state.balance-=bet;addTurnover(bet);state.stats.blackjackGames=(state.stats.blackjackGames||0)+1;save();
  const count=Math.floor(Math.random()*4),pool=[...BJ_NAMES].sort(()=>Math.random()-.5);
- const bots=Array.from({length:count},(_,i)=>({name:pool[i],cards:[]}));const deck={};
- bjRound={bet,you:[],dealer:[],bots,turn:"you",finished:false};
- bjDraw(bjRound.you);bjDraw(bjRound.dealer);bjDraw(bjRound.you);bots.forEach(b=>{bjDraw(b.cards);bjDraw(b.cards)});
- renderBj();document.getElementById("bjStatus").textContent=count?"За столом "+count+" бот(а). Твой ход!":"Сегодня ты играешь один на один с дилером.";
- if(bjValue(bjRound.you)===21){bjFinish();return}
+ const bots=Array.from({length:count},(_,i)=>({name:pool[i],cards:[]}));bjRenderedCounts={};
+ bjRound={bet,you:[],dealer:[],bots,turn:"dealing",finished:false};
+ document.getElementById("bjStatus").textContent="🎴 Дилер раздаёт карты...";
+ updateBjControls();renderBj();
+ const first=[["you",bjRound.you],["dealer",bjRound.dealer],...bots.map((b,i)=>["bot"+i,b.cards]),["you",bjRound.you],["dealer",bjRound.dealer],...bots.map((b,i)=>["bot"+i,b.cards])];
+ for(const [key,hand] of first){bjDraw(hand);renderBj();await bjDelay(330)}
+ bjRound.turn="you";bjBusy=false;renderBj();
+ document.getElementById("bjStatus").textContent=count?"Карты розданы. Сначала ходишь ты, затем каждый игрок по очереди.":"Карты розданы. Твой ход!";
+ if(bjValue(bjRound.you)===21){bjStand();return}
 }
-function bjHit(){if(!bjRound||bjRound.finished||bjRound.turn!=="you"||bjBusy)return;bjDraw(bjRound.you);renderBj();if(bjValue(bjRound.you)>=21){if(bjValue(bjRound.you)>21)bjFinish();else bjStand()}}
-function bjStand(){if(!bjRound||bjRound.finished||bjRound.turn!=="you"||bjBusy)return;bjRound.turn="dealer";bjBusy=true;renderBj();setTimeout(()=>{bjRound.bots.forEach(b=>{while(bjValue(b.cards)<17)bjDraw(b.cards)});while(bjValue(bjRound.dealer)<17)bjDraw(bjRound.dealer);bjRound.turn="done";bjBusy=false;bjFinish()},550)}
+function bjHit(){
+ if(!bjRound||bjRound.finished||bjRound.turn!=="you"||bjBusy)return;
+ bjBusy=true;bjDraw(bjRound.you);renderBj();
+ setTimeout(()=>{bjBusy=false;if(bjValue(bjRound.you)>=21){if(bjValue(bjRound.you)>21)bjStand();else bjStand()}else renderBj()},520);
+}
+async function bjStand(){
+ if(!bjRound||bjRound.finished||bjRound.turn!=="you"||bjBusy)return;
+ bjRound.turn="bots";bjBusy=true;renderBj();
+ document.getElementById("bjStatus").textContent="🤖 Игроки делают ходы по очереди...";
+ for(let i=0;i<bjRound.bots.length;i++){
+  const bot=bjRound.bots[i];bjRound.activeBot=i;renderBj();await bjDelay(450);
+  while(bjValue(bot.cards)<17){bjDraw(bot.cards);renderBj();await bjDelay(650)}
+  await bjDelay(350);
+ }
+ bjRound.turn="dealer";bjRound.activeBot=-1;renderBj();
+ document.getElementById("bjStatus").textContent="🎩 Ход дилера...";
+ await bjDelay(550);
+ while(bjValue(bjRound.dealer)<17){bjDraw(bjRound.dealer);renderBj();await bjDelay(700)}
+ bjRound.turn="done";bjBusy=false;bjFinish();
+}
 function bjFinish(){
  if(!bjRound||bjRound.finished)return;
  const r=bjRound;r.finished=true;r.turn="done";const you=bjValue(r.you),dealer=bjValue(r.dealer);
