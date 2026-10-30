@@ -1204,6 +1204,10 @@ padding:14px;
 @keyframes diceTumble{0%{transform:rotateX(-24deg) rotateY(25deg) translateY(-4px)}50%{transform:rotateX(155deg) rotateY(105deg) translateY(3px)}100%{transform:rotateX(315deg) rotateY(205deg) translateY(-2px)}}
 .dice-seat{background:linear-gradient(145deg,#252b39,#11151e);box-shadow:inset 0 1px #ffffff18,0 7px 15px #0006}
 
+
+.claw-arrows button{touch-action:none;user-select:none;-webkit-user-select:none;min-width:118px;transition:filter .12s,transform .12s,box-shadow .12s}
+.claw-arrows button:active,.claw-arrows button.moving{transform:translateY(3px);box-shadow:0 1px 0 #090909;filter:brightness(1.3)}
+
 </style>
 </head>
 
@@ -2455,7 +2459,7 @@ id="profileBalance"
   <div class="claw-prizes" id="clawPrizes"></div><div class="claw-floor"></div>
   <div class="claw-chute"><span>PRIZE EXIT</span></div>
  </div>
- <div class="claw-refresh" id="clawRefresh">Новая коллекция призов через 30:00</div><div class="claw-controls"><div class="claw-position" id="clawPosition">КАРЕТКА: ЦЕНТР</div><div class="claw-arrows"><button onclick="moveClaw(-1)" id="clawLeft">◀</button><button onclick="moveClaw(1)" id="clawRight">▶</button></div><button class="claw-drop" id="clawDrop" onclick="dropClaw()">⬇ ОПУСТИТЬ КЛЕШНЮ · 100 🪙</button></div>
+ <div class="claw-refresh" id="clawRefresh">Новая коллекция призов через 30:00</div><div class="claw-controls"><div class="claw-position" id="clawPosition">КАРЕТКА: ЦЕНТР</div><div class="claw-arrows"><button type="button" id="clawLeft" onpointerdown="startClawMove(-1,event)" onpointerup="stopClawMove()" onpointerleave="stopClawMove()" onpointercancel="stopClawMove()">◀ ЗАЖАТЬ</button><button type="button" id="clawRight" onpointerdown="startClawMove(1,event)" onpointerup="stopClawMove()" onpointerleave="stopClawMove()" onpointercancel="stopClawMove()">ЗАЖАТЬ ▶</button></div><button class="claw-drop" id="clawDrop" onclick="dropClaw()">⬇ ОПУСТИТЬ КЛЕШНЮ · 100 🪙</button></div>
  <div class="claw-result" id="clawResult">Выбери позицию и попробуй поймать игрушку!</div>
  <div class="claw-statusline"><span>● POWER ON</span><span>GRIP STRENGTH: 72%</span><span>1 CREDIT = 100 COINS</span></div><div class="claw-foot"><span>MECHANICAL CLAW SYSTEM</span><span>PRIZE ARCADE · SKEBOB</span></div>
 </div>
@@ -6975,6 +6979,20 @@ function refreshClawCollection(){
 }
 function updateClawRefresh(){refreshClawCollection();const left=1800000-(Date.now()%1800000),el=document.getElementById("clawRefresh");if(el)el.textContent="СЛЕДУЮЩАЯ КОЛЛЕКЦИЯ ЧЕРЕЗ "+String(Math.floor(left/60000)).padStart(2,"0")+":"+String(Math.floor(left%60000/1000)).padStart(2,"0");}
 
+let clawMoveTimer=null,clawMoveDirection=0,clawMoveLast=0;
+function startClawMove(direction,event){
+ if(clawBusy)return;
+ if(event){event.preventDefault();try{event.currentTarget.setPointerCapture(event.pointerId)}catch(e){}}
+ stopClawMove();clawMoveDirection=direction;clawMoveLast=Date.now();
+ const btn=document.getElementById(direction<0?"clawLeft":"clawRight");if(btn)btn.classList.add("moving");
+ moveClaw(direction);
+ clawMoveTimer=setInterval(()=>{if(!clawBusy)moveClaw(clawMoveDirection)},180);
+}
+function stopClawMove(){
+ if(clawMoveTimer){clearInterval(clawMoveTimer);clawMoveTimer=null}
+ document.querySelectorAll(".claw-arrows button").forEach(b=>b.classList.remove("moving"));
+ clawMoveDirection=0;
+}
 function moveClaw(d){if(clawBusy)return;clawPosition=Math.max(0,Math.min(4,clawPosition+d));document.getElementById("clawCarriage").style.left=(10+clawPosition*20)+"%";document.getElementById("clawPosition").textContent="КАРЕТКА: "+["КРАЙ СЛЕВА","ЛЕВО","ЦЕНТР","ПРАВО","КРАЙ СПРАВА"][clawPosition]}
 async function dropClaw(){
  if(clawBusy)return;refreshClawCollection();const cost=100;if(state.balance<cost){document.getElementById("clawResult").textContent="Не хватает 100 монет.";return}
