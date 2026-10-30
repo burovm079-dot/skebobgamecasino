@@ -1177,6 +1177,33 @@ padding:14px;
 .claw-controls{padding:14px 5px 4px;text-align:center}.claw-position{font-size:11px;letter-spacing:2px;color:#f4d78b;margin:3px 0 10px}.claw-arrows{display:flex;justify-content:center;gap:20px}.claw-arrows button{width:72px;height:45px;border:1px solid #d8b75f;border-radius:12px;background:linear-gradient(#4a4a50,#17171b);color:#ffe6a0;font-size:22px;box-shadow:0 4px 0 #090909}.claw-drop{width:100%;margin-top:14px;padding:15px;border:1px solid #ffe4a0;border-radius:12px;background:linear-gradient(110deg,#a66b18,#f5d77c,#a66b18);font-weight:1000;color:#241606;letter-spacing:1px;box-shadow:0 4px 0 #59370e}.claw-result{text-align:center;min-height:38px;padding:12px;color:#ffe08a;font-weight:900}.claw-foot{display:flex;justify-content:space-between;gap:5px;font-size:8px;letter-spacing:1px;color:#b9a77c;border-top:1px solid #a88b4b55;padding:10px 2px 0}.claw-machine.grabbing .claw-jaw.left{transform:rotate(-8deg)}.claw-machine.grabbing .claw-jaw.right{transform:rotate(8deg)}.claw-machine.lifting .claw-head{top:87px}.claw-machine.lifting .claw-cable{height:78px}
 @media(max-width:430px){.claw-glass{height:300px}.claw-prizes{font-size:31px}.claw-marquee{font-size:16px}.claw-foot{font-size:7px}}
 
+
+/* REALISTIC ARCADE DETAILS */
+.claw-machine{position:relative;background:linear-gradient(145deg,#d8b45f 0%,#63451d 9%,#181a20 17%,#080b12 80%,#9b7131 100%);border-radius:28px;padding:16px;box-shadow:0 24px 50px #000c,0 4px 0 #f0d58a,inset 0 0 0 2px #fff5,inset 0 0 22px #000}
+.claw-marquee{height:66px;border:4px ridge #d9b45d;border-radius:12px;background:radial-gradient(ellipse,#543b16,#100d09 75%);display:flex;flex-direction:column;justify-content:center;margin-bottom:10px}
+.claw-glass{height:370px;border:8px solid #9b9da1;border-image:linear-gradient(90deg,#444,#e6e7e8,#555,#ddd,#333) 1;border-radius:8px;background:linear-gradient(180deg,#182b3e,#40556a 54%,#263342 55%,#111923);box-shadow:inset 0 0 45px #000c,0 0 0 2px #08090b}
+.claw-glass:after{content:"";position:absolute;inset:0;z-index:6;pointer-events:none;background:linear-gradient(108deg,#fff3 0%,#fff1 12%,transparent 28%,transparent 72%,#fff2 100%),repeating-linear-gradient(90deg,transparent 0 49%,#fff1 50%,transparent 51%)}
+.claw-rail{top:27px;height:12px;background:linear-gradient(#f4f4f4,#777 35%,#222 70%,#bbb);border:1px solid #ddd;z-index:2}
+.claw-carriage{z-index:3;filter:drop-shadow(0 4px 3px #000)}
+.claw-carriage:before{width:46px;left:4px;height:20px;background:linear-gradient(90deg,#292d32,#f4f4f4 18%,#777 50%,#eee 78%,#222);border:1px solid #222}
+.claw-cable{left:25px;width:5px;background:repeating-linear-gradient(180deg,#aaa 0 3px,#555 3px 5px);box-shadow:0 0 3px #000}
+.claw-head{filter:drop-shadow(0 4px 3px #000)}
+.claw-head:before{width:22px;left:11px;height:16px;background:linear-gradient(90deg,#555,#eee,#666);border:1px solid #333}
+.claw-jaw{width:6px;height:32px;background:linear-gradient(90deg,#555,#eee 45%,#777);border:1px solid #444}
+.claw-prizes{height:148px;bottom:7px;left:3%;right:3%;padding:12px 5px 0;background:linear-gradient(transparent,#0009 70%);align-items:flex-end;z-index:1}
+.claw-prizes span{height:53px;display:flex;align-items:center;justify-content:center;filter:drop-shadow(0 7px 3px #000);font-size:39px}
+.claw-floor{position:absolute;bottom:0;left:0;right:0;height:20px;background:linear-gradient(#89909a,#252a31 45%,#090b0f);border-top:3px solid #c6cbd0;z-index:2}
+.claw-chute{z-index:3;right:8px;width:100px;height:42px;background:linear-gradient(135deg,#777,#151515 55%,#555);border:3px solid #aeb2b6;border-bottom:0;box-shadow:inset 0 6px 10px #000;border-radius:10px 10px 0 0;padding-top:14px}
+.claw-statusline{display:flex;justify-content:space-between;gap:6px;color:#ffe6a0;font-size:10px;margin:8px 2px}
+.claw-refresh{font-size:11px;color:#f2d48b;text-align:center;margin:5px 0 10px}
+.claw-machine.shake{animation:clawCabinetShake .35s ease}
+@keyframes clawCabinetShake{0%,100%{transform:translateX(0)}25%{transform:translateX(-3px)}75%{transform:translateX(3px)}}
+.dice-cubes{display:flex;justify-content:center;gap:10px;perspective:350px;min-height:48px;align-items:center}
+.dice-cube{width:38px;height:38px;border-radius:9px;display:grid;place-items:center;background:linear-gradient(145deg,#fff,#cfd4dc);color:#20242b;font-size:31px;line-height:1;box-shadow:inset -3px -4px 7px #8c929c,inset 2px 2px 5px white,0 5px 8px #0009;border:1px solid #9ca3ad;text-shadow:0 1px #fff}
+.dice-cube.rolling{animation:diceTumble .42s cubic-bezier(.2,.8,.2,1) infinite alternate}
+@keyframes diceTumble{0%{transform:rotateX(-24deg) rotateY(25deg) translateY(-4px)}50%{transform:rotateX(155deg) rotateY(105deg) translateY(3px)}100%{transform:rotateX(315deg) rotateY(205deg) translateY(-2px)}}
+.dice-seat{background:linear-gradient(145deg,#252b39,#11151e);box-shadow:inset 0 1px #ffffff18,0 7px 15px #0006}
+
 </style>
 </head>
 
@@ -2425,12 +2452,12 @@ id="profileBalance"
  <div class="claw-marquee"><span>★ SKEBOB PRIZE ARCADE ★</span><small>EST. 2026 · LUCKY YOU</small></div>
  <div class="claw-glass">
   <div class="claw-reflection"></div><div class="claw-rail"><div class="claw-carriage" id="clawCarriage"><div class="claw-cable" id="clawCable"></div><div class="claw-head" id="clawHead"><div class="claw-jaw left"></div><div class="claw-jaw right"></div><div class="claw-finger"></div></div></div></div>
-  <div class="claw-prizes" id="clawPrizes"><span>🧸</span><span>💎</span><span>🐻</span><span>🎁</span><span>👑</span><span>🦄</span><span>🏎️</span><span>🎮</span><span>💍</span><span>🐸</span><span>🪙</span><span>🚀</span><span>🧸</span><span>💎</span><span>🎁</span></div>
+  <div class="claw-prizes" id="clawPrizes"></div><div class="claw-floor"></div>
   <div class="claw-chute"><span>PRIZE EXIT</span></div>
  </div>
- <div class="claw-controls"><div class="claw-position" id="clawPosition">КАРЕТКА: ЦЕНТР</div><div class="claw-arrows"><button onclick="moveClaw(-1)" id="clawLeft">◀</button><button onclick="moveClaw(1)" id="clawRight">▶</button></div><button class="claw-drop" id="clawDrop" onclick="dropClaw()">⬇ ОПУСТИТЬ КЛЕШНЮ · 100 🪙</button></div>
+ <div class="claw-refresh" id="clawRefresh">Новая коллекция призов через 30:00</div><div class="claw-controls"><div class="claw-position" id="clawPosition">КАРЕТКА: ЦЕНТР</div><div class="claw-arrows"><button onclick="moveClaw(-1)" id="clawLeft">◀</button><button onclick="moveClaw(1)" id="clawRight">▶</button></div><button class="claw-drop" id="clawDrop" onclick="dropClaw()">⬇ ОПУСТИТЬ КЛЕШНЮ · 100 🪙</button></div>
  <div class="claw-result" id="clawResult">Выбери позицию и попробуй поймать игрушку!</div>
- <div class="claw-foot"><span>● POWER ON</span><span>GRIP STRENGTH: 72%</span><span>1 CREDIT = 100 COINS</span></div>
+ <div class="claw-statusline"><span>● POWER ON</span><span>GRIP STRENGTH: 72%</span><span>1 CREDIT = 100 COINS</span></div><div class="claw-foot"><span>MECHANICAL CLAW SYSTEM</span><span>PRIZE ARCADE · SKEBOB</span></div>
 </div>
 </section>
 
@@ -6926,8 +6953,8 @@ async function playDice(){
  const arena=document.getElementById("dicePlayers");document.getElementById("dicePot").textContent="БАНК: "+(bet*players.length).toLocaleString("ru-RU")+" 🪙";
  arena.innerHTML=players.map((p,i)=>'<div class="dice-seat" id="diceSeat'+i+'"><div class="dice-avatar">'+p.avatar+'</div><div class="dice-name">'+p.name+'</div><div class="dice-cubes" id="diceCubes'+i+'">🎲 🎲</div><div class="dice-total" id="diceTotal'+i+'">?</div></div>').join("");
  document.getElementById("diceResult").textContent="Кости летят...";
- for(let t=0;t<12;t++){players.forEach((p,i)=>{const el=document.getElementById("diceCubes"+i);el.textContent=diceFaces[Math.floor(Math.random()*6)]+" "+diceFaces[Math.floor(Math.random()*6)]});await new Promise(r=>setTimeout(r,85))}
- players.forEach((p,i)=>{p.a=1+Math.floor(Math.random()*6);p.b=1+Math.floor(Math.random()*6);p.total=p.a+p.b;document.getElementById("diceCubes"+i).textContent=diceFaces[p.a-1]+" "+diceFaces[p.b-1];document.getElementById("diceTotal"+i).textContent=p.total});
+ for(let t=0;t<18;t++){players.forEach((p,i)=>{const el=document.getElementById("diceCubes"+i);el.innerHTML='<span class="dice-cube rolling">'+diceFaces[Math.floor(Math.random()*6)]+'</span><span class="dice-cube rolling">'+diceFaces[Math.floor(Math.random()*6)]+'</span>'});await new Promise(r=>setTimeout(r,75+t*9))}
+ for(let i=0;i<players.length;i++){const p=players[i];p.a=1+Math.floor(Math.random()*6);p.b=1+Math.floor(Math.random()*6);p.total=p.a+p.b;const el=document.getElementById("diceCubes"+i);el.innerHTML='<span class="dice-cube">'+diceFaces[p.a-1]+'</span><span class="dice-cube">'+diceFaces[p.b-1]+'</span>';document.getElementById("diceTotal"+i).textContent=p.total;await new Promise(r=>setTimeout(r,180))}
  const max=Math.max(...players.map(p=>p.total)),winners=players.filter(p=>p.total===max),winner=winners[Math.floor(Math.random()*winners.length)],pool=bet*players.length;
  document.getElementById("diceSeat"+players.indexOf(winner)).classList.add("winner");if(winner.you)state.balance+=pool;
  save();render();document.getElementById("diceResult").textContent=(winner.you?"🏆 ТЫ ПОБЕДИЛ!":"🤖 Победитель: "+winner.name)+" · "+max+" очков · "+(winner.you?"+"+pool.toLocaleString("ru-RU"):"банк забран")+" 🪙";
@@ -6935,10 +6962,22 @@ async function playDice(){
 }
 /* CLAW MACHINE */
 let clawPosition=2,clawBusy=false;
-const clawLoot=[["🧸","Плюшевый мишка",80],["💎","Кристалл",500],["🐻","Мягкий медведь",120],["🎁","Подарок",250],["👑","Золотая корона",1500],["🦄","Единорог",300],["🏎️","Мини-суперкар",700],["🎮","Игровая приставка",900],["💍","Алмазное кольцо",1200],["🐸","Лягушка",100],["🪙","Золотая монета",400],["🚀","Ракета",600],["🧸","Плюшевый мишка",80],["💎","Кристалл",500],["🎁","Подарок",250]];
+const CLAW_COLLECTIONS=[
+ [["🧸","Мишка",80],["💎","Кристалл",500],["🐻","Медведь",120],["🎁","Сюрприз",250],["👑","Корона",1500],["🦄","Единорог",300],["🏎️","Суперкар",700],["🎮","Консоль",900],["💍","Кольцо",1200],["🐸","Лягушка",100],["🪙","Монета",400],["🚀","Ракета",600],["🐼","Панда",350],["🎧","Наушники",650],["🦖","Динозавр",220]],
+ [["🐙","Осьминог",180],["💠","Сапфир",650],["🦊","Лис",260],["🎀","Бант",90],["🏆","Кубок",1800],["🐲","Дракон",950],["🚗","Ретро авто",750],["📱","Смартфон",1100],["⌚","Часы",1300],["🍀","Клевер",140],["💰","Мешок монет",500],["🛸","НЛО",800],["🐨","Коала",300],["📷","Камера",700],["🦄","Мини единорог",320]],
+ [["🐯","Тигр",300],["🔮","Шар",550],["🐧","Пингвин",180],["🧩","Пазл",120],["💎","Большой алмаз",2000],["🦈","Акула",800],["🏍️","Мотоцикл",900],["💻","Ноутбук",1400],["💖","Сердце",420],["🌈","Радуга",260],["🪙","Золотой слиток",650],["🤖","Робот",750],["🐹","Хомяк",100],["🎸","Гитара",620],["🦋","Бабочка",210]]
+];
+let clawLoot=[],clawCollectionPeriod=-1;
+function refreshClawCollection(){
+ const period=Math.floor(Date.now()/1800000);if(period===clawCollectionPeriod)return;
+ clawCollectionPeriod=period;const source=CLAW_COLLECTIONS[((period%CLAW_COLLECTIONS.length)+CLAW_COLLECTIONS.length)%CLAW_COLLECTIONS.length];clawLoot=source.map(x=>[...x]);
+ const box=document.getElementById("clawPrizes");if(box)box.innerHTML=clawLoot.map((p,i)=>'<span title="'+p[1]+' · '+p[2]+' монет" data-prize="'+i+'">'+p[0]+'</span>').join("");
+}
+function updateClawRefresh(){refreshClawCollection();const left=1800000-(Date.now()%1800000),el=document.getElementById("clawRefresh");if(el)el.textContent="СЛЕДУЮЩАЯ КОЛЛЕКЦИЯ ЧЕРЕЗ "+String(Math.floor(left/60000)).padStart(2,"0")+":"+String(Math.floor(left%60000/1000)).padStart(2,"0");}
+
 function moveClaw(d){if(clawBusy)return;clawPosition=Math.max(0,Math.min(4,clawPosition+d));document.getElementById("clawCarriage").style.left=(10+clawPosition*20)+"%";document.getElementById("clawPosition").textContent="КАРЕТКА: "+["КРАЙ СЛЕВА","ЛЕВО","ЦЕНТР","ПРАВО","КРАЙ СПРАВА"][clawPosition]}
 async function dropClaw(){
- if(clawBusy)return;const cost=100;if(state.balance<cost){document.getElementById("clawResult").textContent="Не хватает 100 монет.";return}
+ if(clawBusy)return;refreshClawCollection();const cost=100;if(state.balance<cost){document.getElementById("clawResult").textContent="Не хватает 100 монет.";return}
  clawBusy=true;state.balance-=cost;save();render();const machine=document.querySelector(".claw-machine"),head=document.getElementById("clawHead"),cable=document.getElementById("clawCable"),pos=clawPosition;
  document.getElementById("clawDrop").disabled=true;document.getElementById("clawResult").textContent="Клешня опускается...";
  machine.classList.add("grabbing");head.style.top="260px";cable.style.height="251px";await new Promise(r=>setTimeout(r,1100));
@@ -6946,7 +6985,7 @@ async function dropClaw(){
  if(success){spans[idx].style.opacity="0";spans[idx].style.transform="translateY(-120px) scale(.5)";document.getElementById("clawResult").textContent="🤏 Захват! "+prize[0]+" "+prize[1]+" поднят!";head.innerHTML='<div class="claw-jaw left"></div><div class="claw-jaw right"></div><div class="claw-finger"></div><span style="position:absolute;top:34px;left:9px;font-size:24px">'+prize[0]+'</span>'}else document.getElementById("clawResult").textContent="Клешня разжалась... игрушка выскользнула 😭";
  machine.classList.remove("grabbing");machine.classList.add("lifting");head.style.top="87px";cable.style.height="78px";await new Promise(r=>setTimeout(r,1100));
  if(success){state.balance+=prize[2];state.inventory.push({name:prize[1],icon:prize[0],value:prize[2],id:Date.now()});save();render();document.getElementById("clawResult").textContent="🎉 "+prize[0]+" "+prize[1]+" · +" +prize[2].toLocaleString("ru-RU")+" 🪙 добавлено в инвентарь!"}
- machine.classList.remove("lifting");head.innerHTML='<div class="claw-jaw left"></div><div class="claw-jaw right"></div><div class="claw-finger"></div>';head.style.top="87px";cable.style.height="78px";document.getElementById("clawDrop").disabled=false;clawBusy=false;
+ machine.classList.remove("lifting");head.innerHTML='<div class="claw-jaw left"></div><div class="claw-jaw right"></div><div class="claw-finger"></div>';head.style.top="87px";cable.style.height="78px";document.getElementById("clawDrop").disabled=false;clawBusy=false;updateClawRefresh();
 }
 
 /* =========================
@@ -6978,6 +7017,8 @@ initBattles();
 updateSlotsControls();
 
 initSecretCase();
+refreshClawCollection();updateClawRefresh();
+setInterval(updateClawRefresh,1000);
 updateDailyCase();
 updateSecretDrop();
 
