@@ -3148,32 +3148,40 @@ description:"Начальный уровень казино"
 
 }
 
-/* DAILY TASKS — rolling 24-hour cycle */
+/* DAILY TASKS — random set every 24 hours */
 const DAILY_TASK_DURATION=24*60*60*1000;
-const DAILY_TASK_DEFS=[
- {id:"cases",title:"Открой 10 кейсов",description:"Прокрути любые 10 кейсов",target:10,reward:1500,icon:"🎁"},
- {id:"blackjack",title:"Выиграй 3 раза в Blackjack",description:"Победи дилера в трёх раундах",target:3,reward:2000,icon:"🃏"},
- {id:"sales",title:"Продай 5 предметов",description:"Продай любые пять предметов из инвентаря",target:5,reward:1200,icon:"💰"}
+const DAILY_TASK_REWARD=2222;
+const DAILY_TASK_POOL=[
+ {id:"cases",title:"Открой 10 кейсов",description:"Прокрути любые 10 кейсов",target:10,icon:"🎁"},
+ {id:"blackjack",title:"Выиграй 3 раза в Blackjack",description:"Победи дилера в трёх раундах",target:3,icon:"🃏"},
+ {id:"sales",title:"Продай 5 предметов",description:"Продай любые пять предметов из инвентаря",target:5,icon:"💰"},
+ {id:"race",title:"Победи в 2 гонках",description:"Займи первое место в двух гонках",target:2,icon:"🏁"},
+ {id:"mines",title:"Забери выигрыш в MINES 2 раза",description:"Успешно выведи выигрыш из двух игр",target:2,icon:"💣"},
+ {id:"upgrade",title:"Выиграй 3 апгрейда",description:"Успешно улучши предмет три раза",target:3,icon:"🎯"},
+ {id:"plane",title:"Успешно посади самолёт 2 раза",description:"Заверши два успешных полёта",target:2,icon:"✈️"}
 ];
+function makeDailyTaskSet(){return [...DAILY_TASK_POOL].sort(()=>Math.random()-.5).slice(0,3).map(t=>({...t,reward:DAILY_TASK_REWARD}));}
 function updateDailyTasks(shouldSave=true){
  const now=Date.now();
  if(!state.dailyTasks||!Number.isFinite(state.dailyTasks.startedAt)||now-state.dailyTasks.startedAt>=DAILY_TASK_DURATION){
-  state.dailyTasks={startedAt:now,progress:{cases:0,blackjack:0,sales:0},claimed:[]};
+  state.dailyTasks={startedAt:now,progress:{},claimed:[],tasks:makeDailyTaskSet()};
  }
- state.dailyTasks.progress=state.dailyTasks.progress||{cases:0,blackjack:0,sales:0};
+ state.dailyTasks.progress=state.dailyTasks.progress||{};
  state.dailyTasks.claimed=state.dailyTasks.claimed||[];
+ if(!Array.isArray(state.dailyTasks.tasks)||state.dailyTasks.tasks.length!==3)state.dailyTasks.tasks=makeDailyTaskSet();
  if(shouldSave)localStorage.setItem("skebobSave",JSON.stringify(state));
 }
 function claimDailyTask(id){
- updateDailyTasks();const task=DAILY_TASK_DEFS.find(t=>t.id===id);if(!task)return;
+ updateDailyTasks();const task=state.dailyTasks.tasks.find(t=>t.id===id);if(!task)return;
  const d=state.dailyTasks;if((d.progress[id]||0)<task.target||d.claimed.includes(id))return;
- d.claimed.push(id);state.balance+=task.reward;save();renderDailyTasks();
+ d.claimed.push(id);state.balance+=DAILY_TASK_REWARD;save();renderDailyTasks();
 }
 function renderDailyTasks(){
  updateDailyTasks();const list=document.getElementById("dailyTasksList");if(!list)return;
- list.innerHTML=DAILY_TASK_DEFS.map(t=>{const progress=Math.min(t.target,state.dailyTasks.progress[t.id]||0),done=progress>=t.target,claimed=state.dailyTasks.claimed.includes(t.id);return '<div class="panel"><div style="display:flex;gap:12px;align-items:center"><div style="font-size:32px">'+t.icon+'</div><div style="flex:1"><b>'+t.title+'</b><div class="small">'+t.description+'</div></div><b style="color:var(--gold)">+'+t.reward.toLocaleString("ru-RU")+' 🪙</b></div><div style="height:9px;background:var(--panel2);border-radius:9px;margin:13px 0 7px;overflow:hidden"><div style="height:100%;width:'+(progress/t.target*100)+'%;background:linear-gradient(90deg,#24cf78,#b8ed75)"></div></div><div style="display:flex;justify-content:space-between;align-items:center"><span class="small">'+progress+'/'+t.target+'</span><button class="secondary" '+(!done||claimed?'disabled':'')+' onclick="claimDailyTask(\''+t.id+'\')">'+(claimed?'✓ ЗАБРАНО':done?'ЗАБРАТЬ':'В ПРОЦЕССЕ')+'</button></div></div>'}).join("");
- const left=Math.max(0,DAILY_TASK_DURATION-(Date.now()-state.dailyTasks.startedAt));const h=Math.floor(left/3600000),m=Math.floor(left%3600000/60000),sec=Math.floor(left%60000/1000);document.getElementById("tasksTimer").textContent=[h,m,sec].map(v=>String(v).padStart(2,"0")).join(":");document.getElementById("tasksDone").textContent=DAILY_TASK_DEFS.filter(t=>(state.dailyTasks.progress[t.id]||0)>=t.target).length+"/3";
+ list.innerHTML=state.dailyTasks.tasks.map(t=>{const progress=Math.min(t.target,state.dailyTasks.progress[t.id]||0),done=progress>=t.target,claimed=state.dailyTasks.claimed.includes(t.id);return '<div class="panel"><div style="display:flex;gap:12px;align-items:center"><div style="font-size:32px">'+t.icon+'</div><div style="flex:1"><b>'+t.title+'</b><div class="small">'+t.description+'</div></div><b style="color:var(--gold)">+2 222 🪙</b></div><div style="height:9px;background:var(--panel2);border-radius:9px;margin:13px 0 7px;overflow:hidden"><div style="height:100%;width:'+(progress/t.target*100)+'%;background:linear-gradient(90deg,#24cf78,#b8ed75)"></div></div><div style="display:flex;justify-content:space-between;align-items:center"><span class="small">'+progress+'/'+t.target+'</span><button class="secondary" '+(!done||claimed?'disabled':'')+' onclick="claimDailyTask(\''+t.id+'\')">'+(claimed?'✓ ЗАБРАНО':done?'ЗАБРАТЬ':'В ПРОЦЕССЕ')+'</button></div></div>'}).join("");
+ const left=Math.max(0,DAILY_TASK_DURATION-(Date.now()-state.dailyTasks.startedAt));const h=Math.floor(left/3600000),m=Math.floor(left%3600000/60000),sec=Math.floor(left%60000/1000);document.getElementById("tasksTimer").textContent=[h,m,sec].map(v=>String(v).padStart(2,"0")).join(":");document.getElementById("tasksDone").textContent=state.dailyTasks.tasks.filter(t=>(state.dailyTasks.progress[t.id]||0)>=t.target).length+"/3";
 }
+function addDailyTaskProgress(id,amount=1){updateDailyTasks(false);if(state.dailyTasks.tasks.some(t=>t.id===id))state.dailyTasks.progress[id]=(state.dailyTasks.progress[id]||0)+amount;}
 setInterval(()=>{updateDailyTasks();if(!document.getElementById("tasks").classList.contains("hidden"))renderDailyTasks()},1000);
 
 /* =========================
@@ -4172,6 +4180,7 @@ if(secretOpening)state.secretDropUsedPeriod=Math.floor(Date.now()/SECRET_DROP_PE
 addTurnover(cost);
 
 state.stats.casesOpened+=qty;
+addDailyTaskProgress("cases",qty);
 state.dailyTasks.progress.cases+=qty;
 
 save();
@@ -4756,6 +4765,7 @@ multiplier
 state.balance+=reward;
 
 state.stats.upgradeWins++;
+addDailyTaskProgress("upgrade");
 
 registerWin(reward);
 
@@ -5275,6 +5285,7 @@ mineMultiplier
 state.balance+=reward;
 
 state.stats.minesWins++;
+addDailyTaskProgress("mines");
 
 registerWin(reward);
 
@@ -5886,6 +5897,7 @@ planeMultiplier
 state.balance+=reward;
 
 state.stats.planeWins++;
+addDailyTaskProgress("plane");
 
 registerWin(reward);
 
@@ -6212,7 +6224,7 @@ function toggleRaceSound(){raceSound=!raceSound;document.getElementById("raceSou
 async function startRaceGame(){if(raceBusy)return;const bet=Math.floor(Number(document.getElementById("raceBet").value));if(!Number.isFinite(bet)||bet<10||bet>state.balance){alert("Недостаточно монет или неверная ставка.");return}
 raceBusy=true;state.balance-=bet;addTurnover(bet);state.stats.raceGames++;save();updateRaceControls();renderRaceLanes();const runners=RACE_RUNNERS.map((_,i)=>document.getElementById("raceRunner"+i)),track=document.getElementById("raceTrack"),result=document.getElementById("raceResult");result.textContent="🚦 На старт...";await raceWait(400);result.textContent="3... 2... 1... ПОЕХАЛИ!";raceTone(440,.15);await raceWait(350);raceTone(700,.15);track.classList.add("running");const winner=Math.floor(Math.random()*4),progress=[0,0,0,0];
 for(let tick=0;tick<45;tick++){for(let i=0;i<4;i++){progress[i]=Math.min(100,progress[i]+(i===winner?2.4:1.15)+Math.random()*1.1);runners[i].style.left="calc("+Math.min(96,progress[i])+"% - 4px)"}raceTone(220+Math.random()*100,.025,.012);await raceWait(85);if(progress[winner]>=100)break}
-track.classList.remove("running");const won=winner===raceChoice,reward=won?bet*2:0;if(won){state.balance+=reward;state.stats.raceWins++;registerWin(reward)}save();result.style.color=won?"#24cf78":"#e34b55";result.innerHTML=won?"🏆 ПОБЕДА! "+RACE_RUNNERS[winner].icon+" <b>+"+reward.toLocaleString("ru-RU")+" 🪙</b>":"😢 Победил "+RACE_RUNNERS[winner].icon+" "+RACE_RUNNERS[winner].name+". Ставка проиграна.";raceTone(won?880:130,.35,.06);raceBusy=false;updateRaceControls()}
+track.classList.remove("running");const won=winner===raceChoice,reward=won?bet*2:0;if(won){state.balance+=reward;state.stats.raceWins++;addDailyTaskProgress("race");registerWin(reward)}save();result.style.color=won?"#24cf78":"#e34b55";result.innerHTML=won?"🏆 ПОБЕДА! "+RACE_RUNNERS[winner].icon+" <b>+"+reward.toLocaleString("ru-RU")+" 🪙</b>":"😢 Победил "+RACE_RUNNERS[winner].icon+" "+RACE_RUNNERS[winner].name+". Ставка проиграна.";raceTone(won?880:130,.35,.06);raceBusy=false;updateRaceControls()}
 function initRace(){renderRaceLanes();updateRaceControls();selectRace(0,document.querySelector(".race-picks button"))}
  
 /* CASE BATTLES */
@@ -6334,7 +6346,7 @@ function bjFinish(){
  else if(dealer>21||you>dealer){reward=you===21&&r.you.length===2?Math.floor(r.bet*2.5):r.bet*2;message="🎉 Ты победил дилера!";}
  else if(you===dealer){reward=r.bet;message="Ничья! Ставка возвращена."}
  else message="Дилер победил. В следующий раз повезёт!";
- if(reward){state.balance+=reward;if(reward>r.bet){registerWin(reward);state.stats.blackjackWins=(state.stats.blackjackWins||0)+1;state.dailyTasks.progress.blackjack++}}
+ if(reward){state.balance+=reward;if(reward>r.bet){registerWin(reward);state.stats.blackjackWins=(state.stats.blackjackWins||0)+1;addDailyTaskProgress("blackjack");}}
  document.getElementById("bjStatus").textContent=message+(reward?" Выплата: "+reward.toLocaleString("ru-RU")+" 🪙":"");
  renderBj();save();updateBjControls();
 }
