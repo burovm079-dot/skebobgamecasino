@@ -1177,10 +1177,6 @@ SKEBOB <span>CASINO</span>
 🎟 ПРОМО
 </button>
 
-<button onclick="showPage('profile')">
-👤 ПРОФИЛЬ
-</button>
-
 <button onclick="showPage('tasks')">📋 ЗАДАНИЯ</button>
 
 <button onclick="showPage('settings')">
@@ -1237,13 +1233,7 @@ SKEBOB <span>CASINO</span>
 <button onclick="showPage('slots',this)">🎰 СЛОТЫ</button>
 <button onclick="showPage('blackjack',this)">🃏 BLACKJACK</button>
 
-<button onclick="showPage('inventory',this)">
-🎒 INVENTORY
-</button>
 
-<button onclick="showPage('profile',this)">
-👤 ПРОФИЛЬ
-</button>
 
 </div>
 
@@ -2497,6 +2487,25 @@ onchange="toggleTheme()"
 <input type="checkbox" id="casinoMusicToggle" onchange="toggleCasinoMusic()">
 <span class="switch-slider"></span>
 </label>
+
+</div>
+
+<div class="setting-row">
+
+<div>
+<b>🎒 Инвентарь</b>
+
+<div class="small">
+Твои предметы и их стоимость
+</div>
+</div>
+
+<button
+class="secondary"
+onclick="showPage('inventory')"
+>
+ОТКРЫТЬ
+</button>
 
 </div>
 
