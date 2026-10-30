@@ -6132,8 +6132,7 @@ async function startCaseBattle(){
   state.inventory.push(...pool.map((p,i)=>({...p,id:Date.now()+i+100})));registerWin(poolValue);
   out.innerHTML='<div class="battle-result"><div style="font-size:42px">🏆</div><h2>ТЫ ПОБЕДИЛ!</h2><p>Ты забираешь все '+pool.length+' предметов батла на сумму <b class="orange">'+poolValue.toLocaleString("ru-RU")+' 🪙</b></p></div>';
  }else{
-  state.inventory.push(...players[0].drops.map((p,i)=>({...p,id:Date.now()+i+300})));
-  out.innerHTML='<div class="battle-result"><div style="font-size:42px">🤖</div><h2>'+winner.name+' ПОБЕДИЛ</h2><p>Бот забирает общий банк. Твои предметы возвращены тебе.</p><p>Твой результат: '+players[0].total.toLocaleString("ru-RU")+' 🪙 · Победитель: '+best.toLocaleString("ru-RU")+' 🪙</p></div>';
+  out.innerHTML='<div class="battle-result"><div style="font-size:42px">🤖</div><h2>'+winner.name+' ПОБЕДИЛ</h2><p>Бот забирает весь банк. В этот раз твои предметы ушли победителю.</p><p>Твой результат: '+players[0].total.toLocaleString("ru-RU")+' 🪙 · Победитель: '+best.toLocaleString("ru-RU")+' 🪙</p></div>';
  }
  if(leaders.length>1)out.innerHTML+='<p class="small">🤝 Ничья по сумме! Победитель выбран случайно среди лидеров.</p>';
  save();battleBusy=false;updateBattleInfo();
