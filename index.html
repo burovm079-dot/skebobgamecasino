@@ -359,6 +359,11 @@ text-align:center;
 margin-top:10px;
 }
 
+#results.case-opening-view{position:fixed;inset:0;z-index:9999;overflow-y:auto;background:var(--bg);padding:18px 14px 40px;margin:0;}
+#results.case-opening-view:before{content:"🎰 ОТКРЫТИЕ КЕЙСА";display:block;text-align:center;color:var(--gold);font-size:22px;font-weight:900;margin:8px 0 20px;}
+#results.case-opening-view .roulette-row{max-width:760px;margin:18px auto;}
+.case-opening-back{display:block;width:100%;max-width:760px;margin:20px auto;background:var(--panel2);color:var(--text);border:1px solid var(--border);border-radius:12px;padding:15px;font-weight:900;}
+
 /* UPGRADE */
 
 .upgrade-circle{
@@ -3934,6 +3939,7 @@ document.querySelector(
 function closeCase(){
 
 if(caseOpeningBusy)return;
+document.getElementById("results").classList.remove("case-opening-view");
 
 document.getElementById(
 "caseList"
@@ -4022,6 +4028,7 @@ document.getElementById(
 );
 
 results.innerHTML="";
+results.classList.add("case-opening-view");
 
 const caseItems=
 cases[selectedCase].items;
@@ -4206,6 +4213,11 @@ sellButton.style.cssText="width:100%;margin:16px 0;padding:16px;font-weight:900"
 sellButton.textContent="🎁 ЗАБРАТЬ ВСЁ ИЗ ЭТОГО ОТКРЫТИЯ";
 sellButton.onclick=claimAllPendingCasePrizes;
 results.appendChild(sellButton);
+const backButton=document.createElement("button");
+backButton.className="case-opening-back";
+backButton.textContent="← ВЕРНУТЬСЯ К КЕЙСАМ";
+backButton.onclick=()=>{results.classList.remove("case-opening-view");closeCase();};
+results.appendChild(backButton);
 
 }
 
