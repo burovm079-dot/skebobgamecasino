@@ -2645,7 +2645,16 @@ const prizes=[
 
 {name:"Монеты",icon:"🪙",value:250},
 
-{name:"Сюрприз",icon:"🎁",value:1200}
+{name:"Сюрприз",icon:"🎁",value:1200},
+{name:"Золотые часы",icon:"⌚",value:2200},
+{name:"Игровой ноутбук",icon:"💻",value:4500},
+{name:"Сапфир",icon:"🔷",value:8000},
+{name:"Слиток золота",icon:"🪙",value:15000},
+{name:"Алмазная корона",icon:"💠",value:28000},
+{name:"Суперкар",icon:"🏎️",value:45000},
+{name:"Королевский кубок",icon:"🏆",value:70000},
+{name:"Золотой дракон",icon:"🐉",value:110000},
+{name:"Легендарный джекпот",icon:"💎",value:200000}
 
 ];
 
@@ -2680,8 +2689,18 @@ name:"ROYAL CASE",
 icon:"👑",
 price:1000,
 desc:"Особые награды",
-items:[4,5,6,7]
-}
+items:[4,5,6,7,8,9]
+},
+{name:"PLATINUM CASE",icon:"⚪",price:1500,desc:"Платиновые призы",items:[8,9,10,11]},
+{name:"SAPPHIRE CASE",icon:"🔷",price:2500,desc:"Сокровища сапфирового уровня",items:[9,10,11,12]},
+{name:"EMERALD CASE",icon:"🟢",price:5000,desc:"Редкие изумрудные награды",items:[10,11,12,13]},
+{name:"GOLDEN VAULT",icon:"🏦",price:10000,desc:"Хранилище ценных призов",items:[11,12,13,14]},
+{name:"DIAMOND VAULT",icon:"💠",price:20000,desc:"Алмазные сокровища",items:[12,13,14,15]},
+{name:"SUPERCAR CASE",icon:"🏎️",price:35000,desc:"Кейс для настоящих победителей",items:[13,14,15,16]},
+{name:"DRAGON CASE",icon:"🐉",price:50000,desc:"Легендарные трофеи",items:[14,15,16,17]},
+{name:"ROYAL JACKPOT",icon:"🎰",price:75000,desc:"Королевские награды",items:[15,16,17,18]},
+{name:"BLACK DIAMOND",icon:"🖤",price:100000,desc:"Максимальный уровень редкости",items:[16,17,18,19]},
+{name:"SKEBOB LEGEND",icon:"👑",price:150000,desc:"Самый дорогой кейс казино",items:[17,18,19]}
 
 ];
 
@@ -3677,6 +3696,8 @@ track.children[24]
 "winner"
 );
 
+if(i===rows.length-1)playCaseSound(true);
+
 state.balance+=prize;
 
 /*
@@ -3705,6 +3726,39 @@ updateDailyCase();
 
 });
 
+}
+
+/* Case opening sound: rising slot-machine sweep and reveal chime */
+let caseSoundContext=null;
+function playCaseSound(reveal=false){
+  try{
+    const Ctx=window.AudioContext||window.webkitAudioContext;
+    if(!Ctx)return;
+    if(!caseSoundContext)caseSoundContext=new Ctx();
+    const ctx=caseSoundContext;
+    if(ctx.state==="suspended")ctx.resume();
+    const now=ctx.currentTime;
+    const make=(freq,endFreq,start,duration,volume,type)=>{
+      const osc=ctx.createOscillator(),gain=ctx.createGain();
+      osc.type=type||"sawtooth";
+      osc.frequency.setValueAtTime(freq,now+start);
+      osc.frequency.exponentialRampToValueAtTime(Math.max(30,endFreq),now+start+duration);
+      gain.gain.setValueAtTime(.0001,now+start);
+      gain.gain.exponentialRampToValueAtTime(volume,now+start+.025);
+      gain.gain.exponentialRampToValueAtTime(.0001,now+start+duration);
+      osc.connect(gain);gain.connect(ctx.destination);
+      osc.start(now+start);osc.stop(now+start+duration+.03);
+    };
+    if(!reveal){
+      make(110,720,0,.72,.045,"sawtooth");
+      make(330,990,.08,.55,.025,"triangle");
+      make(520,1300,.42,.45,.018,"square");
+    }else{
+      make(660,880,0,.32,.035,"sine");
+      make(880,1320,.12,.48,.028,"sine");
+      make(1320,1760,.25,.62,.018,"triangle");
+    }
+  }catch(e){}
 }
 
 /* =========================
@@ -3907,6 +3961,8 @@ state.stats.casesOpened+=qty;
 save();
 
 caseOpeningBusy=true;
+
+playCaseSound(false);
 
 const results=
 document.getElementById(
