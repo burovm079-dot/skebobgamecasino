@@ -6261,14 +6261,38 @@ function updateSlotsControls(){
 function setSlotsBet(v){if(slotsBusy)return;document.getElementById("slotsBet").value=v==="max"?Math.max(10,Math.floor(state.balance)):v;updateSlotsControls()}
 function changeSlotsBet(d){if(slotsBusy)return;const x=document.getElementById("slotsBet"),v=Math.max(10,Math.floor(Number(x.value)||10));x.value=Math.max(10,v+(d>0?10:-10));updateSlotsControls()}
 function slotPayout(a){const counts={};a.forEach(x=>counts[x]=(counts[x]||0)+1);if(a.every(x=>x===a[0]))return a[0]==="👑"?15:a[0]==="💎"?8:a[0]==="🍋"?5:a[0]==="🍒"?3:2;return Object.values(counts).includes(2)?1.2:0}
+/* Slot machine sound effects (generated with Web Audio) */
+let slotAudioContext=null;
+function playSlotSound(kind="tick",reelIndex=0){
+ try{
+  const Ctx=window.AudioContext||window.webkitAudioContext;if(!Ctx)return;
+  if(!slotAudioContext)slotAudioContext=new Ctx();
+  const ctx=slotAudioContext;if(ctx.state==="suspended")ctx.resume();
+  const now=ctx.currentTime,osc=ctx.createOscillator(),gain=ctx.createGain();
+  const sounds={
+   tick:{freq:520+reelIndex*95,end:260+reelIndex*55,duration:.045,volume:.025,type:"square"},
+   stop:{freq:240+reelIndex*100,end:115+reelIndex*45,duration:.13,volume:.055,type:"triangle"},
+   win:{freq:660,end:1320,duration:.52,volume:.045,type:"sine"},
+   jackpot:{freq:880,end:1760,duration:.8,volume:.06,type:"sine"}
+  };
+  const p=sounds[kind]||sounds.tick;osc.type=p.type;
+  osc.frequency.setValueAtTime(p.freq,now);
+  osc.frequency.exponentialRampToValueAtTime(p.end,now+p.duration);
+  gain.gain.setValueAtTime(.0001,now);
+  gain.gain.exponentialRampToValueAtTime(p.volume,now+.008);
+  gain.gain.exponentialRampToValueAtTime(.0001,now+p.duration);
+  osc.connect(gain);gain.connect(ctx.destination);osc.start(now);osc.stop(now+p.duration+.02);
+ }catch(e){}
+}
 function spinOneSlotReel(reel,finalSymbol,delay){
  return new Promise(resolve=>{
   reel.classList.add("spinning");
   let elapsed=0,step=0,wait=42;
   function tick(){
+   if(step%2===0)playSlotSound("tick",Math.min(2,Math.floor(delay/520)));
    if(step<18)reel.textContent=SLOT_SYMBOLS[Math.floor(Math.random()*SLOT_SYMBOLS.length)];
    else if(step<25)reel.textContent=SLOT_SYMBOLS[Math.floor(Math.random()*SLOT_SYMBOLS.length)];
-   else {reel.textContent=finalSymbol;reel.classList.remove("spinning");reel.classList.add("stopping");setTimeout(()=>reel.classList.remove("stopping"),260);resolve();return}
+   else {reel.textContent=finalSymbol;playSlotSound("stop",Math.min(2,Math.floor(delay/520)));reel.classList.remove("spinning");reel.classList.add("stopping");setTimeout(()=>reel.classList.remove("stopping"),260);resolve();return}
    step++;wait=step<15?48:step<21?72:step<25?115:wait;
    setTimeout(tick,wait);
   }
@@ -6283,7 +6307,7 @@ async function spinSlots(){
  const result=Array.from({length:3},()=>SLOT_SYMBOLS[Math.floor(Math.random()*SLOT_SYMBOLS.length)]);
  await Promise.all(reels.map((reel,i)=>spinOneSlotReel(reel,result[i],i*520)));
  const mult=slotPayout(result),reward=Math.floor(bet*mult);
- if(reward){state.balance+=reward;registerWin(reward);state.stats.slotsWins=(state.stats.slotsWins||0)+1;slotsBest=Math.max(slotsBest,mult)}
+ if(reward){state.balance+=reward;registerWin(reward);state.stats.slotsWins=(state.stats.slotsWins||0)+1;slotsBest=Math.max(slotsBest,mult);playSlotSound(mult>=8?"jackpot":"win") }
  document.getElementById("slotsWinStat").textContent=reward?"+"+reward.toLocaleString("ru-RU")+" 🪙":"0 🪙";
  document.getElementById("slotsBestStat").textContent="x"+slotsBest;
  document.getElementById("slotsMessage").textContent=reward?"🎉 "+result.join(" ")+" — ВЫИГРЫШ x"+mult+"!":"😢 "+result.join(" ")+" — в следующий раз повезёт!";
