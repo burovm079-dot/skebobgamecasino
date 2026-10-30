@@ -6363,7 +6363,7 @@ async function startBlackjack(){
  bjBusy=true;state.balance-=bet;addTurnover(bet);state.stats.blackjackGames=(state.stats.blackjackGames||0)+1;save();
  const count=Math.floor(Math.random()*4),pool=[...BJ_NAMES].sort(()=>Math.random()-.5);
  const bots=Array.from({length:count},(_,i)=>({name:pool[i],cards:[]}));bjRenderedCounts={};
- bjRound={bet,you:[],dealer:[],bots,turn:"dealing",finished:false};
+ bjRound={bet,you:[],dealer:[],bots,turn:"you",finished:false};
  document.getElementById("bjStatus").textContent="🎴 Дилер раздаёт карты...";
  updateBjControls();renderBj();
  const first=[["you",bjRound.you],["dealer",bjRound.dealer],...bots.map((b,i)=>["bot"+i,b.cards]),["you",bjRound.you],["dealer",bjRound.dealer],...bots.map((b,i)=>["bot"+i,b.cards])];
