@@ -1287,6 +1287,12 @@ SKEBOB <span>CASINO</span>
 <button onclick="showPage('blackjack',this)">🃏 BLACKJACK</button>
 <button onclick="showPage('dice',this)">🎲 КОСТИ</button>
 <button onclick="showPage('lottery',this)">🎟️ ЛОТЕРЕЯ</button>
+<button onclick="showPage('battleship',this)">🚢 МОРСКОЙ БОЙ</button>
+<button onclick="showPage('tictactoe',this)">⭕ КРЕСТИКИ</button>
+<button onclick="showPage('darts',this)">🎯 ДАРТС</button>
+<button onclick="showPage('billiards',this)">🎱 БИЛЬЯРД</button>
+<button onclick="showPage('bowling',this)">🎳 БОУЛИНГ</button>
+<button onclick="showPage('chickenroad',this)">🐔 CHICKEN ROAD</button>
 
 
 
@@ -1314,6 +1320,62 @@ SKEBOB <span>CASINO</span>
  <div id="lotteryResult" class="small">Итоги сегодняшнего розыгрыша появятся после 23:00.</div>
 </div>
 </section>
+
+<!-- NEW ARCADE GAMES -->
+<section id="battleship" class="hidden">
+<h2>🚢 МОРСКОЙ БОЙ</h2>
+<div class="panel">
+<p class="small">Найди все 5 кораблей бота на поле 6×6. За победу — x2 от ставки.</p>
+<label>Ставка</label><input id="bsBet" type="number" min="100" step="100" value="100">
+<div id="bsStatus" class="small">Начни игру и ищи корабли!</div>
+<div id="bsGrid" style="display:grid;grid-template-columns:repeat(6,1fr);gap:5px;margin:12px 0"></div>
+<button class="goldbtn" onclick="bsStart()">🚢 НАЧАТЬ МОРСКОЙ БОЙ</button>
+</div></section>
+<section id="tictactoe" class="hidden">
+<h2>⭕ КРЕСТИКИ-НОЛИКИ</h2>
+<div class="panel" style="text-align:center">
+<p class="small">Победи бота. Победа приносит x2 ставки, ничья возвращает ставку.</p>
+<input id="tttBet" type="number" min="100" step="100" value="100">
+<div id="tttStatus" class="small">Ты играешь за ❌</div>
+<div id="tttGrid" style="display:grid;grid-template-columns:repeat(3,1fr);gap:7px;max-width:300px;margin:14px auto"></div>
+<button class="goldbtn" onclick="tttStart()">НОВАЯ ИГРА</button>
+</div></section>
+<section id="darts" class="hidden">
+<h2>🎯 ДАРТС</h2><div class="panel">
+<p class="small">Выставь точность броска. Чем ближе к центру, тем больше награда.</p>
+<label>Ставка</label><input id="dartBet" type="number" min="100" step="100" value="100">
+<label>Прицел</label><input id="dartAim" type="range" min="0" max="100" value="50">
+<label>Сила броска</label><input id="dartPower" type="range" min="1" max="100" value="65">
+<button class="goldbtn" onclick="dartThrow()">🎯 БРОСИТЬ ДРОТИК</button><div id="dartResult" class="small"></div>
+</div></section>
+<section id="billiards" class="hidden">
+<h2>🎱 БИЛЬЯРД</h2><div class="panel">
+<p class="small">Выбери угол и силу удара. Забитый шар приносит до x3 ставки.</p>
+<label>Ставка</label><input id="poolBet" type="number" min="100" step="100" value="100">
+<label>Угол удара</label><input id="poolAngle" type="range" min="0" max="180" value="90">
+<label>Сила удара</label><input id="poolPower" type="range" min="1" max="100" value="55">
+<div style="background:radial-gradient(ellipse,#167a48,#06442a);border:8px solid #5c351d;border-radius:18px;padding:35px;text-align:center;font-size:38px">⚪　🎱　🕳️</div>
+<button class="goldbtn" onclick="poolShot()">УДАРИТЬ ПО ШАРУ</button><div id="poolResult" class="small"></div>
+</div></section>
+<section id="bowling" class="hidden">
+<h2>🎳 БОУЛИНГ</h2><div class="panel">
+<p class="small">Настрой направление и силу. Больше сбитых кеглей — выше выплата.</p>
+<label>Ставка</label><input id="bowlBet" type="number" min="100" step="100" value="100">
+<label>Направление</label><input id="bowlAim" type="range" min="0" max="100" value="50">
+<label>Сила броска</label><input id="bowlPower" type="range" min="1" max="100" value="75">
+<div id="bowlPins" style="text-align:center;font-size:38px;margin:12px">🎳</div>
+<button class="goldbtn" onclick="bowlThrow()">БРОСИТЬ ШАР</button><div id="bowlResult" class="small"></div>
+</div></section>
+<section id="chickenroad" class="hidden">
+<h2>🐔 CHICKEN ROAD</h2><div class="panel" style="text-align:center">
+<p class="small">Переходи дорогу шаг за шагом. Каждый шаг повышает множитель, но можно попасть под машину. Забирай выигрыш вовремя!</p>
+<label>Ставка</label><input id="chBet" type="number" min="100" step="100" value="100">
+<div id="chScene" style="font-size:52px;padding:18px">🐔　🛣️　🚗</div>
+<div id="chMultiplier" style="font-size:30px;color:var(--gold);font-weight:900">x1.00</div>
+<button class="goldbtn" id="chStep" onclick="chickenStep()">🐔 СДЕЛАТЬ ШАГ</button>
+<button class="secondary" id="chCash" style="width:100%;margin-top:8px" onclick="chickenCash()" disabled>ЗАБРАТЬ ВЫИГРЫШ</button>
+<div id="chResult" class="small"></div>
+</div></section>
 
 <!-- CASES -->
 
@@ -7033,6 +7095,27 @@ function lotteryRender(){
  if(lotteryData.result)msg.innerHTML=(lotteryData.result.bot?"🤖 Суперприз забрал бот: ":"🏆 СУПЕРПРИЗ ТВОЙ! ")+lotteryData.result.owner+"<br>Выигрыш: 1 000 000 ₽<br><span class='small'>Следующий розыгрыш начнётся в 00:00.</span>";
  else msg.textContent="Итоги сегодняшнего розыгрыша появятся после 23:00.";
 }
+
+/* SIX ARCADE MINI-GAMES */
+function gameBet(id){const v=Math.floor(Number(document.getElementById(id).value));return Number.isFinite(v)&&v>=100&&v<=state.balance?v:0}
+function gamePay(bet,mult){const win=Math.floor(bet*mult);state.balance+=win;registerWin(win);save();return win}
+let bsShips=[],bsHits=0,bsShots=[],bsStake=0,bsActive=false;
+function bsStart(){const b=gameBet("bsBet");if(!b){alert("Нужна ставка от 100 и достаточно средств");return}state.balance-=b;bsStake=b;bsShips=[];while(bsShips.length<5){let n=Math.floor(Math.random()*36);if(!bsShips.includes(n))bsShips.push(n)}bsHits=0;bsShots=[];bsActive=true;save();bsRender();document.getElementById("bsStatus").textContent="Найди 5 кораблей бота!";}
+function bsRender(){const g=document.getElementById("bsGrid");g.innerHTML="";for(let i=0;i<36;i++){const hit=bsShots.includes(i),b=document.createElement("button");b.textContent=hit?(bsShips.includes(i)?"💥":"🌊"):"　";b.style.cssText="aspect-ratio:1;border:1px solid var(--border);border-radius:7px;background:var(--panel2);font-size:20px";b.disabled=!bsActive||hit;b.onclick=()=>bsFire(i);g.appendChild(b)}}
+function bsFire(i){if(!bsActive)return;bsShots.push(i);if(bsShips.includes(i))bsHits++;if(bsHits===5){bsActive=false;const w=gamePay(bsStake,2);document.getElementById("bsStatus").textContent="🏆 Все корабли потоплены! Выплата "+w.toLocaleString("ru-RU")+" 🪙";}else if(bsShots.length>=24){bsActive=false;document.getElementById("bsStatus").textContent="Поражение! Корабли не найдены.";save()}else document.getElementById("bsStatus").textContent="Попаданий: "+bsHits+"/5 · Выстрелов: "+bsShots.length;bsRender()}
+let ttt=[],tttBetValue=0,tttActive=false;
+function tttStart(){const b=gameBet("tttBet");if(!b){alert("Нужна ставка от 100 и достаточно средств");return}state.balance-=b;tttBetValue=b;ttt=Array(9).fill("");tttActive=true;save();tttRender();document.getElementById("tttStatus").textContent="Твой ход — ❌";}
+function tttWinner(a){for(const [x,y,z] of [[0,1,2],[3,4,5],[6,7,8],[0,3,6],[1,4,7],[2,5,8],[0,4,8],[2,4,6]])if(a[x]&&a[x]===a[y]&&a[y]===a[z])return a[x];return a.every(Boolean)?"draw":""}
+function tttRender(){const g=document.getElementById("tttGrid");g.innerHTML="";ttt.forEach((v,i)=>{const b=document.createElement("button");b.textContent=v||"　";b.style.cssText="aspect-ratio:1;font-size:35px;border-radius:10px;background:var(--panel2);color:var(--text);border:1px solid var(--border)";b.disabled=!!v||!tttActive;b.onclick=()=>tttMove(i);g.appendChild(b)})}
+function tttFinish(w){tttActive=false;if(w==="X"){const n=gamePay(tttBetValue,2);document.getElementById("tttStatus").textContent="🏆 Ты победил! Выплата "+n+" 🪙"}else if(w==="draw"){state.balance+=tttBetValue;save();document.getElementById("tttStatus").textContent="Ничья — ставка возвращена."}else{save();document.getElementById("tttStatus").textContent="🤖 Бот победил. Попробуй ещё!"}tttRender()}
+function tttMove(i){if(!tttActive||ttt[i])return;ttt[i]="X";let w=tttWinner(ttt);if(w){tttRender();tttFinish(w);return}let free=ttt.map((v,i)=>v? -1:i).filter(i=>i>=0);ttt[free[Math.floor(Math.random()*free.length)]]="O";w=tttWinner(ttt);tttRender();if(w)tttFinish(w);else document.getElementById("tttStatus").textContent="Твой ход — ❌"}
+function dartThrow(){const b=gameBet("dartBet");if(!b){alert("Нужна ставка от 100");return}state.balance-=b;const aim=+document.getElementById("dartAim").value,power=+document.getElementById("dartPower").value;const accuracy=Math.max(0,100-Math.abs(aim-50)*1.5-Math.abs(power-60)*.7+(Math.random()*24-12));const score=accuracy>88? bull=50:accuracy>68?25:accuracy>45?10:0;const mult=score===50?3:score===25?1.5:score===10?0.5:0;const win=mult?gamePay(b,mult):0;if(!mult)save();document.getElementById("dartResult").textContent="🎯 Очки: "+score+" · "+(win?"Выплата "+win+" 🪙":"Мимо!");}
+function poolShot(){const b=gameBet("poolBet");if(!b){alert("Нужна ставка от 100");return}state.balance-=b;const a=+document.getElementById("poolAngle").value,p=+document.getElementById("poolPower").value;const chance=Math.max(5,65-Math.abs(a-90)*.45-Math.abs(p-65)*.35);const ok=Math.random()*100<chance;const m=ok?(p>85?3:2):0;const w=m?gamePay(b,m):0;if(!m)save();document.getElementById("poolResult").textContent=ok?"🎱 Шар в лузе! Выплата "+w+" 🪙":"Шар не попал в лузу. Попробуй ещё!";}
+function bowlThrow(){const b=gameBet("bowlBet");if(!b){alert("Нужна ставка от 100");return}state.balance-=b;const aim=+document.getElementById("bowlAim").value,p=+document.getElementById("bowlPower").value;let pins=Math.max(0,Math.min(10,Math.round(10-Math.abs(aim-50)/9-Math.abs(p-78)/18+(Math.random()*4-2))));const m=pins===10?3:pins>=8?2:pins>=6?1:0;const w=m?gamePay(b,m):0;if(!m)save();document.getElementById("bowlPins").textContent="🎳　"+"🟡".repeat(pins)+"　("+pins+"/10)";document.getElementById("bowlResult").textContent=pins===10?"STRIKE! Выплата "+w+" 🪙":"Сбито кеглей: "+pins+" · "+(w?"Выплата "+w+" 🪙":"Без выигрыша");}
+let chBetValue=0,chMult=1,chActive=false;
+function chickenStart(){const b=gameBet("chBet");if(!b){alert("Нужна ставка от 100");return false}state.balance-=b;chBetValue=b;chMult=1;chActive=true;save();document.getElementById("chMultiplier").textContent="x1.00";document.getElementById("chScene").textContent="🐔　🛣️　🚗";document.getElementById("chStep").disabled=false;document.getElementById("chCash").disabled=true;document.getElementById("chResult").textContent="Ставка принята. Вперёд!";return true}
+function chickenStep(){if(!chActive){if(!chickenStart())return}if(Math.random()<.22){chActive=false;document.getElementById("chScene").textContent="💥🐔🚗";document.getElementById("chResult").textContent="Ой! Машина сбила курицу — ставка потеряна.";document.getElementById("chStep").disabled=true;document.getElementById("chCash").disabled=true;save();return}chMult=+(chMult*1.35).toFixed(2);document.getElementById("chScene").textContent="🐔　".repeat(Math.min(5,Math.ceil(chMult)))+"🛣️";document.getElementById("chMultiplier").textContent="x"+chMult.toFixed(2);document.getElementById("chCash").disabled=false;document.getElementById("chResult").textContent="Безопасно! Можешь идти дальше или забрать выигрыш."}
+function chickenCash(){if(!chActive)return;chActive=false;const w=gamePay(chBetValue,chMult);document.getElementById("chResult").textContent="🏆 Ты забрал "+w.toLocaleString("ru-RU")+" 🪙";document.getElementById("chStep").disabled=true;document.getElementById("chCash").disabled=true}
 
 /* =========================
    START
