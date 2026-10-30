@@ -6368,7 +6368,8 @@ function updateBjControls(){
  const active=!!bjRound&&!bjRound.finished;deal.disabled=active||bjBusy||bet>state.balance;
  deal.textContent=active?"РАУНД ИДЁТ":"🃏 РАЗДАТЬ ЗА "+bet.toLocaleString("ru-RU")+" 🪙";
  document.getElementById("bjHit").disabled=!active||bjRound.turn!=="you"||bjBusy;
- document.getElementById("bjStand").disabled=!active||bjRound.turn!=="you"||bjBusy;\n const dbl=document.getElementById("bjDouble");if(dbl)dbl.disabled=!active||bjRound.turn!=="you"||bjBusy||bjRound.you.length!==2||state.balance<bjRound.bet;
+ document.getElementById("bjStand").disabled=!active||bjRound.turn!=="you"||bjBusy;
+ const dbl=document.getElementById("bjDouble");if(dbl)dbl.disabled=!active||bjRound.turn!=="you"||bjBusy||bjRound.you.length!==2||state.balance<bjRound.bet;
 }
 function setBjBet(v){if(bjBusy||bjRound&&!bjRound.finished)return;document.getElementById("bjBet").value=v==="max"?Math.max(10,Math.floor(state.balance)):v;updateBjControls()}
 function changeBjBet(d){if(bjBusy||bjRound&&!bjRound.finished)return;const e=document.getElementById("bjBet"),n=Math.max(10,Math.floor(Number(e.value)||10));e.value=Math.max(10,n+(d>0?10:-10));updateBjControls()}
@@ -6410,7 +6411,8 @@ async function startBlackjack(){
  const dealerNatural=bjValue(bjRound.dealer)===21&&bjRound.dealer.length===2;
  if(dealerNatural){bjRound.turn="done";bjFinish();return}
  document.getElementById("bjStatus").textContent=count?"Карты розданы. Сначала ходишь ты, затем каждый игрок по очереди.":"Карты розданы. Твой ход!";
- if(bjValue(bjRound.you)===21){bjStand();return}\n if(bjValue(bjRound.dealer)===21){bjRound.turn="done";bjBusy=false;bjFinish();return}
+ if(bjValue(bjRound.you)===21){bjStand();return}
+ if(bjValue(bjRound.dealer)===21){bjRound.turn="done";bjBusy=false;bjFinish();return}
 }
 function bjHit(){
  if(!bjRound||bjRound.finished||bjRound.turn!=="you"||bjBusy)return;
