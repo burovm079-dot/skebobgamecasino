@@ -1110,6 +1110,8 @@ SKEBOB <span>CASINO</span>
 
 <div class="header-actions">
 
+<button id="casinoMusicToggle" onclick="toggleCasinoMusic()">🎵 МУЗЫКА: ВЫКЛ</button>
+
 <button onclick="openPromoPage()">
 🎟 ПРОМО
 </button>
@@ -5892,6 +5894,55 @@ for(let tick=0;tick<45;tick++){for(let i=0;i<4;i++){progress[i]=Math.min(100,pro
 track.classList.remove("running");const won=winner===raceChoice,reward=won?bet*2:0;if(won){state.balance+=reward;state.stats.raceWins++;registerWin(reward)}save();result.style.color=won?"#24cf78":"#e34b55";result.innerHTML=won?"🏆 ПОБЕДА! "+RACE_RUNNERS[winner].icon+" <b>+"+reward.toLocaleString("ru-RU")+" 🪙</b>":"😢 Победил "+RACE_RUNNERS[winner].icon+" "+RACE_RUNNERS[winner].name+". Ставка проиграна.";raceTone(won?880:130,.35,.06);raceBusy=false;updateRaceControls()}
 function initRace(){renderRaceLanes();updateRaceControls();selectRace(0,document.querySelector(".race-picks button"))}
  
+/* =========================
+   CASINO LOUNGE MUSIC
+   Original procedural music via Web Audio
+========================= */
+let casinoAudio=null,casinoMusicTimer=null,casinoMusicStep=0;
+const casinoChords=[
+  [261.63,329.63,392.00,493.88],
+  [220.00,261.63,329.63,392.00],
+  [174.61,220.00,261.63,329.63],
+  [196.00,246.94,293.66,349.23]
+];
+function casinoNote(freq,when,duration,volume,type){
+  if(!casinoAudio)return;
+  const osc=casinoAudio.createOscillator(),gain=casinoAudio.createGain();
+  osc.type=type||"sine";osc.frequency.setValueAtTime(freq,when);
+  gain.gain.setValueAtTime(.0001,when);
+  gain.gain.exponentialRampToValueAtTime(Math.max(.0002,volume),when+.035);
+  gain.gain.exponentialRampToValueAtTime(.0001,when+duration);
+  osc.connect(gain);gain.connect(casinoAudio.destination);
+  osc.start(when);osc.stop(when+duration+.03);
+}
+function casinoMusicTick(){
+  if(!casinoAudio)return;
+  const t=casinoAudio.currentTime+.03,beat=casinoMusicStep%16,chord=casinoChords[Math.floor(casinoMusicStep/16)%4];
+  if(beat===0){
+    chord.forEach((f,i)=>casinoNote(f,t,1.65,.012,"sine"));
+    casinoNote(chord[0]/2,t,1.2,.035,"triangle");
+  }
+  const melody=[2,1,3,1,2,0,1,2,3,1,2,0,1,3,2,1];
+  casinoNote(chord[melody[beat]],t,.22,.018,"triangle");
+  if(beat===4||beat===12)casinoNote(chord[0]/2,t,.38,.025,"sine");
+  casinoMusicStep++;
+}
+async function toggleCasinoMusic(){
+  const btn=document.getElementById("casinoMusicToggle");
+  if(casinoMusicTimer){
+    clearInterval(casinoMusicTimer);casinoMusicTimer=null;
+    if(casinoAudio){await casinoAudio.close();casinoAudio=null;}
+    btn.textContent="🎵 МУЗЫКА: ВЫКЛ";return;
+  }
+  const AudioCtx=window.AudioContext||window.webkitAudioContext;
+  if(!AudioCtx){btn.textContent="🔇 НЕТ ЗВУКА";return;}
+  casinoAudio=new AudioCtx();
+  if(casinoAudio.state==="suspended")await casinoAudio.resume();
+  casinoMusicStep=0;casinoMusicTick();
+  casinoMusicTimer=setInterval(casinoMusicTick,375);
+  btn.textContent="🎵 МУЗЫКА: ВКЛ";
+}
+
 /* =========================
    ADMIN
 ========================= */
