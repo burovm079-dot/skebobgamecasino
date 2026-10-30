@@ -2383,7 +2383,7 @@ id="profileBalance"
  <div class="bet-presets"><button onclick="setBjBet(100)">100</button><button onclick="setBjBet(500)">500</button><button onclick="setBjBet(1000)">1K</button><button onclick="setBjBet(5000)">5K</button><button onclick="setBjBet('max')">MAX</button></div></div>
  <div class="bj-actions"><button class="game-main" id="bjDeal" onclick="startBlackjack()">🃏 РАЗДАТЬ КАРТЫ</button><button class="secondary" id="bjHit" onclick="bjHit()" disabled>ЕЩЁ КАРТУ</button><button class="secondary" id="bjStand" onclick="bjStand()" disabled>ХВАТИТ</button><button class="secondary" id="bjDouble" onclick="bjDouble()" disabled>УДВОИТЬ</button></div>
  <div class="game-status" id="bjStatus">Сделай ставку и начинай игру.</div>
- <div class="small">Победа — x2 · Блэкджек — x2.5 · Ничья — возврат. Удвоение: ставка ×2, одна карта и автоматическое завершение хода. Дилер берёт карты до 17.</div>
+ <div class="small">Победа — x2 · Блэкджек — x2.5 · Ничья — возврат. Удвоение доступно на первых двух картах: ставка ×2, ровно одна карта и автоматическое завершение хода. Если у дилера блэкджек, раунд завершается сразу. Дилер берёт карты до 17.</div>
 </div>
 </section>
 
@@ -6368,13 +6368,24 @@ async function startBlackjack(){
  const first=[["you",bjRound.you],["dealer",bjRound.dealer],...bots.map((b,i)=>["bot"+i,b.cards]),["you",bjRound.you],["dealer",bjRound.dealer],...bots.map((b,i)=>["bot"+i,b.cards])];
  for(const [key,hand] of first){bjDraw(hand);renderBj();await bjDelay(330)}
  bjRound.turn="you";bjBusy=false;renderBj();
+ const dealerNatural=bjValue(bjRound.dealer)===21&&bjRound.dealer.length===2;
+ if(dealerNatural){bjRound.turn="done";bjFinish();return}
  document.getElementById("bjStatus").textContent=count?"Карты розданы. Сначала ходишь ты, затем каждый игрок по очереди.":"Карты розданы. Твой ход!";
  if(bjValue(bjRound.you)===21){bjStand();return}\n if(bjValue(bjRound.dealer)===21){bjRound.turn="done";bjBusy=false;bjFinish();return}
 }
 function bjHit(){
  if(!bjRound||bjRound.finished||bjRound.turn!=="you"||bjBusy)return;
  bjBusy=true;bjDraw(bjRound.you);renderBj();
- setTimeout(()=>{bjBusy=false;if(bjValue(bjRound.you)>=21){if(bjValue(bjRound.you)>21)bjStand();else bjStand()}else renderBj()},520);
+ setTimeout(()=>{bjBusy=false;if(bjValue(bjRound.you)>=21)bjStand();else renderBj()},520);
+}
+async function bjDouble(){
+ if(!bjRound||bjRound.finished||bjRound.turn!=="you"||bjBusy||bjRound.you.length!==2)return;
+ const extra=bjRound.bet;
+ if(state.balance<extra){document.getElementById("bjStatus").textContent="Недостаточно монет для удвоения.";return}
+ state.balance-=extra;addTurnover(extra);bjRound.bet+=extra;bjRound.doubled=true;save();
+ bjBusy=true;renderBj();document.getElementById("bjStatus").textContent="⚡ Ставка удвоена! Получаешь ровно одну карту...";
+ await bjDelay(450);bjDraw(bjRound.you);renderBj();await bjDelay(550);
+ bjBusy=false;await bjStand();
 }
 async function bjStand(){
  if(!bjRound||bjRound.finished||bjRound.turn!=="you"||bjBusy)return;
@@ -6395,8 +6406,11 @@ function bjFinish(){
  if(!bjRound||bjRound.finished)return;
  const r=bjRound;r.finished=true;r.turn="done";const you=bjValue(r.you),dealer=bjValue(r.dealer);
  let reward=0,message="";
- if(you>21){message="Перебор! Ты проиграл."}
- else if(dealer>21||you>dealer){reward=you===21&&r.you.length===2?Math.floor(r.bet*2.5):r.bet*2;message="🎉 Ты победил дилера!";}
+ const playerNatural=you===21&&r.you.length===2,dealerNatural=dealer===21&&r.dealer.length===2;
+ if(playerNatural&&dealerNatural){reward=r.bet;message="🤝 У обоих блэкджек — ничья."}
+ else if(dealerNatural){message="🎩 У дилера блэкджек. Раунд окончен."}
+ else if(you>21){message="Перебор! Ты проиграл."}
+ else if(dealer>21||you>dealer){reward=playerNatural?Math.floor(r.bet*2.5):r.bet*2;message=playerNatural?"🃏 BLACKJACK! Выплата x2.5!":"🎉 Ты победил дилера!";}
  else if(you===dealer){reward=r.bet;message="Ничья! Ставка возвращена."}
  else message="Дилер победил. В следующий раз повезёт!";
  if(reward){state.balance+=reward;if(reward>r.bet){registerWin(reward);state.stats.blackjackWins=(state.stats.blackjackWins||0)+1;addDailyTaskProgress("blackjack");}}
