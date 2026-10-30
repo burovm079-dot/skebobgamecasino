@@ -2381,9 +2381,9 @@ id="profileBalance"
 <div class="panel">
  <div class="game-control"><label>СТАВКА</label><div class="bet-main"><button onclick="changeBjBet(-1)">−</button><input id="bjBet" type="number" min="10" step="10" value="100" oninput="updateBjControls()"><button onclick="changeBjBet(1)">+</button></div>
  <div class="bet-presets"><button onclick="setBjBet(100)">100</button><button onclick="setBjBet(500)">500</button><button onclick="setBjBet(1000)">1K</button><button onclick="setBjBet(5000)">5K</button><button onclick="setBjBet('max')">MAX</button></div></div>
- <div class="bj-actions"><button class="game-main" id="bjDeal" onclick="startBlackjack()">🃏 РАЗДАТЬ КАРТЫ</button><button class="secondary" id="bjHit" onclick="bjHit()" disabled>ЕЩЁ КАРТУ</button><button class="secondary" id="bjStand" onclick="bjStand()" disabled>ХВАТИТ</button></div>
+ <div class="bj-actions"><button class="game-main" id="bjDeal" onclick="startBlackjack()">🃏 РАЗДАТЬ КАРТЫ</button><button class="secondary" id="bjHit" onclick="bjHit()" disabled>ЕЩЁ КАРТУ</button><button class="secondary" id="bjStand" onclick="bjStand()" disabled>ХВАТИТ</button><button class="secondary" id="bjDouble" onclick="bjDouble()" disabled>УДВОИТЬ</button></div>
  <div class="game-status" id="bjStatus">Сделай ставку и начинай игру.</div>
- <div class="small">Победа — x2 ставки · Блэкджек (21 за 2 карты) — x2.5 · Ничья — возврат ставки.</div>
+ <div class="small">Победа — x2 · Блэкджек — x2.5 · Ничья — возврат. Удвоение: ставка ×2, одна карта и автоматическое завершение хода. Дилер берёт карты до 17.</div>
 </div>
 </section>
 
@@ -6329,7 +6329,7 @@ function updateBjControls(){
  const active=!!bjRound&&!bjRound.finished;deal.disabled=active||bjBusy||bet>state.balance;
  deal.textContent=active?"РАУНД ИДЁТ":"🃏 РАЗДАТЬ ЗА "+bet.toLocaleString("ru-RU")+" 🪙";
  document.getElementById("bjHit").disabled=!active||bjRound.turn!=="you"||bjBusy;
- document.getElementById("bjStand").disabled=!active||bjRound.turn!=="you"||bjBusy;
+ document.getElementById("bjStand").disabled=!active||bjRound.turn!=="you"||bjBusy;\n const dbl=document.getElementById("bjDouble");if(dbl)dbl.disabled=!active||bjRound.turn!=="you"||bjBusy||bjRound.you.length!==2||state.balance<bjRound.bet;
 }
 function setBjBet(v){if(bjBusy||bjRound&&!bjRound.finished)return;document.getElementById("bjBet").value=v==="max"?Math.max(10,Math.floor(state.balance)):v;updateBjControls()}
 function changeBjBet(d){if(bjBusy||bjRound&&!bjRound.finished)return;const e=document.getElementById("bjBet"),n=Math.max(10,Math.floor(Number(e.value)||10));e.value=Math.max(10,n+(d>0?10:-10));updateBjControls()}
@@ -6369,7 +6369,7 @@ async function startBlackjack(){
  for(const [key,hand] of first){bjDraw(hand);renderBj();await bjDelay(330)}
  bjRound.turn="you";bjBusy=false;renderBj();
  document.getElementById("bjStatus").textContent=count?"Карты розданы. Сначала ходишь ты, затем каждый игрок по очереди.":"Карты розданы. Твой ход!";
- if(bjValue(bjRound.you)===21){bjStand();return}
+ if(bjValue(bjRound.you)===21){bjStand();return}\n if(bjValue(bjRound.dealer)===21){bjRound.turn="done";bjBusy=false;bjFinish();return}
 }
 function bjHit(){
  if(!bjRound||bjRound.finished||bjRound.turn!=="you"||bjBusy)return;
