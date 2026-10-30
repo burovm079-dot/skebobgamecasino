@@ -1286,7 +1286,6 @@ SKEBOB <span>CASINO</span>
 <button onclick="showPage('slots',this)">🎰 СЛОТЫ</button>
 <button onclick="showPage('blackjack',this)">🃏 BLACKJACK</button>
 <button onclick="showPage('dice',this)">🎲 КОСТИ</button>
-<button onclick="showPage('lottery',this)">🎟️ ЛОТЕРЕЯ</button>
 <button onclick="showPage('battleship',this)">🚢 МОРСКОЙ БОЙ</button>
 <button onclick="showPage('tictactoe',this)">⭕ КРЕСТИКИ</button>
 <button onclick="showPage('darts',this)">🎯 ДАРТС</button>
@@ -1298,28 +1297,6 @@ SKEBOB <span>CASINO</span>
 
 
 </div>
-
-<!-- DAILY LOTTERY -->
-<section id="lottery" class="hidden">
-<h2>🎟️ ЕЖЕДНЕВНАЯ ЛОТЕРЕЯ</h2>
-<div class="panel" style="text-align:center">
- <div style="font-size:54px">🎰</div>
- <div style="font-size:13px;color:var(--muted);font-weight:900;letter-spacing:2px">СУПЕРПРИЗ ДНЯ</div>
- <div style="font-size:36px;color:var(--gold);font-weight:1000;margin:8px">1 000 000 ₽</div>
- <div id="lotteryClock" class="small">Продажа билетов до 23:00</div>
- <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:8px;margin:16px 0">
-  <div class="case"><b id="lotterySold">0 / 10 000</b><div class="small">Билетов продано</div></div>
-  <div class="case"><b id="lotteryMine">0</b><div class="small">Твои билеты</div></div>
- </div>
- <div class="small">Цена билета — <b>100 ₽</b>. Боты тоже участвуют и могут забрать суперприз.</div>
- <button class="goldbtn" id="lotteryBuy" onclick="buyLotteryTicket()">🎟️ КУПИТЬ БИЛЕТ — 100 ₽</button>
- <div id="lotteryMessage" class="small" style="margin-top:10px"></div>
-</div>
-<div class="panel">
- <h3>📊 РОЗЫГРЫШ</h3>
- <div id="lotteryResult" class="small">Итоги сегодняшнего розыгрыша появятся после 23:00.</div>
-</div>
-</section>
 
 <!-- NEW ARCADE GAMES -->
 <section id="battleship" class="hidden">
@@ -7046,56 +7023,6 @@ function arcadeNoise(duration=.12,volume=.045,filter=1100){const c=arcadeCtx();i
 function diceRattleSound(){arcadeNoise(.16,.055,2600);arcadeTone(720,.045,"square",.012,520)}
 function diceImpactSound(){arcadeNoise(.095,.085,950);arcadeTone(180,.12,"triangle",.045,95)}
 
-/* DAILY LOTTERY — local daily draw */
-const LOTTERY_LIMIT=10000, LOTTERY_BOT_TICKETS=7000, LOTTERY_PRICE=100, LOTTERY_PRIZE=1000000;
-let lotteryData=null;
-function lotteryDayKey(d=new Date()){return d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0")}
-function lotteryLoad(){
- const day=lotteryDayKey();
- try{lotteryData=JSON.parse(localStorage.getItem("skebobLottery")||"null")}catch(e){lotteryData=null}
- if(!lotteryData||lotteryData.day!==day){
-  const bots=["КиберБот","Счастливчик","КазиноБот","РобоИгрок","Мистер Х","Лаки"];
-  const tickets=[];
-  for(let i=0;i<LOTTERY_BOT_TICKETS;i++)tickets.push({owner:bots[Math.floor(Math.random()*bots.length)],bot:true});
-  lotteryData={day,tickets,mine:0,result:null};
-  localStorage.setItem("skebobLottery",JSON.stringify(lotteryData));
- }
-}
-function lotteryDraw(){
- if(!lotteryData||lotteryData.result)return;
- const d=new Date(),cutoff=new Date(d.getFullYear(),d.getMonth(),d.getDate(),23,0,0);
- if(d<cutoff)return;
- if(!lotteryData.tickets.length){lotteryData.result={owner:"Никто",bot:true};}
- else{
-  const win=lotteryData.tickets[Math.floor(Math.random()*lotteryData.tickets.length)];
-  lotteryData.result={owner:win.owner,bot:!!win.bot};
-  if(!win.bot){state.balance+=LOTTERY_PRIZE;registerWin(LOTTERY_PRIZE);localStorage.setItem("skebobSave",JSON.stringify(state));}
- }
- localStorage.setItem("skebobLottery",JSON.stringify(lotteryData));
-}
-function buyLotteryTicket(){
- lotteryLoad();const now=new Date();
- if(now.getHours()>=23){lotteryRender();return}
- if(lotteryData.tickets.length>=LOTTERY_LIMIT){document.getElementById("lotteryMessage").textContent="Все 10 000 билетов уже проданы.";return}
- if(state.balance<LOTTERY_PRICE){document.getElementById("lotteryMessage").textContent="Недостаточно монет на балансе.";return}
- state.balance-=LOTTERY_PRICE;lotteryData.tickets.push({owner:"Ты",bot:false});lotteryData.mine++;
- localStorage.setItem("skebobLottery",JSON.stringify(lotteryData));save();lotteryRender();
- document.getElementById("lotteryMessage").textContent="Билет куплен! Удачи в розыгрыше 🍀";
-}
-function lotteryRender(){
- if(!document.getElementById("lottery"))return;
- lotteryLoad();lotteryDraw();
- const now=new Date(),closed=now.getHours()>=23;
- const set=(id,v)=>{const e=document.getElementById(id);if(e)e.textContent=v};
- set("lotterySold",lotteryData.tickets.length.toLocaleString("ru-RU")+" / 10 000");
- set("lotteryMine",lotteryData.mine);
- const buy=document.getElementById("lotteryBuy");buy.disabled=closed||lotteryData.tickets.length>=LOTTERY_LIMIT||state.balance<LOTTERY_PRICE;
- set("lotteryClock",closed?"Продажа закрыта · новый день в 00:00":"Продажа билетов до 23:00 · осталось "+Math.max(0,Math.floor((new Date(now.getFullYear(),now.getMonth(),now.getDate(),23)-now)/60000))+" мин.");
- const msg=document.getElementById("lotteryResult");
- if(lotteryData.result)msg.innerHTML=(lotteryData.result.bot?"🤖 Суперприз забрал бот: ":"🏆 СУПЕРПРИЗ ТВОЙ! ")+lotteryData.result.owner+"<br>Выигрыш: 1 000 000 ₽<br><span class='small'>Следующий розыгрыш начнётся в 00:00.</span>";
- else msg.textContent="Итоги сегодняшнего розыгрыша появятся после 23:00.";
-}
-
 /* SIX ARCADE MINI-GAMES */
 function gameBet(id){const v=Math.floor(Number(document.getElementById(id).value));return Number.isFinite(v)&&v>=100&&v<=state.balance?v:0}
 function gamePay(bet,mult){const win=Math.floor(bet*mult);state.balance+=win;registerWin(win);save();return win}
@@ -7122,7 +7049,6 @@ function chickenCash(){if(!chActive)return;chActive=false;const w=gamePay(chBetV
 ========================= */
 
 updateDailyTasks();
-lotteryLoad();
 loadTheme();
 loadCasinoMusicSetting();
 
@@ -7156,8 +7082,6 @@ updateDailyCase,
 1000
 );
 setInterval(updateSecretDrop,1000);
-lotteryRender();
-setInterval(lotteryRender,1000);
 
 </script>
 
