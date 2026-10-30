@@ -804,9 +804,15 @@ line-height:1.6;
 .bj-dealer,.bj-you{text-align:center;padding:8px}.bj-seat-name{font-weight:900;letter-spacing:1px;margin-bottom:8px}.bj-cards{display:flex;justify-content:center;gap:7px;flex-wrap:wrap;min-height:82px;align-items:center}.bj-card{width:53px;height:76px;border-radius:8px;background:#fff;color:#181818;display:grid;place-items:center;font-size:22px;font-weight:900;box-shadow:0 3px 8px #0007;border:1px solid #ddd}.bj-card.red{color:#d3263e}.bj-divider{text-align:center;color:#e9d39b;font-size:11px;letter-spacing:4px;border-top:1px solid #ffffff40;border-bottom:1px solid #ffffff40;padding:8px;margin:6px 0}.bj-players{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:8px}.bj-bot{background:#0003;border:1px solid #ffffff35;border-radius:12px;padding:8px;text-align:center;color:white}.bj-bot .bj-cards{min-height:70px}.bj-bot .bj-card{width:40px;height:58px;font-size:17px}.bj-actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}.bj-actions>*{flex:1;min-width:110px}
 /* SLOTS */
 .slots-machine{display:flex;justify-content:center;gap:10px;margin:22px auto;padding:15px;background:linear-gradient(145deg,#392713,#14131a);border:3px solid #b98732;border-radius:18px;max-width:420px;box-shadow:0 0 24px #f4c75e22}
-.slots-reel{display:grid;place-items:center;width:30%;height:105px;background:linear-gradient(180deg,#fff8dc,#d6c18b 48%,#fff8dc);border:3px solid #8c672c;border-radius:12px;color:#21180b;font-size:clamp(42px,12vw,64px);text-shadow:0 2px 2px #fff;box-shadow:inset 0 0 12px #5c3b12}
-.slots-reel.spinning{animation:slotShake .12s infinite alternate}
-@keyframes slotShake{from{transform:translateY(-3px)}to{transform:translateY(3px)}}
+.slots-reel{position:relative;display:grid;place-items:center;width:30%;height:105px;overflow:hidden;background:linear-gradient(180deg,#fff8dc,#d6c18b 48%,#fff8dc);border:3px solid #8c672c;border-radius:12px;color:#21180b;font-size:clamp(42px,12vw,64px);text-shadow:0 2px 2px #fff;box-shadow:inset 0 0 12px #5c3b12,inset 0 12px 12px #fff8,inset 0 -12px 12px #5c3b1244}
+.slots-reel:before,.slots-reel:after{content:"";position:absolute;left:0;right:0;height:18px;z-index:2;pointer-events:none}
+.slots-reel:before{top:0;background:linear-gradient(#8c672c66,transparent)}
+.slots-reel:after{bottom:0;background:linear-gradient(transparent,#8c672c66)}
+.slots-reel.spinning{filter:blur(1.2px);box-shadow:inset 0 0 20px #5c3b12,inset 0 0 18px #fff8}
+.slots-reel.stopping{animation:slotLand .22s cubic-bezier(.2,.8,.2,1)}
+@keyframes slotLand{0%{transform:translateY(-13px) scaleY(.88)}65%{transform:translateY(4px) scaleY(1.04)}100%{transform:translateY(0) scaleY(1)}}
+.slots-machine{position:relative}
+.slots-machine:after{content:"";position:absolute;left:8px;right:8px;top:50%;height:2px;background:#b9873266;box-shadow:0 0 8px #f4c75e55;pointer-events:none}
 #slotsMessage{min-height:34px;margin:12px;color:var(--gold);font-weight:800}
 /* CRASH */
 .crash-panel{background:var(--panel3);border:1px solid var(--border2);border-radius:22px;padding:13px}
@@ -6280,13 +6286,27 @@ function updateSlotsControls(){
 function setSlotsBet(v){if(slotsBusy)return;document.getElementById("slotsBet").value=v==="max"?Math.max(10,Math.floor(state.balance)):v;updateSlotsControls()}
 function changeSlotsBet(d){if(slotsBusy)return;const x=document.getElementById("slotsBet"),v=Math.max(10,Math.floor(Number(x.value)||10));x.value=Math.max(10,v+(d>0?10:-10));updateSlotsControls()}
 function slotPayout(a){const counts={};a.forEach(x=>counts[x]=(counts[x]||0)+1);if(a.every(x=>x===a[0]))return a[0]==="👑"?15:a[0]==="💎"?8:a[0]==="🍋"?5:a[0]==="🍒"?3:2;return Object.values(counts).includes(2)?1.2:0}
+function spinOneSlotReel(reel,finalSymbol,delay){
+ return new Promise(resolve=>{
+  reel.classList.add("spinning");
+  let elapsed=0,step=0,wait=42;
+  function tick(){
+   if(step<18)reel.textContent=SLOT_SYMBOLS[Math.floor(Math.random()*SLOT_SYMBOLS.length)];
+   else if(step<25)reel.textContent=SLOT_SYMBOLS[Math.floor(Math.random()*SLOT_SYMBOLS.length)];
+   else {reel.textContent=finalSymbol;reel.classList.remove("spinning");reel.classList.add("stopping");setTimeout(()=>reel.classList.remove("stopping"),260);resolve();return}
+   step++;wait=step<15?48:step<21?72:step<25?115:wait;
+   setTimeout(tick,wait);
+  }
+  setTimeout(tick,delay);
+ });
+}
 async function spinSlots(){
  if(slotsBusy)return;const bet=Math.floor(Number(document.getElementById("slotsBet").value));
  if(!Number.isFinite(bet)||bet<10||bet>state.balance){alert("Недостаточно монет или неверная ставка.");return}
  slotsBusy=true;state.balance-=bet;addTurnover(bet);state.stats.slotsGames=(state.stats.slotsGames||0)+1;save();updateSlotsControls();
- const reels=[0,1,2].map(i=>document.getElementById("slotReel"+i));reels.forEach(e=>e.classList.add("spinning"));
+ const reels=[0,1,2].map(i=>document.getElementById("slotReel"+i));
  const result=Array.from({length:3},()=>SLOT_SYMBOLS[Math.floor(Math.random()*SLOT_SYMBOLS.length)]);
- for(let i=0;i<3;i++){await new Promise(resolve=>setTimeout(resolve,650+i*450));reels[i].textContent=result[i];reels[i].classList.remove("spinning")}
+ await Promise.all(reels.map((reel,i)=>spinOneSlotReel(reel,result[i],i*520)));
  const mult=slotPayout(result),reward=Math.floor(bet*mult);
  if(reward){state.balance+=reward;registerWin(reward);state.stats.slotsWins=(state.stats.slotsWins||0)+1;slotsBest=Math.max(slotsBest,mult)}
  document.getElementById("slotsWinStat").textContent=reward?"+"+reward.toLocaleString("ru-RU")+" 🪙":"0 🪙";
