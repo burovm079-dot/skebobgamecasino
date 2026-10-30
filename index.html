@@ -1323,7 +1323,7 @@ SKEBOB <span>CASINO</span>
 <label>Ставка</label><input id="dartBet" type="number" min="100" step="100" value="100">
 <label>Прицел</label><input id="dartAim" type="range" min="0" max="100" value="50">
 <label>Сила броска</label><input id="dartPower" type="range" min="1" max="100" value="65">
-<button class="goldbtn" onclick="dartThrow()">🎯 БРОСИТЬ ДРОТИК</button><div id="dartResult" class="small"></div>
+<canvas id="dartCanvas" class="real-game-canvas dart-scene" aria-label="Детализированная мишень для дартса"></canvas><button class="goldbtn" onclick="dartThrow()">🎯 БРОСИТЬ ДРОТИК</button><div id="dartResult" class="small"></div>
 </div></section>
 <section id="billiards" class="hidden">
 <h2>🎱 БИЛЬЯРД</h2><div class="panel">
@@ -1331,7 +1331,7 @@ SKEBOB <span>CASINO</span>
 <label>Ставка</label><input id="poolBet" type="number" min="100" step="100" value="100">
 <label>Угол удара</label><input id="poolAngle" type="range" min="0" max="180" value="90">
 <label>Сила удара</label><input id="poolPower" type="range" min="1" max="100" value="55">
-<div style="background:radial-gradient(ellipse,#167a48,#06442a);border:8px solid #5c351d;border-radius:18px;padding:35px;text-align:center;font-size:38px">⚪　🎱　🕳️</div>
+<canvas id="poolCanvas" class="real-game-canvas pool-scene" aria-label="Бильярдный стол с шарами"></canvas>
 <button class="goldbtn" onclick="poolShot()">УДАРИТЬ ПО ШАРУ</button><div id="poolResult" class="small"></div>
 </div></section>
 <section id="bowling" class="hidden">
@@ -1340,7 +1340,7 @@ SKEBOB <span>CASINO</span>
 <label>Ставка</label><input id="bowlBet" type="number" min="100" step="100" value="100">
 <label>Направление</label><input id="bowlAim" type="range" min="0" max="100" value="50">
 <label>Сила броска</label><input id="bowlPower" type="range" min="1" max="100" value="75">
-<div id="bowlPins" style="text-align:center;font-size:38px;margin:12px">🎳</div>
+<canvas id="bowlCanvas" class="real-game-canvas bowl-scene" aria-label="Кегельная дорожка"></canvas><div id="bowlPins" style="text-align:center;font-size:18px;margin:12px">ГОТОВ К БРОСКУ</div>
 <button class="goldbtn" onclick="bowlThrow()">БРОСИТЬ ШАР</button><div id="bowlResult" class="small"></div>
 </div></section>
 <section id="chickenroad" class="hidden">
@@ -1353,6 +1353,30 @@ SKEBOB <span>CASINO</span>
 </div></section>
 <style>
 .chicken-panel{max-width:900px;margin:auto}.ch-hud{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin:14px 0}.ch-hud>div{background:var(--panel2);border:1px solid var(--border);border-radius:12px;padding:10px}.ch-hud span{display:block;font-size:10px;color:var(--muted);letter-spacing:1px}.ch-hud b{display:block;color:var(--gold);font-size:22px;margin-top:4px}.ch-canvas-wrap{position:relative;overflow:hidden;border:1px solid #52634b;border-radius:16px;background:#233d2a;box-shadow:inset 0 0 35px #0008}.ch-canvas-wrap canvas{display:block;width:100%;height:300px}.ch-scene-tag{position:absolute;left:12px;top:12px;padding:6px 10px;border-radius:8px;background:#07120dcc;color:#fff;font-size:11px;font-weight:900;letter-spacing:1px}.ch-controls{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-top:14px;text-align:left}.ch-controls label,.ch-controls input{grid-column:1/-1}.ch-controls button{width:100%;min-height:44px}.ch-result{min-height:24px;margin-top:12px}@media(max-width:560px){.ch-canvas-wrap canvas{height:240px}.ch-hud b{font-size:17px}.ch-hud span{font-size:8px}.ch-controls{grid-template-columns:1fr}}
+
+/* REALISM PASS: only the final six arcade games */
+#battleship .panel,#tictactoe .panel,#darts .panel,#billiards .panel,#bowling .panel{background:linear-gradient(155deg,#202936,#101720 72%);border:1px solid #56677a;box-shadow:0 16px 36px #0005,inset 0 1px #ffffff12}
+#battleship h2,#tictactoe h2,#darts h2,#billiards h2,#bowling h2,#chickenroad h2{letter-spacing:.04em;text-shadow:0 3px 12px #0008}
+#battleship #bsGrid{gap:6px!important;padding:12px;background:linear-gradient(145deg,#123a51,#092638);border:2px solid #5b8494;border-radius:16px;box-shadow:inset 0 0 28px #0009}
+#bsGrid button{position:relative!important;overflow:hidden;color:#e8f7ff!important;background:repeating-linear-gradient(0deg,#15506a,#15506a 2px,#17465c 3px,#17465c 20px)!important;border:1px solid #6b9bad!important;border-radius:8px!important;box-shadow:inset 0 2px 5px #ffffff20,0 3px 5px #0006;font-size:clamp(15px,4vw,25px)!important;transition:transform .14s,filter .14s}
+#bsGrid button:not(:disabled):hover{filter:brightness(1.3);transform:translateY(-2px)}
+#bsGrid button:disabled{opacity:1!important}
+#bsGrid button:has(+ .unused){outline:none}
+#tictactoe #tttGrid{max-width:360px!important;padding:12px;background:linear-gradient(145deg,#172b3b,#0b1722);border:1px solid #496175;border-radius:18px;box-shadow:inset 0 0 25px #0008}
+#tttGrid button{font-family:Arial,sans-serif!important;font-weight:900;min-height:82px;color:#e9f5ff!important;background:linear-gradient(145deg,#263c50,#172638)!important;border:1px solid #64809a!important;box-shadow:inset 0 1px #ffffff25,0 5px 9px #0005;transition:transform .16s,background .16s}
+#tttGrid button:not(:disabled):hover{transform:scale(1.035);background:linear-gradient(145deg,#36536b,#20384f)!important}
+.real-game-canvas{display:block;width:100%;height:auto;aspect-ratio:16/10;margin:14px 0;border-radius:15px;border:2px solid #65778a;box-shadow:0 12px 26px #0008,inset 0 0 25px #0008;background:#101820}
+.dart-scene{max-height:390px;background:radial-gradient(ellipse,#303a43,#101820)}
+.pool-scene{aspect-ratio:16/9;background:#075333}
+.bowl-scene{aspect-ratio:16/10;background:#151b26}
+#darts input[type=range],#billiards input[type=range],#bowling input[type=range]{accent-color:#e8b84f}
+#chickenroad .ch-canvas-wrap{border:2px solid #6b806b;box-shadow:0 15px 32px #0008,inset 0 0 40px #0009}
+#chickenroad .ch-hud>div{background:linear-gradient(145deg,#273646,#121e2b);border-color:#53687a;box-shadow:inset 0 1px #ffffff18,0 5px 12px #0004}
+#chickenroad .ch-hud b{font-variant-numeric:tabular-nums;text-shadow:0 2px 8px #e9b94a44}
+#battleship .goldbtn,#tictactoe .goldbtn,#darts .goldbtn,#billiards .goldbtn,#bowling .goldbtn,#chickenroad .goldbtn{box-shadow:0 5px 0 #8b641d,0 9px 18px #0005;transition:transform .12s,filter .12s}
+#battleship .goldbtn:active,#tictactoe .goldbtn:active,#darts .goldbtn:active,#billiards .goldbtn:active,#bowling .goldbtn:active,#chickenroad .goldbtn:active{transform:translateY(3px);box-shadow:0 2px 0 #8b641d}
+@media(max-width:480px){#tttGrid button{min-height:68px}.real-game-canvas{border-radius:11px}}
+
 </style>
 
 <!-- CASES -->
@@ -7037,9 +7061,9 @@ function tttWinner(a){for(const [x,y,z] of [[0,1,2],[3,4,5],[6,7,8],[0,3,6],[1,4
 function tttRender(){const g=document.getElementById("tttGrid");g.innerHTML="";ttt.forEach((v,i)=>{const b=document.createElement("button");b.textContent=v||"　";b.style.cssText="aspect-ratio:1;font-size:35px;border-radius:10px;background:var(--panel2);color:var(--text);border:1px solid var(--border)";b.disabled=!!v||!tttActive;b.onclick=()=>tttMove(i);g.appendChild(b)})}
 function tttFinish(w){tttActive=false;if(w==="X"){const n=gamePay(tttBetValue,2);document.getElementById("tttStatus").textContent="🏆 Ты победил! Выплата "+n+" 🪙"}else if(w==="draw"){state.balance+=tttBetValue;save();document.getElementById("tttStatus").textContent="Ничья — ставка возвращена."}else{save();document.getElementById("tttStatus").textContent="🤖 Бот победил. Попробуй ещё!"}tttRender()}
 function tttMove(i){if(!tttActive||ttt[i])return;ttt[i]="X";let w=tttWinner(ttt);if(w){tttRender();tttFinish(w);return}let free=ttt.map((v,i)=>v? -1:i).filter(i=>i>=0);ttt[free[Math.floor(Math.random()*free.length)]]="O";w=tttWinner(ttt);tttRender();if(w)tttFinish(w);else document.getElementById("tttStatus").textContent="Твой ход — ❌"}
-function dartThrow(){const b=gameBet("dartBet");if(!b){alert("Нужна ставка от 100");return}state.balance-=b;const aim=+document.getElementById("dartAim").value,power=+document.getElementById("dartPower").value;const accuracy=Math.max(0,100-Math.abs(aim-50)*1.5-Math.abs(power-60)*.7+(Math.random()*24-12));const score=accuracy>88? bull=50:accuracy>68?25:accuracy>45?10:0;const mult=score===50?3:score===25?1.5:score===10?0.5:0;const win=mult?gamePay(b,mult):0;if(!mult)save();document.getElementById("dartResult").textContent="🎯 Очки: "+score+" · "+(win?"Выплата "+win+" 🪙":"Мимо!");}
-function poolShot(){const b=gameBet("poolBet");if(!b){alert("Нужна ставка от 100");return}state.balance-=b;const a=+document.getElementById("poolAngle").value,p=+document.getElementById("poolPower").value;const chance=Math.max(5,65-Math.abs(a-90)*.45-Math.abs(p-65)*.35);const ok=Math.random()*100<chance;const m=ok?(p>85?3:2):0;const w=m?gamePay(b,m):0;if(!m)save();document.getElementById("poolResult").textContent=ok?"🎱 Шар в лузе! Выплата "+w+" 🪙":"Шар не попал в лузу. Попробуй ещё!";}
-function bowlThrow(){const b=gameBet("bowlBet");if(!b){alert("Нужна ставка от 100");return}state.balance-=b;const aim=+document.getElementById("bowlAim").value,p=+document.getElementById("bowlPower").value;let pins=Math.max(0,Math.min(10,Math.round(10-Math.abs(aim-50)/9-Math.abs(p-78)/18+(Math.random()*4-2))));const m=pins===10?3:pins>=8?2:pins>=6?1:0;const w=m?gamePay(b,m):0;if(!m)save();document.getElementById("bowlPins").textContent="🎳　"+"🟡".repeat(pins)+"　("+pins+"/10)";document.getElementById("bowlResult").textContent=pins===10?"STRIKE! Выплата "+w+" 🪙":"Сбито кеглей: "+pins+" · "+(w?"Выплата "+w+" 🪙":"Без выигрыша");}
+function dartThrow(){const b=gameBet("dartBet");if(!b){alert("Нужна ставка от 100");return}state.balance-=b;const aim=+document.getElementById("dartAim").value,power=+document.getElementById("dartPower").value;const accuracy=Math.max(0,100-Math.abs(aim-50)*1.5-Math.abs(power-60)*.7+(Math.random()*24-12));const score=accuracy>88?50:accuracy>68?25:accuracy>45?10:0;const mult=score===50?3:score===25?1.5:score===10?.5:0;const win=mult?gamePay(b,mult):0;if(!mult)save();const spread=(100-accuracy)/100*.72,px=.5+(aim-50)/100*.5+(Math.random()-.5)*spread,py=.5+(power-60)/100*.35+(Math.random()-.5)*spread;drawDartScene(px,py,true);document.getElementById("dartResult").textContent="🎯 Очки: "+score+" · "+(win?"Выплата "+win+" 🪙":"Мимо!");}
+function poolShot(){const b=gameBet("poolBet");if(!b){alert("Нужна ставка от 100");return}state.balance-=b;const a=+document.getElementById("poolAngle").value,p=+document.getElementById("poolPower").value;const chance=Math.max(5,65-Math.abs(a-90)*.45-Math.abs(p-65)*.35);const ok=Math.random()*100<chance;const m=ok?(p>85?3:2):0;const w=m?gamePay(b,m):0;if(!m)save();poolAnimFrame=0;const tick=()=>{poolAnimFrame++;drawPoolScene(true,a,p);if(poolAnimFrame<30)requestAnimationFrame(tick)};requestAnimationFrame(tick);document.getElementById("poolResult").textContent=ok?"🎱 Шар в лузе! Выплата "+w+" 🪙":"Шар не попал в лузу. Попробуй ещё!";}
+function bowlThrow(){const b=gameBet("bowlBet");if(!b){alert("Нужна ставка от 100");return}state.balance-=b;const aim=+document.getElementById("bowlAim").value,p=+document.getElementById("bowlPower").value;let pins=Math.max(0,Math.min(10,Math.round(10-Math.abs(aim-50)/9-Math.abs(p-78)/18+(Math.random()*4-2))));const m=pins===10?3:pins>=8?2:pins>=6?1:0;const w=m?gamePay(b,m):0;if(!m)save();let n=0;const tick=()=>{n++;drawBowlingScene(n/28,n>=25?10-pins:0);if(n<28)requestAnimationFrame(tick)};requestAnimationFrame(tick);document.getElementById("bowlPins").textContent=(pins===10?"STRIKE":"СБИТО КЕГЛЕЙ: "+pins)+" / 10";document.getElementById("bowlResult").textContent=pins===10?"STRIKE! Выплата "+w+" 🪙":"Сбито кеглей: "+pins+" · "+(w?"Выплата "+w+" 🪙":"Без выигрыша");}
 let chBetValue=0,chMult=1,chActive=false,chStepCount=0,chAnim=0,chCrash=false;
 function chRoundRect(c,x,y,w,h,r){c.beginPath();c.roundRect(x,y,w,h,r);c.fill()}
 function chDraw(){
@@ -7078,11 +7102,50 @@ function chickenStart(){if(chActive)return;const b=gameBet("chBet");if(!b){alert
 function chickenStep(){if(!chActive)return;const risk=Math.min(.42,.14+chStepCount*.022);if(Math.random()<risk){chActive=false;chCrash=true;document.getElementById("chScene").textContent="АВАРИЯ";document.getElementById("chResult").textContent="🚨 Курица попала под машину. Ставка потеряна.";document.getElementById("chStep").disabled=true;document.getElementById("chCash").disabled=true;document.getElementById("chStart").disabled=false;save();chDraw();return}chStepCount++;chMult=+(chMult*1.35).toFixed(2);document.getElementById("chMultiplier").textContent="x"+chMult.toFixed(2);document.getElementById("chDistance").textContent=chStepCount+" / 12";document.getElementById("chPotential").textContent=Math.floor(chBetValue*chMult).toLocaleString("ru-RU")+" ₽";document.getElementById("chCash").disabled=false;document.getElementById("chResult").textContent="Полоса пройдена! Продолжить или забрать выигрыш?";document.getElementById("chScene").textContent="БЕЗОПАСНО · "+chStepCount+"/12";if(chStepCount>=12)chickenCash();chDraw()}
 function chickenCash(){if(!chActive)return;chActive=false;const w=gamePay(chBetValue,chMult);document.getElementById("chResult").textContent="🏆 Выигрыш зачислен: "+w.toLocaleString("ru-RU")+" 🪙";document.getElementById("chStep").disabled=true;document.getElementById("chCash").disabled=true;document.getElementById("chStart").disabled=false;document.getElementById("chScene").textContent="ПЕРЕХОД ЗАВЕРШЁН"}
 
+
+/* Detailed arcade scene renderers */
+function sceneCanvas(id){const c=document.getElementById(id);if(!c)return null;const w=c.clientWidth||640,h=Math.round(w*(id==="poolCanvas"?.5625:.625)),d=Math.min(window.devicePixelRatio||1,2);c.width=Math.round(w*d);c.height=Math.round(h*d);const x=c.getContext("2d");x.setTransform(d,0,0,d,0,0);return {c,x,w,h}}
+function drawDartScene(px=.5,py=.5,show=false){
+ const z=sceneCanvas("dartCanvas");if(!z)return;const {x:c,w,h}=z,ox=w/2,oy=h/2,r=Math.min(w,h)*.405;
+ const bg=c.createLinearGradient(0,0,w,h);bg.addColorStop(0,"#26323b");bg.addColorStop(1,"#0c141b");c.fillStyle=bg;c.fillRect(0,0,w,h);
+ for(let i=0;i<45;i++){c.fillStyle="rgba(255,255,255,.025)";c.fillRect((i*83)%w,(i*47)%h,1,1)}
+ c.save();c.translate(ox,oy);c.shadowColor="#000";c.shadowBlur=18;c.fillStyle="#080b0d";c.beginPath();c.arc(0,0,r+9,0,Math.PI*2);c.fill();
+ const colors=["#d8d0b7","#171b20"];for(let n=0;n<20;n++){let a=(n*18-99)*Math.PI/180;c.save();c.rotate(a);c.fillStyle=colors[n%2];c.beginPath();c.moveTo(0,0);c.arc(0,0,r,a,a+Math.PI/10);c.closePath();c.fill();c.restore()}
+ for(const [rr,col] of [[r*.94,"#c4bda8"],[r*.88,"#161a1e"],[r*.55,"#c4bda8"],[r*.49,"#171b20"],[r*.105,"#b83232"],[r*.045,"#d8c75b"]]){c.fillStyle=col;c.beginPath();c.arc(0,0,rr,0,Math.PI*2);c.fill()}
+ for(let n=0;n<20;n++){const a=(n*18-99)*Math.PI/180;c.strokeStyle="#ffffff55";c.lineWidth=1;c.beginPath();c.moveTo(Math.cos(a)*r*.1,Math.sin(a)*r*.1);c.lineTo(Math.cos(a)*r*.94,Math.sin(a)*r*.94);c.stroke();c.fillStyle="#eee8d8";c.font="bold "+Math.max(9,r*.085)+"px Arial";c.textAlign="center";c.textBaseline="middle";c.fillText(String([20,1,18,4,13,6,10,15,2,17,3,19,7,16,8,11,14,9,12,5][n]),Math.cos(a)*r*1.08,Math.sin(a)*r*1.08)}
+ c.restore();
+ if(show){const tx=ox+(px-.5)*r*1.7,ty=oy+(py-.5)*r*1.7;c.save();c.translate(tx,ty);c.rotate(-.7);c.shadowColor="#000";c.shadowBlur=7;c.fillStyle="#b8c2ca";c.beginPath();c.moveTo(0,-24);c.lineTo(4,13);c.lineTo(0,18);c.lineTo(-4,13);c.closePath();c.fill();c.fillStyle="#d44a37";c.fillRect(-2,-28,4,12);c.restore();c.fillStyle="#f6d77b";c.font="bold 12px Arial";c.textAlign="center";c.fillText("БРОСОК",w/2,h-10)}
+}
+let poolAnimFrame=0,bowlAnimFrame=0;
+function drawPoolScene(animate=false,angle=90,power=55){
+ const z=sceneCanvas("poolCanvas");if(!z)return;const {x:c,w,h}=z;
+ const bg=c.createLinearGradient(0,0,0,h);bg.addColorStop(0,"#0b603c");bg.addColorStop(1,"#06341f");c.fillStyle="#17202a";c.fillRect(0,0,w,h);
+ const x=w*.07,y=h*.1,tw=w*.86,th=h*.78;c.shadowColor="#000";c.shadowBlur=18;c.fillStyle="#56371f";c.beginPath();c.roundRect(x-13,y-13,tw+26,th+26,17);c.fill();
+ const felt=c.createLinearGradient(x,y,x+tw,y+th);felt.addColorStop(0,"#168354");felt.addColorStop(.5,"#087044");felt.addColorStop(1,"#064a30");c.fillStyle=felt;c.fillRect(x,y,tw,th);
+ c.strokeStyle="#65bd8d66";c.lineWidth=2;c.strokeRect(x+8,y+8,tw-16,th-16);
+ const pockets=[[x,y],[x+tw/2,y],[x+tw,y],[x,y+th],[x+tw/2,y+th],[x+tw,y+th]];for(const [px,py] of pockets){c.fillStyle="#05090a";c.beginPath();c.arc(px,py,Math.max(7,tw*.025),0,Math.PI*2);c.fill();c.strokeStyle="#bd9b68";c.lineWidth=3;c.stroke()}
+ const br=Math.max(6,tw*.022),balls=[[.28,.5,"#f2eee1"],[.64,.43,"#e8c743"],[.69,.5,"#2c62ae"],[.64,.57,"#c83f38"],[.73,.46,"#f1f0e9"],[.73,.55,"#d58b35"]];
+ balls.forEach((b,i)=>{let bx=x+tw*b[0],by=y+th*b[1];if(animate&&i===0){const a=angle*Math.PI/180,dist=poolAnimFrame*tw*.004*(power/55);bx+=Math.cos(a)*dist;by-=Math.sin(a)*dist}c.fillStyle="#0006";c.beginPath();c.ellipse(bx+2,by+4,br*1.1,br*.65,0,0,Math.PI*2);c.fill();const g=c.createRadialGradient(bx-br*.4,by-br*.45,1,bx,by,br);g.addColorStop(0,"#fff");g.addColorStop(.35,b[2]);g.addColorStop(1,"#101820");c.fillStyle=g;c.beginPath();c.arc(bx,by,br,0,Math.PI*2);c.fill();c.fillStyle="#ffffffaa";c.beginPath();c.arc(bx-br*.35,by-br*.35,br*.18,0,Math.PI*2);c.fill()});
+ if(!animate){c.strokeStyle="#e9dfc7";c.lineWidth=2;c.beginPath();c.moveTo(x+tw*.28,y+th*.5);c.lineTo(x+tw*.61,y+th*.5);c.stroke()}
+}
+function drawBowlingScene(progress=0,fallen=0){
+ const z=sceneCanvas("bowlCanvas");if(!z)return;const {x:c,w,h}=z;c.fillStyle="#101720";c.fillRect(0,0,w,h);
+ const lane=c.createLinearGradient(0,0,0,h);lane.addColorStop(0,"#b17d49");lane.addColorStop(.45,"#d9b47b");lane.addColorStop(1,"#82552f");c.fillStyle=lane;c.beginPath();c.moveTo(w*.35,h*.08);c.lineTo(w*.65,h*.08);c.lineTo(w*.94,h*.98);c.lineTo(w*.06,h*.98);c.closePath();c.fill();
+ c.strokeStyle="#f3d8a7";c.lineWidth=2;for(let i=0;i<7;i++){let xx=w*(.37+i*.043);c.beginPath();c.moveTo(xx,h*.1);c.lineTo(w*(.12+i*.126),h*.98);c.stroke()}
+ c.fillStyle="#e6c997";c.fillRect(w*.345,h*.08,w*.31,h*.015);
+ const pins=[];for(let row=0;row<4;row++)for(let col=0;col<=row;col++)pins.push([.5+(col-row/2)*.055,.19+row*.045]);
+ pins.forEach(([px,py],i)=>{let xx=w*px,yy=h*py,down=i<fallen;c.save();c.translate(xx,yy);if(down)c.rotate((i%2?1:-1)*1.05);c.fillStyle="#0006";c.beginPath();c.ellipse(2,5,7,3,0,0,Math.PI*2);c.fill();c.fillStyle="#f2eee7";c.beginPath();c.ellipse(0,0,5.2,11,0,0,Math.PI*2);c.fill();c.fillStyle="#c83e37";c.fillRect(-4,-5,8,2);c.restore()});
+ const bx=w*.5+(progress?Math.sin(progress*2)*w*.04:0),by=h*(.91-progress*.65);const rg=c.createRadialGradient(bx-8,by-10,2,bx,by,Math.max(9,w*.035));rg.addColorStop(0,"#fff");rg.addColorStop(.35,"#b9c4ce");rg.addColorStop(1,"#202b38");c.fillStyle="#0007";c.beginPath();c.ellipse(bx+3,by+8,w*.035,w*.015,0,0,Math.PI*2);c.fill();c.fillStyle=rg;c.beginPath();c.arc(bx,by,w*.035,0,Math.PI*2);c.fill();c.fillStyle="#293747";for(let k=0;k<3;k++){c.beginPath();c.arc(bx-3+k*4,by-2,1.5,0,Math.PI*2);c.fill()}
+}
+function animateCanvasShot(kind,draw){let n=0;const tick=()=>{n++;draw(n/24);if(n<24)requestAnimationFrame(tick)};requestAnimationFrame(tick)}
+function renderArcadeRealism(){drawDartScene();drawPoolScene();drawBowlingScene()}
+
 /* =========================
    START
 ========================= */
 
 updateDailyTasks();
+renderArcadeRealism();
 loadTheme();
 loadCasinoMusicSetting();
 
