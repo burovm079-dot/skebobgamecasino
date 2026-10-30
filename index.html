@@ -794,6 +794,20 @@ line-height:1.6;
 .plinko-last{background:var(--panel);border:1px solid var(--border2);border-radius:12px;text-align:center;padding:13px;margin:12px 0;color:var(--muted);font-size:13px;min-height:46px}
 .plinko-info{color:var(--muted);font-size:12px;line-height:1.6;margin:8px 2px}
 @media(max-width:390px){.plinko-board{height:300px}.plinko-peg{width:6px;height:6px}.plinko-slot{padding:7px 0;font-size:8px}}
+/* RACE */
+.race-panel{background:var(--panel3);border:1px solid var(--border2);border-radius:22px;padding:12px}
+.race-track{position:relative;overflow:hidden;border:2px solid #536176;border-radius:15px;background:repeating-linear-gradient(180deg,#28543b 0 48px,#214832 49px 51px);padding:12px 40px 12px 8px}
+.race-lanes{display:grid;gap:7px}.race-lane{height:49px;position:relative;border-bottom:2px dashed #ffffff45;background:#ffffff09;border-radius:8px;overflow:hidden}
+.race-runner{position:absolute;left:0;top:2px;font-size:32px;filter:drop-shadow(0 2px 2px #0008)}
+.race-finish{position:absolute;z-index:3;right:2px;top:0;bottom:0;width:30px;border-left:3px solid white;display:grid;place-items:center;color:white;font-size:22px}
+.race-track-label{text-align:center;color:#d8f3df;font-size:9px;letter-spacing:2px;margin-top:8px}
+.race-picks{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin:12px 0}.race-picks button{background:var(--panel2);color:var(--text);border:1px solid var(--border2);border-radius:10px;padding:12px 2px}
+.race-picks button.active{border-color:var(--gold);background:#493819;color:#ffda7c}
+.race-result{background:var(--panel);border:1px solid var(--border2);border-radius:12px;padding:13px;text-align:center;margin:12px 0;min-height:46px;color:var(--muted)}
+.race-footer{display:flex;align-items:center;justify-content:space-between;gap:8px;flex-wrap:wrap}
+@keyframes raceShake{0%,100%{transform:translateX(0)}50%{transform:translateX(2px)}}
+.race-track.running{animation:raceShake .15s infinite}
+@media(max-width:420px){.race-lane{height:45px}.race-picks button{font-size:11px}}
 /* INVENTORY */
 
 .inventory-summary{
@@ -1152,6 +1166,7 @@ SKEBOB <span>CASINO</span>
 <button onclick="showPage('plinko',this)">
 🔴 PLINKO
 </button>
+<button onclick="showPage('race',this)">🏁 RACE</button>
 
 <button onclick="showPage('inventory',this)">
 🎒 INVENTORY
@@ -1909,6 +1924,16 @@ class="game-status"
 </div>
 </section>
 
+<section id="race" class="hidden">
+<h2>🏁 RACE</h2><div class="race-panel">
+<div class="game-stats"><div class="game-stat"><span>СТАВКА</span><strong id="raceBetStat">100 🪙</strong></div><div class="game-stat"><span>ТВОЙ УЧАСТНИК</span><strong id="racePickStat">🐎 №1</strong></div><div class="game-stat"><span>КОЭФФИЦИЕНТ</span><strong>×2.00</strong></div></div>
+<div class="race-track" id="raceTrack"><div class="race-finish">🏁</div><div class="race-lanes" id="raceLanes"></div><div class="race-track-label">SKEBOB GRAND PRIX</div></div>
+<div class="race-picks"><button class="active" onclick="selectRace(0,this)">🐎 №1</button><button onclick="selectRace(1,this)">🐆 №2</button><button onclick="selectRace(2,this)">🐺 №3</button><button onclick="selectRace(3,this)">🦊 №4</button></div>
+<div class="race-result" id="raceResult">Выбери участника и делай ставку!</div>
+<button class="game-main" id="racePlayButton" onclick="startRaceGame()">🏁 НАЧАТЬ ГОНКУ ЗА 100 🪙</button>
+<div class="game-control"><div class="small" style="text-align:center">СТАВКА</div><div class="bet-main"><button onclick="changeRaceBet(-1)">−</button><input id="raceBet" type="number" value="100" min="10" oninput="updateRaceControls()"><button onclick="changeRaceBet(1)">+</button></div><div class="bet-presets race-presets"><button onclick="setRaceBet(10,this)">10</button><button class="selected" onclick="setRaceBet(100,this)">100</button><button onclick="setRaceBet(500,this)">500</button><button onclick="setRaceBet(1000,this)">1 000</button><button onclick="setRaceBet('max',this)">МАКС</button></div></div>
+<div class="race-footer"><button class="secondary" id="raceSoundButton" onclick="toggleRaceSound()">🔊 ЗВУК ВКЛ</button><span class="small">4 участника · случайный победитель</span></div>
+<div class="plinko-info">Выбери гонщика, поставь монеты и смотри анимированную гонку. Победитель выбирается случайно. Выплата за победу — ×2.</div></div></section>
 <!-- INVENTORY -->
 
 <section
@@ -2695,6 +2720,8 @@ pickaxeWins:0,
 plinkoGames:0,
 
 plinkoWins:0,
+raceGames:0,
+raceWins:0,
 
 turnover:0
 
@@ -5848,6 +5875,23 @@ async function startPlinkoGame(){
 }
 function initPlinko(){renderPlinkoBoard();updatePlinkoControls();}
 
+/* RACE */
+const RACE_RUNNERS=[{icon:"🐎",name:"ЛОШАДЬ"},{icon:"🐆",name:"ГЕПАРД"},{icon:"🐺",name:"ВОЛК"},{icon:"🦊",name:"ЛИСА"}];
+let raceBusy=false,raceBet=100,raceChoice=0,raceSound=true,raceAudio=null;
+function raceWait(ms){return new Promise(r=>setTimeout(r,ms))}
+function raceTone(freq,duration=.07,volume=.035){if(!raceSound)return;try{const C=window.AudioContext||window.webkitAudioContext;if(!C)return;raceAudio=raceAudio||new C();if(raceAudio.state==="suspended")raceAudio.resume();const o=raceAudio.createOscillator(),g=raceAudio.createGain();o.frequency.value=freq;g.gain.setValueAtTime(volume,raceAudio.currentTime);g.gain.exponentialRampToValueAtTime(.001,raceAudio.currentTime+duration);o.connect(g);g.connect(raceAudio.destination);o.start();o.stop(raceAudio.currentTime+duration)}catch(e){}}
+function renderRaceLanes(){const box=document.getElementById("raceLanes");box.innerHTML="";RACE_RUNNERS.forEach((r,i)=>{const lane=document.createElement("div");lane.className="race-lane";lane.innerHTML='<span class="race-runner" id="raceRunner'+i+'">'+r.icon+'</span>';box.appendChild(lane)})}
+function selectRace(i,b){if(raceBusy)return;raceChoice=i;document.querySelectorAll(".race-picks button").forEach(x=>x.classList.remove("active"));if(b)b.classList.add("active");document.getElementById("racePickStat").textContent=RACE_RUNNERS[i].icon+" №"+(i+1)}
+function updateRaceControls(){const input=document.getElementById("raceBet"),btn=document.getElementById("racePlayButton"),v=Math.max(10,Math.floor(Number(input.value)||10));input.value=v;raceBet=v;input.disabled=raceBusy;btn.disabled=raceBusy;document.getElementById("raceBetStat").textContent=v.toLocaleString("ru-RU")+" 🪙";btn.textContent=raceBusy?"🏁 ГОНКА ИДЁТ...":"🏁 НАЧАТЬ ГОНКУ ЗА "+v.toLocaleString("ru-RU")+" 🪙"}
+function setRaceBet(v,b){if(raceBusy)return;document.getElementById("raceBet").value=v==="max"?Math.max(10,Math.floor(state.balance)):v;document.querySelectorAll(".race-presets button").forEach(x=>x.classList.remove("selected"));if(b)b.classList.add("selected");updateRaceControls()}
+function changeRaceBet(d){if(raceBusy)return;const x=document.getElementById("raceBet"),v=Math.max(10,Math.floor(Number(x.value)||10)),step=v<100?10:100;x.value=d>0?v+step:Math.max(10,v-step);updateRaceControls()}
+function toggleRaceSound(){raceSound=!raceSound;document.getElementById("raceSoundButton").textContent=raceSound?"🔊 ЗВУК ВКЛ":"🔇 ЗВУК ВЫКЛ";if(raceSound)raceTone(660,.12)}
+async function startRaceGame(){if(raceBusy)return;const bet=Math.floor(Number(document.getElementById("raceBet").value));if(!Number.isFinite(bet)||bet<10||bet>state.balance){alert("Недостаточно монет или неверная ставка.");return}
+raceBusy=true;state.balance-=bet;addTurnover(bet);state.stats.raceGames++;save();updateRaceControls();renderRaceLanes();const runners=RACE_RUNNERS.map((_,i)=>document.getElementById("raceRunner"+i)),track=document.getElementById("raceTrack"),result=document.getElementById("raceResult");result.textContent="🚦 На старт...";await raceWait(400);result.textContent="3... 2... 1... ПОЕХАЛИ!";raceTone(440,.15);await raceWait(350);raceTone(700,.15);track.classList.add("running");const winner=Math.floor(Math.random()*4),progress=[0,0,0,0];
+for(let tick=0;tick<45;tick++){for(let i=0;i<4;i++){progress[i]=Math.min(100,progress[i]+(i===winner?2.4:1.15)+Math.random()*1.1);runners[i].style.left="calc("+Math.min(96,progress[i])+"% - 4px)"}raceTone(220+Math.random()*100,.025,.012);await raceWait(85);if(progress[winner]>=100)break}
+track.classList.remove("running");const won=winner===raceChoice,reward=won?bet*2:0;if(won){state.balance+=reward;state.stats.raceWins++;registerWin(reward)}save();result.style.color=won?"#24cf78":"#e34b55";result.innerHTML=won?"🏆 ПОБЕДА! "+RACE_RUNNERS[winner].icon+" <b>+"+reward.toLocaleString("ru-RU")+" 🪙</b>":"😢 Победил "+RACE_RUNNERS[winner].icon+" "+RACE_RUNNERS[winner].name+". Ставка проиграна.";raceTone(won?880:130,.35,.06);raceBusy=false;updateRaceControls()}
+function initRace(){renderRaceLanes();updateRaceControls();selectRace(0,document.querySelector(".race-picks button"))}
+ 
 /* =========================
    ADMIN
 ========================= */
@@ -6121,6 +6165,8 @@ initPlane();
 initPickaxe();
 
 initPlinko();
+
+initRace();
 
 updateDailyCase();
 
