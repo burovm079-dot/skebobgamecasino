@@ -5552,7 +5552,7 @@ const PICK_TYPES=[
  {type:"emerald",icon:"💚",name:"ИЗУМРУД",weight:2.5,value:1.1},
  {type:"diamond",icon:"💎",name:"АЛМАЗ",weight:1.5,value:1.8},
  {type:"chest",icon:"🧰",name:"СУНДУК",weight:1,"value":2.2},
- {type:"tnt",icon:"🧨",name:"TNT",weight:1.5,value:0}
+ {type:"tnt",icon:"🧨",name:"TNT",weight:3,value:0}
 ];
 function pickaxeWait(ms){return new Promise(r=>setTimeout(r,ms))}
 function pickRandomType(row,col){
@@ -5672,7 +5672,7 @@ async function startPickaxeGame(){
   const cell=document.querySelector('.pick-block[data-row="'+row+'"][data-col="'+col+'"]');
   if(!cell||pickaxeMine[row][col].opened)continue;
   miner.style.left=((col+.5)/PICK_COLS*100)+"%";
-  miner.style.top=((row+.5)/PICK_ROWS*100)+"%";
+  miner.style.top=(16+(row+.5)/PICK_ROWS*84)+"%";
   miner.classList.remove("swing");void miner.offsetWidth;miner.classList.add("swing");
   cell.classList.add("crack");await pickaxeWait(190);
   pickaxeHealth=Math.max(0,pickaxeHealth-10);
