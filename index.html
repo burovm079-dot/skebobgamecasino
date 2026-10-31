@@ -3353,7 +3353,7 @@ try{
 
 const saved=
 JSON.parse(
-localStorage.getItem(
+storageGet(
 "skebobSave"
 )
 );
@@ -3384,9 +3384,22 @@ balanceBeforeInfinite:null,
 }catch(e){}
 
 // Время первого запуска казино: даёт новичку окно 24 часа для промокода.
-if(!Number.isFinite(Number(state.createdAt))||Number(state.createdAt)<=0){
- state.createdAt=Date.now();
- try{localStorage.setItem("skebobSave",JSON.stringify(state));}catch(e){}
+if(!Number.isFinite(Number(state.createdAt))||Number(state.createdAt)<=0)state.createdAt=Date.now();
+
+// Восстанавливаем корректную структуру сохранения, если старый файл повреждён.
+state.balance=Number.isFinite(Number(state.balance))?Math.max(0,Math.min(Number.MAX_SAFE_INTEGER,Math.floor(Number(state.balance)))):20;
+if(!Array.isArray(state.inventory))state.inventory=[];
+state.inventory=state.inventory.filter(item=>item&&typeof item==="object").map((item,i)=>({...item,id:item.id??(Date.now()+i),value:Number.isFinite(Number(item.value))?Math.max(0,Number(item.value)):0,name:String(item.name||"Предмет")}));
+for(const key of Object.keys(defaultStats)){const value=Number(state.stats[key]);state.stats[key]=Number.isFinite(value)?Math.max(0,value):0;}
+if(!state.admin||typeof state.admin!=="object")state.admin={alwaysWin:false,manualLevel:null,infiniteBalance:false,balanceBeforeInfinite:null};
+state.admin.alwaysWin=state.admin.alwaysWin===true;
+state.admin.infiniteBalance=state.admin.infiniteBalance===true;
+if(!["vip","player","newbie",null].includes(state.admin.manualLevel))state.admin.manualLevel=null;
+if(state.admin.infiniteBalance)state.balance=Number.MAX_SAFE_INTEGER;
+if(state.dailyTasks&&typeof state.dailyTasks==="object"){
+ if(!state.dailyTasks.progress||typeof state.dailyTasks.progress!=="object"||Array.isArray(state.dailyTasks.progress))state.dailyTasks.progress={};
+ for(const [key,value] of Object.entries(state.dailyTasks.progress)){const n=Number(value);state.dailyTasks.progress[key]=Number.isFinite(n)?Math.max(0,n):0;}
+ if(!Array.isArray(state.dailyTasks.claimed))state.dailyTasks.claimed=[];
 }
 
 /* =========================
@@ -3419,24 +3432,27 @@ let mineMultiplier=1;
 
 let dailyOpening=false;
 
+function storageGet(key){try{return window.localStorage.getItem(key)}catch(error){console.warn("Хранилище браузера недоступно:",error);return null}}
+function storageSet(key,value){try{window.localStorage.setItem(key,value);return true}catch(error){console.warn("Не удалось сохранить данные браузера:",error);return false}}
+
 /* =========================
    SAVE
 ========================= */
 
-function getCurrency(){return localStorage.getItem("skebobCurrency")==="USD"?"USD":"RUB";}
+function getCurrency(){return storageGet("skebobCurrency")==="USD"?"USD":"RUB";}
 function formatMoney(amount){
  if(state.admin&&state.admin.infiniteBalance)return "∞";
  const n=Number(amount)||0;
  return getCurrency()==="USD"?"$"+(n/80).toLocaleString("en-US",{minimumFractionDigits:2,maximumFractionDigits:2}):Math.floor(n).toLocaleString("ru-RU")+" ₽";
 }
-function setCurrency(value){localStorage.setItem("skebobCurrency",value==="USD"?"USD":"RUB");render();renderCases();const e=document.getElementById("currencySelect");if(e)e.value=getCurrency();if(typeof updateUpgradeInfo==="function")updateUpgradeInfo();if(typeof renderDailyTasks==="function")renderDailyTasks();}
+function setCurrency(value){storageSet("skebobCurrency",value==="USD"?"USD":"RUB");render();renderCases();const e=document.getElementById("currencySelect");if(e)e.value=getCurrency();if(typeof updateUpgradeInfo==="function")updateUpgradeInfo();if(typeof renderDailyTasks==="function")renderDailyTasks();}
 function loadCurrency(){const e=document.getElementById("currencySelect");if(e)e.value=getCurrency();}
 function save(){
 
 updateDailyTasks(false);
 let saved=false;
 try{
- localStorage.setItem("skebobSave",JSON.stringify(state));
+ storageSet("skebobSave",JSON.stringify(state));
  saved=true;
 }catch(error){
  console.warn("Не удалось сохранить прогресс в этом браузере:",error);
@@ -3582,7 +3598,7 @@ function updateDailyTasks(shouldSave=true){
  state.dailyTasks.progress=state.dailyTasks.progress||{};
  state.dailyTasks.claimed=state.dailyTasks.claimed||[];
  if(!Array.isArray(state.dailyTasks.tasks)||state.dailyTasks.tasks.length!==3)state.dailyTasks.tasks=makeDailyTaskSet();
- if(shouldSave){try{localStorage.setItem("skebobSave",JSON.stringify(state));}catch(error){console.warn("Не удалось сохранить ежедневные задания:",error);}}
+ if(shouldSave){try{storageSet("skebobSave",JSON.stringify(state));}catch(error){console.warn("Не удалось сохранить ежедневные задания:",error);}}
 }
 function claimDailyTask(id){
  updateDailyTasks();const task=state.dailyTasks.tasks.find(t=>t.id===id);if(!task)return;
@@ -3683,7 +3699,7 @@ behavior:"smooth"
 function loadTheme(){
 
 const theme=
-localStorage.getItem(
+storageGet(
 "skebobTheme"
 )||"dark";
 
@@ -3722,7 +3738,7 @@ document.body.classList.toggle(
 light
 );
 
-localStorage.setItem(
+storageSet(
 "skebobTheme",
 light?"light":"dark"
 );
@@ -3987,7 +4003,7 @@ try{
 
 const x=
 JSON.parse(
-localStorage.getItem(
+storageGet(
 "skebobUsedPromocodes"
 )
 );
@@ -4062,7 +4078,7 @@ return;
 
 used.push(code);
 
-localStorage.setItem(
+storageSet(
 "skebobUsedPromocodes",
 JSON.stringify(used)
 );
@@ -4088,7 +4104,7 @@ input.value="";
 function getDailyLastOpen(){
 
 return Number(
-localStorage.getItem(
+storageGet(
 "skebobDailyLastOpen"
 )
 )||0;
@@ -4228,7 +4244,7 @@ function openDailyCase(){
     state.inventory.push(item);
     finalText=`🏆 <b>${prize.name} добавлен в инвентарь!</b>`;
    }
-   localStorage.setItem("skebobDailyLastOpen",String(Date.now()));
+   storageSet("skebobDailyLastOpen",String(Date.now()));
    save();
    document.getElementById("dailyFinal").innerHTML=finalText;
    dailyOpening=false;
@@ -6842,7 +6858,7 @@ async function startCasinoMusic(){
 async function toggleCasinoMusic(){
  const toggle=document.getElementById("casinoMusicToggle");
  const enabled=!!(toggle&&toggle.checked);
- localStorage.setItem("skebobCasinoMusic",enabled?"on":"off");
+ storageSet("skebobCasinoMusic",enabled?"on":"off");
  if(!enabled){
   if(casinoMusicTimer){clearInterval(casinoMusicTimer);casinoMusicTimer=null;}
   if(casinoAudio){await casinoAudio.close();casinoAudio=null;}
@@ -6853,11 +6869,11 @@ async function toggleCasinoMusic(){
 function loadCasinoMusicSetting(){
  const toggle=document.getElementById("casinoMusicToggle");
  // Music is enabled by default; browsers require a user gesture before audio can play.
- if(localStorage.getItem("skebobCasinoMusic")===null)localStorage.setItem("skebobCasinoMusic","on");
- const enabled=localStorage.getItem("skebobCasinoMusic")==="on";
+ if(storageGet("skebobCasinoMusic")===null)storageSet("skebobCasinoMusic","on");
+ const enabled=storageGet("skebobCasinoMusic")==="on";
  if(toggle)toggle.checked=enabled;
  if(enabled){
-  const unlock=()=>{if(localStorage.getItem("skebobCasinoMusic")==="on")startCasinoMusic();};
+  const unlock=()=>{if(storageGet("skebobCasinoMusic")==="on")startCasinoMusic();};
   ["pointerdown","touchstart","keydown"].forEach(ev=>document.addEventListener(ev,unlock,{once:true,passive:true}));
  }
 }
