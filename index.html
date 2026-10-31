@@ -4525,7 +4525,7 @@ results.appendChild(sellButton);
 const backButton=document.createElement("button");
 backButton.className="case-opening-back";
 backButton.textContent="← ВЕРНУТЬСЯ К КЕЙСАМ";
-backButton.onclick=()=>{results.classList.remove("case-opening-view");closeCase();};
+backButton.onclick=()=>{results.classList.remove("case-opening-view");document.getElementById("caseList").classList.add("hidden");document.getElementById("caseDetail").classList.remove("hidden");document.getElementById("results").innerHTML="";};
 results.appendChild(backButton);
 
 }
