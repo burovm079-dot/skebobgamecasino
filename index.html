@@ -7274,18 +7274,23 @@ function chDraw(){
  for(let i=1;i<5;i++){let y=roadTop+i*laneH;c.setLineDash([w*.035,w*.025]);c.strokeStyle="#e9e5d2a0";c.lineWidth=2;c.beginPath();c.moveTo(0,y);c.lineTo(w,y);c.stroke()}c.setLineDash([]);
  for(let i=0;i<150;i++){const x=(i*67)%w,y=roadTop+((i*41)%roadH);c.fillStyle=i%3?"#ffffff0b":"#0000000c";c.fillRect(x,y,2,1)}
  for(let i=0;i<5;i++){
-  const y=roadTop+i*laneH+laneH*.5,dir=i%2?1:-1,speed=.9+i*.22,carW=Math.max(58,w*.13),carH=laneH*.64;
-  for(let j=0;j<3;j++){let raw=(j*(w/3)+chAnim*speed*dir*2.2)%(w+carW);if(raw<0)raw+=w+carW;let x=dir>0?raw-carW:w-raw;
+  const y=roadTop+i*laneH+laneH*.5,dir=i%2?1:-1,speed=.72+i*.16,carW=Math.max(34,Math.min(68,w*.082)),carH=Math.max(10,laneH*.43);
+  // Two compact cars per lane leave a clear gap for the chicken to cross.
+  for(let j=0;j<2;j++){let raw=(j*(w*.62)+chAnim*speed*dir*1.65)%(w+carW+90);if(raw<0)raw+=w+carW+90;let x=dir>0?raw-carW:w-raw;
    c.save();c.translate(x,y);
-   c.fillStyle="#0008";c.beginPath();c.ellipse(carW*.52,carH*.65,carW*.53,carH*.36,0,0,Math.PI*2);c.fill();
-   const colors=["#b83c32","#c89b35","#34749a","#d6d8d3","#47525d"],paint=c.createLinearGradient(0,-carH/2,0,carH/2);paint.addColorStop(0,"#ffffff66");paint.addColorStop(.22,colors[(i*3+j)%5]);paint.addColorStop(.72,colors[(i*3+j)%5]);paint.addColorStop(1,"#111820");
-   c.fillStyle=paint;c.beginPath();c.roundRect(0,-carH/2,carW,carH,carH*.22);c.fill();
-   c.fillStyle="#10191f";c.beginPath();c.roundRect(carW*.24,-carH*.37,carW*.48,carH*.74,5);c.fill();
-   c.fillStyle="#8db6c9";c.beginPath();c.roundRect(carW*.29,-carH*.31,carW*.39,carH*.62,4);c.fill();
-   c.fillStyle="#d9e7e8aa";c.fillRect(carW*.32,-carH*.28,carW*.08,carH*.56);
-   c.fillStyle="#171a1c";for(const wy of [-1,1]){c.beginPath();c.roundRect(carW*.18,wy*(carH*.43)-3,carW*.2,6,2);c.fill();c.beginPath();c.roundRect(carW*.66,wy*(carH*.43)-3,carW*.2,6,2);c.fill()}
-   c.fillStyle="#ffe9b5";c.fillRect(dir>0?carW-3:0,-carH*.29,3,carH*.18);c.fillRect(dir>0?carW-3:0,carH*.11,3,carH*.18);
-   c.fillStyle="#bd3029";c.fillRect(dir>0?0:carW-3,-carH*.28,3,carH*.16);c.fillRect(dir>0?0:carW-3,carH*.12,3,carH*.16);
+   c.fillStyle="#0007";c.beginPath();c.ellipse(carW*.5,carH*.66,carW*.48,carH*.28,0,0,Math.PI*2);c.fill();
+   const colors=["#a9342d","#c69a36","#286b91","#c9d0d2","#414c58"],color=colors[(i*3+j)%colors.length];
+   // Rounded body, hood and trunk highlights
+   const paint=c.createLinearGradient(0,-carH*.65,0,carH*.65);paint.addColorStop(0,"#ffffffb8");paint.addColorStop(.2,color);paint.addColorStop(.72,color);paint.addColorStop(1,"#151b20");
+   c.fillStyle=paint;c.beginPath();c.roundRect(0,-carH*.48,carW,carH*.9,Math.max(3,carH*.25));c.fill();
+   c.fillStyle="#111a20";c.beginPath();c.roundRect(carW*.25,-carH*.39,carW*.48,carH*.78,Math.max(2,carH*.2));c.fill();
+   c.fillStyle="#83b4c8";c.beginPath();c.roundRect(carW*.31,-carH*.34,carW*.36,carH*.68,Math.max(2,carH*.18));c.fill();
+   c.fillStyle="#d9f0f4aa";c.fillRect(carW*.35,-carH*.29,carW*.055,carH*.55);
+   // Small wheels
+   c.fillStyle="#101214";for(const wy of [-1,1]){c.beginPath();c.roundRect(carW*.17,wy*(carH*.4)-2,carW*.19,4,2);c.fill();c.beginPath();c.roundRect(carW*.65,wy*(carH*.4)-2,carW*.19,4,2);c.fill()}
+   // Headlights and rear lamps
+   c.fillStyle="#fff1bd";c.fillRect(dir>0?carW-2:0,-carH*.28,2,Math.max(2,carH*.2));c.fillRect(dir>0?carW-2:0,carH*.08,2,Math.max(2,carH*.2));
+   c.fillStyle="#ff5548";c.fillRect(dir>0?0:carW-2,-carH*.28,2,Math.max(2,carH*.2));c.fillRect(dir>0?0:carW-2,carH*.08,2,Math.max(2,carH*.2));
    c.restore();
   }
  }
