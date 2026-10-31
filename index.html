@@ -1441,6 +1441,23 @@ body.light #caseList .case,body.light .panel{background:linear-gradient(145deg,#
 @media(max-width:560px){.bj-card-corner{font-size:11px;left:4px;top:4px}.bj-card-corner i{font-size:10px}.bj-card-center{font-size:26px}.bj-face-letter{width:27px;height:32px;font-size:18px}}
 @media(prefers-reduced-motion:reduce){.bj-card{scroll-behavior:auto}}
 
+
+/* Standalone card-dealing demo */
+.bj-demo{margin:18px 0;border:1px solid #a9874b;background:linear-gradient(145deg,#202a2a,#111a1b);color:#f6f0df}
+.bj-demo-head{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;flex-wrap:wrap}
+.bj-demo-head h3{margin:0 0 5px;font-size:16px;color:#f3d28a}
+.bj-sound-toggle{display:flex;align-items:center;gap:7px;font-size:12px;font-weight:800;white-space:nowrap}
+.bj-sound-toggle input{accent-color:#d9b56c;width:17px;height:17px}
+.bj-demo-mats{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin:14px 0}
+.bj-demo-mat{min-height:122px;padding:12px;border:1px solid #927345;border-radius:12px;background:radial-gradient(ellipse at center,#176447,#0b3328);text-align:center}
+.bj-demo-mat>b{font-size:11px;letter-spacing:1.5px;color:#f3d28a}
+.bj-demo-cards{display:flex;justify-content:center;align-items:center;gap:8px;flex-wrap:wrap;min-height:82px;margin-top:8px}
+.bj-demo-placeholder{font-size:12px;color:#d0d7d1}
+.bj-demo-card{animation:bjCardFly .48s cubic-bezier(.18,.78,.25,1) both}
+.bj-demo-actions{display:flex;gap:8px;flex-wrap:wrap}
+.bj-demo-actions button{flex:1 1 150px;min-height:42px}
+@media(max-width:420px){.bj-demo-mats{grid-template-columns:1fr}.bj-demo-mat{min-height:110px}.bj-demo-head{align-items:center}}
+@media(prefers-reduced-motion:reduce){.bj-demo-card{animation:none}}
 </style>
 </head>
 
@@ -2740,6 +2757,15 @@ id="profileBalance"
  <div class="bj-actions"><button class="game-main" id="bjDeal" onclick="startBlackjack()">🃏 РАЗДАТЬ КАРТЫ</button><button class="secondary" id="bjHit" onclick="bjHit()" disabled>ЕЩЁ КАРТУ</button><button class="secondary" id="bjStand" onclick="bjStand()" disabled>ХВАТИТ</button><button class="secondary" id="bjDouble" onclick="bjDouble()" disabled>УДВОИТЬ</button></div>
  <div class="game-status" id="bjStatus">Сделай ставку и начинай игру.</div>
  <div class="small">Победа — x2 · Блэкджек — x2.5 · Ничья — возврат. Удвоение доступно на первых двух картах: ставка ×2, ровно одна карта и автоматическое завершение хода. Если у дилера блэкджек, раунд завершается сразу. Дилер берёт карты до 17.</div>
+</div>
+<div class="bj-demo panel" aria-labelledby="bjDemoTitle">
+ <div class="bj-demo-head"><div><h3 id="bjDemoTitle">🎴 ДЕМО: КАК РАЗДАЮТСЯ КАРТЫ</h3><p class="small">Отдельная визуальная демонстрация — без ставок, баланса и игровых результатов.</p></div><label class="bj-sound-toggle"><input id="bjDemoSound" type="checkbox" checked> Звуки</label></div>
+ <div class="bj-demo-mats">
+  <div class="bj-demo-mat"><b>РУКА A</b><div class="bj-demo-cards" id="bjDemoHandA"><span class="bj-demo-placeholder">Ожидает карты</span></div></div>
+  <div class="bj-demo-mat"><b>РУКА B</b><div class="bj-demo-cards" id="bjDemoHandB"><span class="bj-demo-placeholder">Ожидает карты</span></div></div>
+ </div>
+ <div class="bj-demo-actions"><button class="secondary" id="bjDemoDeal" onclick="runBjCardDemo()">🃏 ПОКАЗАТЬ РАЗДАЧУ</button><button class="secondary" id="bjDemoShuffle" onclick="shuffleBjCardDemo()">↻ ЗВУК ПЕРЕМЕШИВАНИЯ</button><button class="secondary" id="bjDemoReset" onclick="resetBjCardDemo()">СБРОСИТЬ</button></div>
+ <div class="small" id="bjDemoStatus" aria-live="polite">Нажми «Показать раздачу», чтобы увидеть анимацию и услышать звук карт.</div>
 </div>
 </section>
 
@@ -7664,6 +7690,79 @@ setInterval(updateSecretDrop,1000);
  setTimeout(()=>splash.classList.add("splash-hidden"),duration);
 })();
 
+
+/* Standalone card presentation demo: no betting or balance integration. */
+let bjDemoBusy=false;
+let bjDemoAudio=null;
+const bjDemoSampleCards=[
+ {rank:"A",suit:"♥"},{rank:"10",suit:"♠"},
+ {rank:"Q",suit:"♦"},{rank:"7",suit:"♣"}
+];
+function bjDemoAudioContext(){
+ if(!document.getElementById("bjDemoSound")?.checked)return null;
+ try{
+  const AudioCtx=window.AudioContext||window.webkitAudioContext;
+  if(!AudioCtx)return null;
+  if(!bjDemoAudio)bjDemoAudio=new AudioCtx();
+  if(bjDemoAudio.state==="suspended")bjDemoAudio.resume();
+  return bjDemoAudio;
+ }catch(e){return null}
+}
+function playBjCardSound(kind="deal"){
+ const ctx=bjDemoAudioContext();if(!ctx)return;
+ const now=ctx.currentTime;
+ const duration=kind==="shuffle"?.42:.16;
+ const length=Math.floor(ctx.sampleRate*duration);
+ const buffer=ctx.createBuffer(1,length,ctx.sampleRate);
+ const data=buffer.getChannelData(0);
+ for(let i=0;i<length;i++){
+  const fade=1-i/length;
+  data[i]=(Math.random()*2-1)*fade*(kind==="shuffle"?.32:.2);
+ }
+ const noise=ctx.createBufferSource();noise.buffer=buffer;
+ const filter=ctx.createBiquadFilter();filter.type="highpass";filter.frequency.value=kind==="shuffle"?650:1100;
+ const gain=ctx.createGain();gain.gain.setValueAtTime(.0001,now);
+ gain.gain.exponentialRampToValueAtTime(kind==="shuffle"?.12:.09,now+.012);
+ gain.gain.exponentialRampToValueAtTime(.0001,now+duration);
+ noise.connect(filter);filter.connect(gain);gain.connect(ctx.destination);noise.start(now);noise.stop(now+duration);
+ if(kind==="deal"){
+  const tap=ctx.createOscillator(),tapGain=ctx.createGain();
+  tap.type="sine";tap.frequency.setValueAtTime(190,now);tap.frequency.exponentialRampToValueAtTime(95,now+.075);
+  tapGain.gain.setValueAtTime(.0001,now);tapGain.gain.exponentialRampToValueAtTime(.055,now+.008);tapGain.gain.exponentialRampToValueAtTime(.0001,now+.09);
+  tap.connect(tapGain);tapGain.connect(ctx.destination);tap.start(now);tap.stop(now+.1);
+ }
+}
+async function runBjCardDemo(){
+ if(bjDemoBusy)return;
+ bjDemoBusy=true;
+ const deal=document.getElementById("bjDemoDeal");
+ deal.disabled=true;
+ resetBjCardDemo(false);
+ document.getElementById("bjDemoStatus").textContent="Карты скользят по сукну стола…";
+ const targets=["bjDemoHandA","bjDemoHandB","bjDemoHandA","bjDemoHandB"];
+ for(let i=0;i<bjDemoSampleCards.length;i++){
+  const target=document.getElementById(targets[i]);
+  if(i===0)target.innerHTML="";
+  const card=document.createElement("span");
+  card.className="bj-demo-card";
+  card.innerHTML=bjCardHTML(bjDemoSampleCards[i]);
+  target.appendChild(card);
+  playBjCardSound("deal");
+  await new Promise(resolve=>setTimeout(resolve,390));
+ }
+ document.getElementById("bjDemoStatus").textContent="Демонстрационная раздача завершена.";
+ deal.disabled=false;bjDemoBusy=false;
+}
+function shuffleBjCardDemo(){
+ if(bjDemoBusy)return;
+ playBjCardSound("shuffle");
+ document.getElementById("bjDemoStatus").textContent="Звук перемешивания колоды воспроизведён.";
+}
+function resetBjCardDemo(updateStatus=true){
+ if(bjDemoBusy&&updateStatus)return;
+ ["bjDemoHandA","bjDemoHandB"].forEach(id=>{const el=document.getElementById(id);if(el)el.innerHTML='<span class="bj-demo-placeholder">Ожидает карты</span>'});
+ if(updateStatus)document.getElementById("bjDemoStatus").textContent="Демонстрация сброшена.";
+}
 </script>
 
 </body>
