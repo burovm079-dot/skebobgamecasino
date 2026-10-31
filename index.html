@@ -3582,7 +3582,7 @@ function updateDailyTasks(shouldSave=true){
  state.dailyTasks.progress=state.dailyTasks.progress||{};
  state.dailyTasks.claimed=state.dailyTasks.claimed||[];
  if(!Array.isArray(state.dailyTasks.tasks)||state.dailyTasks.tasks.length!==3)state.dailyTasks.tasks=makeDailyTaskSet();
- if(shouldSave)localStorage.setItem("skebobSave",JSON.stringify(state));
+ if(shouldSave){try{localStorage.setItem("skebobSave",JSON.stringify(state));}catch(error){console.warn("Не удалось сохранить ежедневные задания:",error);}}
 }
 function claimDailyTask(id){
  updateDailyTasks();const task=state.dailyTasks.tasks.find(t=>t.id===id);if(!task)return;
@@ -4493,7 +4493,6 @@ addTurnover(cost);
 
 state.stats.casesOpened+=qty;
 addDailyTaskProgress("cases",qty);
-state.dailyTasks.progress.cases+=qty;
 
 save();
 
@@ -6334,7 +6333,7 @@ function renderPickaxeMine(){
 function updatePickaxeStats(){
  const hits=document.getElementById("pickHits");
  if(hits)hits.textContent=pickaxeHits+" / "+PICK_HITS;
- document.getElementById("pickDepth").textContent=pickaxeDepth;
+ document.querySelectorAll("#pickDepth").forEach(el=>el.textContent=pickaxeDepth);
  document.getElementById("pickWin").textContent=Math.floor(pickaxeCurrentWin).toLocaleString("ru-RU")+" 🪙";
  const hp=Math.max(0,pickaxeHealth);
  document.getElementById("pickHealthText").textContent=hp+" / "+PICK_MAX_HP;
@@ -7328,7 +7327,7 @@ function chDraw(){
  if(chCrash){c.fillStyle="#0009";c.fillRect(0,0,w,h);c.fillStyle="#fff";c.font="900 26px sans-serif";c.textAlign="center";c.fillText("СТОЛКНОВЕНИЕ",w/2,h/2)}
 }
 function chAnimate(){chAnim+=1;chDraw()}setInterval(chAnimate,45);
-function chickenStart(){if(chActive)return;const b=gameBet("chBet");if(!b){alert("Нужна ставка от 100 и достаточно средств");return}chAudioReady();chStartTraffic();state.balance-=b;chBetValue=b;chMult=1;chStepCount=0;chActive=true;chCrash=false;save();document.getElementById("chMultiplier").textContent="x1.00";document.getElementById("chDistance").textContent="0 / 5";document.getElementById("chPotential").textContent=b.toLocaleString("ru-RU")+" ₽";document.getElementById("chScene").textContent="ДОРОГА ОТКРЫТА";document.getElementById("chStart").disabled=true;document.getElementById("chStep").disabled=false;document.getElementById("chCash").disabled=true;document.getElementById("chResult").textContent="Поток машин движется. Выбери момент для следующего шага.";chDraw()}
+function chickenStart(){if(chActive)return;const b=gameBet("chBet");if(!b){alert("Нужна ставка от 100 и достаточно средств");return}chAudioReady();chStartTraffic();state.balance-=b;addTurnover(b);chBetValue=b;chMult=1;chStepCount=0;chActive=true;chCrash=false;save();document.getElementById("chMultiplier").textContent="x1.00";document.getElementById("chDistance").textContent="0 / 5";document.getElementById("chPotential").textContent=b.toLocaleString("ru-RU")+" ₽";document.getElementById("chScene").textContent="ДОРОГА ОТКРЫТА";document.getElementById("chStart").disabled=true;document.getElementById("chStep").disabled=false;document.getElementById("chCash").disabled=true;document.getElementById("chResult").textContent="Поток машин движется. Выбери момент для следующего шага.";chDraw()}
 function chickenStep(){
  if(!chActive||chStepLock)return;
  chStepLock=true;
