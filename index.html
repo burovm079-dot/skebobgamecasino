@@ -1453,7 +1453,7 @@ body.light #caseList .case,body.light .panel{background:linear-gradient(145deg,#
 .bj-demo-mat>b{font-size:11px;letter-spacing:1.5px;color:#f3d28a}
 .bj-demo-cards{display:flex;justify-content:center;align-items:center;gap:8px;flex-wrap:wrap;min-height:82px;margin-top:8px}
 .bj-demo-placeholder{font-size:12px;color:#d0d7d1}
-.bj-demo-card{animation:bjCardFly .48s cubic-bezier(.18,.78,.25,1) both}
+.bj-demo-card{display:block;animation:bjCardFly .48s cubic-bezier(.18,.78,.25,1) both}
 .bj-demo-actions{display:flex;gap:8px;flex-wrap:wrap}
 .bj-demo-actions button{flex:1 1 150px;min-height:42px}
 @media(max-width:420px){.bj-demo-mats{grid-template-columns:1fr}.bj-demo-mat{min-height:110px}.bj-demo-head{align-items:center}}
@@ -7711,18 +7711,18 @@ function bjDemoAudioContext(){
 function playBjCardSound(kind="deal"){
  const ctx=bjDemoAudioContext();if(!ctx)return;
  const now=ctx.currentTime;
- const duration=kind==="shuffle"?.42:.16;
+ const duration=kind==="shuffle" ? 0.42 : 0.16;
  const length=Math.floor(ctx.sampleRate*duration);
  const buffer=ctx.createBuffer(1,length,ctx.sampleRate);
  const data=buffer.getChannelData(0);
  for(let i=0;i<length;i++){
   const fade=1-i/length;
-  data[i]=(Math.random()*2-1)*fade*(kind==="shuffle"?.32:.2);
+  data[i]=(Math.random()*2-1)*fade*(kind==="shuffle" ? 0.32 : 0.2);
  }
  const noise=ctx.createBufferSource();noise.buffer=buffer;
  const filter=ctx.createBiquadFilter();filter.type="highpass";filter.frequency.value=kind==="shuffle"?650:1100;
  const gain=ctx.createGain();gain.gain.setValueAtTime(.0001,now);
- gain.gain.exponentialRampToValueAtTime(kind==="shuffle"?.12:.09,now+.012);
+ gain.gain.exponentialRampToValueAtTime(kind==="shuffle" ? 0.12 : 0.09,now+.012);
  gain.gain.exponentialRampToValueAtTime(.0001,now+duration);
  noise.connect(filter);filter.connect(gain);gain.connect(ctx.destination);noise.start(now);noise.stop(now+duration);
  if(kind==="deal"){
@@ -7742,7 +7742,7 @@ async function runBjCardDemo(){
  const targets=["bjDemoHandA","bjDemoHandB","bjDemoHandA","bjDemoHandB"];
  for(let i=0;i<bjDemoSampleCards.length;i++){
   const target=document.getElementById(targets[i]);
-  if(i===0)target.innerHTML="";
+  if(i===0||i===1)target.innerHTML="";
   const card=document.createElement("span");
   card.className="bj-demo-card";
   card.innerHTML=bjCardHTML(bjDemoSampleCards[i]);
