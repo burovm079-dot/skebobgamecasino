@@ -1347,6 +1347,13 @@ body.light #caseList .case,body.light .panel{background:linear-gradient(145deg,#
 #caseList .case .pic img{width:82px;height:82px;object-fit:cover;border-radius:13px;border:1px solid #c59bff;box-shadow:0 5px 18px #0008}
 .prize-card .prize-icon img{width:100%;max-width:112px;aspect-ratio:1;object-fit:cover;border-radius:10px;display:block;margin:0 auto 8px}
 .inventory-nft-image img{width:58px;height:58px;object-fit:cover;border-radius:9px;border:1px solid var(--border)}
+.case-nft-preview img{width:100%;height:100%;max-height:110px;object-fit:contain;border-radius:10px}
+.prize-icon img{width:86px;height:86px;object-fit:contain;border-radius:9px}
+.inventory-nft-image{width:58px;height:58px;flex:0 0 58px;display:grid;place-items:center}
+.inventory-nft-image img{width:100%;height:100%;object-fit:contain;border-radius:8px}
+.roulette-item .icon img{width:58px;height:58px;object-fit:contain;border-radius:7px}
+.case-nft-preview{height:112px;display:flex;align-items:center;justify-content:center}
+.prize-card .small{margin:3px 0}
 </style>
 </head>
 
@@ -4176,8 +4183,9 @@ cases.map(
 
 <div class="case">
 
-<div class="pic">
-${c.icon}
+<div class="pic case-nft-preview">
+<img src="${prizes[c.items[0]].image}" alt="${prizes[c.items[0]].name}" onerror="this.style.display='none';this.nextElementSibling.style.display='block'">
+<span style="display:none">${c.icon}</span>
 </div>
 
 <h3>
@@ -4185,7 +4193,7 @@ ${c.name}
 </h3>
 
 <p class="price">
-${c.price} 🪙
+${c.price} 🪙 · ${(c.price/80).toFixed(2)}
 </p>
 
 <button
@@ -4250,15 +4258,15 @@ n=>`
 <div class="prize-card">
 
 <div class="prize-icon">
-${prizes[n].icon}
+<img src="${prizes[n].image}" alt="${prizes[n].name}" onerror="this.style.display='none';this.parentElement.textContent='${prizes[n].icon}'">
 </div>
 
 <b>
 ${prizes[n].name}
 </b>
-
+<div class="small">${prizes[n].collection}</div>
 <p class="price">
-${prizes[n].value} 🪙
+${prizes[n].value.toLocaleString("ru-RU")} 🪙 · ${(prizes[n].value/80).toFixed(2)}
 </p>
 
 </div>
@@ -4453,7 +4461,7 @@ ${strip.map(p=>`
 <div class="roulette-item">
 
 <div class="icon">
-${p.icon}
+<img src="${p.image}" alt="${p.name}" onerror="this.style.display='none';this.parentElement.textContent='${p.icon}'">
 </div>
 
 <div class="name">
@@ -4678,8 +4686,8 @@ state.inventory.map(
 
 <div class="item">
 
-<div style="font-size:31px">
-${p.icon}
+<div class="inventory-nft-image">
+<img src="${p.image}" alt="${p.name}" onerror="this.style.display='none';this.parentElement.textContent='${p.icon}'">
 </div>
 
 <div class="info">
