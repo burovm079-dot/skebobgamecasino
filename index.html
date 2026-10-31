@@ -1526,6 +1526,14 @@ body.light #caseList .case,body.light .panel{background:linear-gradient(145deg,#
  </div>
 </div>
 
+<script>
+/* Независимый таймер заставки: не зависит от запуска игровых скриптов. */
+window.setTimeout(function(){
+ const splash=document.getElementById("entrySplash");
+ if(splash)splash.classList.add("splash-hidden");
+},3000);
+</script>
+
 <header>
 
 <div class="logo">
