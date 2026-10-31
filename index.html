@@ -2503,6 +2503,8 @@ class="hidden"
 <h2>👤 ПРОФИЛЬ</h2>
 <div class="panel"><div class="small">ТВОЙ NICKNAME</div><strong id="profileNickname" style="display:block;font-size:22px;margin:8px 0 12px">Player</strong><button class="secondary" onclick="changeNickname()">✏️ ИЗМЕНИТЬ NICKNAME</button></div>
 
+<div id="officialAdminEntry" class="panel hidden"><b>🛠 ПАНЕЛЬ ВЛАДЕЛЬЦА</b><div class="small">Управление оформлением и модерацией сайта</div><button class="goldbtn" onclick="showPage(\'adminLogin\')">АДМИН-ПАНЕЛЬ</button></div>
+
 <div class="profile-hero">
 
 <div
@@ -2949,44 +2951,6 @@ onchange="toggleTheme()"
 <div class="setting-row">
 
 <div>
-<b>🔐 Админ-панель</b>
-
-<div class="small">
-Управление игрой
-</div>
-</div>
-
-<button
-class="secondary"
-onclick="showPage('adminLogin')"
->
-ВОЙТИ
-</button>
-
-</div>
-
-<div class="setting-row">
-
-<div>
-<b>🛒 Купить админ-панель</b>
-<div class="small">Связаться с продавцом в Telegram</div>
-</div>
-
-<a
-class="secondary"
-href="https://t.me/ggggg06767"
-target="_blank"
-rel="noopener noreferrer"
-style="display:inline-flex;align-items:center;justify-content:center;text-decoration:none"
->
-КУПИТЬ
-</a>
-
-</div>
-
-<div class="setting-row">
-
-<div>
 <b>♻️ Сброс прогресса</b>
 
 <div class="small">
@@ -3053,180 +3017,14 @@ class="small"
 id="adminPanel"
 class="hidden"
 >
-
-<button
-class="back"
-onclick="showPage('settings')"
->
-← Выйти
-</button>
-
-<h2>🛠 ADMIN PANEL</h2>
-
+<button class="back" onclick="showPage('profile')">← Назад в профиль</button>
+<h2>🛠 ПАНЕЛЬ ВЛАДЕЛЬЦА</h2>
 <div class="panel">
-
-<h3>💰 Баланс</h3>
-
-<p>
-Баланс:
-<b id="adminBalance">
-0
-</b>
-🪙
-</p>
-
-<input
-id="adminAmount"
-type="number"
-placeholder="Сумма"
->
-
-<div class="admin-actions">
-
-<button
-class="admin-btn green"
-onclick="adminChange(1)"
->
-Зачислить
-</button>
-
-<button
-class="admin-btn red"
-onclick="adminChange(-1)"
->
-Списать
-</button>
-
-<button
-class="admin-btn blue admin-full"
-onclick="adminSet()"
->
-Установить баланс
-</button>
-
+<b>Управление сайтом</b>
+<p class="small">Здесь будут безопасные настройки оформления и инструменты модерации.</p>
+<div class="small">Доступ открыт для SKEBOB OFFICIAL.</div>
 </div>
-
-<div class="admin-toggle">
-<div>
-<b>♾️ Бесконечный баланс</b>
-<div class="small">Неограниченные ставки. Можно выключить в любой момент.</div>
-</div>
-<button class="admin-btn gold-admin" id="adminInfiniteBalanceBtn" onclick="toggleInfiniteBalance()">ВКЛЮЧИТЬ</button>
-</div>
-
-<div class="admin-toggle">
-
-<div>
-
-<b>
-🎯 Всегда выигрыш
-</b>
-
-<div class="small">
-Победа в игровых режимах
-</div>
-
-</div>
-
-<label class="switch">
-
-<input
-type="checkbox"
-id="adminAlwaysWin"
-onchange="setAlwaysWin(this.checked)"
->
-
-<span class="switch-slider"></span>
-
-</label>
-
-</div>
-
-<h3>
-👑 Уровень казино
-</h3>
-
-<p class="small">
-Автоматически: Игрок от 10 000 🪙 выигрышей,
-VIP от 100 000 🪙. Администратор может
-установить уровень вручную.
-</p>
-
-<div class="admin-levels">
-
-<button
-id="adminLevelNewbie"
-onclick="adminSetLevel('newbie')"
->
-🌱 НОВИЧОК
-</button>
-
-<button
-id="adminLevelPlayer"
-onclick="adminSetLevel('player')"
->
-🎮 ИГРОК
-</button>
-
-<button
-id="adminLevelVip"
-onclick="adminSetLevel('vip')"
->
-👑 VIP
-</button>
-
-</div>
-
-<button
-class="secondary"
-style="width:100%;margin-top:8px"
-onclick="adminSetLevel('auto')"
->
-♻️ АВТОМАТИЧЕСКИЙ УРОВЕНЬ
-</button>
-
-<h3>
-🎁 Выдать предмет
-</h3>
-
-<select id="adminItem">
-
-<option value="0">
-👕 Футболка
-</option>
-
-<option value="1">
-👟 Кроссовки
-</option>
-
-<option value="2">
-📿 Золотая цепь
-</option>
-
-<option value="3">
-🧢 Кепка
-</option>
-
-<option value="4">
-🎧 Наушники
-</option>
-
-<option value="5">
-🎨 Редкий скин
-</option>
-
-</select>
-
-<button
-class="admin-btn purple"
-style="width:100%"
-onclick="adminGive()"
->
-ВЫДАТЬ
-</button>
-
-</div>
-
+<span id="adminBalance" class="hidden">0</span>
 </section>
 
 </main>
@@ -3956,6 +3754,8 @@ total.toLocaleString("ru-RU")+
 " / 10 000 🪙 до уровня ИГРОК";
 
 }
+
+const ownerEntry=document.getElementById("officialAdminEntry");if(ownerEntry)ownerEntry.classList.toggle("hidden",!isProtectedOfficialNick(getNickname()));
 
 else if(info.id==="player"){
 
