@@ -73,21 +73,6 @@ display:flex;
 gap:6px;
 }
 
-.header-buy-admin{
-display:inline-flex;
-align-items:center;
-justify-content:center;
-padding:10px 12px;
-border-radius:10px;
-border:1px solid #80652e;
-background:#493819;
-color:#ffda7c;
-font-size:12px;
-font-weight:900;
-text-decoration:none;
-white-space:nowrap;
-}
-
 header button,.secondary{
 background:var(--panel2);
 color:var(--text);
@@ -1394,8 +1379,9 @@ body.light #caseList .case,body.light .panel{background:linear-gradient(145deg,#
 .splash-bonus{font-size:clamp(22px,6vw,32px);font-weight:900}.splash-bonus b{color:#ffd04d;text-shadow:0 0 16px #ffb000}
 .splash-time{margin-top:20px;color:#d28bff;font-weight:700;font-size:15px;line-height:1.5}
 .splash-loader{height:13px;border:2px solid #8d21cb;border-radius:20px;margin:55px 0 22px;overflow:hidden;background:#10051e;box-shadow:0 0 15px #8d21cb55}
-.splash-loader span{display:block;width:0;height:100%;border-radius:20px;background:linear-gradient(90deg,#8a00ff,#ed8bff,#fff);box-shadow:0 0 15px #e78cff}
-#entrySplash.loading .splash-loader span{width:100%;transition:width var(--splash-duration) linear}
+.splash-loader span{display:block;width:100%;height:100%;border-radius:20px;transform:scaleX(0);transform-origin:left center;background:linear-gradient(90deg,#8a00ff,#ed8bff,#fff);box-shadow:0 0 15px #e78cff}
+#entrySplash.loading .splash-loader span{animation:splashFill 3s linear forwards}
+@keyframes splashFill{from{transform:scaleX(0)}to{transform:scaleX(1)}}
 .splash-footer{color:#c45bff;font-size:14px;font-weight:900;letter-spacing:7px}
 @media(max-height:700px){.splash-coins{margin-bottom:12px}.splash-promo{margin-top:24px;padding:17px 12px}.splash-loader{margin:32px 0 15px}}
 
@@ -1527,13 +1513,12 @@ body.light #caseList .case,body.light .panel{background:linear-gradient(145deg,#
 </div>
 
 <script>
-/* Запускаем полоску сразу, независимо от загрузки основного приложения. */
+/* Запуск заставки: отдельный скрипт, не зависит от основного приложения. */
 (function(){
  const splash=document.getElementById("entrySplash");
  if(!splash)return;
- splash.style.setProperty("--splash-duration","3000ms");
  requestAnimationFrame(function(){splash.classList.add("loading");});
- window.setTimeout(function(){splash.classList.add("splash-hidden");},3000);
+ window.setTimeout(function(){splash.classList.add("splash-hidden");},3200);
 })();
 </script>
 
@@ -1559,14 +1544,7 @@ SKEBOB <span>CASINO</span>
 ⚙
 </button>
 
-<a
-class="header-buy-admin"
-href="https://t.me/ggggg06767"
-target="_blank"
-rel="noopener noreferrer"
->
-🛒 КУПИТЬ АДМИН ПАНЕЛЬ
-</a>
+
 
 </div>
 
@@ -7650,11 +7628,23 @@ function saveFirstNickname(){
  requestOfficialNicknameCode(nick,true);
 }
 function changeNickname(){
- const next=prompt("Введи новый nickname:",getNickname());
- if(next===null)return;
- const nick=next.trim().replace(/\s+/g," ").slice(0,18);
+ const modal=document.getElementById("changeNicknameModal");
+ const input=document.getElementById("changeNicknameInput");
+ if(!modal||!input){alert("Окно изменения nickname не найдено. Обнови страницу.");return;}
+ input.value=getNickname();
+ modal.style.display="flex";
+ setTimeout(()=>input.focus(),100);
+}
+function closeChangeNickname(){
+ const modal=document.getElementById("changeNicknameModal");
+ if(modal)modal.style.display="none";
+}
+function saveChangedNickname(){
+ const input=document.getElementById("changeNicknameInput");
+ const nick=(input?.value||"").trim().replace(/\s+/g," ").slice(0,18);
  if(nick.length<2){alert("Ник должен содержать минимум 2 символа.");return;}
  if(bjNickTaken(nick,bjOnlineId)){alert("Данный никнейм уже занят");return;}
+ closeChangeNickname();
  requestOfficialNicknameCode(nick,false);
 }
 
@@ -7780,6 +7770,15 @@ document.addEventListener("DOMContentLoaded",initNickname);
   <p class="small">Этот ник будут видеть другие игроки.</p>
   <input id="nicknameInput" maxlength="18" placeholder="Твой nickname" autocomplete="nickname">
   <button class="goldbtn" onclick="saveFirstNickname()">СОХРАНИТЬ NICKNAME</button>
+ </div>
+</div>
+<div id="changeNicknameModal" style="display:none;position:fixed;inset:0;z-index:20500;background:#000d;align-items:center;justify-content:center;padding:22px">
+ <div style="width:100%;max-width:440px;background:var(--panel);border:2px solid var(--gold);border-radius:20px;padding:22px;box-shadow:0 15px 50px #0009">
+  <h2 style="margin-top:0">✏️ Изменить nickname</h2>
+  <p class="small">Новый ник будет виден в профиле и другим игрокам. От 2 до 18 символов.</p>
+  <input id="changeNicknameInput" maxlength="18" placeholder="Новый nickname" autocomplete="nickname">
+  <button class="goldbtn" onclick="saveChangedNickname()">СОХРАНИТЬ</button>
+  <button class="secondary" style="width:100%;margin-top:8px" onclick="closeChangeNickname()">ОТМЕНА</button>
  </div>
 </div>
 <div id="officialNickCodeModal" style="display:none;position:fixed;inset:0;z-index:21000;background:#000e;align-items:center;justify-content:center;padding:22px">
