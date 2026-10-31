@@ -7781,6 +7781,25 @@ document.addEventListener("DOMContentLoaded",initNickname);
   <button class="secondary" style="width:100%;margin-top:8px" onclick="closeChangeNickname()">ОТМЕНА</button>
  </div>
 </div>
+<style>
+#changeNicknameButton{position:relative!important;z-index:100001!important;pointer-events:auto!important;touch-action:manipulation}
+#changeNicknameModal{z-index:100002!important}
+</style>
+<script>
+document.addEventListener("click",function(event){
+ const button=event.target.closest("#changeNicknameButton");
+ if(!button)return;
+ event.preventDefault();
+ event.stopImmediatePropagation();
+ const modal=document.getElementById("changeNicknameModal");
+ const input=document.getElementById("changeNicknameInput");
+ if(modal&&input){
+  input.value=typeof getNickname==="function"?getNickname():"Player";
+  modal.style.display="flex";
+  input.focus();
+ }
+},true);
+</script>
 <div id="officialNickCodeModal" style="display:none;position:fixed;inset:0;z-index:21000;background:#000e;align-items:center;justify-content:center;padding:22px">
  <div style="width:100%;max-width:420px;background:var(--panel);border:2px solid #258cf4;border-radius:18px;padding:22px;box-shadow:0 15px 50px #0009">
   <h2 style="margin-top:0">🔒 Подтверждение SKEBOB OFFICIAL</h2>
