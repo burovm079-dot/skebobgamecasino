@@ -4398,6 +4398,7 @@ qty+
  // Это игровая оценка предмета при продаже, не реальная рыночная цена NFT.
 function getCasePrize(caseIndex,prizeIndex){
  const base=prizes[prizeIndex];
+ if(base.collection==="Telegram Gifts")return {...base,value:Number(base.value)||0};
  const casePrice=cases[caseIndex].price;
  const floorValue=Math.ceil(casePrice*.9);
  const ceilingValue=Math.floor(casePrice*1.7);
