@@ -2940,6 +2940,14 @@ onclick="adminSet()"
 </div>
 
 <div class="admin-toggle">
+<div>
+<b>♾️ Бесконечный баланс</b>
+<div class="small">Неограниченные ставки. Можно выключить в любой момент.</div>
+</div>
+<button class="admin-btn gold-admin" id="adminInfiniteBalanceBtn" onclick="toggleInfiniteBalance()">ВКЛЮЧИТЬ</button>
+</div>
+
+<div class="admin-toggle">
 
 <div>
 
@@ -3197,7 +3205,9 @@ stats:{...defaultStats},
 
 admin:{
 alwaysWin:false,
-manualLevel:null
+manualLevel:null,
+infiniteBalance:false,
+balanceBeforeInfinite:null
 }
 
 };
@@ -3225,6 +3235,8 @@ stats:{
 admin:{
 alwaysWin:false,
 manualLevel:null,
+infiniteBalance:false,
+balanceBeforeInfinite:null,
 ...(saved.admin||{})
 }
 
@@ -3276,6 +3288,7 @@ let dailyOpening=false;
 
 function getCurrency(){return localStorage.getItem("skebobCurrency")==="USD"?"USD":"RUB";}
 function formatMoney(amount){
+ if(state.admin&&state.admin.infiniteBalance)return "∞";
  const n=Number(amount)||0;
  return getCurrency()==="USD"?"$"+(n/80).toLocaleString("en-US",{minimumFractionDigits:2,maximumFractionDigits:2}):Math.floor(n).toLocaleString("ru-RU")+" ₽";
 }
@@ -3794,10 +3807,7 @@ state.stats.turnover
 
 setText(
 "profileBalance",
-Math.floor(
-state.balance
-).toLocaleString("ru-RU")+
-" 🪙"
+state.admin.infiniteBalance?"∞":Math.floor(state.balance).toLocaleString("ru-RU")+" 🪙"
 );
 
 }
@@ -6849,7 +6859,28 @@ renderProfile();
 
 }
 
+function toggleInfiniteBalance(){
+ if(!state.admin.infiniteBalance){
+  state.admin.balanceBeforeInfinite=state.balance;
+  state.admin.infiniteBalance=true;
+  state.balance=Number.MAX_SAFE_INTEGER;
+ }else{
+  state.admin.infiniteBalance=false;
+  const previous=Number(state.admin.balanceBeforeInfinite);
+  state.balance=Number.isFinite(previous)&&previous>=0?previous:20;
+  state.admin.balanceBeforeInfinite=null;
+ }
+ save();
+ renderAdminSettings();
+}
+
 function renderAdminSettings(){
+const infiniteButton=document.getElementById("adminInfiniteBalanceBtn");
+if(infiniteButton){
+ infiniteButton.textContent=state.admin.infiniteBalance?"ВЫКЛЮЧИТЬ":"ВКЛЮЧИТЬ";
+ infiniteButton.classList.toggle("red",!!state.admin.infiniteBalance);
+ infiniteButton.classList.toggle("gold-admin",!state.admin.infiniteBalance);
+}
 
 const always=
 document.getElementById(
