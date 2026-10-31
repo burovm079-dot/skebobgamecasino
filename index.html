@@ -3028,56 +3028,18 @@ const PROMOCODES={
 SKEBOB:{reward:777}
 };
 
-// NFT-кейсы: 80 🪙 = $1. Стоимости — ориентиры по floor price коллекций,
-// пересчитанные в игровые монеты; они не являются котировками или обещанием продажи.
-const nftImage = id => "https://www.larvalabs.com/public/images/cryptopunks/punk" + String(id).padStart(4,"0") + ".png";
-const nftCollections = [
- {name:"CryptoPunk #0000",collection:"CryptoPunks",image:nftImage(0),value:5357120,icon:"👾"},
- {name:"CryptoPunk #0001",collection:"CryptoPunks",image:nftImage(1),value:5357120,icon:"👾"},
- {name:"CryptoPunk #0002",collection:"CryptoPunks",image:nftImage(2),value:5357120,icon:"👾"},
- {name:"CryptoPunk #0003",collection:"CryptoPunks",image:nftImage(3),value:5357120,icon:"👾"},
- {name:"Bored Ape #0001",collection:"Bored Ape Yacht Club",image:"https://files.amberblocks.com/thumbnail/chnbzaa92ook5tnj/posts/pw43pite3id9ypvc/f94fg2yyku02jgfdtkzqgd4aflrwsxi3/nft-quay-tro-lai.jpg",value:1093200,icon:"🐵"},
- {name:"Mutant Ape #0001",collection:"Mutant Ape Yacht Club",image:"https://dl-migration-assets.s3.eu-central-1.amazonaws.com/images/1772087923060.webp",value:168000,icon:"🧬"},
- {name:"Pudgy Penguin #0001",collection:"Pudgy Penguins",image:"https://magnft.com/wp-content/uploads/2024/11/what-is-pudgy-penguins-2024-1-nfts.webp",value:444800,icon:"🐧"},
- {name:"Azuki #0001",collection:"Azuki",image:"https://substackcdn.com/image/fetch/%24s_%21Mf0v%21%2Cf_auto%2Cq_auto%3Agood%2Cfl_progressive%3Asteep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2F83b485ef-ccfb-4508-bb78-dfafc0a52ad0_1600x796.png",value:39200,icon:"🎴"},
- {name:"Moonbird #0001",collection:"Moonbirds",image:"https://pbs.twimg.com/media/FygvKxmakAAiB-e?format=jpg&name=large",value:42400,icon:"🦉"},
- {name:"Doodle #0001",collection:"Doodles",image:"https://files.amberblocks.com/thumbnail/chnbzaa92ook5tnj/posts/pw43pite3id9ypvc/f94fg2yyku02jgfdtkzqgd4aflrwsxi3/nft-quay-tro-lai.jpg",value:45600,icon:"🖍️"},
- {name:"Clone X #0001",collection:"Clone X",image:"https://substackcdn.com/image/fetch/%24s_%21Mf0v%21%2Cf_auto%2Cq_auto%3Agood%2Cfl_progressive%3Asteep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2F83b485ef-ccfb-4508-bb78-dfafc0a52ad0_1600x796.png",value:24800,icon:"🧑‍🚀"},
- {name:"Cool Cat #0001",collection:"Cool Cats",image:"https://substackcdn.com/image/fetch/%24s_%21Mf0v%21%2Cf_auto%2Cq_auto%3Agood%2Cfl_progressive%3Asteep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2F83b485ef-ccfb-4508-bb78-dfafc0a52ad0_1600x796.png",value:18400,icon:"🐱"},
- {name:"Milady #0001",collection:"Milady Maker",image:"https://dl-migration-assets.s3.eu-central-1.amazonaws.com/images/1772087923060.webp",value:143200,icon:"👩‍🎤"},
- {name:"Meebit #0001",collection:"Meebits",image:"https://www.larvalabs.com/public/images/cryptopunks/punk0012.png",value:50400,icon:"🧊"},
- {name:"Lil Pudgy #0001",collection:"Lil Pudgys",image:"https://magnft.com/wp-content/uploads/2024/11/what-is-pudgy-penguins-2024-1-nfts.webp",value:17600,icon:"🐣"},
- {name:"Nakamigo #0001",collection:"Nakamigos",image:"https://dl-migration-assets.s3.eu-central-1.amazonaws.com/images/1772087923060.webp",value:7200,icon:"🧢"},
- {name:"BEANZ #0001",collection:"BEANZ Official",image:"https://pbs.twimg.com/media/FygvKxmakAAiB-e?format=jpg&name=large",value:2480,icon:"🫘"},
- {name:"Otherdeed #0001",collection:"Otherdeed for Otherside",image:"https://pbs.twimg.com/media/FygvKxmakAAiB-e?format=jpg&name=large",value:5040,icon:"🌎"},
- {name:"Trencher Pack #0001",collection:"Trencher Packs",image:"https://files.amberblocks.com/thumbnail/chnbzaa92ook5tnj/posts/pw43pite3id9ypvc/f94fg2yyku02jgfdtkzqgd4aflrwsxi3/nft-quay-tro-lai.jpg",value:720,icon:"🎒"},
- {name:"Bobos #0001",collection:"Bobos",image:"https://magnft.com/wp-content/uploads/2024/11/what-is-pudgy-penguins-2024-1-nfts.webp",value:2000,icon:"🎨"},
- {name:"The Memes #0001",collection:"The Memes by 6529",image:"https://pbs.twimg.com/media/FygvKxmakAAiB-e?format=jpg&name=large",value:2560,icon:"🌀"}
+// Кейсы с Telegram-подарками — без NFT и посторонних предметов.
+const prizes=[
+ {name:"Мишка",collection:"Telegram Gifts",value:80,icon:"🧸",rarity:"Обычный",id:"gift-bear"},
+ {name:"Сердечко",collection:"Telegram Gifts",value:80,icon:"❤️",rarity:"Обычный",id:"gift-heart"},
+ {name:"Золотая цепь",collection:"Telegram Gifts",value:200,icon:"📿",rarity:"Редкий",id:"gift-chain"},
+ {name:"Наушники",collection:"Telegram Gifts",value:300,icon:"🎧",rarity:"Эпический",id:"gift-headphones"},
+ {name:"Редкий скин",collection:"Telegram Gifts",value:500,icon:"🎨",rarity:"Эпический",id:"gift-skin"}
 ];
-const prizes=nftCollections.map((n,i)=>({...n,id:"nft-"+i,rarity:i<4?"Легендарный":i<7?"Эпический":i<12?"Редкий":i<16?"Необычный":"Обычный"}));
 const cases=[
- {name:"MICRO NFT",icon:"🪙",price:80,desc:"Начальный дроп — недорогие цифровые коллекционные предметы",items:[16,18,19]},
- {name:"PIXEL START",icon:"👾",price:400,desc:"Доступные NFT и небольшие коллекции",items:[14,15,16,18,19]},
- {name:"COLLECTOR",icon:"🎨",price:800,desc:"Подборка недорогих коллекционных NFT",items:[14,15,16,18,19]},
- {name:"ART DROP",icon:"🖼️",price:1600,desc:"Цифровое искусство и коллекционные серии",items:[13,14,15,18,19]},
- {name:"AVATAR BOX",icon:"🧢",price:4000,desc:"Аватары из известных NFT-проектов",items:[12,13,14,15,16]},
- {name:"BLUE CHIP MINI",icon:"💠",price:8000,desc:"Нижний ценовой сегмент известных коллекций",items:[11,12,13,14,15]},
- {name:"COOL CLUB",icon:"🐱",price:16000,desc:"Cool Cats, Clone X и другие коллекции",items:[9,10,11,12,13]},
- {name:"DOODLE DREAM",icon:"🖍️",price:32000,desc:"Арт-аватары и популярные коллекции",items:[7,8,9,10,11]},
- {name:"AZUKI GARDEN",icon:"🎴",price:40000,desc:"Аниме-стиль и коллекционные аватары",items:[7,8,9,10]},
- {name:"MOON VAULT",icon:"🦉",price:48000,desc:"Редкие коллекционные серии",items:[6,7,8,9]},
- {name:"MEGA COLLECTOR",icon:"🧊",price:80000,desc:"Meebits и другие заметные коллекции",items:[5,6,7,8]},
- {name:"MILADY CLUB",icon:"👩‍🎤",price:144000,desc:"Коллекционные аватары высокого уровня",items:[5,11,12]},
- {name:"MUTANT LAB",icon:"🧬",price:168000,desc:"Mutant Ape Yacht Club и редкие аватары",items:[5,6,11]},
- {name:"PUDGY PARTY",icon:"🐧",price:448000,desc:"Коллекция Pudgy Penguins",items:[6,13,18]},
- {name:"APE SOCIETY",icon:"🐵",price:1096000,desc:"Bored Ape Yacht Club и близкие по уровню коллекции",items:[4,5,6]},
- {name:"PUNK LEGACY",icon:"👑",price:5357000,desc:"Легендарные CryptoPunks",items:[0,1,2,3]},
- {name:"NFT WHALE",icon:"🐳",price:1096000,desc:"Премиальная подборка blue-chip NFT",items:[0,4,5,6]},
- {name:"SKEBOB GRAIL",icon:"🏆",price:5357000,desc:"Самые дорогие коллекционные NFT в игре",items:[0,1,2,3,4]}
+ {name:"TELEGRAM GIFTS",icon:"🎁",price:80,desc:"Кейс только с подарками Telegram",items:[0,1,2,3,4]}
 ];
-// Жёсткое соотношение: стоимость любого возможного приза в кейсе
-// не выше 1.7 цены открытия этого кейса. Один NFT имеет одну игровую
-// оценку во всех кейсах, поэтому берём минимальный допустимый предел.
+// Ограничение игровой оценки приза относительно цены кейса.
 const prizeValueCaps={};
 cases.forEach(c=>{
  c.items.forEach(index=>{
@@ -3089,20 +3051,18 @@ Object.keys(prizeValueCaps).forEach(index=>{
  prizes[Number(index)].value=Math.min(prizes[Number(index)].value,prizeValueCaps[index]);
 });
 const DAILY_CASE_COOLDOWN=
-24*60*60*1000;
+ 24*60*60*1000;
 
-// Награды ежедневного кейса: обычные игровые предметы, мелкие монеты и 2 NFT.
+// Награды ежедневного кейса — Telegram-подарки и монеты.
 const dailyPrizes=[
- {type:"item",id:"daily-teddy",name:"Мишка",collection:"Обычный подарок",icon:"🧸",value:80,rarity:"Обычный",weight:12},
- {type:"item",id:"daily-heart",name:"Сердечко",collection:"Обычный подарок",icon:"❤️",value:80,rarity:"Обычный",weight:12},
+ {type:"item",id:"daily-teddy",name:"Мишка",collection:"Telegram Gifts",icon:"🧸",value:80,rarity:"Обычный",weight:12},
+ {type:"item",id:"daily-heart",name:"Сердечко",collection:"Telegram Gifts",icon:"❤️",value:80,rarity:"Обычный",weight:12},
  {type:"coins",amount:3,name:"3 монеты",icon:"🪙",value:3,weight:1},
  {type:"coins",amount:5,name:"5 монет",icon:"🪙",value:5,weight:1},
  {type:"coins",amount:10,name:"10 монет",icon:"🪙",value:10,weight:1},
- {type:"item",id:"daily-chain",name:"Золотая цепь",collection:"Обычный подарок",icon:"📿",value:200,rarity:"Редкий",weight:1},
- {type:"item",id:"daily-headphones",name:"Наушники",collection:"Обычный подарок",icon:"🎧",value:300,rarity:"Эпический",weight:1},
- {type:"item",id:"daily-skin",name:"Редкий скин",collection:"Обычный подарок",icon:"🎨",value:500,rarity:"Эпический",weight:1},
- {type:"nft",...prizes[17],weight:1},
- {type:"nft",...prizes[18],weight:1}
+ {type:"item",id:"daily-chain",name:"Золотая цепь",collection:"Telegram Gifts",icon:"📿",value:136,rarity:"Редкий",weight:1},
+ {type:"item",id:"daily-headphones",name:"Наушники",collection:"Telegram Gifts",icon:"🎧",value:136,rarity:"Эпический",weight:1},
+ {type:"item",id:"daily-skin",name:"Редкий скин",collection:"Telegram Gifts",icon:"🎨",value:136,rarity:"Эпический",weight:1}
 ];
 function pickDailyPrize(){
  const total=dailyPrizes.reduce((sum,p)=>sum+(p.weight||1),0);
