@@ -7899,6 +7899,9 @@ function bjOnlineShowResult(){
  bjOnlineStatus("Раунд завершён. Результат рассчитан только для твоей руки.");
 }
 
+// Загружаем сохранённый ник после появления окна регистрации в DOM.
+document.addEventListener("DOMContentLoaded",initNickname);
+
 </script>
 
 
