@@ -7563,7 +7563,7 @@ let nicknameMemoryFallback="";
 function nicknameCookieGet(){
  try{const item=document.cookie.split("; ").find(x=>x.startsWith(NICKNAME_KEY+"="));return item?decodeURIComponent(item.slice(NICKNAME_KEY.length+1)):"";}catch(e){return "";}
 }
-function nicknameRead(){return storageGet(NICKNAME_KEY)||nicknameCookieGet()||nicknameMemoryFallback||"";}
+function nicknameRead(){return nicknameMemoryFallback||nicknameCookieGet()||storageGet(NICKNAME_KEY)||"";}
 function nicknameWrite(value){
  const nick=String(value||"").trim();
  if(!nick)return false;
