@@ -73,6 +73,21 @@ display:flex;
 gap:6px;
 }
 
+.header-buy-admin{
+display:inline-flex;
+align-items:center;
+justify-content:center;
+padding:10px 12px;
+border-radius:10px;
+border:1px solid #80652e;
+background:#493819;
+color:#ffda7c;
+font-size:12px;
+font-weight:900;
+text-decoration:none;
+white-space:nowrap;
+}
+
 header button,.secondary{
 background:var(--panel2);
 color:var(--text);
@@ -1379,9 +1394,8 @@ body.light #caseList .case,body.light .panel{background:linear-gradient(145deg,#
 .splash-bonus{font-size:clamp(22px,6vw,32px);font-weight:900}.splash-bonus b{color:#ffd04d;text-shadow:0 0 16px #ffb000}
 .splash-time{margin-top:20px;color:#d28bff;font-weight:700;font-size:15px;line-height:1.5}
 .splash-loader{height:13px;border:2px solid #8d21cb;border-radius:20px;margin:55px 0 22px;overflow:hidden;background:#10051e;box-shadow:0 0 15px #8d21cb55}
-.splash-loader span{display:block;width:100%;height:100%;border-radius:20px;transform:scaleX(0);transform-origin:left center;background:linear-gradient(90deg,#8a00ff,#ed8bff,#fff);box-shadow:0 0 15px #e78cff}
-#entrySplash.loading .splash-loader span{animation:splashFill 3s linear forwards}
-@keyframes splashFill{from{transform:scaleX(0)}to{transform:scaleX(1)}}
+.splash-loader span{display:block;width:0;height:100%;border-radius:20px;background:linear-gradient(90deg,#8a00ff,#ed8bff,#fff);box-shadow:0 0 15px #e78cff}
+#entrySplash.loading .splash-loader span{width:100%;transition:width var(--splash-duration) linear}
 .splash-footer{color:#c45bff;font-size:14px;font-weight:900;letter-spacing:7px}
 @media(max-height:700px){.splash-coins{margin-bottom:12px}.splash-promo{margin-top:24px;padding:17px 12px}.splash-loader{margin:32px 0 15px}}
 
@@ -1512,16 +1526,6 @@ body.light #caseList .case,body.light .panel{background:linear-gradient(145deg,#
  </div>
 </div>
 
-<script>
-/* Запуск заставки: отдельный скрипт, не зависит от основного приложения. */
-(function(){
- const splash=document.getElementById("entrySplash");
- if(!splash)return;
- requestAnimationFrame(function(){splash.classList.add("loading");});
- window.setTimeout(function(){splash.classList.add("splash-hidden");},3200);
-})();
-</script>
-
 <header>
 
 <div class="logo">
@@ -1544,7 +1548,14 @@ SKEBOB <span>CASINO</span>
 ⚙
 </button>
 
-
+<a
+class="header-buy-admin"
+href="https://t.me/ggggg06767"
+target="_blank"
+rel="noopener noreferrer"
+>
+🛒 КУПИТЬ АДМИН ПАНЕЛЬ
+</a>
 
 </div>
 
@@ -1564,50 +1575,77 @@ SKEBOB <span>CASINO</span>
 </div>
 
 <main>
-<nav class="nav" aria-label="Основное меню">
-<button class="active" onclick="showPage('home',this)">🏠 Главная</button>
-<button onclick="showPage('upgrade',this)">🎯 Апгрейд</button>
-<button onclick="showPage('inventory',this)">🎒 Инвентарь</button>
-<button onclick="showPage('profile',this)">👤 Профиль</button>
-<button onclick="showPage('tasks',this)">📋 Задания</button>
-<button onclick="showPage('settings',this)">⚙️ Настройки</button>
-</nav>
 
-<section id="home">
-<h2>Добро пожаловать в SKEBOB</h2>
-<p class="small">Выбери раздел, чтобы продолжить.</p>
-<div class="panel">
-<button class="goldbtn" onclick="showPage('upgrade')">🎯 MONEY UPGRADE</button>
-<button class="goldbtn" onclick="showPage('profile')">ОТКРЫТЬ ПРОФИЛЬ</button>
-<button class="goldbtn" onclick="showPage('inventory')">ОТКРЫТЬ ИНВЕНТАРЬ</button>
-<button class="goldbtn" onclick="showPage('tasks')">ЕЖЕДНЕВНЫЕ ЗАДАНИЯ</button>
+<div class="nav">
+
+<button class="active" onclick="showPage('cases',this)">
+🎁 CASES
+</button>
+
+<button onclick="showPage('upgrade',this)">
+🎯 UPGRADE
+</button>
+
+<button onclick="showPage('mines',this)">
+💣 MINES
+</button>
+
+<button onclick="showPage('plane',this)">
+✈️ САМОЛЁТ
+</button>
+
+<button onclick="showPage('pickaxe',this)">
+⛏ КИРКА
+</button>
+
+<button onclick="showPage('plinko',this)">
+🔴 PLINKO
+</button>
+<button onclick="showPage('race',this)">🏁 RACE</button>
+<button onclick="showPage('crash',this)">📈 КРАШ</button>
+<button onclick="showPage('battles',this)">⚔️ БАТЛЫ</button>
+<button onclick="showPage('slots',this)">🎰 СЛОТЫ</button>
+<button onclick="showPage('blackjack',this)">🃏 BLACKJACK</button>
+<button onclick="showPage('dice',this)">🎲 КОСТИ</button>
+
+<button onclick="showPage('tictactoe',this)">⭕ КРЕСТИКИ</button>
+
+<button onclick="showPage('billiards',this)">🎱 БИЛЬЯРД</button>
+
+<button onclick="showPage('chickenroad',this)">🐔 CHICKEN ROAD</button>
+
+
+
+
 </div>
-</section>
-<section id="upgrade" class="hidden">
-<h2>🎯 MONEY UPGRADE</h2>
-<div class="panel" style="max-width:760px;margin:18px auto;padding:20px">
-<div class="upgrade-circle" id="upgradeCircle" style="--chance:100%">
-<div class="upgrade-arrow"></div>
-<div class="upgrade-center"><strong id="chanceText">100%</strong><span id="upgradeValues">10 → 20 🪙</span></div>
-</div>
-<div class="small">СУММА МОНЕТ</div>
-<input type="number" id="upgradeAmount" value="10" min="1" step="1" oninput="updateUpgradeInfo()">
-<div class="small">МНОЖИТЕЛЬ</div>
-<div class="multiplier-grid">
-<button onclick="setMultiplier(1.2,this)">x1.2</button>
-<button onclick="setMultiplier(1.5,this)">x1.5</button>
-<button class="active" onclick="setMultiplier(2,this)">x2</button>
-<button onclick="setMultiplier(3,this)">x3</button>
-<button onclick="setMultiplier(5,this)">x5</button>
-<button onclick="setMultiplier(10,this)">x10</button>
-</div>
-<p class="small">Улучшение гарантированное: монеты не проигрываются. Результат начисляется сразу.</p>
-<button class="goldbtn" id="upgradeButton" onclick="spinUpgrade()">УЛУЧШИТЬ</button>
-<div id="upgradeStatus" class="game-status" aria-live="polite"></div>
-</div>
-</section>
 
 <!-- NEW ARCADE GAMES -->
+<section id="tictactoe" class="hidden">
+<h2>⭕ КРЕСТИКИ-НОЛИКИ</h2>
+<div class="panel" style="text-align:center">
+<p class="small">Победи бота. Победа приносит x2 ставки, ничья возвращает ставку.</p>
+<input id="tttBet" type="number" min="100" step="100" value="100">
+<div id="tttStatus" class="small">Ты играешь за ❌</div>
+<div id="tttGrid" style="display:grid;grid-template-columns:repeat(3,1fr);gap:7px;max-width:300px;margin:14px auto"></div>
+<button class="goldbtn" onclick="tttStart()">НОВАЯ ИГРА</button>
+</div></section>
+<section id="billiards" class="hidden">
+<h2>🎱 БИЛЬЯРД</h2><div class="panel">
+<p class="small">Матч 8-ball против бота. Забивай свои шары, затем чёрную восьмёрку. Победитель забирает общий банк — две ставки.</p>
+<label>Ставка за матч</label><input id="poolBet" type="number" min="100" step="100" value="100">
+<label>Угол прицеливания</label><input id="poolAngle" type="range" min="0" max="359" value="0">
+<label>Сила удара</label><input id="poolPower" type="range" min="1" max="100" value="55">
+<canvas id="poolCanvas" class="real-game-canvas pool-scene" aria-label="Бильярдный стол: нажми на стол для прицеливания"></canvas>
+<div class="game-actions"><button class="goldbtn" onclick="poolStart()">НОВАЯ ПАРТИЯ</button><button class="goldbtn" id="poolHitBtn" onclick="poolShot()" disabled>УДАРИТЬ КИЕМ</button></div><div id="poolResult" class="small">Начни партию, затем нажми на стол для прицеливания.</div>
+</div></section>
+<section id="chickenroad" class="hidden">
+<h2>🐔 CHICKEN ROAD</h2><div class="panel chicken-panel">
+<p class="small">Проведи курицу через скоростное шоссе. Следи за потоком машин, продвигайся по полосам и фиксируй выигрыш в любой момент.</p>
+<div class="ch-hud"><div><span>МНОЖИТЕЛЬ</span><b id="chMultiplier">x1.00</b></div><div><span>ПОЛОСЫ</span><b id="chDistance">0 / 12</b></div><div><span>ВОЗМОЖНЫЙ ВЫИГРЫШ</span><b id="chPotential">—</b></div></div>
+<div class="ch-canvas-wrap"><canvas id="chCanvas" aria-label="Анимированное шоссе с машинами и курицей"></canvas><div class="ch-scene-tag" id="chScene">ГОТОВ К СТАРТУ</div></div><div class="ch-sound-row"><button type="button" class="secondary" id="chSoundToggle" onclick="chToggleSound()">🔊 ЗВУК ВКЛ</button><span class="small">Машины гудят, курица кричит «Ко-ко-ко!»</span></div>
+<div class="ch-controls"><label>Ставка</label><input id="chBet" type="number" min="100" step="100" value="100"><button class="goldbtn" id="chStart" onclick="chickenStart()">▶ НАЧАТЬ ПЕРЕХОД</button><button class="goldbtn" id="chStep" onclick="chickenStep()" disabled>🐔 СЛЕДУЮЩАЯ ПОЛОСА</button><button class="secondary" id="chCash" onclick="chickenCash()" disabled>ЗАБРАТЬ ВЫИГРЫШ</button></div>
+<div id="chResult" class="small ch-result">Выбери ставку и начни игру.</div>
+</div></section>
 <style>
 .chicken-panel{max-width:900px;margin:auto}.ch-hud{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin:14px 0}.ch-hud>div{background:var(--panel2);border:1px solid var(--border);border-radius:12px;padding:10px}.ch-hud span{display:block;font-size:10px;color:var(--muted);letter-spacing:1px}.ch-hud b{display:block;color:var(--gold);font-size:22px;margin-top:4px}.ch-canvas-wrap{position:relative;overflow:hidden;border:1px solid #52634b;border-radius:16px;background:#233d2a;box-shadow:inset 0 0 35px #0008}.ch-canvas-wrap canvas{display:block;width:100%;height:300px}.ch-scene-tag{position:absolute;left:12px;top:12px;padding:6px 10px;border-radius:8px;background:#07120dcc;color:#fff;font-size:11px;font-weight:900;letter-spacing:1px}.ch-sound-row{display:flex;align-items:center;gap:10px;margin:10px 0}.ch-sound-row button{font-weight:900}.ch-sound-row span{font-size:11px}
 .ch-controls{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-top:14px;text-align:left}.ch-controls label,.ch-controls input{grid-column:1/-1}.ch-controls button{width:100%;min-height:44px}.ch-result{min-height:24px;margin-top:12px}@media(max-width:560px){.ch-canvas-wrap canvas{height:240px}.ch-hud b{font-size:17px}.ch-hud span{font-size:8px}.ch-controls{grid-template-columns:1fr}}
@@ -1629,22 +1667,799 @@ SKEBOB <span>CASINO</span>
 
 <!-- CASES -->
 
+<section id="cases">
+
+<h2>🎁 КЕЙСЫ</h2>
+
+<div class="daily-case">
+
+<div class="daily-icon">🎁</div>
+
+<h2>DAILY CASE</h2>
+
+<p class="small">
+Бесплатный кейс раз в 24 часа.<br>
+Подпишись на Telegram SKEBOB CASINO.
+</p>
+
+<div class="daily-prizes">
+<div class="daily-prize">🧸 Мишка · 15⭐ / 20₽</div>
+<div class="daily-prize">❤️ Сердечко · 15⭐ / 20₽</div>
+<div class="daily-prize">🪙 3</div>
+<div class="daily-prize">🪙 5</div>
+<div class="daily-prize">🪙 10</div>
+</div>
+
+<a
+class="daily-channel"
+href="https://t.me/skebobcasino"
+target="_blank"
+rel="noopener noreferrer"
+>
+<button class="daily-telegram">
+✈️ ПОДПИСАТЬСЯ НА TELEGRAM
+</button>
+</a>
+
+<button
+class="goldbtn"
+id="dailyCaseButton"
+onclick="openDailyCase()"
+>
+Я ПОДПИСАЛСЯ — ОТКРЫТЬ
+</button>
+
+<div
+id="dailyTimer"
+class="daily-timer"
+></div>
+
+<div id="dailyResult"></div>
+
+</div>
+
+<section id="secretDrop" class="secret-drop" aria-live="polite">
+<div class="secret-icon">🕵️‍♂️💎</div>
+<h2>???</h2>
+<div style="font-weight:900;font-size:21px;color:#f0d8ff">СЕКРЕТНЫЙ КЕЙС</div>
+<p class="small" style="color:#eadcf8">Появился неизвестный кейс. Успей открыть, пока он не исчез!</p>
+<div class="secret-timer" id="secretDropTimer">05:00</div>
+<div style="font-size:18px;font-weight:900;color:#ffe08a">500 000 🪙</div>
+<button class="goldbtn" id="secretDropButton" onclick="openSecretDrop()">ОТКРЫТЬ СЕКРЕТНЫЙ КЕЙС</button>
+</section>
+
+<h2>📦 ОБЫЧНЫЕ КЕЙСЫ</h2>
+
+<div
+class="cases"
+id="caseList"
+></div>
+
+<div
+id="caseDetail"
+class="hidden"
+>
+
+<button
+class="back"
+onclick="closeCase()"
+>
+← Назад
+</button>
+
+<div class="panel">
+
+<h2 id="detailName"></h2>
+
+<p
+id="detailDescription"
+class="small"
+></p>
+
+<p>
+Цена:
+<b
+id="detailPrice"
+class="price"
+></b>
+🪙
+</p>
+
+<h3>Возможные призы</h3>
+
+<div
+class="prize-grid"
+id="prizePreview"
+></div>
+
+<h3>Количество</h3>
+
+<div class="quantity">
+
+<button
+class="active"
+onclick="setQty(1,this)"
+>
+x1
+</button>
+
+<button onclick="setQty(2,this)">x2</button>
+<button onclick="setQty(3,this)">x3</button>
+<button onclick="setQty(5,this)">x5</button>
+
+</div>
+
+<p
+id="totalPrice"
+class="small"
+></p>
+
+<button
+class="goldbtn"
+id="openCaseButton"
+onclick="openCase()"
+>
+ОТКРЫТЬ
+</button>
+
+</div>
+
+<div id="results"></div>
+
+</div>
+
+</section>
 
 <!-- CASE BATTLES -->
+<section id="battles" class="hidden">
+<h2>⚔️ БАТЛЫ КЕЙСОВ</h2>
+<p class="small">Открывай одинаковые кейсы с ботами. Победитель забирает все предметы батла!</p>
+<div class="battle-panel">
+<h3>🎮 Настройки батла</h3>
+<div class="battle-options">
+<div class="battle-choice"><label>ВЫБЕРИ КЕЙС</label><select id="battleCase"></select></div>
+<div class="battle-choice"><label>КОЛИЧЕСТВО ОТКРЫТИЙ</label><select id="battleRounds"><option value="1">1 раунд</option><option value="2">2 раунда</option><option value="3" selected>3 раунда</option><option value="5">5 раундов</option></select></div>
+</div>
+<label class="small">ФОРМАТ</label>
+<div class="battle-mode"><button id="battleMode2" class="active" onclick="setBattleMode(2)">👤 1 на 1</button><button id="battleMode3" onclick="setBattleMode(3)">👤 1 на 1 на 1</button></div>
+<label class="small">ПРАВИЛО ПОБЕДЫ</label>
+<div class="battle-mode"><button id="battleRuleHigh" class="active" onclick="setBattleRule('high')">📈 КТО БОЛЬШЕ</button><button id="battleRuleLow" onclick="setBattleRule('low')">📉 КТО МЕНЬШЕ</button></div>
+<div class="game-stats"><div class="game-stat"><span>СТАВКА</span><strong id="battleCost">—</strong></div><div class="game-stat"><span>ТВОЙ БАЛАНС</span><strong id="battleBalance">—</strong></div><div class="game-stat"><span>БОТОВ</span><strong id="battleBots">1</strong></div></div>
+<button class="game-main" id="battleStart" onclick="startCaseBattle()">⚔️ НАЧАТЬ БАТЛ</button>
+<p class="small">Ты оплачиваешь все открытия своего кейса. Боты участвуют бесплатно. Если победишь — получишь все предметы, выпавшие всем участникам. При ничьей победитель выбирается случайно среди лидеров.</p>
+</div>
+<div id="battleArena" class="battle-panel hidden"><h3>🏟️ АРЕНА</h3><div class="battle-arena" id="battlePlayers"></div><div id="battleRoundsLog"></div><div id="battleOutcome"></div></div>
+</section>
 <!-- UPGRADE -->
 
+<section
+id="upgrade"
+class="hidden"
+>
+
+<h2>🎯 MONEY UPGRADE</h2>
+
+<div class="panel">
+
+<div
+class="upgrade-circle"
+id="upgradeCircle"
+>
+
+<div
+class="upgrade-arrow"
+id="upgradeArrow"
+></div>
+
+<div class="upgrade-center">
+
+<strong id="chanceText">
+45%
+</strong>
+
+<span id="upgradeValues">
+100 → 200 🪙
+</span>
+
+</div>
+
+</div>
+
+<div class="small">
+СУММА
+</div>
+
+<input
+type="number"
+id="upgradeStake"
+value="100"
+min="1"
+oninput="updateUpgradeInfo()"
+>
+
+<p
+id="commissionText"
+class="small"
+></p>
+
+<div class="small">
+МНОЖИТЕЛЬ
+</div>
+
+<div class="multiplier-grid">
+
+<button onclick="setMultiplier(1.2,this)">
+x1.2
+</button>
+
+<button onclick="setMultiplier(1.5,this)">
+x1.5
+</button>
+
+<button
+class="active"
+onclick="setMultiplier(2,this)"
+>
+x2
+</button>
+
+<button onclick="setMultiplier(3,this)">x3</button>
+<button onclick="setMultiplier(5,this)">x5</button>
+<button onclick="setMultiplier(10,this)">x10</button>
+
+</div>
+
+<button
+class="goldbtn"
+id="upgradeButton"
+onclick="spinUpgrade()"
+>
+АПГРЕЙД
+</button>
+
+<div
+id="upgradeStatus"
+class="game-status"
+></div>
+
+</div>
+
+</section>
 
 <!-- MINES -->
 
+<section
+id="mines"
+class="hidden"
+>
+
+<h2>💣 MINES</h2>
+
+<div class="game-stats">
+
+<div class="game-stat">
+<span>ОТКРЫТО</span>
+<strong id="mineOpened">—</strong>
+</div>
+
+<div class="game-stat">
+<span>МНОЖИТЕЛЬ</span>
+<strong
+class="orange"
+id="mineMultiplier"
+>
+x1,00
+</strong>
+</div>
+
+<div class="game-stat">
+<span>ШАНС</span>
+<strong id="mineChance">88%</strong>
+</div>
+
+</div>
+
+<div
+class="mines-board"
+id="mineGrid"
+></div>
+
+<button
+class="game-main"
+id="minePlayButton"
+onclick="mineMainAction()"
+>
+ИГРАТЬ ЗА 1 000 🪙
+</button>
+
+<div class="game-control">
+
+<div
+class="small"
+style="text-align:center"
+>
+СТАВКА
+</div>
+
+<div class="bet-main">
+
+<button onclick="changeMineBet(-1)">
+−
+</button>
+
+<input
+id="mineBet"
+type="number"
+value="1000"
+oninput="updateMineControls()"
+>
+
+<button onclick="changeMineBet(1)">
++
+</button>
+
+</div>
+
+<div class="bet-presets mine-bets">
+
+<button onclick="setMineBet(10,this)">
+10
+</button>
+
+<button onclick="setMineBet(100,this)">
+100
+</button>
+
+<button
+class="selected"
+onclick="setMineBet(1000,this)"
+>
+1 000
+</button>
+
+<button onclick="setMineBet(10000,this)">
+10 000
+</button>
+
+<button onclick="setMineBet('max',this)">
+МАКС
+</button>
+
+</div>
+
+</div>
+
+<div class="game-control">
+
+<div class="mine-count-main">
+
+<span>
+Мин на поле
+</span>
+
+<div class="mine-step">
+
+<button onclick="changeMineCount(-1)">
+−
+</button>
+
+<strong id="mineCountValue">
+3
+</strong>
+
+<button onclick="changeMineCount(1)">
++
+</button>
+
+</div>
+
+</div>
+
+<div class="bet-presets mine-presets">
+
+<button onclick="setMineCount(1,this)">
+1
+</button>
+
+<button
+class="selected"
+onclick="setMineCount(3,this)"
+>
+3
+</button>
+
+<button onclick="setMineCount(5,this)">
+5
+</button>
+
+<button onclick="setMineCount(10,this)">
+10
+</button>
+
+<button onclick="setMineCount(24,this)">
+24
+</button>
+
+</div>
+
+</div>
+
+<div
+id="mineStatus"
+class="game-status"
+>
+Выбери ставку и количество мин.
+</div>
+
+</section>
 
 <!-- PLANE -->
 
+<section
+id="plane"
+class="hidden"
+>
+
+<h2>✈️ САМОЛЁТИК</h2>
+
+<div class="plane-panel">
+
+<div class="game-stats">
+
+<div class="game-stat">
+<span>ЭТАП</span>
+<strong id="planeStage">ГОТОВ</strong>
+</div>
+
+<div class="game-stat">
+<span>МНОЖИТЕЛЬ</span>
+<strong
+class="orange"
+id="planeStatMultiplier"
+>
+x1,00
+</strong>
+</div>
+
+<div class="game-stat">
+<span>ВЫИГРЫШ</span>
+<strong id="planePotential">
+0 🪙
+</strong>
+</div>
+
+</div>
+
+<div class="plane-world">
+
+<div class="plane-flight-hud">
+ <span>ДИСТАНЦИЯ <b id="planeDistance">0 м</b></span>
+ <span>ВЫСОТА <b id="planeAltitude">2,5 м</b></span>
+</div>
+
+<div class="plane-sun"></div>
+
+<div class="cloud cloud1">
+☁️
+</div>
+
+<div class="cloud cloud2">
+☁️
+</div>
+
+<div class="cloud cloud3">
+☁️
+</div>
+
+<div class="plane-sea"></div>
+
+<div class="carrier">
+<div class="carrier-tower"></div>
+</div>
+
+<div
+class="landing-carrier"
+id="landingCarrier"
+></div>
+
+<div
+class="plane-multiplier"
+id="planeMultiplier"
+>
+×1,00
+</div>
+
+<div
+class="plane-event"
+id="planeEvent"
+>
+✈️ ВЗЛЁТ
+</div>
+
+<div
+class="plane-object"
+id="planeObject"
+>
+✈️
+</div>
+
+</div>
+
+<button
+class="game-main"
+id="planePlayButton"
+onclick="startPlaneGame()"
+>
+✈️ ВЗЛЁТ ЗА 1 000 🪙
+</button>
+
+<div class="game-control">
+
+<div
+class="small"
+style="text-align:center"
+>
+СТАВКА
+</div>
+
+<div class="bet-main">
+
+<button onclick="changePlaneBet(-1)">
+−
+</button>
+
+<input
+id="planeBet"
+type="number"
+value="1000"
+min="10"
+oninput="updatePlaneControls()"
+>
+
+<button onclick="changePlaneBet(1)">
++
+</button>
+
+</div>
+
+<div class="bet-presets plane-presets">
+
+<button onclick="setPlaneBet(10,this)">
+10
+</button>
+
+<button onclick="setPlaneBet(100,this)">
+100
+</button>
+
+<button
+class="selected"
+onclick="setPlaneBet(1000,this)"
+>
+1 000
+</button>
+
+<button onclick="setPlaneBet(10000,this)">
+10 000
+</button>
+
+<button onclick="setPlaneBet('max',this)">
+МАКС
+</button>
+
+</div>
+
+</div>
+
+<div
+id="planeStatus"
+class="game-status"
+>
+Самолёт готов к взлёту.
+</div>
+
+<div class="plane-description">
+
+Самолёт летит автоматически. По пути собирает случайные множители и преодолевает опасности.
+В конце полёта случайно определяется, попадёт ли он на платформу. Управлять самолётом не нужно.
+
+</div>
+
+</div>
+
+</section>
 
 <!-- PICKAXE -->
 
+<section
+id="pickaxe"
+class="hidden"
+>
+
+<h2>⛏ КИРКА</h2>
+
+<div class="pick-panel">
+
+<div class="game-stats">
+
+<div class="game-stat">
+<span>УДАРОВ</span>
+<strong id="pickHits">0 / 14</strong>
+</div>
+
+<div class="game-stat">
+<span>ГЛУБИНА</span>
+<strong id="pickDepth">0</strong>
+</div>
+
+<div class="game-stat">
+<span>ДОБЫТО</span>
+<strong
+class="orange"
+id="pickWin"
+>
+0 🪙
+</strong>
+</div>
+
+</div>
+
+<div class="pick-mine-hud">
+<div class="pick-hud-card">❤️ ЗДОРОВЬЕ <strong id="pickHealthText">400 / 400</strong><div class="pick-hp-track"><div class="pick-hp-fill" id="pickHealthBar"></div></div></div>
+<div class="pick-hud-card">⛏ ГЛУБИНА <strong><span id="pickDepth">0</span> м</strong><span id="pickMineLoot">Руда ещё не найдена</span></div>
+</div>
+<div class="pick-mine-window">
+<div class="pick-sky"></div>
+<div class="pick-depth-label" id="pickDepthLabel">ПОВЕРХНОСТЬ</div>
+<div class="pick-mine-grid" id="pickaxeBoard"></div>
+<div class="pick-miner" id="pickMiner">⛏️</div>
+</div>
+
+<button
+class="game-main"
+id="pickaxePlayButton"
+onclick="startPickaxeGame()"
+>
+⛏ КОПАТЬ ЗА 100 🪙
+</button>
+
+<div class="game-control">
+
+<div
+class="small"
+style="text-align:center"
+>
+СТАВКА
+</div>
+
+<div class="bet-main">
+
+<button onclick="changePickaxeBet(-1)">
+−
+</button>
+
+<input
+id="pickaxeBet"
+type="number"
+value="100"
+min="10"
+oninput="updatePickaxeControls()"
+>
+
+<button onclick="changePickaxeBet(1)">
++
+</button>
+
+</div>
+
+<div class="bet-presets pick-presets">
+
+<button onclick="setPickaxeBet(10,this)">
+10
+</button>
+
+<button
+class="selected"
+onclick="setPickaxeBet(100,this)"
+>
+100
+</button>
+
+<button onclick="setPickaxeBet(500,this)">
+500
+</button>
+
+<button onclick="setPickaxeBet(1000,this)">
+1 000
+</button>
+
+<button onclick="setPickaxeBet('max',this)">
+МАКС
+</button>
+
+</div>
+
+</div>
+
+<div
+id="pickaxeStatus"
+class="game-status"
+>
+В блоках спрятаны денежные призы 🪙
+</div>
+
+</div>
+
+</section>
 
 <!-- PLINKO -->
+<section id="plinko" class="hidden">
+<h2>🔴 PLINKO</h2>
+<div class="plinko-panel">
+ <div class="game-stats">
+  <div class="game-stat"><span>СТАВКА</span><strong id="plinkoBetStat">100 🪙</strong></div>
+  <div class="game-stat"><span>РИСК</span><strong id="plinkoRiskStat">СРЕДНИЙ</strong></div>
+  <div class="game-stat"><span>ВОЗВРАТ</span><strong class="orange" id="plinkoReturn">—</strong></div>
+ </div>
+ <div class="plinko-risk">
+  <button class="active" onclick="setPlinkoRisk('low',this)">🟢 НИЗКИЙ</button>
+  <button onclick="setPlinkoRisk('medium',this)">🟡 СРЕДНИЙ</button>
+  <button onclick="setPlinkoRisk('high',this)">🔴 ВЫСОКИЙ</button>
+ </div>
+ <div class="plinko-board-wrap">
+  <div class="plinko-board" id="plinkoBoard">
+   <div class="plinko-ball" id="plinkoBall">🔴</div>
+  </div>
+  <div class="plinko-slots" id="plinkoSlots"></div>
+ </div>
+ <div class="plinko-last" id="plinkoResult">Выбери ставку и запусти шарик!</div>
+ <button class="game-main" id="plinkoPlayButton" onclick="startPlinkoGame()">🔴 БРОСИТЬ ШАР ЗА 100 🪙</button>
+ <div class="game-control">
+  <div class="small" style="text-align:center">СТАВКА</div>
+  <div class="bet-main">
+   <button onclick="changePlinkoBet(-1)">−</button>
+   <input id="plinkoBet" type="number" value="100" min="10" oninput="updatePlinkoControls()">
+   <button onclick="changePlinkoBet(1)">+</button>
+  </div>
+  <div class="bet-presets plinko-presets">
+   <button onclick="setPlinkoBet(10,this)">10</button>
+   <button class="selected" onclick="setPlinkoBet(100,this)">100</button>
+   <button onclick="setPlinkoBet(500,this)">500</button>
+   <button onclick="setPlinkoBet(1000,this)">1 000</button>
+   <button onclick="setPlinkoBet('max',this)">МАКС</button>
+  </div>
+ </div>
+ <div class="plinko-info">
+  <b>КАК ИГРАТЬ</b><br>
+  Шарик автоматически падает через поле с штырьками. Внизу его ждёт случайный множитель. Чем выше риск, тем больше возможный выигрыш — и тем выше шанс маленького возврата.
+ </div>
+</div>
+</section>
 
+<section id="race" class="hidden">
+<h2>🏎️ RACE · GRAND PRIX</h2><div class="race-panel">
+<div class="game-stats"><div class="game-stat"><span>СТАВКА</span><strong id="raceBetStat">100 🪙</strong></div><div class="game-stat"><span>ТВОЯ МАШИНА</span><strong id="racePickStat">🔴 №1</strong></div><div class="game-stat"><span>КОЭФФИЦИЕНТ</span><strong>×2.00</strong></div></div>
+<div class="race-track" id="raceTrack"><div class="race-finish">🏁</div><div class="race-lanes" id="raceLanes"></div><div class="race-track-label">SKEBOB MOTORSPORT · CIRCUIT RACE</div></div>
+<div class="race-picks"><button class="active" onclick="selectRace(0,this)">🔴 GT-R №1</button><button onclick="selectRace(1,this)">🔵 SUPRA №2</button><button onclick="selectRace(2,this)">🟡 911 №3</button><button onclick="selectRace(3,this)">🟢 M4 №4</button></div>
+<div class="race-result" id="raceResult">Выбери участника и делай ставку!</div>
+<button class="game-main" id="racePlayButton" onclick="startRaceGame()">🏁 НАЧАТЬ ГОНКУ ЗА 100 🪙</button>
+<div class="game-control"><div class="small" style="text-align:center">СТАВКА</div><div class="bet-main"><button onclick="changeRaceBet(-1)">−</button><input id="raceBet" type="number" value="100" min="10" oninput="updateRaceControls()"><button onclick="changeRaceBet(1)">+</button></div><div class="bet-presets race-presets"><button onclick="setRaceBet(10,this)">10</button><button class="selected" onclick="setRaceBet(100,this)">100</button><button onclick="setRaceBet(500,this)">500</button><button onclick="setRaceBet(1000,this)">1 000</button><button onclick="setRaceBet('max',this)">МАКС</button></div></div>
+<div class="race-footer"><button class="secondary" id="raceSoundButton" onclick="toggleRaceSound()">🔊 ЗВУК ВКЛ</button><span class="small">4 участника · случайный победитель</span></div>
+<div class="plinko-info">Выбери гонщика, поставь монеты и смотри анимированную гонку. Победитель выбирается случайно. Выплата за победу — ×2.</div></div></section>
+<section id="crash" class="hidden">
+<h2>📈 CRASH</h2>
+<div class="crash-panel">
+<div class="game-stats">
+<div class="game-stat"><span>ТЕКУЩИЙ КОЭФФИЦИЕНТ</span><strong id="crashMultiplier">1.00x</strong></div>
+<div class="game-stat"><span>ВОЗМОЖНЫЙ ВЫИГРЫШ</span><strong id="crashPotential">—</strong></div>
+<div class="game-stat"><span>СТАВКА</span><strong id="crashBetStat">100 🪙</strong></div>
+</div>
+<div class="crash-screen" id="crashScreen"><div class="crash-chart-grid"></div><div class="crash-rocket" id="crashRocket">🚀</div><div class="crash-value" id="crashValue">1.00x</div><div class="crash-status" id="crashStatus">Сделай ставку и запусти раунд</div></div>
+<button class="game-main" id="crashPlayButton" onclick="startCrash()">🚀 НАЧАТЬ ЗА 100 🪙</button>
+<button class="game-main crash-cashout" id="crashCashoutButton" onclick="cashOutCrash()" disabled>💰 ЗАБРАТЬ 100 🪙</button>
+<div class="game-control"><div class="small" style="text-align:center">СТАВКА</div><div class="bet-main"><button onclick="changeCrashBet(-1)">−</button><input id="crashBet" type="number" value="100" min="10" oninput="updateCrashControls()"><button onclick="changeCrashBet(1)">+</button></div><div class="bet-presets crash-presets"><button onclick="setCrashBet(10,this)">10</button><button class="selected" onclick="setCrashBet(100,this)">100</button><button onclick="setCrashBet(500,this)">500</button><button onclick="setCrashBet(1000,this)">1 000</button><button onclick="setCrashBet('max',this)">МАКС</button></div></div>
+<div class="plinko-info">Коэффициент растёт каждую секунду. Успей нажать «Забрать» до того, как ракета разобьётся. Если не успеешь — ставка сгорит. Выплата = ставка × коэффициент.</div>
+</div></section>
 <!-- INVENTORY -->
 
 <section
@@ -1686,9 +2501,7 @@ class="hidden"
 >
 
 <h2>👤 ПРОФИЛЬ</h2>
-<div class="panel"><div class="small">ТВОЙ NICKNAME</div><strong id="profileNickname" style="display:block;font-size:22px;margin:8px 0 12px">Player</strong></div>
-
-<div id="officialAdminEntry" class="panel hidden"><b>🛠 ПАНЕЛЬ ВЛАДЕЛЬЦА</b><div class="small">Управление оформлением и модерацией сайта</div><button class="goldbtn" onclick="showPage('adminLogin')">АДМИН-ПАНЕЛЬ</button></div>
+<div class="panel"><div class="small">ТВОЙ NICKNAME</div><strong id="profileNickname" style="display:block;font-size:22px;margin:8px 0 12px">Player</strong><button class="secondary" onclick="changeNickname()">✏️ ИЗМЕНИТЬ NICKNAME</button></div>
 
 <div class="profile-hero">
 
@@ -1959,11 +2772,66 @@ id="profileBalance"
 
 
 <!-- SLOTS -->
+<section id="slots" class="hidden">
+<h2>🎰 SKEBOB SLOTS</h2>
+<p class="small">Крути барабаны, собирай комбинации и забирай множители!</p>
+<div class="panel" style="text-align:center">
+<div class="game-stats">
+<div class="game-stat"><span>СТАВКА</span><strong id="slotsBetStat">100 🪙</strong></div>
+<div class="game-stat"><span>ВЫИГРЫШ</span><strong id="slotsWinStat">—</strong></div>
+<div class="game-stat"><span>ЛУЧШИЙ МНОЖИТЕЛЬ</span><strong id="slotsBestStat">x0</strong></div>
+</div>
+<div class="slots-machine"><div class="slots-reel" id="slotReel0">🍒</div><div class="slots-reel" id="slotReel1">🍋</div><div class="slots-reel" id="slotReel2">💎</div></div>
+<div id="slotsMessage">Выставь ставку и нажми КРУТИТЬ!</div>
+<div class="game-control"><label>ТВОЯ СТАВКА</label><div class="bet-main"><button onclick="changeSlotsBet(-1)">−</button><input id="slotsBet" type="number" min="10" step="10" value="100" oninput="updateSlotsControls()"><button onclick="changeSlotsBet(1)">+</button></div>
+<div class="bet-presets"><button onclick="setSlotsBet(100)">100</button><button onclick="setSlotsBet(500)">500</button><button onclick="setSlotsBet(1000)">1K</button><button onclick="setSlotsBet(5000)">5K</button><button onclick="setSlotsBet('max')">MAX</button></div></div>
+<button class="game-main" id="slotsSpin" onclick="spinSlots()">🎰 КРУТИТЬ БАРАБАНЫ</button>
+<div class="panel small" style="text-align:left"><b>ТАБЛИЦА ВЫПЛАТ</b><br>💎💎💎 — x8 · 👑👑👑 — x15<br>🍋🍋🍋 — x5 · 🍒🍒🍒 — x3<br>Любые две одинаковые — x1.2</div>
+</div></section>
 
 
 <!-- BLACKJACK ONLINE: no-stakes social mode -->
+<section id="blackjack" class="hidden">
+<h2>🃏 BLACKJACK ONLINE</h2>
+<p class="small">До 4 игроков в комнате. Каждый играет отдельно против общего дилера. Только бесплатная игра — без ставок и выплат.</p>
+<div class="panel">
+ <div class="bj-actions">
+  <button class="game-main" id="bjOnlineJoin" onclick="bjOnlineJoin()">🎮 ИГРАТЬ</button>
+  <button class="secondary" id="bjOnlineLeave" onclick="bjOnlineLeave()" disabled>ВЫЙТИ ИЗ ИГРЫ</button>
+ </div>
+ <div class="game-status" id="bjOnlineStatus">Нажми «Играть», чтобы войти в очередь на следующий раунд.</div>
+ <div class="small" id="bjOnlineRoomLabel">Комната: —</div>
+ <div class="small" id="bjOnlineCountdown"></div>
+</div>
+<div class="bj-table">
+ <div class="bj-dealer"><div class="bj-seat-name">🎩 ОБЩИЙ ДИЛЕР</div><div class="bj-cards" id="bjOnlineDealerCards"><span class="bj-card">?</span></div><div class="small" id="bjOnlineDealerScore">Ожидает начала раунда</div></div>
+ <div class="bj-divider">ИГРОКИ ЗА СТОЛОМ</div>
+ <div id="bjOnlinePlayers" class="bj-players"></div>
+ <div class="small" id="bjOnlineYourScore">Твои карты появятся после старта</div>
+ <div class="small" id="bjOnlineResult"></div>
+</div>
+<div class="panel">
+ <div class="bj-actions">
+  <button class="secondary" id="bjOnlineHit" onclick="bjOnlineHit()" disabled>ЕЩЁ КАРТУ</button>
+  <button class="secondary" id="bjOnlineStand" onclick="bjOnlineStand()" disabled>ХВАТИТ</button>
+ </div>
+ <div class="small">Правила: цель — набрать ближе к 21, не превышая 21. Дилер берёт карты до 17. Победа, поражение или ничья считаются отдельно для каждого игрока.</div>
+</div>
+</section>
 
 
+<section id="dice" class="hidden">
+<h2>🎲 КОСТИ — ТУРНИР</h2>
+<p class="small">Ты против случайных ботов. Каждый раунд собирает от 2 до 4 соперников (всего до 5 игроков). Все ставят одинаково — победитель забирает банк.</p>
+<div class="dice-table panel">
+ <div class="dice-arena" id="dicePlayers"><div class="dice-seat">🎲 Игроки появятся здесь</div></div>
+ <div class="dice-pot" id="dicePot">БАНК: —</div>
+ <div class="dice-result" id="diceResult">Выбери ставку и бросай кости!</div>
+ <div class="game-control"><label>СТАВКА КАЖДОГО ИГРОКА</label><div class="bet-main"><button onclick="changeDiceBet(-1)">−</button><input id="diceBet" type="number" min="10" step="10" value="100" oninput="updateDiceBet()"><button onclick="changeDiceBet(1)">+</button></div><div class="bet-presets"><button onclick="setDiceBet(100)">100</button><button onclick="setDiceBet(500)">500</button><button onclick="setDiceBet(1000)">1K</button><button onclick="setDiceBet(5000)">5K</button><button onclick="setDiceBet('max')">MAX</button></div></div>
+ <button class="game-main" id="dicePlay" onclick="playDice()">🎲 БРОСИТЬ КОСТИ</button>
+ <div class="small">У каждого игрока два кубика. Побеждает наибольшая сумма; при равенстве победитель выбирается случайно среди лидеров.</div>
+</div>
+</section>
 
 
 <!-- PROMO -->
@@ -1975,7 +2843,7 @@ class="hidden"
 
 <button
 class="back"
-onclick="showPage('home')"
+onclick="showPage('cases')"
 >
 ← Назад
 </button>
@@ -2016,7 +2884,7 @@ class="game-status"
 
 <!-- DAILY TASKS -->
 <section id="tasks" class="hidden">
-<button class="back" onclick="showPage('home')">← Назад</button>
+<button class="back" onclick="showPage('cases')">← Назад</button>
 <h2>📋 ЕЖЕДНЕВНЫЕ ЗАДАНИЯ</h2>
 <p class="small">Задания обновляются каждые 24 часа автоматически, даже если ты не заходил в игру.</p>
 <div class="panel"><div class="game-stats"><div class="game-stat"><span>ОБНОВЛЕНИЕ ЧЕРЕЗ</span><strong id="tasksTimer">24:00:00</strong></div><div class="game-stat"><span>ВЫПОЛНЕНО</span><strong id="tasksDone">0/3</strong></div><div class="game-stat"><span>НАГРАДА</span><strong>🪙</strong></div></div><div id="dailyTasksList"></div></div>
@@ -2075,6 +2943,44 @@ onchange="toggleTheme()"
 <input type="checkbox" id="casinoMusicToggle" onchange="toggleCasinoMusic()">
 <span class="switch-slider"></span>
 </label>
+
+</div>
+
+<div class="setting-row">
+
+<div>
+<b>🔐 Админ-панель</b>
+
+<div class="small">
+Управление игрой
+</div>
+</div>
+
+<button
+class="secondary"
+onclick="showPage('adminLogin')"
+>
+ВОЙТИ
+</button>
+
+</div>
+
+<div class="setting-row">
+
+<div>
+<b>🛒 Купить админ-панель</b>
+<div class="small">Связаться с продавцом в Telegram</div>
+</div>
+
+<a
+class="secondary"
+href="https://t.me/ggggg06767"
+target="_blank"
+rel="noopener noreferrer"
+style="display:inline-flex;align-items:center;justify-content:center;text-decoration:none"
+>
+КУПИТЬ
+</a>
 
 </div>
 
@@ -2147,24 +3053,180 @@ class="small"
 id="adminPanel"
 class="hidden"
 >
-<button class="back" onclick="showPage('profile')">← Назад в профиль</button>
-<h2>🛠 ПАНЕЛЬ ВЛАДЕЛЬЦА</h2>
+
+<button
+class="back"
+onclick="showPage('settings')"
+>
+← Выйти
+</button>
+
+<h2>🛠 ADMIN PANEL</h2>
+
 <div class="panel">
- <b>📊 Состояние профиля и сайта</b>
- <p class="small">Информационная панель владельца. Здесь отображаются текущие данные; изменения баланса, ставок и результатов игр через неё недоступны.</p>
- <div class="profile-grid">
-  <div class="profile-card"><div class="profile-card-label">Аккаунт</div><div class="profile-card-value" id="ownerDashNick">—</div></div>
-  <div class="profile-card"><div class="profile-card-label">Виртуальные монеты</div><div class="profile-card-value" id="ownerDashBalance">—</div></div>
-  <div class="profile-card"><div class="profile-card-label">Предметов в инвентаре</div><div class="profile-card-value" id="ownerDashItems">—</div></div>
-  <div class="profile-card"><div class="profile-card-label">Открыто кейсов</div><div class="profile-card-value" id="ownerDashCases">—</div></div>
- </div>
- <button class="secondary" style="width:100%;margin-top:12px" onclick="renderOwnerDashboard()">🔄 ОБНОВИТЬ ДАННЫЕ</button>
- <p class="small" id="ownerDashUpdated">Данные обновляются при открытии панели.</p>
+
+<h3>💰 Баланс</h3>
+
+<p>
+Баланс:
+<b id="adminBalance">
+0
+</b>
+🪙
+</p>
+
+<input
+id="adminAmount"
+type="number"
+placeholder="Сумма"
+>
+
+<div class="admin-actions">
+
+<button
+class="admin-btn green"
+onclick="adminChange(1)"
+>
+Зачислить
+</button>
+
+<button
+class="admin-btn red"
+onclick="adminChange(-1)"
+>
+Списать
+</button>
+
+<button
+class="admin-btn blue admin-full"
+onclick="adminSet()"
+>
+Установить баланс
+</button>
+
 </div>
-<div class="panel">
- <b>🛡️ Безопасность</b>
- <p class="small">Не публикуй коды доступа и секретные ключи в HTML: всё, что находится в GitHub Pages, доступно посетителям сайта. Для настоящих административных прав нужна серверная проверка доступа.</p>
+
+<div class="admin-toggle">
+<div>
+<b>♾️ Бесконечный баланс</b>
+<div class="small">Неограниченные ставки. Можно выключить в любой момент.</div>
 </div>
+<button class="admin-btn gold-admin" id="adminInfiniteBalanceBtn" onclick="toggleInfiniteBalance()">ВКЛЮЧИТЬ</button>
+</div>
+
+<div class="admin-toggle">
+
+<div>
+
+<b>
+🎯 Всегда выигрыш
+</b>
+
+<div class="small">
+Победа в игровых режимах
+</div>
+
+</div>
+
+<label class="switch">
+
+<input
+type="checkbox"
+id="adminAlwaysWin"
+onchange="setAlwaysWin(this.checked)"
+>
+
+<span class="switch-slider"></span>
+
+</label>
+
+</div>
+
+<h3>
+👑 Уровень казино
+</h3>
+
+<p class="small">
+Автоматически: Игрок от 10 000 🪙 выигрышей,
+VIP от 100 000 🪙. Администратор может
+установить уровень вручную.
+</p>
+
+<div class="admin-levels">
+
+<button
+id="adminLevelNewbie"
+onclick="adminSetLevel('newbie')"
+>
+🌱 НОВИЧОК
+</button>
+
+<button
+id="adminLevelPlayer"
+onclick="adminSetLevel('player')"
+>
+🎮 ИГРОК
+</button>
+
+<button
+id="adminLevelVip"
+onclick="adminSetLevel('vip')"
+>
+👑 VIP
+</button>
+
+</div>
+
+<button
+class="secondary"
+style="width:100%;margin-top:8px"
+onclick="adminSetLevel('auto')"
+>
+♻️ АВТОМАТИЧЕСКИЙ УРОВЕНЬ
+</button>
+
+<h3>
+🎁 Выдать предмет
+</h3>
+
+<select id="adminItem">
+
+<option value="0">
+👕 Футболка
+</option>
+
+<option value="1">
+👟 Кроссовки
+</option>
+
+<option value="2">
+📿 Золотая цепь
+</option>
+
+<option value="3">
+🧢 Кепка
+</option>
+
+<option value="4">
+🎧 Наушники
+</option>
+
+<option value="5">
+🎨 Редкий скин
+</option>
+
+</select>
+
+<button
+class="admin-btn purple"
+style="width:100%"
+onclick="adminGive()"
+>
+ВЫДАТЬ
+</button>
+
+</div>
+
 </section>
 
 </main>
@@ -2394,7 +3456,7 @@ turnover:0
 
 let state={
 
-balance:50,
+balance:20,
 
 inventory:[],
 
@@ -2410,13 +3472,25 @@ balanceBeforeInfinite:null
 };
 
 try{
-const rawSaved=storageGet("skebobSave")||storageGet("skebobSaveBackup");
-const saved=rawSaved?JSON.parse(rawSaved):null;
-if(saved&&typeof saved==="object"){
+
+const saved=
+JSON.parse(
+storageGet(
+"skebobSave"
+)
+);
+
+if(saved){
+
 state={
 ...state,
 ...saved,
-stats:{...defaultStats,...(saved.stats||{})},
+
+stats:{
+...defaultStats,
+...(saved.stats||{})
+},
+
 admin:{
 alwaysWin:false,
 manualLevel:null,
@@ -2424,15 +3498,12 @@ infiniteBalance:false,
 balanceBeforeInfinite:null,
 ...(saved.admin||{})
 }
+
 };
+
 }
-}catch(e){
-console.warn("Не удалось прочитать основное сохранение; пробуем резервную копию.",e);
-try{
-const backup=JSON.parse(storageGet("skebobSaveBackup")||"null");
-if(backup&&typeof backup==="object")state={...state,...backup,stats:{...defaultStats,...(backup.stats||{})},admin:{alwaysWin:false,manualLevel:null,infiniteBalance:false,balanceBeforeInfinite:null,...(backup.admin||{})}};
-}catch(backupError){console.warn("Резервное сохранение тоже недоступно.",backupError);}
-}
+
+}catch(e){}
 
 // Время первого запуска казино: даёт новичку окно 24 часа для промокода.
 if(!Number.isFinite(Number(state.createdAt))||Number(state.createdAt)<=0)state.createdAt=Date.now();
@@ -2484,7 +3555,7 @@ let mineMultiplier=1;
 let dailyOpening=false;
 
 function storageGet(key){try{return window.localStorage.getItem(key)}catch(error){console.warn("Хранилище браузера недоступно:",error);return null}}
-function storageSet(key,value){try{window.localStorage.setItem(key,value);return window.localStorage.getItem(key)===String(value)}catch(error){console.warn("Не удалось сохранить данные браузера:",error);return false}}
+function storageSet(key,value){try{window.localStorage.setItem(key,value);return true}catch(error){console.warn("Не удалось сохранить данные браузера:",error);return false}}
 
 /* =========================
    SAVE
@@ -2499,19 +3570,18 @@ function formatMoney(amount){
 function setCurrency(value){storageSet("skebobCurrency",value==="USD"?"USD":"RUB");render();renderCases();const e=document.getElementById("currencySelect");if(e)e.value=getCurrency();if(typeof updateUpgradeInfo==="function")updateUpgradeInfo();if(typeof renderDailyTasks==="function")renderDailyTasks();}
 function loadCurrency(){const e=document.getElementById("currencySelect");if(e)e.value=getCurrency();}
 function save(){
+
 updateDailyTasks(false);
 let saved=false;
 try{
- const payload=JSON.stringify(state);
- const primarySaved=storageSet("skebobSave",payload);
- const backupSaved=storageSet("skebobSaveBackup",payload);
- saved=primarySaved||backupSaved;
- if(!saved)console.warn("Браузер не разрешил сохранить игровой прогресс.");
+ storageSet("skebobSave",JSON.stringify(state));
+ saved=true;
 }catch(error){
  console.warn("Не удалось сохранить прогресс в этом браузере:",error);
 }
 render();
 return saved;
+
 }
 
 /* =========================
@@ -2673,6 +3743,7 @@ function render(){
 
 document.getElementById("balance").textContent=formatMoney(state.balance);
 
+document.getElementById("adminBalance").textContent=formatMoney(state.balance);
 
 renderInventory();
 
@@ -2688,7 +3759,6 @@ renderAdminSettings();
 
 function showPage(id,button){
 if(id==="tasks")renderDailyTasks();
-if(id==="upgrade")updateUpgradeInfo();
 
 document
 .querySelectorAll(
@@ -2734,7 +3804,6 @@ renderProfile();
 if(id==="adminPanel"){
 
 renderAdminSettings();
-renderOwnerDashboard();
 
 }
 
@@ -2886,7 +3955,9 @@ progressText=
 total.toLocaleString("ru-RU")+
 " / 10 000 🪙 до уровня ИГРОК";
 
-}else if(info.id==="player"){
+}
+
+else if(info.id==="player"){
 
 progress=
 Math.min(
@@ -2908,9 +3979,6 @@ progressText=
 "👑 Высший уровень — лимиты сняты";
 
 }
-
-const ownerEntry=document.getElementById("officialAdminEntry");
-if(ownerEntry)ownerEntry.classList.toggle("hidden",!isProtectedOfficialNick(getNickname()));
 
 const progressBar=
 document.getElementById(
@@ -3990,63 +5058,200 @@ save();
 ========================= */
 
 function setMultiplier(m,b){
+
 if(upgradeBusy)return;
-multiplier=Math.max(1.2,Math.min(10,Number(m)||2));
-document.querySelectorAll("#upgrade .multiplier-grid button").forEach(x=>x.classList.remove("active"));
-if(b)b.classList.add("active");
+
+multiplier=m;
+
+document
+.querySelectorAll(
+".multiplier-grid button"
+)
+.forEach(
+x=>x.classList.remove(
+"active"
+)
+);
+
+b.classList.add(
+"active"
+);
+
 updateUpgradeInfo();
+
 }
 
 function updateUpgradeInfo(){
-const input=document.getElementById("upgradeAmount");
-const amount=input?Math.floor(Number(input.value)):0;
-const valid=Number.isFinite(amount)&&amount>=1&&amount<=state.balance;
-const result=valid?Math.floor(amount*multiplier):0;
-const chance=document.getElementById("chanceText");
-const values=document.getElementById("upgradeValues");
-const button=document.getElementById("upgradeButton");
-if(chance)chance.textContent="100%";
-const circle=document.getElementById("upgradeCircle");
-if(circle)circle.style.setProperty("--chance","100%");
-if(values)values.textContent=valid
-?formatMoney(amount)+" → "+formatMoney(result)+" 🪙"
-:"Укажи сумму в пределах баланса";
-if(button)button.disabled=!valid||upgradeBusy;
+
+const stake=
+Math.max(
+0,
+Number(
+document.getElementById(
+"upgradeStake"
+).value
+)||0
+);
+
+const chance=
+Math.min(
+90,
+Math.max(
+5,
+Math.floor(
+90/multiplier
+)
+)
+);
+
+document.getElementById(
+"chanceText"
+).textContent=
+chance+
+"%";
+
+document.getElementById(
+"upgradeValues"
+).textContent=
+stake+
+" → "+
+Math.floor(
+stake*multiplier
+)+
+" 🪙";
+
+document.getElementById(
+"upgradeCircle"
+).style.setProperty(
+"--chance",
+chance+"%"
+);
+
+document.getElementById(
+"commissionText"
+).textContent=
+
+state.admin.alwaysWin
+?
+"🎯 ADMIN: всегда выигрыш"
+:
+"Шанс успеха: "+
+chance+
+"%";
+
 }
 
 function spinUpgrade(){
+
 if(upgradeBusy)return;
-const input=document.getElementById("upgradeAmount");
-const status=document.getElementById("upgradeStatus");
-const raw=input?String(input.value).trim():"";
-const amount=raw===""?0:Number(raw);
-if(!Number.isSafeInteger(amount)||amount<1||amount>state.balance){
-if(status)status.textContent="Введи целое число монет от 1 до текущего баланса.";
-updateUpgradeInfo();
+
+const stake=
+Math.floor(
+Number(
+document.getElementById(
+"upgradeStake"
+).value
+)
+);
+
+if(
+stake<=0||
+stake>state.balance
+){
+
+alert(
+"Проверь сумму."
+);
+
 return;
+
 }
-const factor=Number(multiplier);
-const reward=Math.floor(amount*factor);
-if(!Number.isSafeInteger(reward)||reward<amount||!Number.isSafeInteger(state.balance-amount+reward)){
-if(status)status.textContent="Сумма слишком большая. Уменьши количество монет.";
-return;
-}
+
 upgradeBusy=true;
-const previousBalance=state.balance;
-try{
-state.balance=previousBalance-amount+reward;
-state.stats.upgrades=(Number(state.stats.upgrades)||0)+1;
-state.stats.upgradeWins=(Number(state.stats.upgradeWins)||0)+1;
-if(typeof addDailyTaskProgress==="function")addDailyTaskProgress("upgrade");
-const saved=save();
-if(status)status.textContent=(saved?"✓ Апгрейд выполнен! ":"⚠ Изменение применено, но браузер не подтвердил сохранение. ")+"Начислено "+formatMoney(reward)+". Баланс: "+formatMoney(state.balance)+".";
-}catch(error){
-state.balance=previousBalance;
-if(status)status.textContent="Не удалось выполнить апгрейд: "+(error&&error.message?error.message:"ошибка");
-}finally{
-upgradeBusy=false;
-updateUpgradeInfo();
+
+const chance=
+Math.min(
+90,
+Math.max(
+5,
+Math.floor(
+90/multiplier
+)
+)
+);
+
+state.balance-=stake;
+
+addTurnover(stake);
+
+state.stats.upgrades++;
+
+save();
+
+const won=
+state.admin.alwaysWin
+||
+Math.random()*100<
+chance;
+
+const arrow=
+document.getElementById(
+"upgradeArrow"
+);
+
+arrow.style.transition=
+"none";
+
+arrow.style.transform=
+"rotate(0deg)";
+
+void arrow.offsetWidth;
+
+arrow.style.transition=
+"transform 4s cubic-bezier(.12,.7,.15,1)";
+
+arrow.style.transform=
+`rotate(${7*360+Math.random()*360}deg)`;
+
+setTimeout(()=>{
+
+if(won){
+
+const reward=
+Math.floor(
+stake*
+multiplier
+);
+
+state.balance+=reward;
+
+state.stats.upgradeWins++;
+addDailyTaskProgress("upgrade");
+
+registerWin(reward);
+
+document.getElementById(
+"upgradeStatus"
+).textContent=
+"🏆 ПОБЕДА! +"+
+reward+
+" 🪙";
+
+}else{
+
+document.getElementById(
+"upgradeStatus"
+).textContent=
+"❌ ПРОИГРЫШ";
+
 }
+
+save();
+
+upgradeBusy=false;
+
+},4000);
+
 }
 
 /* =========================
@@ -5847,19 +7052,6 @@ document.getElementById(
 
 }
 
-function renderOwnerDashboard(){
- const nick=document.getElementById("ownerDashNick");
- const balance=document.getElementById("ownerDashBalance");
- const items=document.getElementById("ownerDashItems");
- const cases=document.getElementById("ownerDashCases");
- if(nick)nick.textContent=typeof getNickname==="function"?getNickname():"—";
- if(balance)balance.textContent=typeof state!=="undefined"?Math.floor(Number(state.balance)||0).toLocaleString("ru-RU")+" 🪙":"—";
- if(items)items.textContent=typeof state!=="undefined"&&Array.isArray(state.inventory)?String(state.inventory.length):"—";
- if(cases)cases.textContent=typeof state!=="undefined"&&state.stats?String(state.stats.casesOpened||0):"—";
- const updated=document.getElementById("ownerDashUpdated");
- if(updated)updated.textContent="Обновлено: "+new Date().toLocaleString("ru-RU");
-}
-
 function adminChange(sign){
 
 const n=
@@ -6541,40 +7733,26 @@ updateDailyCase,
 );
 setInterval(updateSecretDrop,1000);
 
-// Заставка запускается отдельным ранним скриптом в начале body.
+// Автоматическая заставка: случайная длительность от 2 до 6 секунд.
+(()=>{
+ const splash=document.getElementById("entrySplash");
+ if(!splash)return;
+ const duration=2000+Math.random()*8000;
+ splash.style.setProperty("--splash-duration",duration+"ms");
+ requestAnimationFrame(()=>splash.classList.add("loading"));
+ setTimeout(()=>splash.classList.add("splash-hidden"),duration);
+})();
 
 
 
 
 /* PLAYER NICKNAME */
 const NICKNAME_KEY="skebobNickname";
-let nicknameMemoryFallback="";
-function nicknameCookieGet(){
- try{const item=document.cookie.split("; ").find(x=>x.startsWith(NICKNAME_KEY+"="));return item?decodeURIComponent(item.slice(NICKNAME_KEY.length+1)):"";}catch(e){return "";}
-}
-function nicknameRead(){return nicknameMemoryFallback||nicknameCookieGet()||storageGet(NICKNAME_KEY)||"";}
-function nicknameWrite(value){
- const nick=String(value||"").trim();
- if(!nick)return false;
- let saved=false;
- try{
-  localStorage.setItem(NICKNAME_KEY,nick);
-  saved=localStorage.getItem(NICKNAME_KEY)===nick;
- }catch(e){}
- try{
-  document.cookie=NICKNAME_KEY+"="+encodeURIComponent(nick)+"; Max-Age=31536000; Path=/; SameSite=Lax; Secure";
-  if(nicknameCookieGet()===nick)saved=true;
- }catch(e){}
- if(!saved){nicknameMemoryFallback=nick;return true;}
- nicknameMemoryFallback=nick;
- return true;
-}
 function randomNickname(){
  const names=["Shadow","Lucky","Pixel","Nova","Tiger","Storm","Frost","Comet","Raven","Flash"];
  return names[Math.floor(Math.random()*names.length)]+String(100+Math.floor(Math.random()*9900));
 }
-function getNickname(){return nicknameRead()||"Player";}
-window.addEventListener("pagehide",()=>{const nick=nicknameRead();if(nick)nicknameWrite(nick);});
+function getNickname(){return storageGet(NICKNAME_KEY)||"Player";}
 function bjIsOfficialNickname(value){return String(value||"").trim().replace(/\\s+/g," ").toLocaleUpperCase("ru")==="SKEBOB OFFICIAL";}
 function bjOfficialBadge(value){return bjIsOfficialNickname(value)?' <button type="button" class="skebob-verified" aria-label="Информация о верификации" title="SKEBOB OFFICIAL" onclick="bjShowOfficialBadge()">✓</button>':'';}
 function bjShowOfficialBadge(){alert("Верифицированный аккаунт | владелец игры");}
@@ -6582,52 +7760,33 @@ function updateNicknameUI(){
  const p=document.getElementById("profileNickname");if(p)p.innerHTML=bjEscape(getNickname())+bjOfficialBadge(getNickname());
 }
 function initNickname(){
- let nick=nicknameRead();
+ let nick=storageGet(NICKNAME_KEY);
  if(!nick){
   // Players with an existing saved profile get an automatic nickname.
-  if(storageGet("skebobSave")){nick=randomNickname();if(!nicknameWrite(nick))nick="";}
-  if(!nick){
+  if(storageGet("skebobSave")){nick=randomNickname();storageSet(NICKNAME_KEY,nick);}
+  else{
    const m=document.getElementById("nicknameModal");
    if(m){m.style.display="flex";const i=document.getElementById("nicknameInput");if(i)setTimeout(()=>i.focus(),250);}
   }
  }
  updateNicknameUI();
 }
-let pendingOfficialNickname="",pendingOfficialFirst=false;
-function isProtectedOfficialNick(value){return String(value||"").trim().replace(/\s+/g," ").toLocaleUpperCase("ru")==="SKEBOB OFFICIAL";}
-function commitNickname(nick,isFirst){
- if(!nicknameWrite(nick)){alert("Не удалось сохранить nickname. Проверь настройки хранения данных сайта.");return;}
- if(isFirst){const m=document.getElementById("nicknameModal");if(m)m.style.display="none";}
- updateNicknameUI();
- if(bjOnlineChannel){bjOnlineChannel.track({id:bjOnlineId,name:nick,done:!bjOnlineMyTurn,joinedAt:bjOnlineJoinedAt,phase:bjOnlineRound&&!bjOnlineRound.finished?"playing":"waiting"});}
-}
-function requestOfficialNicknameCode(nick,isFirst){
- if(!isProtectedOfficialNick(nick)){commitNickname(nick,isFirst);return;}
- pendingOfficialNickname=nick;pendingOfficialFirst=isFirst;
- const modal=document.getElementById("officialNickCodeModal"),input=document.getElementById("officialNickCodeInput");
- if(input)input.value="";
- if(modal)modal.style.display="flex";
-}
-function verifyOfficialNicknameCode(){
- const input=document.getElementById("officialNickCodeInput");
- if((input?.value||"").trim()!=="666666"){alert("Неверный код.");return;}
- const nick=pendingOfficialNickname,isFirst=pendingOfficialFirst;
- pendingOfficialNickname="";pendingOfficialFirst=false;
- const modal=document.getElementById("officialNickCodeModal");if(modal)modal.style.display="none";
- commitNickname(nick,isFirst);
- const status=document.getElementById("nicknameSaveStatus");
- const details=document.getElementById("nicknameEditorDetails");
- if(getNickname()===nick){if(status)status.textContent="Ник успешно изменён на: "+nick;if(details)details.open=false;}
-}
-function cancelOfficialNicknameCode(){
- pendingOfficialNickname="";pendingOfficialFirst=false;
- const modal=document.getElementById("officialNickCodeModal");if(modal)modal.style.display="none";
-}
 function saveFirstNickname(){
  const i=document.getElementById("nicknameInput"),nick=(i?.value||"").trim().replace(/\s+/g," ").slice(0,18);
  if(nick.length<2){alert("Ник должен содержать минимум 2 символа.");return;}
- if(bjNickTaken(nick)){alert("Данный никнейм уже занят");return;}
- requestOfficialNicknameCode(nick,true);
+ if(bjNickTaken(nick)){alert("Этот nickname уже занят игроком за столом. Придумай другой.");return;}
+ storageSet(NICKNAME_KEY,nick);
+ const m=document.getElementById("nicknameModal");if(m)m.style.display="none";
+ updateNicknameUI();
+}
+function changeNickname(){
+ const next=prompt("Введи новый nickname:",getNickname());
+ if(next===null)return;
+ const nick=next.trim().replace(/\s+/g," ").slice(0,18);
+ if(nick.length<2){alert("Ник должен содержать минимум 2 символа.");return;}
+ if(bjNickTaken(nick,bjOnlineId)){alert("Этот nickname уже занят игроком за столом. Придумай другой.");return;}
+ storageSet(NICKNAME_KEY,nick);updateNicknameUI();
+ if(bjOnlineChannel){bjOnlineChannel.track({id:bjOnlineId,name:nick,done:!bjOnlineMyTurn,joinedAt:bjOnlineJoinedAt,phase:bjOnlineRound&&!bjOnlineRound.finished?"playing":"waiting"});}
 }
 
 /* BLACKJACK ONLINE — Supabase Realtime, no wagers or payouts */
@@ -6685,7 +7844,7 @@ async function bjOnlineJoin(){
  const status=await bjOnlineChannel.subscribe(async st=>{
   if(st==="SUBSCRIBED"){
    const duplicate=bjNickTaken(bjOnlineName());
-   if(duplicate){bjOnlineStatus("Данный никнейм уже занят. Измени его в профиле и попробуй снова.");await bjOnlineClient.removeChannel(bjOnlineChannel);bjOnlineChannel=null;document.getElementById("bjOnlineJoin").disabled=false;document.getElementById("bjOnlineLeave").disabled=true;return;}
+   if(duplicate){bjOnlineStatus("Этот nickname уже занят. Измени его в профиле и попробуй снова.");await bjOnlineClient.removeChannel(bjOnlineChannel);bjOnlineChannel=null;document.getElementById("bjOnlineJoin").disabled=false;document.getElementById("bjOnlineLeave").disabled=true;return;}
    bjOnlineJoinedAt=Date.now();await bjOnlineChannel.track({id:bjOnlineId,name:bjOnlineName(),done:false,joinedAt:bjOnlineJoinedAt,phase:"waiting"});
    document.getElementById("bjOnlineJoin").disabled=true;document.getElementById("bjOnlineLeave").disabled=false;
    document.getElementById("bjOnlineRoomLabel").textContent="Комната: "+bjOnlineRoom;
@@ -6740,9 +7899,6 @@ function bjOnlineShowResult(){
  bjOnlineStatus("Раунд завершён. Результат рассчитан только для твоей руки.");
 }
 
-// Загружаем сохранённый ник после появления окна регистрации в DOM.
-document.addEventListener("DOMContentLoaded",initNickname);
-
 </script>
 
 
@@ -6754,42 +7910,7 @@ document.addEventListener("DOMContentLoaded",initNickname);
   <button class="goldbtn" onclick="saveFirstNickname()">СОХРАНИТЬ NICKNAME</button>
  </div>
 </div>
-<div id="changeNicknameModal" style="display:none;position:fixed;inset:0;z-index:20500;background:#000d;align-items:center;justify-content:center;padding:22px">
- <div style="width:100%;max-width:440px;background:var(--panel);border:2px solid var(--gold);border-radius:20px;padding:22px;box-shadow:0 15px 50px #0009">
-  <h2 style="margin-top:0">✏️ Изменить nickname</h2>
-  <p class="small">Новый ник будет виден в профиле и другим игрокам. От 2 до 18 символов.</p>
-  <input id="changeNicknameModalInput" maxlength="18" placeholder="Новый nickname" autocomplete="nickname">
-  <button class="goldbtn" onclick="saveChangedNickname()">СОХРАНИТЬ</button>
-  <button class="secondary" style="width:100%;margin-top:8px" onclick="closeChangeNickname()">ОТМЕНА</button>
- </div>
-</div>
-<style>
-#changeNicknameButton{position:relative!important;z-index:100001!important;pointer-events:auto!important;touch-action:manipulation}
-#changeNicknameModal{z-index:100002!important}
-</style>
-<script>
-document.addEventListener("click",function(event){
- const button=event.target.closest("#changeNicknameButton");
- if(!button)return;
- event.preventDefault();
- event.stopImmediatePropagation();
- const modal=document.getElementById("changeNicknameModal");
- const input=document.getElementById("changeNicknameModalInput");
- if(modal&&input){
-  input.value=typeof getNickname==="function"?getNickname():"Player";
-  modal.style.display="flex";
-  input.focus();
- }
-},true);
-</script>
-<div id="officialNickCodeModal" style="display:none;position:fixed;inset:0;z-index:21000;background:#000e;align-items:center;justify-content:center;padding:22px">
- <div style="width:100%;max-width:420px;background:var(--panel);border:2px solid #258cf4;border-radius:18px;padding:22px;box-shadow:0 15px 50px #0009">
-  <h2 style="margin-top:0">🔒 Подтверждение SKEBOB OFFICIAL</h2>
-  <p class="small">Чтобы использовать этот nickname, введи код подтверждения.</p>
-  <input id="officialNickCodeInput" type="password" inputmode="numeric" maxlength="6" placeholder="Введите код">
-  <button class="goldbtn" onclick="verifyOfficialNicknameCode()">ПОДТВЕРДИТЬ</button>
-  <button class="secondary" style="width:100%;margin-top:8px" onclick="cancelOfficialNicknameCode()">ОТМЕНА</button>
- </div>
-</div>
 </body>
-</html>
+    </html>
+
+/* TWO-FIELD BATTLESHIP: player vs bot, winner takes the 2x pot */
