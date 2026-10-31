@@ -1565,76 +1565,13 @@ SKEBOB <span>CASINO</span>
 
 <main>
 
-<div class="nav">
-
-<button class="active" onclick="showPage('cases',this)">
-🎁 CASES
-</button>
-
-<button onclick="showPage('upgrade',this)">
-🎯 UPGRADE
-</button>
-
-<button onclick="showPage('mines',this)">
-💣 MINES
-</button>
-
-<button onclick="showPage('plane',this)">
-✈️ САМОЛЁТ
-</button>
-
-<button onclick="showPage('pickaxe',this)">
-⛏ КИРКА
-</button>
-
-<button onclick="showPage('plinko',this)">
-🔴 PLINKO
-</button>
-<button onclick="showPage('race',this)">🏁 RACE</button>
-<button onclick="showPage('crash',this)">📈 КРАШ</button>
-<button onclick="showPage('battles',this)">⚔️ БАТЛЫ</button>
-<button onclick="showPage('slots',this)">🎰 СЛОТЫ</button>
-<button onclick="showPage('blackjack',this)">🃏 BLACKJACK</button>
-<button onclick="showPage('dice',this)">🎲 КОСТИ</button>
-
-<button onclick="showPage('tictactoe',this)">⭕ КРЕСТИКИ</button>
-
-<button onclick="showPage('billiards',this)">🎱 БИЛЬЯРД</button>
-
-<button onclick="showPage('chickenroad',this)">🐔 CHICKEN ROAD</button>
-
-
-
-
-</div>
+<section id="home">
+<h2>Добро пожаловать в SKEBOB</h2>
+<p class="small">Игровые разделы удалены. Здесь остались профиль, инвентарь, задания и настройки.</p>
+<div class="panel"><button class="goldbtn" onclick="showPage('profile')">ОТКРЫТЬ ПРОФИЛЬ</button><button class="goldbtn" onclick="showPage('inventory')">ОТКРЫТЬ ИНВЕНТАРЬ</button><button class="goldbtn" onclick="showPage('tasks')">ЕЖЕДНЕВНЫЕ ЗАДАНИЯ</button></div>
+</section>
 
 <!-- NEW ARCADE GAMES -->
-<section id="tictactoe" class="hidden">
-<h2>⭕ КРЕСТИКИ-НОЛИКИ</h2>
-<div class="panel" style="text-align:center">
-<p class="small">Победи бота. Победа приносит x2 ставки, ничья возвращает ставку.</p>
-<input id="tttBet" type="number" min="100" step="100" value="100">
-<div id="tttStatus" class="small">Ты играешь за ❌</div>
-<div id="tttGrid" style="display:grid;grid-template-columns:repeat(3,1fr);gap:7px;max-width:300px;margin:14px auto"></div>
-<button class="goldbtn" onclick="tttStart()">НОВАЯ ИГРА</button>
-</div></section>
-<section id="billiards" class="hidden">
-<h2>🎱 БИЛЬЯРД</h2><div class="panel">
-<p class="small">Матч 8-ball против бота. Забивай свои шары, затем чёрную восьмёрку. Победитель забирает общий банк — две ставки.</p>
-<label>Ставка за матч</label><input id="poolBet" type="number" min="100" step="100" value="100">
-<label>Угол прицеливания</label><input id="poolAngle" type="range" min="0" max="359" value="0">
-<label>Сила удара</label><input id="poolPower" type="range" min="1" max="100" value="55">
-<canvas id="poolCanvas" class="real-game-canvas pool-scene" aria-label="Бильярдный стол: нажми на стол для прицеливания"></canvas>
-<div class="game-actions"><button class="goldbtn" onclick="poolStart()">НОВАЯ ПАРТИЯ</button><button class="goldbtn" id="poolHitBtn" onclick="poolShot()" disabled>УДАРИТЬ КИЕМ</button></div><div id="poolResult" class="small">Начни партию, затем нажми на стол для прицеливания.</div>
-</div></section>
-<section id="chickenroad" class="hidden">
-<h2>🐔 CHICKEN ROAD</h2><div class="panel chicken-panel">
-<p class="small">Проведи курицу через скоростное шоссе. Следи за потоком машин, продвигайся по полосам и фиксируй выигрыш в любой момент.</p>
-<div class="ch-hud"><div><span>МНОЖИТЕЛЬ</span><b id="chMultiplier">x1.00</b></div><div><span>ПОЛОСЫ</span><b id="chDistance">0 / 12</b></div><div><span>ВОЗМОЖНЫЙ ВЫИГРЫШ</span><b id="chPotential">—</b></div></div>
-<div class="ch-canvas-wrap"><canvas id="chCanvas" aria-label="Анимированное шоссе с машинами и курицей"></canvas><div class="ch-scene-tag" id="chScene">ГОТОВ К СТАРТУ</div></div><div class="ch-sound-row"><button type="button" class="secondary" id="chSoundToggle" onclick="chToggleSound()">🔊 ЗВУК ВКЛ</button><span class="small">Машины гудят, курица кричит «Ко-ко-ко!»</span></div>
-<div class="ch-controls"><label>Ставка</label><input id="chBet" type="number" min="100" step="100" value="100"><button class="goldbtn" id="chStart" onclick="chickenStart()">▶ НАЧАТЬ ПЕРЕХОД</button><button class="goldbtn" id="chStep" onclick="chickenStep()" disabled>🐔 СЛЕДУЮЩАЯ ПОЛОСА</button><button class="secondary" id="chCash" onclick="chickenCash()" disabled>ЗАБРАТЬ ВЫИГРЫШ</button></div>
-<div id="chResult" class="small ch-result">Выбери ставку и начни игру.</div>
-</div></section>
 <style>
 .chicken-panel{max-width:900px;margin:auto}.ch-hud{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin:14px 0}.ch-hud>div{background:var(--panel2);border:1px solid var(--border);border-radius:12px;padding:10px}.ch-hud span{display:block;font-size:10px;color:var(--muted);letter-spacing:1px}.ch-hud b{display:block;color:var(--gold);font-size:22px;margin-top:4px}.ch-canvas-wrap{position:relative;overflow:hidden;border:1px solid #52634b;border-radius:16px;background:#233d2a;box-shadow:inset 0 0 35px #0008}.ch-canvas-wrap canvas{display:block;width:100%;height:300px}.ch-scene-tag{position:absolute;left:12px;top:12px;padding:6px 10px;border-radius:8px;background:#07120dcc;color:#fff;font-size:11px;font-weight:900;letter-spacing:1px}.ch-sound-row{display:flex;align-items:center;gap:10px;margin:10px 0}.ch-sound-row button{font-weight:900}.ch-sound-row span{font-size:11px}
 .ch-controls{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-top:14px;text-align:left}.ch-controls label,.ch-controls input{grid-column:1/-1}.ch-controls button{width:100%;min-height:44px}.ch-result{min-height:24px;margin-top:12px}@media(max-width:560px){.ch-canvas-wrap canvas{height:240px}.ch-hud b{font-size:17px}.ch-hud span{font-size:8px}.ch-controls{grid-template-columns:1fr}}
@@ -1656,169 +1593,8 @@ SKEBOB <span>CASINO</span>
 
 <!-- CASES -->
 
-<section id="cases">
-
-<h2>🎁 КЕЙСЫ</h2>
-
-<div class="daily-case">
-
-<div class="daily-icon">🎁</div>
-
-<h2>DAILY CASE</h2>
-
-<p class="small">
-Бесплатный кейс раз в 24 часа.<br>
-Подпишись на Telegram SKEBOB CASINO.
-</p>
-
-<div class="daily-prizes">
-<div class="daily-prize">🧸 Мишка · 15⭐ / 20₽</div>
-<div class="daily-prize">❤️ Сердечко · 15⭐ / 20₽</div>
-<div class="daily-prize">🪙 3</div>
-<div class="daily-prize">🪙 5</div>
-<div class="daily-prize">🪙 10</div>
-</div>
-
-<a
-class="daily-channel"
-href="https://t.me/skebobcasino"
-target="_blank"
-rel="noopener noreferrer"
->
-<button class="daily-telegram">
-✈️ ПОДПИСАТЬСЯ НА TELEGRAM
-</button>
-</a>
-
-<button
-class="goldbtn"
-id="dailyCaseButton"
-onclick="openDailyCase()"
->
-Я ПОДПИСАЛСЯ — ОТКРЫТЬ
-</button>
-
-<div
-id="dailyTimer"
-class="daily-timer"
-></div>
-
-<div id="dailyResult"></div>
-
-</div>
-
-<section id="secretDrop" class="secret-drop" aria-live="polite">
-<div class="secret-icon">🕵️‍♂️💎</div>
-<h2>???</h2>
-<div style="font-weight:900;font-size:21px;color:#f0d8ff">СЕКРЕТНЫЙ КЕЙС</div>
-<p class="small" style="color:#eadcf8">Появился неизвестный кейс. Успей открыть, пока он не исчез!</p>
-<div class="secret-timer" id="secretDropTimer">05:00</div>
-<div style="font-size:18px;font-weight:900;color:#ffe08a">500 000 🪙</div>
-<button class="goldbtn" id="secretDropButton" onclick="openSecretDrop()">ОТКРЫТЬ СЕКРЕТНЫЙ КЕЙС</button>
-</section>
-
-<h2>📦 ОБЫЧНЫЕ КЕЙСЫ</h2>
-
-<div
-class="cases"
-id="caseList"
-></div>
-
-<div
-id="caseDetail"
-class="hidden"
->
-
-<button
-class="back"
-onclick="closeCase()"
->
-← Назад
-</button>
-
-<div class="panel">
-
-<h2 id="detailName"></h2>
-
-<p
-id="detailDescription"
-class="small"
-></p>
-
-<p>
-Цена:
-<b
-id="detailPrice"
-class="price"
-></b>
-🪙
-</p>
-
-<h3>Возможные призы</h3>
-
-<div
-class="prize-grid"
-id="prizePreview"
-></div>
-
-<h3>Количество</h3>
-
-<div class="quantity">
-
-<button
-class="active"
-onclick="setQty(1,this)"
->
-x1
-</button>
-
-<button onclick="setQty(2,this)">x2</button>
-<button onclick="setQty(3,this)">x3</button>
-<button onclick="setQty(5,this)">x5</button>
-
-</div>
-
-<p
-id="totalPrice"
-class="small"
-></p>
-
-<button
-class="goldbtn"
-id="openCaseButton"
-onclick="openCase()"
->
-ОТКРЫТЬ
-</button>
-
-</div>
-
-<div id="results"></div>
-
-</div>
-
-</section>
 
 <!-- CASE BATTLES -->
-<section id="battles" class="hidden">
-<h2>⚔️ БАТЛЫ КЕЙСОВ</h2>
-<p class="small">Открывай одинаковые кейсы с ботами. Победитель забирает все предметы батла!</p>
-<div class="battle-panel">
-<h3>🎮 Настройки батла</h3>
-<div class="battle-options">
-<div class="battle-choice"><label>ВЫБЕРИ КЕЙС</label><select id="battleCase"></select></div>
-<div class="battle-choice"><label>КОЛИЧЕСТВО ОТКРЫТИЙ</label><select id="battleRounds"><option value="1">1 раунд</option><option value="2">2 раунда</option><option value="3" selected>3 раунда</option><option value="5">5 раундов</option></select></div>
-</div>
-<label class="small">ФОРМАТ</label>
-<div class="battle-mode"><button id="battleMode2" class="active" onclick="setBattleMode(2)">👤 1 на 1</button><button id="battleMode3" onclick="setBattleMode(3)">👤 1 на 1 на 1</button></div>
-<label class="small">ПРАВИЛО ПОБЕДЫ</label>
-<div class="battle-mode"><button id="battleRuleHigh" class="active" onclick="setBattleRule('high')">📈 КТО БОЛЬШЕ</button><button id="battleRuleLow" onclick="setBattleRule('low')">📉 КТО МЕНЬШЕ</button></div>
-<div class="game-stats"><div class="game-stat"><span>СТАВКА</span><strong id="battleCost">—</strong></div><div class="game-stat"><span>ТВОЙ БАЛАНС</span><strong id="battleBalance">—</strong></div><div class="game-stat"><span>БОТОВ</span><strong id="battleBots">1</strong></div></div>
-<button class="game-main" id="battleStart" onclick="startCaseBattle()">⚔️ НАЧАТЬ БАТЛ</button>
-<p class="small">Ты оплачиваешь все открытия своего кейса. Боты участвуют бесплатно. Если победишь — получишь все предметы, выпавшие всем участникам. При ничьей победитель выбирается случайно среди лидеров.</p>
-</div>
-<div id="battleArena" class="battle-panel hidden"><h3>🏟️ АРЕНА</h3><div class="battle-arena" id="battlePlayers"></div><div id="battleRoundsLog"></div><div id="battleOutcome"></div></div>
-</section>
 <!-- UPGRADE -->
 
 <section
@@ -2323,73 +2099,7 @@ class="game-status"
 </section>
 
 <!-- PLINKO -->
-<section id="plinko" class="hidden">
-<h2>🔴 PLINKO</h2>
-<div class="plinko-panel">
- <div class="game-stats">
-  <div class="game-stat"><span>СТАВКА</span><strong id="plinkoBetStat">100 🪙</strong></div>
-  <div class="game-stat"><span>РИСК</span><strong id="plinkoRiskStat">СРЕДНИЙ</strong></div>
-  <div class="game-stat"><span>ВОЗВРАТ</span><strong class="orange" id="plinkoReturn">—</strong></div>
- </div>
- <div class="plinko-risk">
-  <button class="active" onclick="setPlinkoRisk('low',this)">🟢 НИЗКИЙ</button>
-  <button onclick="setPlinkoRisk('medium',this)">🟡 СРЕДНИЙ</button>
-  <button onclick="setPlinkoRisk('high',this)">🔴 ВЫСОКИЙ</button>
- </div>
- <div class="plinko-board-wrap">
-  <div class="plinko-board" id="plinkoBoard">
-   <div class="plinko-ball" id="plinkoBall">🔴</div>
-  </div>
-  <div class="plinko-slots" id="plinkoSlots"></div>
- </div>
- <div class="plinko-last" id="plinkoResult">Выбери ставку и запусти шарик!</div>
- <button class="game-main" id="plinkoPlayButton" onclick="startPlinkoGame()">🔴 БРОСИТЬ ШАР ЗА 100 🪙</button>
- <div class="game-control">
-  <div class="small" style="text-align:center">СТАВКА</div>
-  <div class="bet-main">
-   <button onclick="changePlinkoBet(-1)">−</button>
-   <input id="plinkoBet" type="number" value="100" min="10" oninput="updatePlinkoControls()">
-   <button onclick="changePlinkoBet(1)">+</button>
-  </div>
-  <div class="bet-presets plinko-presets">
-   <button onclick="setPlinkoBet(10,this)">10</button>
-   <button class="selected" onclick="setPlinkoBet(100,this)">100</button>
-   <button onclick="setPlinkoBet(500,this)">500</button>
-   <button onclick="setPlinkoBet(1000,this)">1 000</button>
-   <button onclick="setPlinkoBet('max',this)">МАКС</button>
-  </div>
- </div>
- <div class="plinko-info">
-  <b>КАК ИГРАТЬ</b><br>
-  Шарик автоматически падает через поле с штырьками. Внизу его ждёт случайный множитель. Чем выше риск, тем больше возможный выигрыш — и тем выше шанс маленького возврата.
- </div>
-</div>
-</section>
 
-<section id="race" class="hidden">
-<h2>🏎️ RACE · GRAND PRIX</h2><div class="race-panel">
-<div class="game-stats"><div class="game-stat"><span>СТАВКА</span><strong id="raceBetStat">100 🪙</strong></div><div class="game-stat"><span>ТВОЯ МАШИНА</span><strong id="racePickStat">🔴 №1</strong></div><div class="game-stat"><span>КОЭФФИЦИЕНТ</span><strong>×2.00</strong></div></div>
-<div class="race-track" id="raceTrack"><div class="race-finish">🏁</div><div class="race-lanes" id="raceLanes"></div><div class="race-track-label">SKEBOB MOTORSPORT · CIRCUIT RACE</div></div>
-<div class="race-picks"><button class="active" onclick="selectRace(0,this)">🔴 GT-R №1</button><button onclick="selectRace(1,this)">🔵 SUPRA №2</button><button onclick="selectRace(2,this)">🟡 911 №3</button><button onclick="selectRace(3,this)">🟢 M4 №4</button></div>
-<div class="race-result" id="raceResult">Выбери участника и делай ставку!</div>
-<button class="game-main" id="racePlayButton" onclick="startRaceGame()">🏁 НАЧАТЬ ГОНКУ ЗА 100 🪙</button>
-<div class="game-control"><div class="small" style="text-align:center">СТАВКА</div><div class="bet-main"><button onclick="changeRaceBet(-1)">−</button><input id="raceBet" type="number" value="100" min="10" oninput="updateRaceControls()"><button onclick="changeRaceBet(1)">+</button></div><div class="bet-presets race-presets"><button onclick="setRaceBet(10,this)">10</button><button class="selected" onclick="setRaceBet(100,this)">100</button><button onclick="setRaceBet(500,this)">500</button><button onclick="setRaceBet(1000,this)">1 000</button><button onclick="setRaceBet('max',this)">МАКС</button></div></div>
-<div class="race-footer"><button class="secondary" id="raceSoundButton" onclick="toggleRaceSound()">🔊 ЗВУК ВКЛ</button><span class="small">4 участника · случайный победитель</span></div>
-<div class="plinko-info">Выбери гонщика, поставь монеты и смотри анимированную гонку. Победитель выбирается случайно. Выплата за победу — ×2.</div></div></section>
-<section id="crash" class="hidden">
-<h2>📈 CRASH</h2>
-<div class="crash-panel">
-<div class="game-stats">
-<div class="game-stat"><span>ТЕКУЩИЙ КОЭФФИЦИЕНТ</span><strong id="crashMultiplier">1.00x</strong></div>
-<div class="game-stat"><span>ВОЗМОЖНЫЙ ВЫИГРЫШ</span><strong id="crashPotential">—</strong></div>
-<div class="game-stat"><span>СТАВКА</span><strong id="crashBetStat">100 🪙</strong></div>
-</div>
-<div class="crash-screen" id="crashScreen"><div class="crash-chart-grid"></div><div class="crash-rocket" id="crashRocket">🚀</div><div class="crash-value" id="crashValue">1.00x</div><div class="crash-status" id="crashStatus">Сделай ставку и запусти раунд</div></div>
-<button class="game-main" id="crashPlayButton" onclick="startCrash()">🚀 НАЧАТЬ ЗА 100 🪙</button>
-<button class="game-main crash-cashout" id="crashCashoutButton" onclick="cashOutCrash()" disabled>💰 ЗАБРАТЬ 100 🪙</button>
-<div class="game-control"><div class="small" style="text-align:center">СТАВКА</div><div class="bet-main"><button onclick="changeCrashBet(-1)">−</button><input id="crashBet" type="number" value="100" min="10" oninput="updateCrashControls()"><button onclick="changeCrashBet(1)">+</button></div><div class="bet-presets crash-presets"><button onclick="setCrashBet(10,this)">10</button><button class="selected" onclick="setCrashBet(100,this)">100</button><button onclick="setCrashBet(500,this)">500</button><button onclick="setCrashBet(1000,this)">1 000</button><button onclick="setCrashBet('max',this)">МАКС</button></div></div>
-<div class="plinko-info">Коэффициент растёт каждую секунду. Успей нажать «Забрать» до того, как ракета разобьётся. Если не успеешь — ставка сгорит. Выплата = ставка × коэффициент.</div>
-</div></section>
 <!-- INVENTORY -->
 
 <section
@@ -2704,66 +2414,11 @@ id="profileBalance"
 
 
 <!-- SLOTS -->
-<section id="slots" class="hidden">
-<h2>🎰 SKEBOB SLOTS</h2>
-<p class="small">Крути барабаны, собирай комбинации и забирай множители!</p>
-<div class="panel" style="text-align:center">
-<div class="game-stats">
-<div class="game-stat"><span>СТАВКА</span><strong id="slotsBetStat">100 🪙</strong></div>
-<div class="game-stat"><span>ВЫИГРЫШ</span><strong id="slotsWinStat">—</strong></div>
-<div class="game-stat"><span>ЛУЧШИЙ МНОЖИТЕЛЬ</span><strong id="slotsBestStat">x0</strong></div>
-</div>
-<div class="slots-machine"><div class="slots-reel" id="slotReel0">🍒</div><div class="slots-reel" id="slotReel1">🍋</div><div class="slots-reel" id="slotReel2">💎</div></div>
-<div id="slotsMessage">Выставь ставку и нажми КРУТИТЬ!</div>
-<div class="game-control"><label>ТВОЯ СТАВКА</label><div class="bet-main"><button onclick="changeSlotsBet(-1)">−</button><input id="slotsBet" type="number" min="10" step="10" value="100" oninput="updateSlotsControls()"><button onclick="changeSlotsBet(1)">+</button></div>
-<div class="bet-presets"><button onclick="setSlotsBet(100)">100</button><button onclick="setSlotsBet(500)">500</button><button onclick="setSlotsBet(1000)">1K</button><button onclick="setSlotsBet(5000)">5K</button><button onclick="setSlotsBet('max')">MAX</button></div></div>
-<button class="game-main" id="slotsSpin" onclick="spinSlots()">🎰 КРУТИТЬ БАРАБАНЫ</button>
-<div class="panel small" style="text-align:left"><b>ТАБЛИЦА ВЫПЛАТ</b><br>💎💎💎 — x8 · 👑👑👑 — x15<br>🍋🍋🍋 — x5 · 🍒🍒🍒 — x3<br>Любые две одинаковые — x1.2</div>
-</div></section>
 
 
 <!-- BLACKJACK ONLINE: no-stakes social mode -->
-<section id="blackjack" class="hidden">
-<h2>🃏 BLACKJACK ONLINE</h2>
-<p class="small">До 4 игроков в комнате. Каждый играет отдельно против общего дилера. Только бесплатная игра — без ставок и выплат.</p>
-<div class="panel">
- <div class="bj-actions">
-  <button class="game-main" id="bjOnlineJoin" onclick="bjOnlineJoin()">🎮 ИГРАТЬ</button>
-  <button class="secondary" id="bjOnlineLeave" onclick="bjOnlineLeave()" disabled>ВЫЙТИ ИЗ ИГРЫ</button>
- </div>
- <div class="game-status" id="bjOnlineStatus">Нажми «Играть», чтобы войти в очередь на следующий раунд.</div>
- <div class="small" id="bjOnlineRoomLabel">Комната: —</div>
- <div class="small" id="bjOnlineCountdown"></div>
-</div>
-<div class="bj-table">
- <div class="bj-dealer"><div class="bj-seat-name">🎩 ОБЩИЙ ДИЛЕР</div><div class="bj-cards" id="bjOnlineDealerCards"><span class="bj-card">?</span></div><div class="small" id="bjOnlineDealerScore">Ожидает начала раунда</div></div>
- <div class="bj-divider">ИГРОКИ ЗА СТОЛОМ</div>
- <div id="bjOnlinePlayers" class="bj-players"></div>
- <div class="small" id="bjOnlineYourScore">Твои карты появятся после старта</div>
- <div class="small" id="bjOnlineResult"></div>
-</div>
-<div class="panel">
- <div class="bj-actions">
-  <button class="secondary" id="bjOnlineHit" onclick="bjOnlineHit()" disabled>ЕЩЁ КАРТУ</button>
-  <button class="secondary" id="bjOnlineStand" onclick="bjOnlineStand()" disabled>ХВАТИТ</button>
- </div>
- <div class="small">Правила: цель — набрать ближе к 21, не превышая 21. Дилер берёт карты до 17. Победа, поражение или ничья считаются отдельно для каждого игрока.</div>
-</div>
-</section>
 
 
-<section id="dice" class="hidden">
-<h2>🎲 КОСТИ — ТУРНИР</h2>
-<p class="small">Ты против случайных ботов. Каждый раунд собирает от 2 до 4 соперников (всего до 5 игроков). Все ставят одинаково — победитель забирает банк.</p>
-<div class="dice-table panel">
- <div class="dice-arena" id="dicePlayers"><div class="dice-seat">🎲 Игроки появятся здесь</div></div>
- <div class="dice-pot" id="dicePot">БАНК: —</div>
- <div class="dice-result" id="diceResult">Выбери ставку и бросай кости!</div>
- <div class="game-control"><label>СТАВКА КАЖДОГО ИГРОКА</label><div class="bet-main"><button onclick="changeDiceBet(-1)">−</button><input id="diceBet" type="number" min="10" step="10" value="100" oninput="updateDiceBet()"><button onclick="changeDiceBet(1)">+</button></div><div class="bet-presets"><button onclick="setDiceBet(100)">100</button><button onclick="setDiceBet(500)">500</button><button onclick="setDiceBet(1000)">1K</button><button onclick="setDiceBet(5000)">5K</button><button onclick="setDiceBet('max')">MAX</button></div></div>
- <button class="game-main" id="dicePlay" onclick="playDice()">🎲 БРОСИТЬ КОСТИ</button>
- <div class="small">У каждого игрока два кубика. Побеждает наибольшая сумма; при равенстве победитель выбирается случайно среди лидеров.</div>
-</div>
-</section>
 
 
 <!-- PROMO -->
@@ -2775,7 +2430,7 @@ class="hidden"
 
 <button
 class="back"
-onclick="showPage('cases')"
+onclick="showPage('home')"
 >
 ← Назад
 </button>
@@ -2816,7 +2471,7 @@ class="game-status"
 
 <!-- DAILY TASKS -->
 <section id="tasks" class="hidden">
-<button class="back" onclick="showPage('cases')">← Назад</button>
+<button class="back" onclick="showPage('home')">← Назад</button>
 <h2>📋 ЕЖЕДНЕВНЫЕ ЗАДАНИЯ</h2>
 <p class="small">Задания обновляются каждые 24 часа автоматически, даже если ты не заходил в игру.</p>
 <div class="panel"><div class="game-stats"><div class="game-stat"><span>ОБНОВЛЕНИЕ ЧЕРЕЗ</span><strong id="tasksTimer">24:00:00</strong></div><div class="game-stat"><span>ВЫПОЛНЕНО</span><strong id="tasksDone">0/3</strong></div><div class="game-stat"><span>НАГРАДА</span><strong>🪙</strong></div></div><div id="dailyTasksList"></div></div>
