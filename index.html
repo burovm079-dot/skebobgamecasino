@@ -3540,7 +3540,8 @@ function render(){
 
 document.getElementById("balance").textContent=formatMoney(state.balance);
 
-document.getElementById("adminBalance").textContent=formatMoney(state.balance);
+const adminBalance=document.getElementById("adminBalance");
+if(adminBalance)adminBalance.textContent=formatMoney(state.balance);
 
 renderInventory();
 
@@ -7778,7 +7779,7 @@ document.addEventListener("click",function(event){
  event.preventDefault();
  event.stopImmediatePropagation();
  const modal=document.getElementById("changeNicknameModal");
- const input=document.getElementById("changeNicknameInput");
+ const input=document.getElementById("changeNicknameModalInput");
  if(modal&&input){
   input.value=typeof getNickname==="function"?getNickname():"Player";
   modal.style.display="flex";
