@@ -3030,7 +3030,7 @@ onclick="adminGive()"
 const ADMIN_CODE="PASITO3_lirika";
 
 const PROMOCODES={
-SKEBOB:{reward:777}
+SKEBOB:{reward:50}
 };
 
 // NFT-кейсы: 80 🪙 = $1. Стоимости — игровые ориентиры коллекций.
@@ -3198,6 +3198,12 @@ manualLevel:null,
 }
 
 }catch(e){}
+
+// Время первого запуска казино: даёт новичку окно 24 часа для промокода.
+if(!Number.isFinite(Number(state.createdAt))||Number(state.createdAt)<=0){
+ state.createdAt=Date.now();
+ try{localStorage.setItem("skebobSave",JSON.stringify(state));}catch(e){}
+}
 
 /* =========================
    GLOBAL VARIABLES
@@ -3845,6 +3851,12 @@ return;
 const used=
 getUsedPromocodes();
 
+if(code==="SKEBOB" && Date.now()-Number(state.createdAt||0)>=24*60*60*1000){
+ status.style.color="#e34b55";
+ status.textContent="❌ Промокод SKEBOB доступен только в первые 24 часа после первого входа.";
+ return;
+}
+
 if(
 used.includes(code)
 ){
@@ -3878,10 +3890,7 @@ save();
 status.style.color=
 "#24cf78";
 
-status.innerHTML=
-"✅ Получено +"+
-PROMOCODES[code].reward+
-" 🪙";
+status.textContent="✅ Получено +"+formatMoney(PROMOCODES[code].reward);
 
 input.value="";
 
