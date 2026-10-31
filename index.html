@@ -818,6 +818,7 @@ line-height:1.6;
 .plinko-last{background:var(--panel);border:1px solid var(--border2);border-radius:12px;text-align:center;padding:13px;margin:12px 0;color:var(--muted);font-size:13px;min-height:46px}
 .plinko-info{color:var(--muted);font-size:12px;line-height:1.6;margin:8px 2px}
 @media(max-width:390px){.plinko-board{height:300px}.plinko-peg{width:6px;height:6px}.plinko-slot{padding:7px 0;font-size:8px}}
+.skebob-verified{display:inline-grid;place-items:center;vertical-align:middle;width:19px;height:19px;margin-left:6px;padding:0;border:0;border-radius:50%;background:#258cf4;color:#fff;font-size:13px;line-height:1;box-shadow:0 0 0 2px #ffffff20;cursor:pointer}.skebob-verified:hover{background:#0875df;transform:scale(1.08)}
 /* BLACKJACK */
 .bj-table{background:radial-gradient(ellipse at center,#176b49,#073d2e 68%,#05271f);border:5px solid #9b7138;border-radius:24px;padding:18px;margin:16px 0;color:white;box-shadow:inset 0 0 30px #0008,0 8px 24px #0005;min-height:300px}
 .bj-dealer,.bj-you{text-align:center;padding:8px}.bj-seat-name{font-weight:900;letter-spacing:1px;margin-bottom:8px}.bj-cards{display:flex;justify-content:center;gap:7px;flex-wrap:wrap;min-height:82px;align-items:center}.bj-card{width:53px;height:76px;border-radius:8px;background:#fff;color:#181818;display:grid;place-items:center;font-size:22px;font-weight:900;box-shadow:0 3px 8px #0007;border:1px solid #ddd}.bj-card.red{color:#d3263e}.bj-card.bj-new{animation:bjCardFly .48s cubic-bezier(.18,.78,.25,1) both;transform-origin:center;will-change:transform,opacity}@keyframes bjCardFly{0%{opacity:0;transform:translate(115px,-155px) rotate(24deg) scale(.72);filter:brightness(1.35)}65%{opacity:1;transform:translate(-8px,7px) rotate(-5deg) scale(1.04)}82%{transform:translate(3px,-2px) rotate(2deg) scale(.99)}100%{opacity:1;transform:translate(0,0) rotate(0) scale(1);filter:none}}.bj-bot .bj-card.bj-new{animation-name:bjBotCardFly}.bj-dealer .bj-card.bj-new{animation-name:bjDealerCardFly}@keyframes bjBotCardFly{0%{opacity:0;transform:translate(70px,-95px) rotate(20deg) scale(.7)}70%{opacity:1;transform:translate(-4px,4px) rotate(-3deg)}100%{transform:none}}@keyframes bjDealerCardFly{0%{opacity:0;transform:translate(0,-150px) rotate(18deg) scale(.7)}70%{opacity:1;transform:translate(0,5px) rotate(-3deg)}100%{transform:none}}.bj-divider{text-align:center;color:#e9d39b;font-size:11px;letter-spacing:4px;border-top:1px solid #ffffff40;border-bottom:1px solid #ffffff40;padding:8px;margin:6px 0}.bj-players{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:8px}.bj-bot{background:#0003;border:1px solid #ffffff35;border-radius:12px;padding:8px;text-align:center;color:white}.bj-players{grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin:14px 0}.bj-bot{min-width:0;padding:12px 6px;background:linear-gradient(145deg,#145c42,#073526);border:2px solid #c39a53;box-shadow:inset 0 0 14px #0005,0 4px 10px #0004}.bj-bot.bj-me{border-color:#ffe18a;box-shadow:0 0 0 2px #ffe18a55,0 0 18px #f4c75e55}.bj-bot.bj-turn{border-color:#42f59b;box-shadow:0 0 0 2px #42f59b55,0 0 18px #24cf7855}.bj-bot .bj-seat-name{font-size:12px;overflow-wrap:anywhere}.bj-bot .bj-cards{gap:4px;min-height:76px}.bj-bot .bj-card{width:clamp(27px,8vw,42px);height:clamp(42px,12vw,60px);font-size:clamp(12px,3.5vw,18px)}@media(max-width:380px){.bj-players{grid-template-columns:1fr}}.bj-bot .bj-cards{min-height:70px}.bj-bot .bj-card{width:40px;height:58px;font-size:17px}.bj-actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}.bj-actions>*{flex:1;min-width:110px}
@@ -7752,8 +7753,11 @@ function randomNickname(){
  return names[Math.floor(Math.random()*names.length)]+String(100+Math.floor(Math.random()*9900));
 }
 function getNickname(){return storageGet(NICKNAME_KEY)||"Player";}
+function bjIsOfficialNickname(value){return String(value||"").trim().replace(/\\s+/g," ").toLocaleUpperCase("ru")==="SKEBOB OFFICIAL";}
+function bjOfficialBadge(value){return bjIsOfficialNickname(value)?' <button type="button" class="skebob-verified" aria-label="Информация о верификации" title="SKEBOB OFFICIAL" onclick="bjShowOfficialBadge()">✓</button>':'';}
+function bjShowOfficialBadge(){alert("Верифицированный аккаунт | владелец игры");}
 function updateNicknameUI(){
- const p=document.getElementById("profileNickname");if(p)p.textContent=getNickname();
+ const p=document.getElementById("profileNickname");if(p)p.innerHTML=bjEscape(getNickname())+bjOfficialBadge(getNickname());
 }
 function initNickname(){
  let nick=storageGet(NICKNAME_KEY);
@@ -7811,7 +7815,7 @@ function bjOnlineRender(){
   const score=hand.length?" · "+bjOnlineValue(hand)+" очков":"";
   const turn=p.done?"Ход завершён":mine?(bjOnlineMyTurn?"ТВОЙ ХОД":"Ожидание"):p.turn?(p.turn+" ходит"):"Ожидает хода";
   const active=mine?bjOnlineMyTurn:(!p.done&&!!p.turn&&p.turn!=="Ожидает хода");
-  return '<div class="bj-bot '+(mine?"bj-me ":"")+(active?"bj-turn":"")+'"><div class="bj-seat-name">👤 '+bjEscape(p.name)+(mine?" · ВЫ":"")+'</div><div class="bj-cards">'+cards+'</div><div class="small">'+turn+score+'</div></div>';
+  return '<div class="bj-bot '+(mine?"bj-me ":"")+(active?"bj-turn":"")+'"><div class="bj-seat-name">👤 '+bjEscape(p.name)+bjOfficialBadge(p.name)+(mine?" · ВЫ":"")+'</div><div class="bj-cards">'+cards+'</div><div class="small">'+turn+score+'</div></div>';
  }).join("");
  const start=document.getElementById("bjOnlineStart"),hit=document.getElementById("bjOnlineHit"),stand=document.getElementById("bjOnlineStand");
  if(start)start.disabled=true;
