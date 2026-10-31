@@ -7753,21 +7753,27 @@ function randomNickname(){
  return names[Math.floor(Math.random()*names.length)]+String(100+Math.floor(Math.random()*9900));
 }
 function getNickname(){return storageGet(NICKNAME_KEY)||"Player";}
-function bjIsOfficialNickname(value){return String(value||"").trim().replace(/\\s+/g," ").toLocaleUpperCase("ru")==="SKEBOB OFFICIAL";}
+function bjIsOfficialNickname(value){return String(value||"").trim().replace(/\s+/g," ").toLocaleUpperCase("ru")==="SKEBOB OFFICIAL";}
 function bjOfficialBadge(value){return bjIsOfficialNickname(value)?' <button type="button" class="skebob-verified" aria-label="Информация о верификации" title="SKEBOB OFFICIAL" onclick="bjShowOfficialBadge()">✓</button>':'';}
-function bjShowOfficialBadge(){alert("Верифицированный аккаунт | владелец игры");}
+function bjShowOfficialBadge(){alert("Официальный аккаунт SKEBOB OFFICIAL");}
+function bjRequestOfficialCode(){
+ const entered=prompt("SKEBOB OFFICIAL — введи код доступа:");
+ if(entered!=="666666"){alert("Неверный код. Вход в официальный аккаунт запрещён.");return false;}
+ return true;
+}
 function updateNicknameUI(){
  const p=document.getElementById("profileNickname");if(p)p.innerHTML=bjEscape(getNickname())+bjOfficialBadge(getNickname());
 }
 function initNickname(){
  let nick=storageGet(NICKNAME_KEY);
  if(!nick){
-  // Players with an existing saved profile get an automatic nickname.
   if(storageGet("skebobSave")){nick=randomNickname();storageSet(NICKNAME_KEY,nick);}
   else{
    const m=document.getElementById("nicknameModal");
    if(m){m.style.display="flex";const i=document.getElementById("nicknameInput");if(i)setTimeout(()=>i.focus(),250);}
   }
+ }else if(bjIsOfficialNickname(nick)&&!bjRequestOfficialCode()){
+  nick=randomNickname();storageSet(NICKNAME_KEY,nick);
  }
  updateNicknameUI();
 }
@@ -7775,7 +7781,8 @@ function saveFirstNickname(){
  const i=document.getElementById("nicknameInput"),nick=(i?.value||"").trim().replace(/\s+/g," ").slice(0,18);
  if(nick.length<2){alert("Ник должен содержать минимум 2 символа.");return;}
  if(bjNickTaken(nick)){alert("Этот nickname уже занят игроком за столом. Придумай другой.");return;}
- storageSet(NICKNAME_KEY,nick);
+ if(bjIsOfficialNickname(nick)&&!bjRequestOfficialCode())return;
+ if(!storageSet(NICKNAME_KEY,nick)){alert("Не удалось сохранить nickname. Попробуй ещё раз.");return;}
  const m=document.getElementById("nicknameModal");if(m)m.style.display="none";
  updateNicknameUI();
 }
@@ -7785,7 +7792,9 @@ function changeNickname(){
  const nick=next.trim().replace(/\s+/g," ").slice(0,18);
  if(nick.length<2){alert("Ник должен содержать минимум 2 символа.");return;}
  if(bjNickTaken(nick,bjOnlineId)){alert("Этот nickname уже занят игроком за столом. Придумай другой.");return;}
- storageSet(NICKNAME_KEY,nick);updateNicknameUI();
+ if(bjIsOfficialNickname(nick)&&!bjRequestOfficialCode())return;
+ if(!storageSet(NICKNAME_KEY,nick)){alert("Не удалось сохранить nickname. Попробуй ещё раз.");return;}
+ updateNicknameUI();
  if(bjOnlineChannel){bjOnlineChannel.track({id:bjOnlineId,name:nick,done:!bjOnlineMyTurn,joinedAt:bjOnlineJoinedAt,phase:bjOnlineRound&&!bjOnlineRound.finished?"playing":"waiting"});}
 }
 
@@ -7899,6 +7908,7 @@ function bjOnlineShowResult(){
  bjOnlineStatus("Раунд завершён. Результат рассчитан только для твоей руки.");
 }
 
+initNickname();
 </script>
 
 
