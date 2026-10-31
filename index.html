@@ -7744,7 +7744,7 @@ async function bjOnlineJoin(){
    document.getElementById("bjOnlineRoomLabel").textContent="Комната: "+bjOnlineRoom;
    bjOnlineStatus("Ищем игроков. Ожидание — до 60 секунд.");
    if(bjOnlineTimer)clearInterval(bjOnlineTimer);
-   bjOnlineTimer=setInterval(()=>{bjOnlineSeconds--;const c=document.getElementById("bjOnlineCountdown");if(c)c.textContent="До старта: "+Math.max(0,bjOnlineSeconds)+" сек.";if(bjOnlineSeconds<=0){clearInterval(bjOnlineTimer);if(bjOnlineHost)bjOnlineStart();else bjOnlineStatus("Время ожидания завершено. Ждём ведущего комнаты.");}},1000);
+   bjOnlineTimer=setInterval(()=>{bjOnlineSeconds--;const c=document.getElementById("bjOnlineCountdown");if(c)c.textContent="До старта: "+Math.max(0,bjOnlineSeconds)+" сек.";if(bjOnlineSeconds<=0){clearInterval(bjOnlineTimer);if(bjOnlineHost){bjOnlineStatus("⏱ Время набора вышло. Начинаем даже без дополнительных игроков — играй против дилера!");bjOnlineStart();}else{bjOnlineStatus("⏱ Время набора вышло. Ведущий запускает раунд с теми, кто успел присоединиться.");}}},1000);
   }else if(st==="CHANNEL_ERROR"||st==="TIMED_OUT"){bjOnlineStatus("Ошибка соединения. Проверь настройки Realtime и попробуй снова.");}
  });
 }
