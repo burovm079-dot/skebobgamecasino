@@ -2490,7 +2490,14 @@ class="hidden"
 >
 
 <h2>👤 ПРОФИЛЬ</h2>
-<div class="panel"><div class="small">ТВОЙ NICKNAME</div><strong id="profileNickname" style="display:block;font-size:22px;margin:8px 0 12px">Player</strong><button type="button" id="changeNicknameButton" class="secondary" onclick="var m=document.getElementById('changeNicknameModal');var i=document.getElementById('changeNicknameInput');if(m&&i){i.value=(typeof getNickname==='function'?getNickname():'Player');m.style.display='flex';}else{alert('Окно изменения nickname не найдено. Обнови страницу.');}">✏️ ИЗМЕНИТЬ NICKNAME</button></div>
+<div class="panel"><div class="small">ТВОЙ NICKNAME</div><strong id="profileNickname" style="display:block;font-size:22px;margin:8px 0 12px">Player</strong><details id="nicknameEditorDetails" style="margin-top:12px">
+<summary style="display:inline-block;list-style:none;cursor:pointer;background:var(--panel2);color:var(--text);border:2px solid var(--gold);border-radius:14px;padding:14px 18px;font-weight:900">✏️ ИЗМЕНИТЬ NICKNAME</summary>
+<div style="margin-top:14px;padding:14px;border:1px solid var(--border);border-radius:12px;background:var(--panel2)">
+<label for="changeNicknameInput" class="small">НОВЫЙ NICKNAME</label>
+<input id="changeNicknameInput" maxlength="18" placeholder="Новый nickname" autocomplete="nickname">
+<button type="button" class="goldbtn" onclick="saveChangedNickname()">СОХРАНИТЬ</button>
+</div>
+</details></div>
 
 <div id="officialAdminEntry" class="panel hidden"><b>🛠 ПАНЕЛЬ ВЛАДЕЛЬЦА</b><div class="small">Управление оформлением и модерацией сайта</div><button class="goldbtn" onclick="showPage('adminLogin')">АДМИН-ПАНЕЛЬ</button></div>
 
