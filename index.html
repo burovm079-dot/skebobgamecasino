@@ -2495,7 +2495,7 @@ class="hidden"
 <div style="margin-top:14px;padding:14px;border:1px solid var(--border);border-radius:12px;background:var(--panel2)">
 <label for="changeNicknameInput" class="small">НОВЫЙ NICKNAME</label>
 <input id="changeNicknameInput" maxlength="18" placeholder="Новый nickname" autocomplete="nickname">
-<button type="button" id="saveNicknameButton" class="goldbtn" onclick="(function(){var input=document.getElementById('changeNicknameInput');var nick=String(input&&input.value||'').trim().replace(/\\s+/g,' ').slice(0,18);var status=document.getElementById('nicknameSaveStatus');if(nick.length<2){if(status)status.textContent='Ник должен содержать минимум 2 символа.';return;}try{localStorage.setItem('skebobNickname',nick);}catch(e){}try{document.cookie='skebobNickname='+encodeURIComponent(nick)+'; Max-Age=31536000; Path=/; SameSite=Lax';}catch(e){}window.nicknameMemoryFallback=nick;var profile=document.getElementById('profileNickname');if(profile)profile.textContent=nick;if(status)status.textContent='Ник изменён на: '+nick;})();">СОХРАНИТЬ</button><p id="nicknameSaveStatus" class="small" aria-live="polite"></p>
+<button type="button" id="saveNicknameButton" class="goldbtn" onclick="saveChangedNickname()">СОХРАНИТЬ</button><p id="nicknameSaveStatus" class="small" aria-live="polite"></p>
 </div>
 </details></div>
 
@@ -7820,22 +7820,7 @@ document.addEventListener("click",function(event){
  </div>
 </div>
 <script>
-(function(){
- const saveButton=document.getElementById("saveNicknameButton");
- if(!saveButton)return;
- saveButton.addEventListener("click",function(){
-  const input=document.getElementById("changeNicknameInput");
-  const nick=String(input&&input.value||"").trim().replace(/\s+/g," ").slice(0,18);
-  if(nick.length<2){alert("Ник должен содержать минимум 2 символа.");return;}
-  if(typeof commitNickname==="function")commitNickname(nick,false);
-  else if(typeof nicknameWrite==="function")nicknameWrite(nick);
-  if(typeof updateNicknameUI==="function")updateNicknameUI();
-  const details=document.getElementById("nicknameEditorDetails");
-  if(details)details.open=false;
-  alert("Nickname установлен: "+nick+(nicknameMemoryFallback===nick?" (до перезагрузки страницы — браузер блокирует постоянное сохранение)":""));
- });
-})();
-</script>
+
 </body>
     </html>
 
