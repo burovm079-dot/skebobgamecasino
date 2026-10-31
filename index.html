@@ -1378,6 +1378,21 @@ body.light #caseList .case,body.light .panel{background:linear-gradient(145deg,#
 #entrySplash.loading .splash-loader span{width:100%;transition:width var(--splash-duration) linear}
 .splash-footer{color:#c45bff;font-size:14px;font-weight:900;letter-spacing:7px}
 @media(max-height:700px){.splash-coins{margin-bottom:12px}.splash-promo{margin-top:24px;padding:17px 12px}.splash-loader{margin:32px 0 15px}}
+
+/* DEMO WITHDRAWAL */
+.withdraw-actions{display:flex;gap:10px;flex-wrap:wrap;margin:14px 0}
+.withdraw-panel{background:var(--panel);border:1px solid var(--border2);border-radius:16px;padding:16px;margin:12px 0}
+.withdraw-panel h3{margin:0 0 12px}
+.withdraw-field{display:block;margin:12px 0;color:var(--muted);font-size:13px;font-weight:700}
+.withdraw-field input,.withdraw-field select{display:block;width:100%;margin-top:7px;padding:13px;border:1px solid var(--border2);border-radius:10px;background:var(--input);color:var(--text);font-size:15px}
+.withdraw-primary{background:linear-gradient(135deg,#f4c75e,#ffae19);color:#17130a;border:0;border-radius:10px;padding:13px 18px;font-weight:900}
+.withdraw-secondary{background:var(--panel2);color:var(--text);border:1px solid var(--border2);border-radius:10px;padding:12px 16px}
+.withdraw-note{font-size:12px;line-height:1.55;color:var(--muted);margin-top:10px}
+.withdraw-item{padding:13px;border:1px solid var(--border2);border-radius:12px;background:var(--panel2);margin:10px 0}
+.withdraw-item-head{display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap;font-weight:800}
+.withdraw-status-pending{color:#e9bd55}.withdraw-status-failed{color:#e36b72}
+#withdrawNotice{position:fixed;z-index:99999;left:50%;bottom:22px;transform:translateX(-50%);width:min(92vw,460px);padding:15px 18px;border-radius:13px;background:#242630;color:#fff;border:1px solid #e9bd55;box-shadow:0 12px 40px #0009;font-weight:700;line-height:1.45}
+
 </style>
 </head>
 
@@ -2626,6 +2641,49 @@ id="profileBalance"
 </div>
 
 </div>
+
+<div class="withdraw-panel" id="withdrawHome">
+ <h3>💳 ВЫВОД СРЕДСТВ</h3>
+ <div class="small">Демо-раздел для виртуальных монет SKEBOB CASINO.</div>
+ <div class="withdraw-actions">
+  <button class="withdraw-primary" onclick="openDemoWithdraw()">💸 ВЫВЕСТИ</button>
+  <button class="withdraw-secondary" onclick="openDemoHistory()">📜 ИСТОРИЯ</button>
+ </div>
+ <div class="withdraw-note">Важно: это игровая симуляция. Реальные деньги не переводятся. Не вводите номера банковских карт, телефоны, seed-фразы или настоящие адреса кошельков. Для теста используется только код формата TEST-1234.</div>
+</div>
+<div class="withdraw-panel hidden" id="withdrawFormPanel">
+ <h3>💸 НОВАЯ ЗАЯВКА</h3>
+ <label class="withdraw-field">Способ получения
+  <select id="demoWithdrawMethod">
+   <option value="Карта РФ">💳 Банковская карта РФ (демо)</option>
+   <option value="СБП">📱 СБП (демо)</option>
+   <option value="USDT TRC20">₮ USDT TRC20 (демо)</option>
+   <option value="Bitcoin">₿ Bitcoin (демо)</option>
+   <option value="Ethereum">◆ Ethereum (демо)</option>
+  </select>
+ </label>
+ <label class="withdraw-field">Тестовый реквизит
+  <input id="demoWithdrawDetails" type="text" maxlength="20" autocomplete="off" placeholder="TEST-1234">
+ </label>
+ <label class="withdraw-field">Сумма виртуальных монет
+  <input id="demoWithdrawAmount" type="number" min="1" step="1" placeholder="Например, 500">
+ </label>
+ <div class="withdraw-note">Укажите только тестовый код, например TEST-1234. Реквизиты не сохраняются. В реальности переводы не выполняются, а баланс виртуальных монет не является денежным счётом.</div>
+ <div class="withdraw-actions">
+  <button class="withdraw-primary" onclick="submitDemoWithdraw()">ПОДАТЬ ДЕМО-ЗАЯВКУ</button>
+  <button class="withdraw-secondary" onclick="openDemoHistory()">ИСТОРИЯ</button>
+  <button class="withdraw-secondary" onclick="closeDemoWithdraw()">НАЗАД</button>
+ </div>
+</div>
+<div class="withdraw-panel hidden" id="withdrawHistoryPanel">
+ <div class="withdraw-actions" style="justify-content:space-between;align-items:center">
+  <h3 style="margin:0">📜 ИСТОРИЯ ОПЕРАЦИЙ</h3>
+  <button class="withdraw-secondary" onclick="closeDemoHistory()">НАЗАД</button>
+ </div>
+ <div class="withdraw-note">Все операции здесь демонстрационные и не являются реальными платежами.</div>
+ <div id="demoWithdrawHistory"></div>
+</div>
+
 
 </section>
 
@@ -7294,6 +7352,78 @@ function poolResolveMatch(p,who){
 function poolEndMatch(who){poolMatch.over=true;document.getElementById("poolHitBtn").disabled=true;if(who==="player"){const prize=gamePay(poolMatch.bet,2);document.getElementById("poolResult").textContent="Победа! Выплата "+prize+" 🪙"}else{save();document.getElementById("poolResult").textContent="Бот выиграл партию. Начни новую игру."}}
 function poolBotMove(){if(!poolMatch||poolMatch.over)return;const q=poolBodies[0],t=poolBodies.filter(b=>b.active&&b.kind==="bot").sort((a,b)=>Math.hypot(a.x-q.x,a.y-q.y)-Math.hypot(b.x-q.x,b.y-q.y))[0];if(!t){poolEndMatch("player");return}const a=Math.atan2(-(t.y-q.y),t.x-q.x)+(Math.random()-.5)*.16;q.vx=Math.cos(a)*.007;q.vy=-Math.sin(a)*.007;poolRunMatch("bot")}
 
+
+
+/* =========================
+   DEMO WITHDRAWAL HISTORY
+========================= */
+const DEMO_WITHDRAW_KEY="skebobDemoWithdrawals";
+function getDemoWithdrawals(){
+ try{const a=JSON.parse(localStorage.getItem(DEMO_WITHDRAW_KEY)||"[]");return Array.isArray(a)?a:[]}catch(e){return []}
+}
+function setDemoWithdrawals(a){try{localStorage.setItem(DEMO_WITHDRAW_KEY,JSON.stringify(a))}catch(e){}}
+function openDemoWithdraw(){
+ document.getElementById("withdrawHome").classList.add("hidden");
+ document.getElementById("withdrawHistoryPanel").classList.add("hidden");
+ document.getElementById("withdrawFormPanel").classList.remove("hidden");
+}
+function closeDemoWithdraw(){
+ document.getElementById("withdrawFormPanel").classList.add("hidden");
+ document.getElementById("withdrawHome").classList.remove("hidden");
+}
+function openDemoHistory(){
+ document.getElementById("withdrawHome").classList.add("hidden");
+ document.getElementById("withdrawFormPanel").classList.add("hidden");
+ document.getElementById("withdrawHistoryPanel").classList.remove("hidden");
+ renderDemoWithdrawHistory();
+}
+function closeDemoHistory(){
+ document.getElementById("withdrawHistoryPanel").classList.add("hidden");
+ document.getElementById("withdrawHome").classList.remove("hidden");
+}
+function renderDemoWithdrawHistory(){
+ const root=document.getElementById("demoWithdrawHistory");if(!root)return;
+ const rows=getDemoWithdrawals().sort((a,b)=>b.createdAt-a.createdAt);
+ if(!rows.length){root.innerHTML='<div class="withdraw-note">Операций пока нет.</div>';return}
+ root.innerHTML=rows.map(x=>'<div class="withdraw-item"><div class="withdraw-item-head"><span>Операция #'+x.id+'</span><span>'+Number(x.amount).toLocaleString("ru-RU")+' 🪙</span></div><div class="withdraw-note">Способ: '+x.method+' · '+new Date(x.createdAt).toLocaleString("ru-RU")+'</div><div class="'+(x.status==="pending"?"withdraw-status-pending":"withdraw-status-failed")+'" style="margin-top:9px;font-weight:800">'+(x.status==="pending"?"⏳ На проверке — демо-статус":"✖ Отклонено — демо-операция, реальные выплаты недоступны")+'</div></div>').join("");
+}
+function showDemoWithdrawNotice(message){
+ let el=document.getElementById("withdrawNotice");
+ if(!el){el=document.createElement("div");el.id="withdrawNotice";document.body.appendChild(el)}
+ el.textContent=message;
+ setTimeout(()=>{if(el&&el.parentNode)el.parentNode.removeChild(el)},6500);
+}
+function finishDemoWithdrawal(id){
+ const rows=getDemoWithdrawals(),x=rows.find(a=>a.id===id);
+ if(!x||x.status!=="pending")return;
+ x.status="failed";x.finishedAt=Date.now();setDemoWithdrawals(rows);
+ renderDemoWithdrawHistory();
+ showDemoWithdrawNotice("Демо-уведомление: операция #"+id+" отклонена. Реальные выплаты в игре не выполняются.");
+}
+function scheduleDemoWithdrawal(x){
+ if(x.status!=="pending")return;
+ const delay=Math.max(0,x.createdAt+15000-Date.now());
+ setTimeout(()=>finishDemoWithdrawal(x.id),delay);
+}
+function submitDemoWithdraw(){
+ const method=document.getElementById("demoWithdrawMethod").value;
+ const details=document.getElementById("demoWithdrawDetails").value.trim();
+ const amount=Math.floor(Number(document.getElementById("demoWithdrawAmount").value));
+ if(!/^TEST-[A-Z0-9-]{3,15}$/i.test(details)){alert("Для демонстрации используйте тестовый код формата TEST-1234. Настоящие реквизиты вводить нельзя.");return}
+ if(!Number.isFinite(amount)||amount<1){alert("Укажите корректную сумму виртуальных монет.");return}
+ const rows=getDemoWithdrawals();
+ let id;do{id=100+Math.floor(Math.random()*900)}while(rows.some(x=>x.id===id&&Date.now()-x.createdAt<86400000));
+ const x={id,method,amount,status:"pending",createdAt:Date.now()};
+ rows.push(x);setDemoWithdrawals(rows);
+ document.getElementById("demoWithdrawDetails").value="";
+ document.getElementById("demoWithdrawAmount").value="";
+ openDemoHistory();
+ showDemoWithdrawNotice("Операция #"+id+" создана. Это демо-заявка; проверка статуса займёт около 15 секунд.");
+ scheduleDemoWithdrawal(x);
+}
+function initDemoWithdrawals(){
+ getDemoWithdrawals().forEach(x=>{if(x.status==="pending")scheduleDemoWithdrawal(x)});
+}
 
 /* =========================
    START
