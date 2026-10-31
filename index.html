@@ -3434,12 +3434,15 @@ function loadCurrency(){const e=document.getElementById("currencySelect");if(e)e
 function save(){
 
 updateDailyTasks(false);
-localStorage.setItem(
-"skebobSave",
-JSON.stringify(state)
-);
-
+let saved=false;
+try{
+ localStorage.setItem("skebobSave",JSON.stringify(state));
+ saved=true;
+}catch(error){
+ console.warn("Не удалось сохранить прогресс в этом браузере:",error);
+}
 render();
+return saved;
 
 }
 
@@ -7220,7 +7223,7 @@ function changeDiceBet(d){const e=document.getElementById("diceBet");e.value=Mat
 async function playDice(){
  if(diceBusy)return;const bet=diceBetValue(),count=2+Math.floor(Math.random()*4);
  if(state.balance<bet){document.getElementById("diceResult").textContent="Недостаточно монет для ставки.";return}
- diceBusy=true;state.balance-=bet;save();render();
+ diceBusy=true;state.balance-=bet;addTurnover(bet);save();render();
  const players=[{name:"ТЫ",avatar:"😎",you:true},...Array.from({length:count},()=>({name:diceNames[Math.floor(Math.random()*diceNames.length)],avatar:["🤖","🐸","👽","🥷","🦊","🐻"][Math.floor(Math.random()*6)]}))];
  const arena=document.getElementById("dicePlayers");document.getElementById("dicePot").textContent="БАНК: "+(bet*players.length).toLocaleString("ru-RU")+" 🪙";
  arena.innerHTML=players.map((p,i)=>'<div class="dice-seat" id="diceSeat'+i+'"><div class="dice-avatar">'+p.avatar+'</div><div class="dice-name">'+p.name+'</div><div class="dice-cubes" id="diceCubes'+i+'">🎲 🎲</div><div class="dice-total" id="diceTotal'+i+'">?</div></div>').join("");
@@ -7242,11 +7245,24 @@ function diceRattleSound(){arcadeNoise(.16,.055,2600);arcadeTone(720,.045,"squar
 function diceImpactSound(){arcadeNoise(.095,.085,950);arcadeTone(180,.12,"triangle",.045,95)}
 
 /* SIX ARCADE MINI-GAMES */
-function gameBet(id){const v=Math.floor(Number(document.getElementById(id).value));return Number.isFinite(v)&&v>=100&&v<=state.balance?v:0}
-function gamePay(bet,mult){const win=Math.floor(bet*mult);state.balance+=win;registerWin(win);save();return win}
+function gameBet(id){
+ const input=document.getElementById(id);
+ if(!input)return 0;
+ const raw=Number(input.value),balance=Number(state.balance);
+ if(!Number.isFinite(raw)||!Number.isFinite(balance)||raw<100||raw>balance)return 0;
+ return Math.floor(raw);
+}
+function gamePay(bet,mult){
+ bet=Number(bet);mult=Number(mult);
+ if(!Number.isFinite(bet)||!Number.isFinite(mult)||bet<=0||mult<=0)return 0;
+ const win=Math.floor(bet*mult);
+ if(!Number.isSafeInteger(win)||win<=0)return 0;
+ state.balance=(Number(state.balance)||0)+win;
+ registerWin(win);save();return win;
+}
 
 let ttt=[],tttBetValue=0,tttActive=false;
-function tttStart(){const b=gameBet("tttBet");if(!b){alert("Нужна ставка от 100 и достаточно средств");return}state.balance-=b;tttBetValue=b;ttt=Array(9).fill("");tttActive=true;save();tttRender();document.getElementById("tttStatus").textContent="Твой ход — ❌";}
+function tttStart(){const b=gameBet("tttBet");if(!b){alert("Нужна ставка от 100 и достаточно средств");return}state.balance-=b;addTurnover(b);tttBetValue=b;ttt=Array(9).fill("");tttActive=true;save();tttRender();document.getElementById("tttStatus").textContent="Твой ход — ❌";}
 function tttWinner(a){for(const [x,y,z] of [[0,1,2],[3,4,5],[6,7,8],[0,3,6],[1,4,7],[2,5,8],[0,4,8],[2,4,6]])if(a[x]&&a[x]===a[y]&&a[y]===a[z])return a[x];return a.every(Boolean)?"draw":""}
 function tttRender(){const g=document.getElementById("tttGrid");g.innerHTML="";ttt.forEach((v,i)=>{const b=document.createElement("button");b.textContent=v||"　";b.style.cssText="aspect-ratio:1;font-size:35px;border-radius:10px;background:var(--panel2);color:var(--text);border:1px solid var(--border)";b.disabled=!!v||!tttActive;b.onclick=()=>tttMove(i);g.appendChild(b)})}
 function tttFinish(w){tttActive=false;if(w==="X"){const n=gamePay(tttBetValue,2);document.getElementById("tttStatus").textContent="🏆 Ты победил! Выплата "+n+" 🪙"}else if(w==="draw"){state.balance+=tttBetValue;save();document.getElementById("tttStatus").textContent="Ничья — ставка возвращена."}else{save();document.getElementById("tttStatus").textContent="🤖 Бот победил. Попробуй ещё!"}tttRender()}
@@ -7310,7 +7326,7 @@ function chDraw(){
  if(chCrash){c.fillStyle="#0009";c.fillRect(0,0,w,h);c.fillStyle="#fff";c.font="900 26px sans-serif";c.textAlign="center";c.fillText("СТОЛКНОВЕНИЕ",w/2,h/2)}
 }
 function chAnimate(){chAnim+=1;chDraw()}setInterval(chAnimate,45);
-function chickenStart(){if(chActive)return;const b=gameBet("chBet");if(!b){alert("Нужна ставка от 100 и достаточно средств");return}chAudioReady();chStartTraffic();state.balance-=b;chBetValue=b;chMult=1;chStepCount=0;chActive=true;chCrash=false;save();document.getElementById("chMultiplier").textContent="x1.00";document.getElementById("chDistance").textContent="0 / 12";document.getElementById("chPotential").textContent=b.toLocaleString("ru-RU")+" ₽";document.getElementById("chScene").textContent="ДОРОГА ОТКРЫТА";document.getElementById("chStart").disabled=true;document.getElementById("chStep").disabled=false;document.getElementById("chCash").disabled=true;document.getElementById("chResult").textContent="Поток машин движется. Выбери момент для следующего шага.";chDraw()}
+function chickenStart(){if(chActive)return;const b=gameBet("chBet");if(!b){alert("Нужна ставка от 100 и достаточно средств");return}chAudioReady();chStartTraffic();state.balance-=b;chBetValue=b;chMult=1;chStepCount=0;chActive=true;chCrash=false;save();document.getElementById("chMultiplier").textContent="x1.00";document.getElementById("chDistance").textContent="0 / 5";document.getElementById("chPotential").textContent=b.toLocaleString("ru-RU")+" ₽";document.getElementById("chScene").textContent="ДОРОГА ОТКРЫТА";document.getElementById("chStart").disabled=true;document.getElementById("chStep").disabled=false;document.getElementById("chCash").disabled=true;document.getElementById("chResult").textContent="Поток машин движется. Выбери момент для следующего шага.";chDraw()}
 function chickenStep(){
  if(!chActive||chStepLock)return;
  chStepLock=true;
@@ -7461,7 +7477,7 @@ function tttMove(i){
 let poolMatch=null,poolAim=0,poolPointerReady=false;
 function poolStart(){
  const bet=gameBet("poolBet");if(!bet){alert("Нужна ставка от 100 и достаточно средств");return}
- state.balance-=bet;save();poolMatch={bet,turn:"player",moving:false,over:false,leftPlayer:3,leftBot:3};
+ state.balance-=bet;addTurnover(bet);save();poolMatch={bet,turn:"player",moving:false,over:false,leftPlayer:3,leftBot:3};
  poolBodies=[
  {x:.25,y:.5,vx:0,vy:0,color:"#f5f0df",kind:"cue",active:true},
  {x:.65,y:.5,vx:0,vy:0,color:"#e8c743",kind:"player",active:true},
