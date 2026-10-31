@@ -1826,23 +1826,20 @@ id="upgrade"
 class="hidden"
 >
 
-<h2>🎯 УЛУЧШЕНИЕ ПРЕДМЕТОВ</h2>
+<h2>💰 АПГРЕЙД МОНЕТ</h2>
 
 <div class="panel">
-
 <div class="upgrade-circle" id="upgradeCircle">
 <div class="upgrade-center">
 <strong id="chanceText">100%</strong>
-<span id="upgradeValues">Выбери предмет</span>
+<span id="upgradeValues">100 → 200 🪙</span>
 </div>
 </div>
 
-<div class="small">ПРЕДМЕТ ИЗ ИНВЕНТАРЯ</div>
-<select id="upgradeItemSelect" onchange="updateUpgradeInfo()">
-<option value="">Сначала выбери предмет</option>
-</select>
+<div class="small">СКОЛЬКО МОНЕТ УЛУЧШИТЬ</div>
+<input type="number" id="upgradeAmount" value="100" min="1" step="1" oninput="updateUpgradeInfo()">
 
-<div class="small">УЛУЧШЕНИЕ ЦЕННОСТИ</div>
+<div class="small">МНОЖИТЕЛЬ</div>
 <div class="multiplier-grid">
 <button onclick="setMultiplier(1.2,this)">x1.2</button>
 <button onclick="setMultiplier(1.5,this)">x1.5</button>
@@ -1852,8 +1849,8 @@ class="hidden"
 <button onclick="setMultiplier(10,this)">x10</button>
 </div>
 
-<p id="commissionText" class="small">Улучшение гарантировано и не тратит очки.</p>
-<button class="goldbtn" id="upgradeButton" onclick="spinUpgrade()">УЛУЧШИТЬ ПРЕДМЕТ</button>
+<p id="commissionText" class="small">Гарантированное улучшение без случайности. Сумма апгрейда возвращается с выбранным множителем.</p>
+<button class="goldbtn" id="upgradeButton" onclick="spinUpgrade()">УЛУЧШИТЬ МОНЕТЫ</button>
 <div id="upgradeStatus" class="game-status"></div>
 </div>
 
@@ -3486,7 +3483,6 @@ document.getElementById("balance").textContent=formatMoney(state.balance);
 
 
 renderInventory();
-refreshUpgradeItems();
 
 renderProfile();
 
@@ -4802,62 +4798,53 @@ save();
 
 function setMultiplier(m,b){
 if(upgradeBusy)return;
-multiplier=m;
-document.querySelectorAll(".multiplier-grid button").forEach(x=>x.classList.remove("active"));
+multiplier=Math.max(1.2,Math.min(10,Number(m)||2));
+document.querySelectorAll("#upgrade .multiplier-grid button").forEach(x=>x.classList.remove("active"));
 if(b)b.classList.add("active");
 updateUpgradeInfo();
 }
 
-function refreshUpgradeItems(){
-const select=document.getElementById("upgradeItemSelect");
-if(!select)return;
-const previous=select.value;
-select.innerHTML='<option value="">Выбери предмет</option>';
-state.inventory.forEach((item,index)=>{
-const option=document.createElement("option");
-option.value=String(index);
-option.textContent=(item.name||"Предмет")+" — "+formatMoney(Number(item.value)||0)+" (уровень "+(Number(item.level)||1)+")";
-select.appendChild(option);
-});
-if(previous!==""&&state.inventory[Number(previous)])select.value=previous;
-updateUpgradeInfo();
-}
-
 function updateUpgradeInfo(){
-const select=document.getElementById("upgradeItemSelect");
-const index=select?Number(select.value):-1;
-const item=select&&select.value!==""?state.inventory[index]:null;
+const input=document.getElementById("upgradeAmount");
+const amount=input?Math.floor(Number(input.value)):0;
+const valid=Number.isFinite(amount)&&amount>=1&&amount<=state.balance;
+const result=valid?Math.floor(amount*multiplier):0;
 const chance=document.getElementById("chanceText");
 const values=document.getElementById("upgradeValues");
 const button=document.getElementById("upgradeButton");
 if(chance)chance.textContent="100%";
-if(values)values.textContent=item
-?formatMoney(Number(item.value)||0)+" → "+formatMoney(Math.floor((Number(item.value)||0)*multiplier))
-:"Выбери предмет";
-if(button)button.disabled=!item||upgradeBusy;
+if(values)values.textContent=valid
+?formatMoney(amount)+" → "+formatMoney(result)+" 🪙"
+:"Укажи сумму в пределах баланса";
+if(button)button.disabled=!valid||upgradeBusy;
 }
 
 function spinUpgrade(){
 if(upgradeBusy)return;
-const select=document.getElementById("upgradeItemSelect");
-const index=select&&select.value!==""?Number(select.value):-1;
-const item=state.inventory[index];
-if(!item){
+const input=document.getElementById("upgradeAmount");
+const amount=input?Math.floor(Number(input.value)):0;
+if(!Number.isFinite(amount)||amount<1||amount>state.balance){
 const status=document.getElementById("upgradeStatus");
-if(status)status.textContent="Сначала выбери предмет из инвентаря.";
+if(status)status.textContent="Укажи сумму от 1 монеты до текущего баланса.";
+updateUpgradeInfo();
+return;
+}
+const reward=Math.floor(amount*multiplier);
+if(!Number.isSafeInteger(reward)||reward<amount){
+const status=document.getElementById("upgradeStatus");
+if(status)status.textContent="Слишком большая сумма. Уменьши количество монет.";
 return;
 }
 upgradeBusy=true;
-item.level=(Number(item.level)||1)+1;
-item.value=Math.max(0,Math.floor((Number(item.value)||0)*multiplier));
-state.stats.upgrades++;
-state.stats.upgradeWins++;
+state.balance=state.balance-amount+reward;
+state.stats.upgrades=(Number(state.stats.upgrades)||0)+1;
+state.stats.upgradeWins=(Number(state.stats.upgradeWins)||0)+1;
 addDailyTaskProgress("upgrade");
 save();
 const status=document.getElementById("upgradeStatus");
-if(status)status.textContent="✓ Предмет улучшен! Новый уровень: "+item.level;
+if(status)status.textContent="✓ Готово! Было "+formatMoney(amount)+" 🪙, начислено "+formatMoney(reward)+" 🪙. Баланс: "+formatMoney(state.balance)+" 🪙.";
 upgradeBusy=false;
-refreshUpgradeItems();
+updateUpgradeInfo();
 }
 
 /* =========================
