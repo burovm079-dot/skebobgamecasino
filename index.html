@@ -1567,8 +1567,36 @@ SKEBOB <span>CASINO</span>
 
 <section id="home">
 <h2>Добро пожаловать в SKEBOB</h2>
-<p class="small">Игровые разделы удалены. Здесь остались профиль, инвентарь, задания и настройки.</p>
-<div class="panel"><button class="goldbtn" onclick="showPage('profile')">ОТКРЫТЬ ПРОФИЛЬ</button><button class="goldbtn" onclick="showPage('inventory')">ОТКРЫТЬ ИНВЕНТАРЬ</button><button class="goldbtn" onclick="showPage('tasks')">ЕЖЕДНЕВНЫЕ ЗАДАНИЯ</button></div>
+<p class="small">Выбери раздел, чтобы продолжить.</p>
+<div class="panel">
+<button class="goldbtn" onclick="showPage('upgrade')">🎯 MONEY UPGRADE</button>
+<button class="goldbtn" onclick="showPage('profile')">ОТКРЫТЬ ПРОФИЛЬ</button>
+<button class="goldbtn" onclick="showPage('inventory')">ОТКРЫТЬ ИНВЕНТАРЬ</button>
+<button class="goldbtn" onclick="showPage('tasks')">ЕЖЕДНЕВНЫЕ ЗАДАНИЯ</button>
+</div>
+</section>
+<section id="upgrade" class="hidden">
+<h2>🎯 MONEY UPGRADE</h2>
+<div class="panel" style="max-width:760px;margin:18px auto;padding:20px">
+<div class="upgrade-circle" id="upgradeCircle" style="--chance:100%">
+<div class="upgrade-arrow"></div>
+<div class="upgrade-center"><strong id="chanceText">100%</strong><span id="upgradeValues">10 → 20 🪙</span></div>
+</div>
+<div class="small">СУММА МОНЕТ</div>
+<input type="number" id="upgradeAmount" value="10" min="1" step="1" oninput="updateUpgradeInfo()">
+<div class="small">МНОЖИТЕЛЬ</div>
+<div class="multiplier-grid">
+<button onclick="setMultiplier(1.2,this)">x1.2</button>
+<button onclick="setMultiplier(1.5,this)">x1.5</button>
+<button class="active" onclick="setMultiplier(2,this)">x2</button>
+<button onclick="setMultiplier(3,this)">x3</button>
+<button onclick="setMultiplier(5,this)">x5</button>
+<button onclick="setMultiplier(10,this)">x10</button>
+</div>
+<p class="small">Улучшение гарантированное: монеты не проигрываются. Результат начисляется сразу.</p>
+<button class="goldbtn" id="upgradeButton" onclick="spinUpgrade()">УЛУЧШИТЬ</button>
+<div id="upgradeStatus" class="game-status" aria-live="polite"></div>
+</div>
 </section>
 
 <!-- NEW ARCADE GAMES -->
@@ -2358,7 +2386,7 @@ turnover:0
 
 let state={
 
-balance:20,
+balance:50,
 
 inventory:[],
 
@@ -3977,6 +4005,8 @@ const chance=document.getElementById("chanceText");
 const values=document.getElementById("upgradeValues");
 const button=document.getElementById("upgradeButton");
 if(chance)chance.textContent="100%";
+const circle=document.getElementById("upgradeCircle");
+if(circle)circle.style.setProperty("--chance","100%");
 if(values)values.textContent=valid
 ?formatMoney(amount)+" → "+formatMoney(result)+" 🪙"
 :"Укажи сумму в пределах баланса";
