@@ -2745,7 +2745,12 @@ onchange="toggleTheme()"
 </div>
 
 <div class="setting-row">
-
+<div><b>💱 Валюта</b><div class="small">Отображение баланса и цен · 80 монет = 1 $</div></div>
+<select id="currencySelect" onchange="setCurrency(this.value)" style="width:125px;margin:0">
+<option value="RUB">₽ Рубли</option><option value="USD">$ Доллары</option>
+</select>
+</div>
+<div class="setting-row">
 <div>
 <b id="musicSettingTitle">🎵 Музыка</b>
 <div class="small">Фоновая музыка казино на всех игровых страницах</div>
@@ -3149,7 +3154,7 @@ turnover:0
 
 let state={
 
-balance:1000,
+balance:50,
 
 inventory:[],
 
@@ -3228,6 +3233,13 @@ let dailyOpening=false;
    SAVE
 ========================= */
 
+function getCurrency(){return localStorage.getItem("skebobCurrency")==="USD"?"USD":"RUB";}
+function formatMoney(amount){
+ const n=Number(amount)||0;
+ return getCurrency()==="USD"?"$"+(n/80).toLocaleString("en-US",{minimumFractionDigits:2,maximumFractionDigits:2}):Math.floor(n).toLocaleString("ru-RU")+" ₽";
+}
+function setCurrency(value){localStorage.setItem("skebobCurrency",value==="USD"?"USD":"RUB");render();renderCases();const e=document.getElementById("currencySelect");if(e)e.value=getCurrency();if(typeof updateUpgradeInfo==="function")updateUpgradeInfo();if(typeof renderDailyTasks==="function")renderDailyTasks();}
+function loadCurrency(){const e=document.getElementById("currencySelect");if(e)e.value=getCurrency();}
 function save(){
 
 updateDailyTasks(false);
@@ -3397,19 +3409,9 @@ setInterval(()=>{updateDailyTasks();if(!document.getElementById("tasks").classLi
 
 function render(){
 
-document.getElementById(
-"balance"
-).textContent=
-Math.floor(
-state.balance
-).toLocaleString("ru-RU");
+document.getElementById("balance").textContent=formatMoney(state.balance);
 
-document.getElementById(
-"adminBalance"
-).textContent=
-Math.floor(
-state.balance
-).toLocaleString("ru-RU");
+document.getElementById("adminBalance").textContent=formatMoney(state.balance);
 
 renderInventory();
 
@@ -4099,7 +4101,7 @@ ${c.name}
 </h3>
 
 <p class="price">
-${c.price} 🪙 · ${(c.price/80).toFixed(2)}
+${formatMoney(c.price)}
 </p>
 
 <button
@@ -4149,10 +4151,7 @@ document.getElementById(
 ).textContent=
 c.desc;
 
-document.getElementById(
-"detailPrice"
-).textContent=
-c.price;
+document.getElementById("detailPrice").textContent=formatMoney(c.price);
 
 document.getElementById(
 "prizePreview"
@@ -4172,7 +4171,7 @@ ${prizes[n].name}
 </b>
 <div class="small">${prizes[n].collection}</div>
 <p class="price">
-${prizes[n].value.toLocaleString("ru-RU")} 🪙 · ${(prizes[n].value/80).toFixed(2)}
+${formatMoney(prizes[n].value)}
 </p>
 
 </div>
@@ -4560,10 +4559,7 @@ x.value||0
 document.getElementById(
 "inventoryTotal"
 ).textContent=
-total.toLocaleString(
-"ru-RU"
-)+
-" 🪙";
+formatMoney(total);
 
 document.getElementById(
 "sellAllButton"
@@ -4598,7 +4594,7 @@ ${p.name}
 </b>
 
 <div class="small">
-${p.value} 🪙
+${formatMoney(p.value)}
 </div>
 
 </div>
@@ -6835,7 +6831,7 @@ if(
 
 state={
 
-balance:1000,
+balance:50,
 
 inventory:[],
 
@@ -7210,6 +7206,7 @@ function poolBotMove(){if(!poolMatch||poolMatch.over)return;const q=poolBodies[0
 updateDailyTasks();
 renderArcadeRealism();
 loadTheme();
+loadCurrency();
 loadCasinoMusicSetting();
 
 renderCases();
