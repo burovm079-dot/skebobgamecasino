@@ -1564,6 +1564,14 @@ SKEBOB <span>CASINO</span>
 </div>
 
 <main>
+<nav class="nav" aria-label="Основное меню">
+<button class="active" onclick="showPage('home',this)">🏠 Главная</button>
+<button onclick="showPage('upgrade',this)">🎯 Апгрейд</button>
+<button onclick="showPage('inventory',this)">🎒 Инвентарь</button>
+<button onclick="showPage('profile',this)">👤 Профиль</button>
+<button onclick="showPage('tasks',this)">📋 Задания</button>
+<button onclick="showPage('settings',this)">⚙️ Настройки</button>
+</nav>
 
 <section id="home">
 <h2>Добро пожаловать в SKEBOB</h2>
@@ -2688,6 +2696,7 @@ renderAdminSettings();
 
 function showPage(id,button){
 if(id==="tasks")renderDailyTasks();
+if(id==="upgrade")updateUpgradeInfo();
 
 document
 .querySelectorAll(
@@ -4016,29 +4025,36 @@ if(button)button.disabled=!valid||upgradeBusy;
 function spinUpgrade(){
 if(upgradeBusy)return;
 const input=document.getElementById("upgradeAmount");
-const amount=input?Math.floor(Number(input.value)):0;
-if(!Number.isFinite(amount)||amount<1||amount>state.balance){
 const status=document.getElementById("upgradeStatus");
-if(status)status.textContent="Укажи сумму от 1 монеты до текущего баланса.";
+const raw=input?String(input.value).trim():"";
+const amount=raw===""?0:Number(raw);
+if(!Number.isSafeInteger(amount)||amount<1||amount>state.balance){
+if(status)status.textContent="Введи целое число монет от 1 до текущего баланса.";
 updateUpgradeInfo();
 return;
 }
-const reward=Math.floor(amount*multiplier);
-if(!Number.isSafeInteger(reward)||reward<amount){
-const status=document.getElementById("upgradeStatus");
-if(status)status.textContent="Слишком большая сумма. Уменьши количество монет.";
+const factor=Number(multiplier);
+const reward=Math.floor(amount*factor);
+if(!Number.isSafeInteger(reward)||reward<amount||!Number.isSafeInteger(state.balance-amount+reward)){
+if(status)status.textContent="Сумма слишком большая. Уменьши количество монет.";
 return;
 }
 upgradeBusy=true;
-state.balance=state.balance-amount+reward;
+const previousBalance=state.balance;
+try{
+state.balance=previousBalance-amount+reward;
 state.stats.upgrades=(Number(state.stats.upgrades)||0)+1;
 state.stats.upgradeWins=(Number(state.stats.upgradeWins)||0)+1;
-addDailyTaskProgress("upgrade");
-save();
-const status=document.getElementById("upgradeStatus");
-if(status)status.textContent="✓ Готово! Было "+formatMoney(amount)+" 🪙, начислено "+formatMoney(reward)+" 🪙. Баланс: "+formatMoney(state.balance)+" 🪙.";
+if(typeof addDailyTaskProgress==="function")addDailyTaskProgress("upgrade");
+const saved=save();
+if(status)status.textContent=(saved?"✓ Апгрейд выполнен! ":"⚠ Изменение применено, но браузер не подтвердил сохранение. ")+"Начислено "+formatMoney(reward)+". Баланс: "+formatMoney(state.balance)+".";
+}catch(error){
+state.balance=previousBalance;
+if(status)status.textContent="Не удалось выполнить апгрейд: "+(error&&error.message?error.message:"ошибка");
+}finally{
 upgradeBusy=false;
 updateUpgradeInfo();
+}
 }
 
 /* =========================
