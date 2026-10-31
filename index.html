@@ -7559,10 +7559,11 @@ setInterval(updateSecretDrop,1000);
 
 /* PLAYER NICKNAME */
 const NICKNAME_KEY="skebobNickname";
+let nicknameMemoryFallback="";
 function nicknameCookieGet(){
  try{const item=document.cookie.split("; ").find(x=>x.startsWith(NICKNAME_KEY+"="));return item?decodeURIComponent(item.slice(NICKNAME_KEY.length+1)):"";}catch(e){return "";}
 }
-function nicknameRead(){return storageGet(NICKNAME_KEY)||nicknameCookieGet()||"";}
+function nicknameRead(){return storageGet(NICKNAME_KEY)||nicknameCookieGet()||nicknameMemoryFallback||"";}
 function nicknameWrite(value){
  const nick=String(value||"").trim();
  if(!nick)return false;
@@ -7575,7 +7576,9 @@ function nicknameWrite(value){
   document.cookie=NICKNAME_KEY+"="+encodeURIComponent(nick)+"; Max-Age=31536000; Path=/; SameSite=Lax; Secure";
   if(nicknameCookieGet()===nick)saved=true;
  }catch(e){}
- return saved;
+ if(!saved){nicknameMemoryFallback=nick;return true;}
+ nicknameMemoryFallback=nick;
+ return true;
 }
 function randomNickname(){
  const names=["Shadow","Lucky","Pixel","Nova","Tiger","Storm","Frost","Comet","Raven","Flash"];
@@ -7824,14 +7827,12 @@ document.addEventListener("click",function(event){
   const input=document.getElementById("changeNicknameInput");
   const nick=String(input&&input.value||"").trim().replace(/\s+/g," ").slice(0,18);
   if(nick.length<2){alert("Ник должен содержать минимум 2 символа.");return;}
-  if(typeof nicknameWrite!=="function"||!nicknameWrite(nick)){
-   alert("Браузер не разрешил сохранить ник. Проверь настройки сайта и хранилища.");
-   return;
-  }
+  if(typeof commitNickname==="function")commitNickname(nick,false);
+  else if(typeof nicknameWrite==="function")nicknameWrite(nick);
   if(typeof updateNicknameUI==="function")updateNicknameUI();
   const details=document.getElementById("nicknameEditorDetails");
   if(details)details.open=false;
-  alert("Nickname сохранён: "+nick);
+  alert("Nickname установлен: "+nick+(nicknameMemoryFallback===nick?" (до перезагрузки страницы — браузер блокирует постоянное сохранение)":""));
  });
 })();
 </script>
