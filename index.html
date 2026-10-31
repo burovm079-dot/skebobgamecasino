@@ -7770,6 +7770,7 @@ function initNickname(){
 function saveFirstNickname(){
  const i=document.getElementById("nicknameInput"),nick=(i?.value||"").trim().replace(/\s+/g," ").slice(0,18);
  if(nick.length<2){alert("Ник должен содержать минимум 2 символа.");return;}
+ if(bjNickTaken(nick)){alert("Этот nickname уже занят игроком за столом. Придумай другой.");return;}
  storageSet(NICKNAME_KEY,nick);
  const m=document.getElementById("nicknameModal");if(m)m.style.display="none";
  updateNicknameUI();
@@ -7779,7 +7780,9 @@ function changeNickname(){
  if(next===null)return;
  const nick=next.trim().replace(/\s+/g," ").slice(0,18);
  if(nick.length<2){alert("Ник должен содержать минимум 2 символа.");return;}
+ if(bjNickTaken(nick,bjOnlineId)){alert("Этот nickname уже занят игроком за столом. Придумай другой.");return;}
  storageSet(NICKNAME_KEY,nick);updateNicknameUI();
+ if(bjOnlineChannel){bjOnlineChannel.track({id:bjOnlineId,name:nick,done:!bjOnlineMyTurn,joinedAt:bjOnlineJoinedAt,phase:bjOnlineRound&&!bjOnlineRound.finished?"playing":"waiting"});}
 }
 
 /* BLACKJACK ONLINE — Supabase Realtime, no wagers or payouts */
@@ -7787,6 +7790,8 @@ const BJ_ONLINE_URL="https://quglxnyhtqoojzbimtmv.supabase.co";
 const BJ_ONLINE_KEY="sb_publishable_qm5CyU510e0Yu1ayUq4tlw_je8hQhbL";
 let bjOnlineClient=null,bjOnlineChannel=null,bjOnlineRoom="",bjOnlineId="",bjOnlineHost=false;
 let bjOnlineMembers=[],bjOnlineTimer=null,bjOnlineSeconds=60,bjOnlineRound=null,bjOnlineMyHand=[],bjOnlineDealer=null,bjOnlineMyTurn=false,bjOnlineJoinedAt=0;
+function bjNormalizeNick(value){return String(value||"").trim().replace(/\\s+/g," ").toLocaleLowerCase("ru");}
+function bjNickTaken(value,excludeId=""){const wanted=bjNormalizeNick(value);if(!wanted||!bjOnlineChannel)return false;const state=bjOnlineChannel.presenceState();return Object.values(state).flat().some(p=>p.id!==excludeId&&bjNormalizeNick(p.name)===wanted);}
 const bjOnlineName=()=>getNickname();
 const bjOnlineCard=()=>({rank:["A","2","3","4","5","6","7","8","9","10","J","Q","K"][Math.floor(Math.random()*13)],suit:["♠","♥","♦","♣"][Math.floor(Math.random()*4)]});
 function bjOnlineValue(hand){let n=0,a=0;for(const c of hand){if(c.rank==="A"){n+=11;a++}else n+=["J","Q","K"].includes(c.rank)?10:Number(c.rank)}while(n>21&&a-- >0)n-=10;return n}
@@ -7834,6 +7839,8 @@ async function bjOnlineJoin(){
  bjOnlineStatus("Подключаемся к комнате…");
  const status=await bjOnlineChannel.subscribe(async st=>{
   if(st==="SUBSCRIBED"){
+   const duplicate=bjNickTaken(bjOnlineName());
+   if(duplicate){bjOnlineStatus("Этот nickname уже занят. Измени его в профиле и попробуй снова.");await bjOnlineClient.removeChannel(bjOnlineChannel);bjOnlineChannel=null;document.getElementById("bjOnlineJoin").disabled=false;document.getElementById("bjOnlineLeave").disabled=true;return;}
    bjOnlineJoinedAt=Date.now();await bjOnlineChannel.track({id:bjOnlineId,name:bjOnlineName(),done:false,joinedAt:bjOnlineJoinedAt,phase:"waiting"});
    document.getElementById("bjOnlineJoin").disabled=true;document.getElementById("bjOnlineLeave").disabled=false;
    document.getElementById("bjOnlineRoomLabel").textContent="Комната: "+bjOnlineRoom;
