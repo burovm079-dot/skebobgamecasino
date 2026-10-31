@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>SKEBOB — Профиль</title>
+<style>
+:root{color-scheme:dark;--bg:#0b0c11;--panel:#191a20;--panel2:#22232b;--text:#f5f5f5;--muted:#969bad;--border:#594725;--gold:#f4c75e}
+body.light{color-scheme:light;--bg:#f2f3f7;--panel:#fff;--panel2:#e9ebf1;--text:#161820;--muted:#73798a;--border:#d5b66a}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--text);font-family:Arial,sans-serif;min-height:100vh}
+header{padding:18px 22px;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;gap:12px}
+.logo{font-size:22px;font-weight:900}.logo span{color:var(--gold)}
+button,input{font:inherit}button{cursor:pointer;border:1px solid var(--border);border-radius:10px;padding:10px 14px;background:var(--panel2);color:var(--text);font-weight:700}
+main{width:min(720px,calc(100% - 28px));margin:34px auto}.card{background:var(--panel);border:1px solid var(--border);border-radius:18px;padding:22px;margin-bottom:16px}
+.hero{text-align:center;padding:32px 20px}.avatar{font-size:58px}.eyebrow{color:var(--muted);font-size:12px;letter-spacing:1.4px;font-weight:800;margin-top:12px}
+h1{font-size:27px;margin:9px 0 7px}.muted{color:var(--muted);line-height:1.5}.verified{display:inline-grid;place-items:center;vertical-align:middle;width:20px;height:20px;margin-left:7px;border-radius:50%;background:#258cf4;color:white;font-size:13px;font-weight:900}
+.field{display:flex;gap:9px;margin-top:12px}.field input{flex:1;min-width:0;padding:12px;border-radius:10px;border:1px solid var(--border);background:var(--panel2);color:var(--text)}
+.notice{font-size:13px;color:var(--muted);margin-top:12px}.actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:14px}.primary{background:#493819;color:#ffda7c;border-color:#80652e}
+footer{text-align:center;color:var(--muted);font-size:12px;padding:20px}
+@media(max-width:480px){.field{flex-direction:column}.field button{width:100%}header{padding:14px}}
+</style>
+</head>
+<body>
+<header><div class="logo"><span>SKEBOB</span> PROFILE</div><button id="themeButton" type="button">☀️ Тема</button></header>
+<main>
+<section class="card hero">
+<div class="avatar">👤</div><div class="eyebrow">ЛИЧНЫЙ ПРОФИЛЬ</div>
+<h1 id="shownNick">Player</h1><div class="muted">Профиль пользователя SKEBOB</div>
+</section>
+<section class="card">
+<h2>Изменить nickname</h2>
+<div class="muted">Выбери отображаемое имя профиля.</div>
+<div class="field"><input id="nicknameInput" maxlength="24" autocomplete="nickname" placeholder="Новый nickname"><button class="primary" id="saveButton" type="button">Сохранить</button></div>
+<div class="notice">Имя сохраняется только в этом браузере.</div>
+</section>
+<section class="card">
+<h2>О верификации</h2>
+<div class="muted">Синяя отметка отображается рядом с именем SKEBOB OFFICIAL. Она является элементом оформления этой страницы и сама по себе не подтверждает личность владельца.</div>
+</section>
+</main>
+<footer>SKEBOB • Страница профиля</footer>
+<script>
+(function(){
+ const input=document.getElementById('nicknameInput');
+ const shown=document.getElementById('shownNick');
+ const official='SKEBOB OFFICIAL';
+ function render(){
+  const nick=localStorage.getItem('skebobProfileNickname')||'Player';
+  shown.textContent=nick;
+  if(nick.trim().toLocaleUpperCase('ru')===official){
+   const mark=document.createElement('span');mark.className='verified';mark.textContent='✓';mark.title='SKEBOB OFFICIAL';mark.setAttribute('aria-label','Отметка SKEBOB OFFICIAL');shown.appendChild(mark);
+  }
+  input.value=nick;
+ }
+ document.getElementById('saveButton').addEventListener('click',function(){
+  const nick=input.value.trim().replace(/\s+/g,' ');
+  if(!nick){alert('Введите nickname.');return;}
+  if(nick.toLocaleUpperCase('ru')===official && !confirm('Вы выбрали SKEBOB OFFICIAL. Продолжить?'))return;
+  localStorage.setItem('skebobProfileNickname',nick);
+  render();
+  alert('Nickname сохранён.');
+ });
+ document.getElementById('themeButton').addEventListener('click',function(){
+  document.body.classList.toggle('light');
+  localStorage.setItem('skebobProfileLight',document.body.classList.contains('light')?'1':'0');
+ });
+ if(localStorage.getItem('skebobProfileLight')==='1')document.body.classList.add('light');
+ render();
+})();
+</script>
+</body>
+</html>
