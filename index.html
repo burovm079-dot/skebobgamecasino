@@ -202,6 +202,9 @@ text-align:center;
 }
 
 .prize-icon,.prizepic{font-size:34px}
+.prizepic img{display:block;width:min(190px,55vw);height:min(190px,55vw);object-fit:contain;border-radius:14px;margin:8px auto;border:1px solid var(--border);background:var(--panel2);box-shadow:0 5px 22px #0008}
+.roulette-item .icon{width:58px;height:58px;display:grid;place-items:center;overflow:hidden}
+.roulette-item .icon img{width:100%;height:100%;object-fit:contain;border-radius:7px}
 
 .quantity,.multiplier-grid{
 display:flex;
@@ -4238,7 +4241,7 @@ n=>`
 <div class="prize-card">
 
 <div class="prize-icon">
-<img src="${prizes[n].image}" alt="${prizes[n].name}" onerror="this.style.display='none';this.parentElement.textContent='${prizes[n].icon}'">
+<img loading="lazy" src="${prizes[n].image}" alt="${prizes[n].name}" onerror="this.style.display='none';this.parentElement.textContent='${prizes[n].icon}'">
 </div>
 
 <b>
@@ -4515,7 +4518,7 @@ row.querySelector(
 ).innerHTML=`
 
 <div class="prizepic">
-${won[i].icon}
+<img src="${won[i].image}" alt="${won[i].name}" onerror="this.style.display='none';this.parentElement.textContent='${won[i].icon}'">
 </div>
 
 <h3>
@@ -4678,7 +4681,7 @@ state.inventory.map(
 
 <div class="inventory-nft-image">
 <a href="${p.market||'https://opensea.io'}" target="_blank" rel="noopener noreferrer" title="Открыть NFT на OpenSea">
-<img src="${p.image||''}" alt="${p.name}" onerror="this.style.display='none';this.parentElement.textContent='${p.icon}'">
+<img loading="lazy" src="${p.image||''}" alt="${p.name}" onerror="this.style.display='none';this.parentElement.textContent='${p.icon}'">
 </a>
 </div>
 
