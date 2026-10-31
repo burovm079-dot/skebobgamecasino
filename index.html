@@ -1527,11 +1527,14 @@ body.light #caseList .case,body.light .panel{background:linear-gradient(145deg,#
 </div>
 
 <script>
-/* Независимый таймер заставки: не зависит от запуска игровых скриптов. */
-window.setTimeout(function(){
+/* Запускаем полоску сразу, независимо от загрузки основного приложения. */
+(function(){
  const splash=document.getElementById("entrySplash");
- if(splash)splash.classList.add("splash-hidden");
-},3000);
+ if(!splash)return;
+ splash.style.setProperty("--splash-duration","3000ms");
+ requestAnimationFrame(function(){splash.classList.add("loading");});
+ window.setTimeout(function(){splash.classList.add("splash-hidden");},3000);
+})();
 </script>
 
 <header>
@@ -3028,11 +3031,21 @@ class="hidden"
 <button class="back" onclick="showPage('profile')">← Назад в профиль</button>
 <h2>🛠 ПАНЕЛЬ ВЛАДЕЛЬЦА</h2>
 <div class="panel">
-<b>Управление сайтом</b>
-<p class="small">Здесь будут безопасные настройки оформления и инструменты модерации.</p>
-<div class="small">Доступ открыт для SKEBOB OFFICIAL.</div>
+ <b>📊 Состояние профиля и сайта</b>
+ <p class="small">Информационная панель владельца. Здесь отображаются текущие данные; изменения баланса, ставок и результатов игр через неё недоступны.</p>
+ <div class="profile-grid">
+  <div class="profile-card"><div class="profile-card-label">Аккаунт</div><div class="profile-card-value" id="ownerDashNick">—</div></div>
+  <div class="profile-card"><div class="profile-card-label">Виртуальные монеты</div><div class="profile-card-value" id="ownerDashBalance">—</div></div>
+  <div class="profile-card"><div class="profile-card-label">Предметов в инвентаре</div><div class="profile-card-value" id="ownerDashItems">—</div></div>
+  <div class="profile-card"><div class="profile-card-label">Открыто кейсов</div><div class="profile-card-value" id="ownerDashCases">—</div></div>
+ </div>
+ <button class="secondary" style="width:100%;margin-top:12px" onclick="renderOwnerDashboard()">🔄 ОБНОВИТЬ ДАННЫЕ</button>
+ <p class="small" id="ownerDashUpdated">Данные обновляются при открытии панели.</p>
 </div>
-<span id="adminBalance" class="hidden">0</span>
+<div class="panel">
+ <b>🛡️ Безопасность</b>
+ <p class="small">Не публикуй коды доступа и секретные ключи в HTML: всё, что находится в GitHub Pages, доступно посетителям сайта. Для настоящих административных прав нужна серверная проверка доступа.</p>
+</div>
 </section>
 
 </main>
@@ -3610,6 +3623,7 @@ renderProfile();
 if(id==="adminPanel"){
 
 renderAdminSettings();
+renderOwnerDashboard();
 
 }
 
@@ -6859,6 +6873,19 @@ document.getElementById(
 
 }
 
+function renderOwnerDashboard(){
+ const nick=document.getElementById("ownerDashNick");
+ const balance=document.getElementById("ownerDashBalance");
+ const items=document.getElementById("ownerDashItems");
+ const cases=document.getElementById("ownerDashCases");
+ if(nick)nick.textContent=typeof getNickname==="function"?getNickname():"—";
+ if(balance)balance.textContent=typeof state!=="undefined"?Math.floor(Number(state.balance)||0).toLocaleString("ru-RU")+" 🪙":"—";
+ if(items)items.textContent=typeof state!=="undefined"&&Array.isArray(state.inventory)?String(state.inventory.length):"—";
+ if(cases)cases.textContent=typeof state!=="undefined"&&state.stats?String(state.stats.casesOpened||0):"—";
+ const updated=document.getElementById("ownerDashUpdated");
+ if(updated)updated.textContent="Обновлено: "+new Date().toLocaleString("ru-RU");
+}
+
 function adminChange(sign){
 
 const n=
@@ -7540,15 +7567,7 @@ updateDailyCase,
 );
 setInterval(updateSecretDrop,1000);
 
-// Автоматическая заставка: случайная длительность от 2 до 6 секунд.
-(()=>{
- const splash=document.getElementById("entrySplash");
- if(!splash)return;
- const duration=2000+Math.random()*8000;
- splash.style.setProperty("--splash-duration",duration+"ms");
- requestAnimationFrame(()=>splash.classList.add("loading"));
- setTimeout(()=>splash.classList.add("splash-hidden"),duration);
-})();
+// Заставка запускается отдельным ранним скриптом в начале body.
 
 
 
