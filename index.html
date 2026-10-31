@@ -4261,6 +4261,16 @@ qty+
 
 }
 
+// Возврат из обычных кейсов: каждый приз оценивается минимум в 90% цены кейса.
+ // Это игровая оценка предмета при продаже, не реальная рыночная цена NFT.
+function getCasePrize(caseIndex,prizeIndex){
+ const base=prizes[prizeIndex];
+ const casePrice=cases[caseIndex].price;
+ const floorValue=Math.ceil(casePrice*.9);
+ const ceilingValue=Math.floor(casePrice*1.7);
+ return {...base,value:Math.min(ceilingValue,Math.max(floorValue,Number(base.value)||0))};
+}
+
 function openCase(){
 
 if(caseOpeningBusy)return;
@@ -4321,15 +4331,8 @@ i<qty;
 i++
 ){
 
-const prize=
-prizes[
-caseItems[
-Math.floor(
-Math.random()*
-caseItems.length
-)
-]
-];
+const prizeIndex=caseItems[Math.floor(Math.random()*caseItems.length)];
+const prize=getCasePrize(selectedCase,prizeIndex);
 
 won.push({
 ...prize,
@@ -4344,16 +4347,8 @@ j<30;
 j++
 ){
 
-strip.push(
-prizes[
-caseItems[
-Math.floor(
-Math.random()*
-caseItems.length
-)
-]
-]
-);
+const stripIndex=caseItems[Math.floor(Math.random()*caseItems.length)];
+strip.push(getCasePrize(selectedCase,stripIndex));
 
 }
 
