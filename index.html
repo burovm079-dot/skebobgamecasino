@@ -3018,37 +3018,53 @@ const PROMOCODES={
 SKEBOB:{reward:777}
 };
 
-// NFT-кейсы. Игровой курс: 80 🪙 = $1. Цены ориентировочные,
-// это виртуальные значения игры, не котировки и не реальные NFT.
+// NFT-кейсы: 80 🪙 = $1. Стоимости — ориентиры по floor price коллекций,
+// пересчитанные в игровые монеты; они не являются котировками или обещанием продажи.
 const nftImage = id => "https://www.larvalabs.com/public/images/cryptopunks/punk" + String(id).padStart(4,"0") + ".png";
 const nftCollections = [
- {name:"CryptoPunk #0000",collection:"CryptoPunks",image:nftImage(0),value:5096000,icon:"🧑‍🎤"},
- {name:"CryptoPunk #0001",collection:"CryptoPunks",image:nftImage(1),value:3200000,icon:"🧑‍🎤"},
- {name:"CryptoPunk #0002",collection:"CryptoPunks",image:nftImage(2),value:1800000,icon:"🧑‍🎤"},
- {name:"CryptoPunk #0003",collection:"CryptoPunks",image:nftImage(3),value:950000,icon:"🧑‍🎤"},
- {name:"CryptoPunk #0004",collection:"CryptoPunks",image:nftImage(4),value:500000,icon:"🧑‍🎤"},
- {name:"CryptoPunk #0005",collection:"CryptoPunks",image:nftImage(5),value:250000,icon:"🧑‍🎤"},
- {name:"CryptoPunk #0006",collection:"CryptoPunks",image:nftImage(6),value:120000,icon:"🧑‍🎤"},
- {name:"CryptoPunk #0007",collection:"CryptoPunks",image:nftImage(7),value:40000,icon:"🧑‍🎤"},
- {name:"CryptoPunk #0008",collection:"CryptoPunks",image:nftImage(8),value:8000,icon:"🧑‍🎤"},
- {name:"CryptoPunk #0009",collection:"CryptoPunks",image:nftImage(9),value:800,icon:"🧑‍🎤"},
- {name:"CryptoPunk #0010",collection:"CryptoPunks",image:nftImage(10),value:400,icon:"🧑‍🎤"},
- {name:"CryptoPunk #0011",collection:"CryptoPunks",image:nftImage(11),value:160,icon:"🧑‍🎤"}
+ {name:"CryptoPunk #0000",collection:"CryptoPunks",image:nftImage(0),value:5357120,icon:"👾"},
+ {name:"CryptoPunk #0001",collection:"CryptoPunks",image:nftImage(1),value:5357120,icon:"👾"},
+ {name:"CryptoPunk #0002",collection:"CryptoPunks",image:nftImage(2),value:5357120,icon:"👾"},
+ {name:"CryptoPunk #0003",collection:"CryptoPunks",image:nftImage(3),value:5357120,icon:"👾"},
+ {name:"Bored Ape #0001",collection:"Bored Ape Yacht Club",image:"https://files.amberblocks.com/thumbnail/chnbzaa92ook5tnj/posts/pw43pite3id9ypvc/f94fg2yyku02jgfdtkzqgd4aflrwsxi3/nft-quay-tro-lai.jpg",value:1093200,icon:"🐵"},
+ {name:"Mutant Ape #0001",collection:"Mutant Ape Yacht Club",image:"https://dl-migration-assets.s3.eu-central-1.amazonaws.com/images/1772087923060.webp",value:168000,icon:"🧬"},
+ {name:"Pudgy Penguin #0001",collection:"Pudgy Penguins",image:"https://magnft.com/wp-content/uploads/2024/11/what-is-pudgy-penguins-2024-1-nfts.webp",value:444800,icon:"🐧"},
+ {name:"Azuki #0001",collection:"Azuki",image:"https://substackcdn.com/image/fetch/%24s_%21Mf0v%21%2Cf_auto%2Cq_auto%3Agood%2Cfl_progressive%3Asteep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2F83b485ef-ccfb-4508-bb78-dfafc0a52ad0_1600x796.png",value:39200,icon:"🎴"},
+ {name:"Moonbird #0001",collection:"Moonbirds",image:"https://pbs.twimg.com/media/FygvKxmakAAiB-e?format=jpg&name=large",value:42400,icon:"🦉"},
+ {name:"Doodle #0001",collection:"Doodles",image:"https://files.amberblocks.com/thumbnail/chnbzaa92ook5tnj/posts/pw43pite3id9ypvc/f94fg2yyku02jgfdtkzqgd4aflrwsxi3/nft-quay-tro-lai.jpg",value:45600,icon:"🖍️"},
+ {name:"Clone X #0001",collection:"Clone X",image:"https://substackcdn.com/image/fetch/%24s_%21Mf0v%21%2Cf_auto%2Cq_auto%3Agood%2Cfl_progressive%3Asteep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2F83b485ef-ccfb-4508-bb78-dfafc0a52ad0_1600x796.png",value:24800,icon:"🧑‍🚀"},
+ {name:"Cool Cat #0001",collection:"Cool Cats",image:"https://substackcdn.com/image/fetch/%24s_%21Mf0v%21%2Cf_auto%2Cq_auto%3Agood%2Cfl_progressive%3Asteep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2F83b485ef-ccfb-4508-bb78-dfafc0a52ad0_1600x796.png",value:18400,icon:"🐱"},
+ {name:"Milady #0001",collection:"Milady Maker",image:"https://dl-migration-assets.s3.eu-central-1.amazonaws.com/images/1772087923060.webp",value:143200,icon:"👩‍🎤"},
+ {name:"Meebit #0001",collection:"Meebits",image:"https://www.larvalabs.com/public/images/cryptopunks/punk0012.png",value:50400,icon:"🧊"},
+ {name:"Lil Pudgy #0001",collection:"Lil Pudgys",image:"https://magnft.com/wp-content/uploads/2024/11/what-is-pudgy-penguins-2024-1-nfts.webp",value:17600,icon:"🐣"},
+ {name:"Nakamigo #0001",collection:"Nakamigos",image:"https://dl-migration-assets.s3.eu-central-1.amazonaws.com/images/1772087923060.webp",value:7200,icon:"🧢"},
+ {name:"BEANZ #0001",collection:"BEANZ Official",image:"https://pbs.twimg.com/media/FygvKxmakAAiB-e?format=jpg&name=large",value:2480,icon:"🫘"},
+ {name:"Otherdeed #0001",collection:"Otherdeed for Otherside",image:"https://pbs.twimg.com/media/FygvKxmakAAiB-e?format=jpg&name=large",value:5040,icon:"🌎"},
+ {name:"OnChain Hoodie #0001",collection:"OnChainHoodies",image:"https://substackcdn.com/image/fetch/%24s_%21Mf0v%21%2Cf_auto%2Cq_auto%3Agood%2Cfl_progressive%3Asteep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2F83b485ef-ccfb-4508-bb78-dfafc0a52ad0_1600x796.png",value:800,icon:"👕"},
+ {name:"Trencher Pack #0001",collection:"Trencher Packs",image:"https://files.amberblocks.com/thumbnail/chnbzaa92ook5tnj/posts/pw43pite3id9ypvc/f94fg2yyku02jgfdtkzqgd4aflrwsxi3/nft-quay-tro-lai.jpg",value:720,icon:"🎒"},
+ {name:"Bobos #0001",collection:"Bobos",image:"https://magnft.com/wp-content/uploads/2024/11/what-is-pudgy-penguins-2024-1-nfts.webp",value:2000,icon:"🎨"},
+ {name:"The Memes #0001",collection:"The Memes by 6529",image:"https://pbs.twimg.com/media/FygvKxmakAAiB-e?format=jpg&name=large",value:2560,icon:"🌀"}
 ];
-const prizes=nftCollections.map((n,i)=>({...n,id:"nft-"+i,rarity:["Легендарный","Эпический","Эпический","Редкий","Редкий","Редкий","Необычный","Необычный","Обычный","Обычный","Обычный","Обычный"][i]}));
+const prizes=nftCollections.map((n,i)=>({...n,id:"nft-"+i,rarity:i<4?"Легендарный":i<7?"Эпический":i<12?"Редкий":i<16?"Необычный":"Обычный"}));
 const cases=[
- {name:"NFT STARTER",icon:"🖼️",price:80,desc:"Стартовый кейс с цифровыми коллекционными предметами",items:[9,10,11]},
- {name:"PIXEL DROP",icon:"👾",price:400,desc:"Пиксельные коллекционные NFT",items:[7,8,9,10,11]},
- {name:"RARE PUNK",icon:"💜",price:1600,desc:"Подборка редких CryptoPunks",items:[6,7,8,9]},
- {name:"CLASSIC PUNKS",icon:"🎭",price:5000,desc:"Классические NFT из коллекции CryptoPunks",items:[5,6,7,8]},
- {name:"NEON PUNKS",icon:"🌈",price:12000,desc:"Яркие цифровые коллекционные портреты",items:[4,5,6,7]},
- {name:"ELITE PUNKS",icon:"💎",price:30000,desc:"Кейс с более редкими NFT",items:[3,4,5,6]},
- {name:"DIAMOND PUNKS",icon:"💠",price:80000,desc:"Высокий уровень редкости",items:[2,3,4,5]},
- {name:"LEGENDARY PUNKS",icon:"👑",price:200000,desc:"Легендарная подборка CryptoPunks",items:[1,2,3,4]},
- {name:"WHALE VAULT",icon:"🐳",price:500000,desc:"Кейс для крупных виртуальных ставок",items:[0,1,2,3]},
- {name:"BLUE CHIP NFT",icon:"🏛️",price:1000000,desc:"Премиальный NFT-кейс",items:[0,1,2]},
- {name:"GENESIS PUNK",icon:"⚡",price:2500000,desc:"Редчайшие цифровые коллекционные образы",items:[0,1]},
- {name:"SKEBOB NFT GRAIL",icon:"🏆",price:5000000,desc:"Самый дорогой NFT-кейс казино",items:[0]}
+ {name:"MICRO NFT",icon:"🪙",price:80,desc:"Начальный дроп — недорогие цифровые коллекционные предметы",items:[17,18,19]},
+ {name:"PIXEL START",icon:"👾",price:400,desc:"Доступные NFT и небольшие коллекции",items:[14,15,16,17,18]},
+ {name:"COLLECTOR",icon:"🎨",price:800,desc:"Подборка недорогих коллекционных NFT",items:[14,15,16,18,19]},
+ {name:"ART DROP",icon:"🖼️",price:1600,desc:"Цифровое искусство и коллекционные серии",items:[13,14,15,18,19]},
+ {name:"AVATAR BOX",icon:"🧢",price:4000,desc:"Аватары из известных NFT-проектов",items:[12,13,14,15,16]},
+ {name:"BLUE CHIP MINI",icon:"💠",price:8000,desc:"Нижний ценовой сегмент известных коллекций",items:[11,12,13,14,15]},
+ {name:"COOL CLUB",icon:"🐱",price:16000,desc:"Cool Cats, Clone X и другие коллекции",items:[9,10,11,12,13]},
+ {name:"DOODLE DREAM",icon:"🖍️",price:32000,desc:"Арт-аватары и популярные коллекции",items:[7,8,9,10,11]},
+ {name:"AZUKI GARDEN",icon:"🎴",price:40000,desc:"Аниме-стиль и коллекционные аватары",items:[7,8,9,10]},
+ {name:"MOON VAULT",icon:"🦉",price:48000,desc:"Редкие коллекционные серии",items:[6,7,8,9]},
+ {name:"MEGA COLLECTOR",icon:"🧊",price:80000,desc:"Meebits и другие заметные коллекции",items:[5,6,7,8]},
+ {name:"MILADY CLUB",icon:"👩‍🎤",price:144000,desc:"Коллекционные аватары высокого уровня",items:[5,11,12]},
+ {name:"MUTANT LAB",icon:"🧬",price:168000,desc:"Mutant Ape Yacht Club и редкие аватары",items:[5,6,11]},
+ {name:"PUDGY PARTY",icon:"🐧",price:448000,desc:"Коллекция Pudgy Penguins",items:[6,13,17]},
+ {name:"APE SOCIETY",icon:"🐵",price:1096000,desc:"Bored Ape Yacht Club и близкие по уровню коллекции",items:[4,5,6]},
+ {name:"PUNK LEGACY",icon:"👑",price:5357000,desc:"Легендарные CryptoPunks",items:[0,1,2,3]},
+ {name:"NFT WHALE",icon:"🐳",price:1096000,desc:"Премиальная подборка blue-chip NFT",items:[0,4,5,6]},
+ {name:"SKEBOB GRAIL",icon:"🏆",price:5357000,desc:"Самые дорогие коллекционные NFT в игре",items:[0,1,2,3,4]}
 ];
 const DAILY_CASE_COOLDOWN=
 24*60*60*1000;
