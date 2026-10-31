@@ -7043,9 +7043,9 @@ function tttWinner(a){for(const [x,y,z] of [[0,1,2],[3,4,5],[6,7,8],[0,3,6],[1,4
 function tttRender(){const g=document.getElementById("tttGrid");g.innerHTML="";ttt.forEach((v,i)=>{const b=document.createElement("button");b.textContent=v||"　";b.style.cssText="aspect-ratio:1;font-size:35px;border-radius:10px;background:var(--panel2);color:var(--text);border:1px solid var(--border)";b.disabled=!!v||!tttActive;b.onclick=()=>tttMove(i);g.appendChild(b)})}
 function tttFinish(w){tttActive=false;if(w==="X"){const n=gamePay(tttBetValue,2);document.getElementById("tttStatus").textContent="🏆 Ты победил! Выплата "+n+" 🪙"}else if(w==="draw"){state.balance+=tttBetValue;save();document.getElementById("tttStatus").textContent="Ничья — ставка возвращена."}else{save();document.getElementById("tttStatus").textContent="🤖 Бот победил. Попробуй ещё!"}tttRender()}
 function tttMove(i){if(!tttActive||ttt[i])return;ttt[i]="X";let w=tttWinner(ttt);if(w){tttRender();tttFinish(w);return}let free=ttt.map((v,i)=>v? -1:i).filter(i=>i>=0);ttt[free[Math.floor(Math.random()*free.length)]]="O";w=tttWinner(ttt);tttRender();if(w)tttFinish(w);else document.getElementById("tttStatus").textContent="Твой ход — ❌"}
-function dartThrow(){const b=gameBet("dartBet");if(!b){alert("Нужна ставка от 100");return}state.balance-=b;const aim=+document.getElementById("dartAim").value,power=+document.getElementById("dartPower").value;const accuracy=Math.max(0,100-Math.abs(aim-50)*1.5-Math.abs(power-60)*.7+(Math.random()*24-12));const score=accuracy>88?50:accuracy>68?25:accuracy>45?10:0;const mult=score===50?3:score===25?1.5:score===10?.5:0;const win=mult?gamePay(b,mult):0;if(!mult)save();const spread=(100-accuracy)/100*.72,px=.5+(aim-50)/100*.5+(Math.random()-.5)*spread,py=.5+(power-60)/100*.35+(Math.random()-.5)*spread;drawDartScene(px,py,true);document.getElementById("dartResult").textContent="🎯 Очки: "+score+" · "+(win?"Выплата "+win+" 🪙":"Мимо!");}
+
 function poolShot(){const b=gameBet("poolBet");if(!b){alert("Нужна ставка от 100");return}state.balance-=b;const a=+document.getElementById("poolAngle").value,p=+document.getElementById("poolPower").value;const chance=Math.max(5,65-Math.abs(a-90)*.45-Math.abs(p-65)*.35);const ok=Math.random()*100<chance;const m=ok?(p>85?3:2):0;const w=m?gamePay(b,m):0;if(!m)save();poolAnimFrame=0;const tick=()=>{poolAnimFrame++;drawPoolScene(true,a,p);if(poolAnimFrame<30)requestAnimationFrame(tick)};requestAnimationFrame(tick);document.getElementById("poolResult").textContent=ok?"🎱 Шар в лузе! Выплата "+w+" 🪙":"Шар не попал в лузу. Попробуй ещё!";}
-function bowlThrow(){const b=gameBet("bowlBet");if(!b){alert("Нужна ставка от 100");return}state.balance-=b;const aim=+document.getElementById("bowlAim").value,p=+document.getElementById("bowlPower").value;let pins=Math.max(0,Math.min(10,Math.round(10-Math.abs(aim-50)/9-Math.abs(p-78)/18+(Math.random()*4-2))));const m=pins===10?3:pins>=8?2:pins>=6?1:0;const w=m?gamePay(b,m):0;if(!m)save();let n=0;const tick=()=>{n++;drawBowlingScene(n/28,n>=25?10-pins:0);if(n<28)requestAnimationFrame(tick)};requestAnimationFrame(tick);document.getElementById("bowlPins").textContent=(pins===10?"STRIKE":"СБИТО КЕГЛЕЙ: "+pins)+" / 10";document.getElementById("bowlResult").textContent=pins===10?"STRIKE! Выплата "+w+" 🪙":"Сбито кеглей: "+pins+" · "+(w?"Выплата "+w+" 🪙":"Без выигрыша");}
+
 let chBetValue=0,chMult=1,chActive=false,chStepCount=0,chAnim=0,chCrash=false;
 function chRoundRect(c,x,y,w,h,r){c.beginPath();c.roundRect(x,y,w,h,r);c.fill()}
 function chDraw(){
@@ -7096,17 +7096,7 @@ function chickenCash(){if(!chActive)return;chActive=false;const w=gamePay(chBetV
 
 /* Detailed arcade scene renderers */
 function sceneCanvas(id){const c=document.getElementById(id);if(!c)return null;const w=c.clientWidth||640,h=Math.round(w*(id==="poolCanvas" ? .5625 : .625)),d=Math.min(window.devicePixelRatio||1,2);c.width=Math.round(w*d);c.height=Math.round(h*d);const x=c.getContext("2d");x.setTransform(d,0,0,d,0,0);return {c,x,w,h}}
-function drawDartScene(px=.5,py=.5,show=false){
- const z=sceneCanvas("dartCanvas");if(!z)return;const {x:c,w,h}=z,ox=w/2,oy=h/2,r=Math.min(w,h)*.405;
- const bg=c.createLinearGradient(0,0,w,h);bg.addColorStop(0,"#26323b");bg.addColorStop(1,"#0c141b");c.fillStyle=bg;c.fillRect(0,0,w,h);
- for(let i=0;i<45;i++){c.fillStyle="rgba(255,255,255,.025)";c.fillRect((i*83)%w,(i*47)%h,1,1)}
- c.save();c.translate(ox,oy);c.shadowColor="#000";c.shadowBlur=18;c.fillStyle="#080b0d";c.beginPath();c.arc(0,0,r+9,0,Math.PI*2);c.fill();
- const colors=["#d8d0b7","#171b20"];for(let n=0;n<20;n++){let a=(n*18-99)*Math.PI/180;c.save();c.rotate(a);c.fillStyle=colors[n%2];c.beginPath();c.moveTo(0,0);c.arc(0,0,r,a,a+Math.PI/10);c.closePath();c.fill();c.restore()}
- for(const [rr,col] of [[r*.94,"#c4bda8"],[r*.88,"#161a1e"],[r*.55,"#c4bda8"],[r*.49,"#171b20"],[r*.105,"#b83232"],[r*.045,"#d8c75b"]]){c.fillStyle=col;c.beginPath();c.arc(0,0,rr,0,Math.PI*2);c.fill()}
- for(let n=0;n<20;n++){const a=(n*18-99)*Math.PI/180;c.strokeStyle="#ffffff55";c.lineWidth=1;c.beginPath();c.moveTo(Math.cos(a)*r*.1,Math.sin(a)*r*.1);c.lineTo(Math.cos(a)*r*.94,Math.sin(a)*r*.94);c.stroke();c.fillStyle="#eee8d8";c.font="bold "+Math.max(9,r*.085)+"px Arial";c.textAlign="center";c.textBaseline="middle";c.fillText(String([20,1,18,4,13,6,10,15,2,17,3,19,7,16,8,11,14,9,12,5][n]),Math.cos(a)*r*1.08,Math.sin(a)*r*1.08)}
- c.restore();
- if(show){const tx=ox+(px-.5)*r*1.7,ty=oy+(py-.5)*r*1.7;c.save();c.translate(tx,ty);c.rotate(-.7);c.shadowColor="#000";c.shadowBlur=7;c.fillStyle="#b8c2ca";c.beginPath();c.moveTo(0,-24);c.lineTo(4,13);c.lineTo(0,18);c.lineTo(-4,13);c.closePath();c.fill();c.fillStyle="#d44a37";c.fillRect(-2,-28,4,12);c.restore();c.fillStyle="#f6d77b";c.font="bold 12px Arial";c.textAlign="center";c.fillText("БРОСОК",w/2,h-10)}
-}
+
 let poolAnimFrame=0,bowlAnimFrame=0;
 function drawPoolScene(animate=false,angle=90,power=55){
  const z=sceneCanvas("poolCanvas");if(!z)return;const {x:c,w,h}=z;
@@ -7119,17 +7109,9 @@ function drawPoolScene(animate=false,angle=90,power=55){
  balls.forEach((b,i)=>{let bx=x+tw*b[0],by=y+th*b[1];if(animate&&i===0){const a=angle*Math.PI/180,dist=poolAnimFrame*tw*.004*(power/55);bx+=Math.cos(a)*dist;by-=Math.sin(a)*dist}c.fillStyle="#0006";c.beginPath();c.ellipse(bx+2,by+4,br*1.1,br*.65,0,0,Math.PI*2);c.fill();const g=c.createRadialGradient(bx-br*.4,by-br*.45,1,bx,by,br);g.addColorStop(0,"#fff");g.addColorStop(.35,b[2]);g.addColorStop(1,"#101820");c.fillStyle=g;c.beginPath();c.arc(bx,by,br,0,Math.PI*2);c.fill();c.fillStyle="#ffffffaa";c.beginPath();c.arc(bx-br*.35,by-br*.35,br*.18,0,Math.PI*2);c.fill()});
  if(!animate){c.strokeStyle="#e9dfc7";c.lineWidth=2;c.beginPath();c.moveTo(x+tw*.28,y+th*.5);c.lineTo(x+tw*.61,y+th*.5);c.stroke()}
 }
-function drawBowlingScene(progress=0,fallen=0){
- const z=sceneCanvas("bowlCanvas");if(!z)return;const {x:c,w,h}=z;c.fillStyle="#101720";c.fillRect(0,0,w,h);
- const lane=c.createLinearGradient(0,0,0,h);lane.addColorStop(0,"#b17d49");lane.addColorStop(.45,"#d9b47b");lane.addColorStop(1,"#82552f");c.fillStyle=lane;c.beginPath();c.moveTo(w*.35,h*.08);c.lineTo(w*.65,h*.08);c.lineTo(w*.94,h*.98);c.lineTo(w*.06,h*.98);c.closePath();c.fill();
- c.strokeStyle="#f3d8a7";c.lineWidth=2;for(let i=0;i<7;i++){let xx=w*(.37+i*.043);c.beginPath();c.moveTo(xx,h*.1);c.lineTo(w*(.12+i*.126),h*.98);c.stroke()}
- c.fillStyle="#e6c997";c.fillRect(w*.345,h*.08,w*.31,h*.015);
- const pins=[];for(let row=0;row<4;row++)for(let col=0;col<=row;col++)pins.push([.5+(col-row/2)*.055,.19+row*.045]);
- pins.forEach(([px,py],i)=>{let xx=w*px,yy=h*py,down=i<fallen;c.save();c.translate(xx,yy);if(down)c.rotate((i%2?1:-1)*1.05);c.fillStyle="#0006";c.beginPath();c.ellipse(2,5,7,3,0,0,Math.PI*2);c.fill();c.fillStyle="#f2eee7";c.beginPath();c.ellipse(0,0,5.2,11,0,0,Math.PI*2);c.fill();c.fillStyle="#c83e37";c.fillRect(-4,-5,8,2);c.restore()});
- const bx=w*.5+(progress?Math.sin(progress*2)*w*.04:0),by=h*(.91-progress*.65);const rg=c.createRadialGradient(bx-8,by-10,2,bx,by,Math.max(9,w*.035));rg.addColorStop(0,"#fff");rg.addColorStop(.35,"#b9c4ce");rg.addColorStop(1,"#202b38");c.fillStyle="#0007";c.beginPath();c.ellipse(bx+3,by+8,w*.035,w*.015,0,0,Math.PI*2);c.fill();c.fillStyle=rg;c.beginPath();c.arc(bx,by,w*.035,0,Math.PI*2);c.fill();c.fillStyle="#293747";for(let k=0;k<3;k++){c.beginPath();c.arc(bx-3+k*4,by-2,1.5,0,Math.PI*2);c.fill()}
-}
+
 function animateCanvasShot(kind,draw){let n=0;const tick=()=>{n++;draw(n/24);if(n<24)requestAnimationFrame(tick)};requestAnimationFrame(tick)}
-function renderArcadeRealism(){drawDartScene();drawPoolScene();drawBowlingScene()}
+function renderArcadeRealism(){drawPoolScene()}
 
 
 /* PHYSICS PASS: last-six-games only */
@@ -7184,49 +7166,10 @@ function poolShot(){
  };
  requestAnimationFrame(step);
 }
-function dartThrow(){
- const b=gameBet("dartBet");if(!b){alert("Нужна ставка от 100");return}
- state.balance-=b;const aim=+document.getElementById("dartAim").value,power=+document.getElementById("dartPower").value;
- const accuracy=Math.max(0,100-Math.abs(aim-50)*1.5-Math.abs(power-60)*.7+(Math.random()*24-12));
- const score=accuracy>88?50:accuracy>68?25:accuracy>45?10:0,mult=score===50?3:score===25?1.5:score===10?.5:0,win=mult?gamePay(b,mult):0;if(!mult)save();
- const spread=(100-accuracy)/100*.72,tx=.5+(aim-50)/100*.5+(Math.random()-.5)*spread,ty=.5+(power-60)/100*.35+(Math.random()-.5)*spread;
- let n=0;const fly=()=>{n++;const t=n/24,ease=1-Math.pow(1-t,2);drawDartScene(.5+(tx-.5)*ease,.5+(ty-.5)*ease,true);if(n<24)requestAnimationFrame(fly);else document.getElementById("dartResult").textContent="🎯 Очки: "+score+" · "+(win?"Выплата "+win+" 🪙":"Мимо!")};
- requestAnimationFrame(fly);
-}
+
 
 
 /* Bowling pinfall animation with per-pin rotation and impact spread */
-let bowlKnockState=[];
-function drawBowlingScene(progress=0,fallen=0){
- const z=sceneCanvas("bowlCanvas");if(!z)return;const {x:c,w,h}=z;
- const bg=c.createLinearGradient(0,0,0,h);bg.addColorStop(0,"#111a24");bg.addColorStop(1,"#05090e");c.fillStyle=bg;c.fillRect(0,0,w,h);
- const lane=c.createLinearGradient(0,0,0,h);lane.addColorStop(0,"#a8794d");lane.addColorStop(.45,"#d8b77f");lane.addColorStop(1,"#80502e");
- c.fillStyle=lane;c.beginPath();c.moveTo(w*.35,h*.07);c.lineTo(w*.65,h*.07);c.lineTo(w*.96,h*.98);c.lineTo(w*.04,h*.98);c.closePath();c.fill();
- for(let i=0;i<9;i++){let xx=w*(.36+i*.035);c.strokeStyle="#fff2d033";c.lineWidth=1;c.beginPath();c.moveTo(xx,h*.08);c.lineTo(w*(.08+i*.105),h*.98);c.stroke()}
- c.fillStyle="#f1d7a6";c.fillRect(w*.345,h*.075,w*.31,h*.012);
- const pins=[];for(let row=0;row<4;row++)for(let col=0;col<=row;col++)pins.push([.5+(col-row/2)*.055,.18+row*.047]);
- pins.forEach(([px,py],i)=>{const knocked=bowlKnockState[i]||0,fall=Math.max(0,Math.min(1,(progress-knocked)*3.5));const xx=w*px+Math.sin(fall*1.4+i)*fall*w*.012,yy=h*py+fall*9;
-  c.save();c.translate(xx,yy);c.rotate((i%2?1:-1)*fall*1.38);
-  c.fillStyle="#0007";c.beginPath();c.ellipse(3,6,7,3,0,0,Math.PI*2);c.fill();
-  const pg=c.createLinearGradient(-5,0,5,0);pg.addColorStop(0,"#aeb5b9");pg.addColorStop(.35,"#fff");pg.addColorStop(1,"#c6cbd0");
-  c.fillStyle=pg;c.beginPath();c.moveTo(-3,9);c.bezierCurveTo(-7,1,-5,-12,-2,-15);c.quadraticCurveTo(0,-19,2,-15);c.bezierCurveTo(6,-9,7,1,3,9);c.closePath();c.fill();
-  c.fillStyle="#c83232";c.fillRect(-3,-8,6,2);c.fillRect(-3,-4,6,2);c.restore();
- });
- if(progress<.86){const bx=w*.5,by=h*(.92-progress*.78),rad=Math.max(9,w*.033),g=c.createRadialGradient(bx-rad*.35,by-rad*.4,1,bx,by,rad);g.addColorStop(0,"#fff");g.addColorStop(.35,"#aeb9c5");g.addColorStop(1,"#17212d");c.fillStyle="#0007";c.beginPath();c.ellipse(bx+4,by+rad*.7,rad*1.1,rad*.45,0,0,Math.PI*2);c.fill();c.fillStyle=g;c.beginPath();c.arc(bx,by,rad,0,Math.PI*2);c.fill();for(let k=0;k<3;k++){c.fillStyle="#26394d";c.beginPath();c.arc(bx-rad*.25+k*rad*.25,by-rad*.2,rad*.09,0,Math.PI*2);c.fill()}}
-}
-function bowlThrow(){
- const b=gameBet("bowlBet");if(!b){alert("Нужна ставка от 100");return}
- state.balance-=b;const aim=+document.getElementById("bowlAim").value,p=+document.getElementById("bowlPower").value;
- const pins=Math.max(0,Math.min(10,Math.round(10-Math.abs(aim-50)/9-Math.abs(p-78)/18+(Math.random()*2-1))));
- const mult=pins===10?3:pins>=8?2:pins>=6?1:0,win=mult?gamePay(b,mult):0;if(!mult)save();
- bowlKnockState=Array.from({length:10},(_,i)=>i<pins?.58+i*.018:2);
- let n=0;const tick=()=>{n++;drawBowlingScene(n/32,pins);if(n<32)requestAnimationFrame(tick);else drawBowlingScene(1,pins)};
- requestAnimationFrame(tick);
- document.getElementById("bowlPins").textContent=(pins===10?"STRIKE":"СБИТО КЕГЛЕЙ: "+pins)+" / 10";
- document.getElementById("bowlResult").textContent=pins===10?"STRIKE! Выплата "+win+" 🪙":"Сбито кеглей: "+pins+" · "+(win?"Выплата "+win+" 🪙":"Без выигрыша");
-}
-
-
 /* FINAL SIX: smarter opponent and fleet placement */
 function bsBuildFleet(){
  const fleet=[],occupied=new Set(),sizes=[3,2,2,1,1];
