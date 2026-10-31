@@ -7772,8 +7772,6 @@ function initNickname(){
    const m=document.getElementById("nicknameModal");
    if(m){m.style.display="flex";const i=document.getElementById("nicknameInput");if(i)setTimeout(()=>i.focus(),250);}
   }
- }else if(bjIsOfficialNickname(nick)&&!bjRequestOfficialCode()){
-  nick=randomNickname();storageSet(NICKNAME_KEY,nick);
  }
  updateNicknameUI();
 }
@@ -7781,7 +7779,6 @@ function saveFirstNickname(){
  const i=document.getElementById("nicknameInput"),nick=(i?.value||"").trim().replace(/\s+/g," ").slice(0,18);
  if(nick.length<2){alert("Ник должен содержать минимум 2 символа.");return;}
  if(bjNickTaken(nick)){alert("Этот nickname уже занят игроком за столом. Придумай другой.");return;}
- if(bjIsOfficialNickname(nick)&&!bjRequestOfficialCode())return;
  if(!storageSet(NICKNAME_KEY,nick)){alert("Не удалось сохранить nickname. Попробуй ещё раз.");return;}
  const m=document.getElementById("nicknameModal");if(m)m.style.display="none";
  updateNicknameUI();
