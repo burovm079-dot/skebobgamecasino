@@ -1,0 +1,46 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>SKEBOB — бесплатные мини-игры</title>
+<style>
+:root{color-scheme:dark;--bg:#0b0c11;--panel:#191d27;--line:#394354;--gold:#f4c75e;--text:#f5f6fa;--muted:#aab2c2}
+*{box-sizing:border-box}body{margin:0;background:radial-gradient(circle at top,#1b2638,var(--bg) 55%);color:var(--text);font:16px Arial,sans-serif}
+header{padding:18px;display:flex;justify-content:space-between;align-items:center;gap:12px;border-bottom:1px solid var(--line)}h1{font-size:20px;margin:0}a,button{cursor:pointer}a{color:var(--gold);text-decoration:none}
+main{max-width:850px;margin:auto;padding:18px}.intro{color:var(--muted);line-height:1.5}.tabs{display:flex;gap:8px;flex-wrap:wrap;margin:18px 0}.tabs button,.action{border:1px solid var(--line);background:#252d3b;color:var(--text);padding:12px 15px;border-radius:11px;font-weight:800}.tabs button.active,.action.primary{background:linear-gradient(110deg,#d7a83f,#f5d77c);color:#17120a;border:0}
+.game{display:none;background:var(--panel);border:1px solid var(--line);border-radius:18px;padding:18px}.game.active{display:block}h2{margin-top:0;color:var(--gold)}.status{min-height:26px;color:#d9e3f4;margin:12px 0}.muted{color:var(--muted);font-size:13px}
+.grid{display:grid;gap:8px;margin:16px auto;max-width:350px}.ttt{grid-template-columns:repeat(3,1fr)}.ttt button{aspect-ratio:1;font-size:42px;border-radius:12px;border:1px solid #526078;background:#222c3a;color:white}.memory{grid-template-columns:repeat(4,1fr);max-width:430px}.memory button{aspect-ratio:1;border-radius:12px;border:1px solid #526078;background:#263246;color:white;font-size:clamp(22px,6vw,34px)}.memory button:disabled{opacity:1;background:#354c42}
+.reaction-area{height:230px;display:grid;place-items:center;border:1px dashed #63728b;border-radius:15px;background:#111925;margin:15px 0}.target{width:100px;height:100px;border:0;border-radius:50%;background:#f4c75e;color:#17120a;font-size:38px;font-weight:900;display:none}.target.ready{display:block}.score{font-size:24px;font-weight:900;color:var(--gold)}
+@media(max-width:480px){main{padding:12px}.game{padding:14px}.tabs button{flex:1}}
+</style></head>
+<body>
+<header><h1>🎮 SKEBOB ARCADE</h1><a href="./index.html">← На главную</a></header>
+<main>
+<h2>Бесплатные мини-игры</h2><p class="intro">Три небольшие игры без ставок, покупок, баланса и денежных призов. Прогресс раунда хранится только на этой странице.</p>
+<div class="tabs" role="tablist">
+<button class="active" data-game="ttt">⭕ Крестики-нолики</button><button data-game="memory">🧠 Память</button><button data-game="reaction">⚡ Реакция</button>
+</div>
+<section id="ttt" class="game active"><h2>Крестики-нолики</h2><p class="muted">Ты играешь за ❌, компьютер — за ⭕.</p><div id="tttGrid" class="grid ttt"></div><div id="tttStatus" class="status" aria-live="polite">Твой ход.</div><button class="action primary" id="tttReset">Новая партия</button></section>
+<section id="memory" class="game"><h2>Найди пары</h2><p class="muted">Открой две карточки и найди все одинаковые символы.</p><div id="memoryGrid" class="grid memory"></div><div id="memoryStatus" class="status" aria-live="polite">Найдено пар: 0 из 8</div><button class="action primary" id="memoryReset">Перемешать карточки</button></section>
+<section id="reaction" class="game"><h2>Проверка реакции</h2><p class="muted">Нажми «Старт», дождись появления круга и нажми на него как можно быстрее.</p><button id="reactionStart" class="action primary">Старт</button><div class="reaction-area"><button id="reactionTarget" class="target" aria-label="Нажми на круг">●</button><span id="reactionHint">Круг появится после случайной паузы.</span></div><div class="status" id="reactionStatus" aria-live="polite">Лучшее время: —</div></section>
+</main>
+<script>
+const $=id=>document.getElementById(id);
+document.querySelectorAll("[data-game]").forEach(b=>b.addEventListener("click",()=>{document.querySelectorAll("[data-game]").forEach(x=>x.classList.toggle("active",x===b));document.querySelectorAll(".game").forEach(x=>x.classList.toggle("active",x.id===b.dataset.game));}));
+let board=Array(9).fill(""),ended=false;
+function winner(a){for(const [x,y,z] of [[0,1,2],[3,4,5],[6,7,8],[0,3,6],[1,4,7],[2,5,8],[0,4,8],[2,4,6]])if(a[x]&&a[x]===a[y]&&a[y]===a[z])return a[x];return a.every(Boolean)?"draw":""}
+function drawTtt(){const g=$("tttGrid");g.innerHTML="";board.forEach((v,i)=>{const b=document.createElement("button");b.textContent=v;b.disabled=!!v||ended;b.setAttribute("aria-label","Клетка "+(i+1));b.addEventListener("click",()=>move(i));g.append(b)})}
+function finishTtt(){const w=winner(board);if(!w)return false;ended=true;$("tttStatus").textContent=w==="draw"?"Ничья!":w==="X"?"Ты победил!":"Компьютер победил.";drawTtt();return true}
+function move(i){if(ended||board[i])return;board[i]="X";if(finishTtt())return;const free=board.map((v,j)=>v?null:j).filter(v=>v!==null);if(free.length){const winMove=(mark)=>free.find(j=>{const t=board.slice();t[j]=mark;return winner(t)===mark});const choice=winMove("O")??winMove("X")??free[Math.floor(Math.random()*free.length)];board[choice]="O"}finishTtt();drawTtt()}
+function resetTtt(){board=Array(9).fill("");ended=false;$("tttStatus").textContent="Твой ход.";drawTtt()}
+$("tttReset").addEventListener("click",resetTtt);resetTtt();
+const symbols=["🍀","⭐","🍉","🎈","🐱","🚀","💎","🌙"];let cards=[],opened=[],matched=0,lock=false,moves=0;
+function resetMemory(){cards=[...symbols,...symbols].sort(()=>Math.random()-.5);opened=[];matched=0;moves=0;lock=false;drawMemory();$("memoryStatus").textContent="Найдено пар: 0 из 8 · Ходы: 0"}
+function drawMemory(){const g=$("memoryGrid");g.innerHTML="";cards.forEach((v,i)=>{const b=document.createElement("button");b.textContent=opened.includes(i)||b.dataset.done?"": "？";if(opened.includes(i)||matchedCards.has(i))b.textContent=v;b.disabled=opened.includes(i)||matchedCards.has(i)||lock;b.addEventListener("click",()=>flip(i));g.append(b)})}
+let matchedCards=new Set();
+function flip(i){if(lock||opened.includes(i)||matchedCards.has(i))return;opened.push(i);drawMemory();if(opened.length===2){moves++;const [a,b]=opened;if(cards[a]===cards[b]){matchedCards.add(a);matchedCards.add(b);matched++;opened=[];$("memoryStatus").textContent="Найдено пар: "+matched+" из 8 · Ходы: "+moves;if(matched===8)$("memoryStatus").textContent+=" · Отличная работа!" ;drawMemory()}else{lock=true;$("memoryStatus").textContent="Не совпало — попробуй ещё раз. Ходы: "+moves;setTimeout(()=>{opened=[];lock=false;drawMemory()},750)}}}
+$("memoryReset").addEventListener("click",()=>{matchedCards=new Set();resetMemory()});matchedCards=new Set();resetMemory();
+let waitTimer=null,shownAt=0,best=null,waiting=false;
+$("reactionStart").addEventListener("click",()=>{clearTimeout(waitTimer);waiting=true;$("reactionTarget").classList.remove("ready");$("reactionHint").textContent="Жди…";$("reactionStatus").textContent="";$("reactionStart").disabled=true;waitTimer=setTimeout(()=>{shownAt=performance.now();$("reactionTarget").classList.add("ready");$("reactionHint").textContent="ЖМИ!";},900+Math.random()*2600)});
+$("reactionTarget").addEventListener("click",()=>{if(!waiting||!shownAt)return;const ms=Math.round(performance.now()-shownAt);best=best===null?ms:Math.min(best,ms);waiting=false;shownAt=0;$("reactionTarget").classList.remove("ready");$("reactionHint").textContent="Готово!";$("reactionStatus").textContent="Твоя реакция: "+ms+" мс · Лучшее время: "+best+" мс";$("reactionStart").disabled=false});
+</script></body></html>
