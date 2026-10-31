@@ -3753,11 +3753,7 @@ progressText=
 total.toLocaleString("ru-RU")+
 " / 10 000 🪙 до уровня ИГРОК";
 
-}
-
-const ownerEntry=document.getElementById("officialAdminEntry");if(ownerEntry)ownerEntry.classList.toggle("hidden",!isProtectedOfficialNick(getNickname()));
-
-else if(info.id==="player"){
+}else if(info.id==="player"){
 
 progress=
 Math.min(
@@ -3779,6 +3775,9 @@ progressText=
 "👑 Высший уровень — лимиты сняты";
 
 }
+
+const ownerEntry=document.getElementById("officialAdminEntry");
+if(ownerEntry)ownerEntry.classList.toggle("hidden",!isProtectedOfficialNick(getNickname()));
 
 const progressBar=
 document.getElementById(
