@@ -2734,22 +2734,39 @@ id="profileBalance"
 </div></section>
 
 
-<!-- BLACKJACK -->
+<!-- BLACKJACK ONLINE: no-stakes social mode -->
 <section id="blackjack" class="hidden">
-<h2>🃏 BLACKJACK</h2>
-<p class="small">Ты против дилера. За столом могут появиться до трёх случайных ботов. Цель — набрать ближе к 21, не перебрав.</p>
+<h2>🃏 BLACKJACK ONLINE</h2>
+<p class="small">До 4 игроков в комнате. Каждый играет отдельно против общего дилера. Только бесплатная игра — без ставок и выплат.</p>
+<div class="panel">
+ <label for="bjOnlineName">ТВОЁ ИМЯ</label>
+ <input id="bjOnlineName" maxlength="18" placeholder="Например, Player123">
+ <div class="game-control">
+  <label for="bjRoomCode">КОД КОМНАТЫ (оставь пустым для поиска)</label>
+  <input id="bjRoomCode" maxlength="6" placeholder="Автоматический подбор">
+ </div>
+ <div class="bj-actions">
+  <button class="game-main" id="bjOnlineJoin" onclick="bjOnlineJoin()">🌐 НАЙТИ ИГРОКОВ</button>
+  <button class="secondary" id="bjOnlineLeave" onclick="bjOnlineLeave()" disabled>ВЫЙТИ</button>
+ </div>
+ <div class="game-status" id="bjOnlineStatus">Подключись к комнате. Поиск длится до 60 секунд.</div>
+ <div class="small" id="bjOnlineRoomLabel">Комната: —</div>
+ <div id="bjOnlinePlayers" class="bj-players"></div>
+ <div class="small" id="bjOnlineCountdown"></div>
+</div>
 <div class="bj-table">
- <div class="bj-dealer"><div class="bj-seat-name">🎩 ДИЛЕР</div><div class="bj-cards" id="bjDealerCards"><span class="bj-card">?</span></div><div class="small" id="bjDealerScore">Ожидает игроков</div></div>
+ <div class="bj-dealer"><div class="bj-seat-name">🎩 ОБЩИЙ ДИЛЕР</div><div class="bj-cards" id="bjOnlineDealerCards"><span class="bj-card">?</span></div><div class="small" id="bjOnlineDealerScore">Ожидает начала раунда</div></div>
  <div class="bj-divider">BLACKJACK TABLE</div>
- <div class="bj-players" id="bjPlayers"></div>
- <div class="bj-you"><div class="bj-seat-name">😎 ТЫ</div><div class="bj-cards" id="bjYourCards"><span class="bj-card">?</span></div><div class="small" id="bjYourScore">Твои карты появятся здесь</div></div>
+ <div class="bj-you"><div class="bj-seat-name">😎 ТВОИ КАРТЫ</div><div class="bj-cards" id="bjOnlineYourCards"><span class="bj-card">?</span></div><div class="small" id="bjOnlineYourScore">Карты появятся после старта</div></div>
+ <div class="small" id="bjOnlineResult"></div>
 </div>
 <div class="panel">
- <div class="game-control"><label>СТАВКА</label><div class="bet-main"><button onclick="changeBjBet(-1)">−</button><input id="bjBet" type="number" min="10" step="10" value="100" oninput="updateBjControls()"><button onclick="changeBjBet(1)">+</button></div>
- <div class="bet-presets"><button onclick="setBjBet(100)">100</button><button onclick="setBjBet(500)">500</button><button onclick="setBjBet(1000)">1K</button><button onclick="setBjBet(5000)">5K</button><button onclick="setBjBet('max')">MAX</button></div></div>
- <div class="bj-actions"><button class="game-main" id="bjDeal" onclick="startBlackjack()">🃏 РАЗДАТЬ КАРТЫ</button><button class="secondary" id="bjHit" onclick="bjHit()" disabled>ЕЩЁ КАРТУ</button><button class="secondary" id="bjStand" onclick="bjStand()" disabled>ХВАТИТ</button><button class="secondary" id="bjDouble" onclick="bjDouble()" disabled>УДВОИТЬ</button></div>
- <div class="game-status" id="bjStatus">Сделай ставку и начинай игру.</div>
- <div class="small">Победа — x2 · Блэкджек — x2.5 · Ничья — возврат. Удвоение доступно на первых двух картах: ставка ×2, ровно одна карта и автоматическое завершение хода. Если у дилера блэкджек, раунд завершается сразу. Дилер берёт карты до 17.</div>
+ <div class="bj-actions">
+  <button class="game-main" id="bjOnlineStart" onclick="bjOnlineStart()" disabled>🃏 НАЧАТЬ РАУНД</button>
+  <button class="secondary" id="bjOnlineHit" onclick="bjOnlineHit()" disabled>ЕЩЁ КАРТУ</button>
+  <button class="secondary" id="bjOnlineStand" onclick="bjOnlineStand()" disabled>ХВАТИТ</button>
+ </div>
+ <div class="small">Правила: цель — набрать ближе к 21, не превышая 21. Дилер берёт карты до 17. Победа, поражение или ничья считаются отдельно для каждого игрока.</div>
 </div>
 </section>
 
@@ -3165,6 +3182,9 @@ onclick="adminGive()"
 
 </main>
 
+
+<!-- Supabase Realtime client for no-stakes blackjack rooms -->
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
 
 /* =========================
@@ -7674,6 +7694,103 @@ setInterval(updateSecretDrop,1000);
  setTimeout(()=>splash.classList.add("splash-hidden"),duration);
 })();
 
+
+
+/* BLACKJACK ONLINE — Supabase Realtime, no wagers or payouts */
+const BJ_ONLINE_URL="https://quglxnyhtqoojzbimtmv.supabase.co";
+const BJ_ONLINE_KEY="sb_publishable_qm5CyU510e0Yu1ayUq4tlw_je8hQhbL";
+let bjOnlineClient=null,bjOnlineChannel=null,bjOnlineRoom="",bjOnlineId="",bjOnlineHost=false;
+let bjOnlineMembers=[],bjOnlineTimer=null,bjOnlineSeconds=60,bjOnlineRound=null,bjOnlineMyHand=[],bjOnlineDealer=null,bjOnlineMyTurn=false;
+const bjOnlineName=()=>((document.getElementById("bjOnlineName")?.value||"").trim().slice(0,18)||"Player");
+const bjOnlineCard=()=>({rank:["A","2","3","4","5","6","7","8","9","10","J","Q","K"][Math.floor(Math.random()*13)],suit:["♠","♥","♦","♣"][Math.floor(Math.random()*4)]});
+function bjOnlineValue(hand){let n=0,a=0;for(const c of hand){if(c.rank==="A"){n+=11;a++}else n+=["J","Q","K"].includes(c.rank)?10:Number(c.rank)}while(n>21&&a-- >0)n-=10;return n}
+function bjOnlineDraw(hand){hand.push(bjOnlineCard())}
+function bjOnlineRender(){
+ const d=document.getElementById("bjOnlineDealerCards"),y=document.getElementById("bjOnlineYourCards");
+ if(d)d.innerHTML=bjOnlineDealer?bjHandHTML(bjOnlineDealer.cards||[],!bjOnlineDealer.revealed):'<span class="bj-card">?</span>';
+ if(y)y.innerHTML=bjOnlineMyHand.length?bjHandHTML(bjOnlineMyHand):'<span class="bj-card">?</span>';
+ const ds=document.getElementById("bjOnlineDealerScore"),ys=document.getElementById("bjOnlineYourScore");
+ if(ds)ds.textContent=bjOnlineDealer?(bjOnlineDealer.revealed?"Очки дилера: "+bjOnlineValue(bjOnlineDealer.cards):"Открытая карта: "+bjOnlineValue([bjOnlineDealer.cards[0]])):"Ожидает начала раунда";
+ if(ys)ys.textContent=bjOnlineMyHand.length?"Твои очки: "+bjOnlineValue(bjOnlineMyHand):"Карты появятся после старта";
+ const box=document.getElementById("bjOnlinePlayers");
+ if(box)box.innerHTML=bjOnlineMembers.map(p=>'<div class="bj-bot"><div class="bj-seat-name">👤 '+bjEscape(p.name)+'</div><div class="small">'+(p.done?"Завершил ход":p.id===bjOnlineId?"Это ты":"В комнате")+'</div></div>').join("");
+ const start=document.getElementById("bjOnlineStart"),hit=document.getElementById("bjOnlineHit"),stand=document.getElementById("bjOnlineStand");
+ if(start)start.disabled=!bjOnlineHost||bjOnlineMembers.length===0||!!bjOnlineRound&&!bjOnlineRound.finished;
+ if(hit)hit.disabled=!bjOnlineMyTurn;
+ if(stand)stand.disabled=!bjOnlineMyTurn;
+}
+function bjEscape(v){return String(v).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]))}
+function bjOnlineStatus(t){const e=document.getElementById("bjOnlineStatus");if(e)e.textContent=t}
+function bjOnlineSend(event,payload){if(bjOnlineChannel)bjOnlineChannel.send({type:"broadcast",event,payload})}
+async function bjOnlineJoin(){
+ if(bjOnlineChannel)return;
+ if(!window.supabase?.createClient){bjOnlineStatus("Не удалось загрузить Supabase. Обнови страницу и попробуй снова.");return}
+ bjOnlineClient=bjOnlineClient||window.supabase.createClient(BJ_ONLINE_URL,BJ_ONLINE_KEY);
+ bjOnlineId=crypto.randomUUID?crypto.randomUUID():String(Date.now())+Math.random();
+ bjOnlineRoom=(document.getElementById("bjRoomCode").value.trim().toUpperCase()||"QUICK");
+ bjOnlineHost=false;bjOnlineMembers=[];bjOnlineRound=null;bjOnlineMyHand=[];bjOnlineSeconds=60;
+ const channelName="bj-room-"+bjOnlineRoom;
+ bjOnlineChannel=bjOnlineClient.channel(channelName,{config:{presence:{key:bjOnlineId},broadcast:{self:true}}});
+ bjOnlineChannel.on("presence",{event:"sync"},()=>{const state=bjOnlineChannel.presenceState();bjOnlineMembers=Object.values(state).flat().map(x=>({id:x.id,name:x.name,done:!!x.done})).slice(0,4);bjOnlineMembers.sort((a,b)=>a.id.localeCompare(b.id));bjOnlineHost=bjOnlineMembers[0]?.id===bjOnlineId;bjOnlineRender()});
+ bjOnlineChannel.on("broadcast",{event:"round"},({payload})=>{if(payload.host!==bjOnlineMembers[0]?.id)return;bjOnlineRound={id:payload.id,finished:false};bjOnlineDealer={cards:payload.dealer,revealed:false};bjOnlineMyHand=[bjOnlineCard(),bjOnlineCard()];bjOnlineMyTurn=true;bjOnlineMyHand.length=0;bjOnlineDraw(bjOnlineMyHand);bjOnlineDraw(bjOnlineMyHand);bjOnlineRender();bjOnlineStatus("Раунд начался! Играй против общего дилера.")});
+ bjOnlineChannel.on("broadcast",{event:"dealer-final"},({payload})=>{if(!bjOnlineRound||payload.round!==bjOnlineRound.id)return;bjOnlineDealer={cards:payload.cards,revealed:true};bjOnlineRound.finished=true;bjOnlineMyTurn=false;bjOnlineRender();bjOnlineShowResult()});
+ bjOnlineChannel.on("broadcast",{event:"player-done"},({payload})=>{const p=bjOnlineMembers.find(x=>x.id===payload.id);if(p)p.done=true;bjOnlineRender()});
+ bjOnlineChannel.on("broadcast",{event:"room-full"},()=>bjOnlineStatus("Комната заполнена. Попробуй ещё раз."));
+ bjOnlineStatus("Подключаемся к комнате…");
+ const status=await bjOnlineChannel.subscribe(async st=>{
+  if(st==="SUBSCRIBED"){
+   await bjOnlineChannel.track({id:bjOnlineId,name:bjOnlineName(),done:false});
+   document.getElementById("bjOnlineJoin").disabled=true;document.getElementById("bjOnlineLeave").disabled=false;
+   document.getElementById("bjOnlineRoomLabel").textContent="Комната: "+bjOnlineRoom;
+   bjOnlineStatus("Ищем игроков. Ожидание — до 60 секунд.");
+   if(bjOnlineTimer)clearInterval(bjOnlineTimer);
+   bjOnlineTimer=setInterval(()=>{bjOnlineSeconds--;const c=document.getElementById("bjOnlineCountdown");if(c)c.textContent="До старта: "+Math.max(0,bjOnlineSeconds)+" сек.";if(bjOnlineSeconds<=0){clearInterval(bjOnlineTimer);if(bjOnlineHost)bjOnlineStart();else bjOnlineStatus("Время ожидания завершено. Ждём ведущего комнаты.");}},1000);
+  }else if(st==="CHANNEL_ERROR"||st==="TIMED_OUT"){bjOnlineStatus("Ошибка соединения. Проверь настройки Realtime и попробуй снова.");}
+ });
+}
+async function bjOnlineLeave(){
+ if(bjOnlineTimer)clearInterval(bjOnlineTimer);
+ if(bjOnlineChannel){await bjOnlineChannel.untrack();await bjOnlineClient.removeChannel(bjOnlineChannel)}
+ bjOnlineChannel=null;bjOnlineRoom="";bjOnlineMembers=[];bjOnlineRound=null;bjOnlineMyHand=[];bjOnlineDealer=null;bjOnlineMyTurn=false;
+ document.getElementById("bjOnlineJoin").disabled=false;document.getElementById("bjOnlineLeave").disabled=true;
+ document.getElementById("bjOnlineRoomLabel").textContent="Комната: —";document.getElementById("bjOnlineCountdown").textContent="";
+ bjOnlineStatus("Ты вышел из комнаты.");bjOnlineRender();
+}
+function bjOnlineStart(){
+ if(!bjOnlineHost||!bjOnlineChannel||bjOnlineMembers.length===0)return;
+ const dealer=[bjOnlineCard(),bjOnlineCard()];bjOnlineRound={id:Date.now().toString(),finished:false};
+ bjOnlineDealer={cards:dealer,revealed:false};bjOnlineMyHand=[];bjOnlineDraw(bjOnlineMyHand);bjOnlineDraw(bjOnlineMyHand);bjOnlineMyTurn=true;
+ bjOnlineSend("round",{id:bjOnlineRound.id,host:bjOnlineId,dealer});
+ bjOnlineRender();bjOnlineStatus("Раунд начался! Твой ход.");
+}
+function bjOnlineHit(){
+ if(!bjOnlineMyTurn||!bjOnlineRound||bjOnlineRound.finished)return;
+ bjOnlineDraw(bjOnlineMyHand);bjOnlineRender();
+ if(bjOnlineValue(bjOnlineMyHand)>=21)bjOnlineStand();
+}
+function bjOnlineStand(){
+ if(!bjOnlineMyTurn||!bjOnlineRound||bjOnlineRound.finished)return;
+ bjOnlineMyTurn=false;bjOnlineSend("player-done",{id:bjOnlineId,score:bjOnlineValue(bjOnlineMyHand)});
+ bjOnlineStatus("Ты завершил ход. Ждём завершения раунда.");
+ bjOnlineRender();
+ if(bjOnlineHost)bjOnlineFinishDealer();
+}
+function bjOnlineFinishDealer(){
+ if(!bjOnlineHost||!bjOnlineRound||bjOnlineRound.finished)return;
+ const allDone=bjOnlineMembers.every(p=>p.id===bjOnlineId||p.done);
+ if(!allDone)return;
+ const dealer=bjOnlineDealer.cards.slice();while(bjOnlineValue(dealer)<17)bjOnlineDraw(dealer);
+ bjOnlineDealer={cards:dealer,revealed:true};bjOnlineRound.finished=true;
+ bjOnlineSend("dealer-final",{round:bjOnlineRound.id,cards:dealer});
+ bjOnlineRender();bjOnlineShowResult();
+}
+function bjOnlineShowResult(){
+ if(!bjOnlineDealer?.revealed||!bjOnlineMyHand.length)return;
+ const p=bjOnlineValue(bjOnlineMyHand),d=bjOnlineValue(bjOnlineDealer.cards);
+ const result=p>21?"Перебор — проигрыш":d>21||p>d?"Ты победил дилера!":p===d?"Ничья!":"Дилер победил.";
+ const el=document.getElementById("bjOnlineResult");if(el)el.textContent=result+" Твои очки: "+p+" · Дилер: "+d;
+ bjOnlineStatus("Раунд завершён. Результат рассчитан только для твоей руки.");
+}
 
 </script>
 
