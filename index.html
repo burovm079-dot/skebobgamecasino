@@ -7654,7 +7654,9 @@ function closeChangeNickname(){
 }
 function saveChangedNickname(){
  const details=document.getElementById("nicknameEditorDetails");
- const input=details?.querySelector("input");
+ const modal=document.getElementById("changeNicknameModal");
+ const modalInput=document.getElementById("changeNicknameModalInput");
+ const input=modal&&modal.style.display==="flex"?modalInput:details?.querySelector("input");
  const status=document.getElementById("nicknameSaveStatus");
  const nick=String(input?.value||"").trim().replace(/\s+/g," ").slice(0,18);
  if(nick.length<2){if(status)status.textContent="Ник должен содержать минимум 2 символа.";return;}
@@ -7668,6 +7670,7 @@ function saveChangedNickname(){
  if(getNickname()===nick){
   if(status)status.textContent="Ник успешно изменён на: "+nick;
   if(details)details.open=false;
+  if(modal)modal.style.display="none";
  }else{
   if(status)status.textContent="Не удалось обновить ник. Попробуй ещё раз.";
  }
@@ -7801,7 +7804,7 @@ document.addEventListener("DOMContentLoaded",initNickname);
  <div style="width:100%;max-width:440px;background:var(--panel);border:2px solid var(--gold);border-radius:20px;padding:22px;box-shadow:0 15px 50px #0009">
   <h2 style="margin-top:0">✏️ Изменить nickname</h2>
   <p class="small">Новый ник будет виден в профиле и другим игрокам. От 2 до 18 символов.</p>
-  <input id="changeNicknameInput" maxlength="18" placeholder="Новый nickname" autocomplete="nickname">
+  <input id="changeNicknameModalInput" maxlength="18" placeholder="Новый nickname" autocomplete="nickname">
   <button class="goldbtn" onclick="saveChangedNickname()">СОХРАНИТЬ</button>
   <button class="secondary" style="width:100%;margin-top:8px" onclick="closeChangeNickname()">ОТМЕНА</button>
  </div>
