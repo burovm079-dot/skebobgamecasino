@@ -1209,6 +1209,139 @@ padding:14px;
 .claw-arrows button{touch-action:none;user-select:none;-webkit-user-select:none;min-width:118px;transition:filter .12s,transform .12s,box-shadow .12s}
 .claw-arrows button:active,.claw-arrows button.moving{transform:translateY(3px);box-shadow:0 1px 0 #090909;filter:brightness(1.3)}
 
+
+/* ===== SKEBOB CASINO LOBBY REDESIGN (visual only) ===== */
+:root{
+ --bg:#10051d;--panel:#1b0d2c;--panel2:#28113f;--panel3:#160a27;
+ --text:#fff8ff;--muted:#c0a9d4;--border:#8b3bd1;--border2:#512477;
+ --gold:#ffd66b;--gold2:#ffad25;--input:#211132;
+}
+body{
+ background:
+ radial-gradient(ellipse at 50% 8%,#65218c66 0,transparent 43%),
+ radial-gradient(ellipse at 5% 55%,#a54bff22 0,transparent 35%),
+ radial-gradient(ellipse at 95% 48%,#ff9d2420 0,transparent 32%),
+ linear-gradient(155deg,#10051d 0%,#1b082b 52%,#090414 100%);
+ background-attachment:fixed;
+}
+header{
+ position:relative;isolation:isolate;flex-wrap:wrap;
+ padding:18px clamp(14px,3vw,34px);
+ border:1px solid #7f35ba;border-top:0;border-radius:0 0 22px 22px;
+ background:linear-gradient(105deg,#160822f2,#260d3bf2 55%,#13071ff2);
+ box-shadow:0 10px 35px #0008,0 1px #ffffff18 inset;
+}
+header:after{
+ content:"";position:absolute;inset:0;z-index:-1;pointer-events:none;
+ background:radial-gradient(ellipse at 20% 0%,#ffbd4a22,transparent 42%),linear-gradient(90deg,transparent,#a13cff12,transparent);
+}
+.logo{font-size:clamp(23px,3vw,34px);letter-spacing:.5px;text-shadow:0 3px 0 #6d3100,0 0 22px #ffb52c88}
+.logo span{color:#ffd66b;text-shadow:0 0 16px #ffb52c99}
+.header-actions{flex-wrap:wrap;justify-content:flex-end}
+header button,.secondary{
+ background:linear-gradient(145deg,#32144e,#1b0d2c);border:1px solid #9c4bd4;
+ color:#fff2ff;border-radius:13px;box-shadow:0 4px 14px #0005,inset 0 1px #ffffff20;
+ transition:transform .18s,border-color .18s,filter .18s;
+}
+header button:hover,.secondary:hover{transform:translateY(-2px);border-color:#ffd66b;filter:brightness(1.12)}
+.balance{
+ max-width:1100px;margin:18px auto;padding:16px 22px;
+ background:linear-gradient(110deg,#2b1046,#180a2b 60%,#35133d);
+ border:1px solid #b36bff;border-radius:18px;
+ box-shadow:0 8px 28px #0007,0 0 22px #8d36d933,inset 0 1px #ffffff22;
+}
+.balance strong{color:#ffdc79;text-shadow:0 0 15px #ffb52c66}
+main{max-width:1120px;padding:12px 18px 55px}
+.nav{
+ display:grid;grid-template-columns:repeat(auto-fit,minmax(105px,1fr));
+ gap:9px;overflow:visible;margin:18px 0 24px;padding:14px;
+ background:linear-gradient(145deg,#1e0b31eF,#10071df2);
+ border:1px solid #7637a4;border-radius:20px;
+ box-shadow:0 12px 30px #0006,inset 0 1px #ffffff16;
+}
+.nav button{
+ min-width:0;flex:auto;background:linear-gradient(145deg,#32144e,#1c0c2d);
+ color:#e9d8f8;border:1px solid #63328b;border-radius:12px;
+ padding:13px 8px;font-size:11px;letter-spacing:.25px;
+ box-shadow:0 4px 10px #0004,inset 0 1px #ffffff16;
+ transition:transform .16s,border-color .16s,background .16s;
+}
+.nav button:hover{transform:translateY(-2px);border-color:#e5ae52}
+.nav button.active{
+ background:linear-gradient(115deg,#ffdc78,#ed9c22 60%,#c66b10);
+ color:#30133d;border:1px solid #ffe9a5;
+ box-shadow:0 0 18px #ffb52c66,0 4px 12px #0005;
+}
+#cases>h2{
+ color:#ffe08a;text-shadow:0 2px 0 #713c09,0 0 18px #b84dff66;
+ letter-spacing:.7px;margin:22px 0 14px;
+}
+#cases .daily-case{
+ position:relative;overflow:hidden;text-align:left;
+ display:grid;grid-template-columns:auto 1fr;align-items:center;column-gap:18px;
+ padding:22px 25px;
+ background:radial-gradient(circle at 12% 50%,#a04bff44,transparent 34%),linear-gradient(115deg,#38114f,#1a0b2b 62%,#4b1c35);
+ border:1px solid #e4a83f;border-radius:22px;
+ box-shadow:0 12px 30px #0008,0 0 24px #a33aff2b,inset 0 1px #ffffff25;
+}
+#cases .daily-case:after{
+ content:"✦  ✧  ✦";position:absolute;right:20px;top:12px;
+ color:#ffdc79;font-size:25px;letter-spacing:12px;opacity:.7;pointer-events:none;
+}
+#cases .daily-icon{grid-row:span 5;font-size:clamp(54px,8vw,88px);filter:drop-shadow(0 8px 12px #0008)}
+#cases .daily-case h2{margin:0 0 6px;color:#ffdc79}
+#cases .daily-case .small{max-width:560px}
+#cases .daily-prizes{flex-wrap:wrap;overflow:visible}
+#cases .daily-prize{background:#32134a;border-color:#a45acb;color:#ffdf8c}
+#cases .daily-channel,#cases #dailyCaseButton,#cases #dailyTimer,#cases #dailyResult{grid-column:2}
+#cases .daily-telegram{
+ background:linear-gradient(100deg,#6f35b8,#a34be0);border:1px solid #d69bff;
+ box-shadow:0 5px 15px #0005;
+}
+#caseList.cases{grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:13px}
+#caseList .case{
+ position:relative;overflow:hidden;min-height:175px;padding:18px 14px;
+ background:radial-gradient(ellipse at 50% 0%,#8e3cbd44,transparent 62%),linear-gradient(155deg,#32134a,#1a0a2a 72%);
+ border:1px solid #8745b6;border-radius:18px;
+ box-shadow:0 8px 18px #0006,inset 0 1px #ffffff20;
+ transition:transform .18s,border-color .18s,box-shadow .18s;
+}
+#caseList .case:hover{transform:translateY(-4px);border-color:#ffcf69;box-shadow:0 12px 24px #0008,0 0 18px #a13cff44}
+#caseList .case .pic{font-size:54px;filter:drop-shadow(0 7px 8px #0008)}
+#caseList .case h3,#caseList .case .price{color:#ffdc79}
+#caseList .case .goldbtn,.daily-case .goldbtn{
+ background:linear-gradient(110deg,#ffe18a,#f6ad2e 55%,#d87b13);
+ color:#351329;border:1px solid #fff0b1;
+ box-shadow:0 5px 15px #0006,0 0 14px #ffb52c33;
+}
+.panel,.case{
+ background:linear-gradient(145deg,#251039,#170a27);
+ border-color:#66318d;box-shadow:0 7px 20px #0004,inset 0 1px #ffffff12;
+}
+body.light{
+ --bg:#f2eafa;--panel:#fffaff;--panel2:#f0e4fa;--panel3:#fffaff;
+ --text:#281538;--muted:#79658a;--border:#bd8bda;--border2:#d8c1e8;--input:#f7effb;
+}
+body.light header,body.light .nav,body.light .balance{background:linear-gradient(110deg,#fffaff,#f0e3fb)}
+body.light .nav button{background:linear-gradient(145deg,#fff,#f1e4fb);color:#513267}
+body.light .nav button.active{background:linear-gradient(115deg,#ffdc78,#ed9c22);color:#30133d}
+body.light #caseList .case,body.light .panel{background:linear-gradient(145deg,#fffaff,#f2e5fb)}
+@media(max-width:620px){
+ header{justify-content:center}
+ .logo{width:100%;text-align:center}
+ .header-actions{justify-content:center}
+ .balance{margin:12px 10px;padding:13px 15px}
+ main{padding:8px 11px 40px}
+ .nav{grid-template-columns:repeat(3,minmax(0,1fr));gap:7px;padding:10px}
+ .nav button{font-size:10px;padding:12px 4px}
+ #cases .daily-case{grid-template-columns:1fr;text-align:center;padding:18px}
+ #cases .daily-icon{grid-row:auto;font-size:54px}
+ #cases .daily-channel,#cases #dailyCaseButton,#cases #dailyTimer,#cases #dailyResult{grid-column:1}
+ #caseList.cases{grid-template-columns:repeat(2,minmax(0,1fr));gap:9px}
+ #caseList .case{padding:13px 8px;min-height:155px}
+ #caseList .case .pic{font-size:43px}
+}
+
 </style>
 </head>
 
