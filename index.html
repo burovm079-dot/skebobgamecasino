@@ -3079,27 +3079,27 @@ SKEBOB:{reward:50}
 // NFT-кейсы: 80 🪙 = $1. Стоимости — игровые ориентиры коллекций.
 const nftImage = id => "https://www.larvalabs.com/public/images/cryptopunks/punk" + String(id).padStart(4,"0") + ".png";
 const nftCollections = [
- {name:"CryptoPunk #0",collection:"CryptoPunks",image:nftImage(0),value:5357120,icon:"👾"},
- {name:"CryptoPunk #1",collection:"CryptoPunks",image:nftImage(1),value:5357120,icon:"👾"},
- {name:"CryptoPunk #2",collection:"CryptoPunks",image:nftImage(2),value:5357120,icon:"👾"},
- {name:"CryptoPunk #3",collection:"CryptoPunks",image:nftImage(3),value:5357120,icon:"👾"},
- {name:"Bored Ape Yacht Club NFT",collection:"Bored Ape Yacht Club",image:"https://files.amberblocks.com/thumbnail/chnbzaa92ook5tnj/posts/pw43pite3id9ypvc/f94fg2yyku02jgfdtkzqgd4aflrwsxi3/nft-quay-tro-lai.jpg",value:1093200,icon:"🐵"},
- {name:"Mutant Ape Yacht Club NFT",collection:"Mutant Ape Yacht Club",image:"https://dl-migration-assets.s3.eu-central-1.amazonaws.com/images/1772087923060.webp",value:168000,icon:"🧬"},
- {name:"Pudgy Penguins NFT",collection:"Pudgy Penguins",image:"https://magnft.com/wp-content/uploads/2024/11/what-is-pudgy-penguins-2024-1-nfts.webp",value:444800,icon:"🐧"},
- {name:"Azuki NFT",collection:"Azuki",image:"https://substackcdn.com/image/fetch/%24s_%21Mf0v%21%2Cf_auto%2Cq_auto%3Agood%2Cfl_progressive%3Asteep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2F83b485ef-ccfb-4508-bb78-dfafc0a52ad0_1600x796.png",value:39200,icon:"🎴"},
- {name:"Moonbirds NFT",collection:"Moonbirds",image:"https://pbs.twimg.com/media/FygvKxmakAAiB-e?format=jpg&name=large",value:42400,icon:"🦉"},
- {name:"Doodles NFT",collection:"Doodles",image:"https://files.amberblocks.com/thumbnail/chnbzaa92ook5tnj/posts/pw43pite3id9ypvc/f94fg2yyku02jgfdtkzqgd4aflrwsxi3/nft-quay-tro-lai.jpg",value:45600,icon:"🖍️"},
- {name:"CloneX NFT",collection:"Clone X",image:"https://substackcdn.com/image/fetch/%24s_%21Mf0v%21%2Cf_auto%2Cq_auto%3Agood%2Cfl_progressive%3Asteep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2F83b485ef-ccfb-4508-bb78-dfafc0a52ad0_1600x796.png",value:24800,icon:"🧑‍🚀"},
- {name:"Cool Cats NFT",collection:"Cool Cats",image:"https://substackcdn.com/image/fetch/%24s_%21Mf0v%21%2Cf_auto%2Cq_auto%3Agood%2Cfl_progressive%3Asteep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2F83b485ef-ccfb-4508-bb78-dfafc0a52ad0_1600x796.png",value:18400,icon:"🐱"},
- {name:"Milady Maker NFT",collection:"Milady Maker",image:"https://dl-migration-assets.s3.eu-central-1.amazonaws.com/images/1772087923060.webp",value:143200,icon:"👩‍🎤"},
- {name:"Meebits NFT",collection:"Meebits",image:"https://www.larvalabs.com/public/images/cryptopunks/punk0012.png",value:50400,icon:"🧊"},
- {name:"Lil Pudgys NFT",collection:"Lil Pudgys",image:"https://magnft.com/wp-content/uploads/2024/11/what-is-pudgy-penguins-2024-1-nfts.webp",value:17600,icon:"🐣"},
- {name:"Nakamigos NFT",collection:"Nakamigos",image:"https://dl-migration-assets.s3.eu-central-1.amazonaws.com/images/1772087923060.webp",value:7200,icon:"🧢"},
- {name:"BEANZ NFT",collection:"BEANZ Official",image:"https://pbs.twimg.com/media/FygvKxmakAAiB-e?format=jpg&name=large",value:2480,icon:"🫘"},
- {name:"Otherdeed for Otherside NFT",collection:"Otherdeed for Otherside",image:"https://pbs.twimg.com/media/FygvKxmakAAiB-e?format=jpg&name=large",value:5040,icon:"🌎"},
- {name:"Trencher Packs NFT",collection:"Trencher Packs",image:"https://files.amberblocks.com/thumbnail/chnbzaa92ook5tnj/posts/pw43pite3id9ypvc/f94fg2yyku02jgfdtkzqgd4aflrwsxi3/nft-quay-tro-lai.jpg",value:720,icon:"🎒"},
- {name:"Bobos NFT",collection:"Bobos",image:"https://magnft.com/wp-content/uploads/2024/11/what-is-pudgy-penguins-2024-1-nfts.webp",value:2000,icon:"🎨"},
- {name:"The Memes by 6529 NFT",collection:"The Memes by 6529",image:"https://pbs.twimg.com/media/FygvKxmakAAiB-e?format=jpg&name=large",value:2560,icon:"🌀"}
+ {name:"CryptoPunk #0",collection:"CryptoPunks",image:nftImage(0),market:"https://opensea.io/item/ethereum/0xb47e3cd837ddf8e4c57f05d70ab865de6e193bbb/0",value:5357120,icon:"👾"},
+ {name:"CryptoPunk #1",collection:"CryptoPunks",image:nftImage(1),market:"https://opensea.io/collection/cryptopunks",value:5357120,icon:"👾"},
+ {name:"CryptoPunk #2",collection:"CryptoPunks",image:nftImage(2),market:"https://opensea.io/collection/cryptopunks",value:5357120,icon:"👾"},
+ {name:"CryptoPunk #3",collection:"CryptoPunks",image:nftImage(3),market:"https://opensea.io/collection/cryptopunks",value:5357120,icon:"👾"},
+ {name:"Bored Ape Yacht Club #1",collection:"Bored Ape Yacht Club",image:"https://i2c.seadn.io/ethereum/0xbc4ca0eda7647a8ab7c2061c2e118a18a936f13d/1",market:"https://opensea.io/item/ethereum/0xbc4ca0eda7647a8ab7c2061c2e118a18a936f13d/1",value:1093200,icon:"🐵"},
+ {name:"Mutant Ape Yacht Club",collection:"Mutant Ape Yacht Club",image:null,market:"https://opensea.io/collection/mutant-ape-yacht-club",value:168000,icon:"🧬"},
+ {name:"Pudgy Penguin #2026",collection:"Pudgy Penguins",image:"https://i2c.seadn.io/ethereum/0xbd3531da5cf5857e7cfaa92426877b022e612cf8/941156d0c7937c7fb647c46946669891.png?w=1000",market:"https://opensea.io/item/ethereum/0xbd3531da5cf5857e7cfaa92426877b022e612cf8/2026",value:444800,icon:"🐧"},
+ {name:"Azuki NFT",collection:"Azuki",image:null,market:"https://opensea.io/collection/azuki",value:39200,icon:"🎴"},
+ {name:"Moonbirds NFT",collection:"Moonbirds",image:null,market:"https://opensea.io/collection/moonbirds",value:42400,icon:"🦉"},
+ {name:"Doodles NFT",collection:"Doodles",image:null,market:"https://opensea.io/collection/doodles-official",value:45600,icon:"🖍️"},
+ {name:"CloneX NFT",collection:"Clone X",image:null,market:"https://opensea.io/collection/clonex",value:24800,icon:"🧑‍🚀"},
+ {name:"Cool Cats NFT",collection:"Cool Cats",image:null,market:"https://opensea.io/collection/cool-cats-nft",value:18400,icon:"🐱"},
+ {name:"Milady Maker NFT",collection:"Milady Maker",image:null,market:"https://opensea.io/collection/milady",value:143200,icon:"👩‍🎤"},
+ {name:"Meebits NFT",collection:"Meebits",image:null,market:"https://opensea.io/collection/meebits",value:50400,icon:"🧊"},
+ {name:"Lil Pudgys NFT",collection:"Lil Pudgys",image:null,market:"https://opensea.io/collection/lilpudgys",value:17600,icon:"🐣"},
+ {name:"Nakamigos NFT",collection:"Nakamigos",image:null,market:"https://opensea.io/collection/nakamigos",value:7200,icon:"🧢"},
+ {name:"BEANZ NFT",collection:"BEANZ Official",image:null,market:"https://opensea.io/collection/beanzofficial",value:2480,icon:"🫘"},
+ {name:"Otherdeed for Otherside NFT",collection:"Otherdeed for Otherside",image:null,market:"https://opensea.io/collection/otherdeed",value:5040,icon:"🌎"},
+ {name:"Trencher Packs NFT",collection:"Trencher Packs",image:null,market:"https://opensea.io",value:720,icon:"🎒"},
+ {name:"Bobos NFT",collection:"Bobos",image:null,market:"https://opensea.io",value:2000,icon:"🎨"},
+ {name:"The Memes by 6529 NFT",collection:"The Memes by 6529",image:null,market:"https://opensea.io/collection/thememesby6529",value:2560,icon:"🌀"}
 ];
 const prizes=nftCollections.map((n,i)=>({...n,id:"nft-"+i,rarity:i<4?"Легендарный":i<7?"Эпический":i<12?"Редкий":i<16?"Необычный":"Обычный"}));
 const cases=[
