@@ -4479,6 +4479,16 @@ function getCasePrize(caseIndex,prizeIndex){
 function openCase(){
 
 if(caseOpeningBusy)return;
+if(!cases[selectedCase]||!Array.isArray(cases[selectedCase].items)||!cases[selectedCase].items.length){alert("Этот кейс временно недоступен.");return;}
+
+// Не теряем предыдущие выигрыши: при повторном открытии незабранные призы
+// автоматически отправляются в инвентарь.
+const unclaimed=pendingPrizes.filter(Boolean);
+if(unclaimed.length){
+ state.inventory.push(...unclaimed);
+ pendingPrizes=[];
+ save();
+}
 
 const secretOpening=!!cases[selectedCase].secret;
 if(secretOpening){
@@ -4705,8 +4715,9 @@ replayButton.className="goldbtn";
 replayButton.id="reopenSameCaseButton";
 replayButton.style.cssText="width:100%;margin:10px 0 18px;padding:16px;font-weight:900";
 replayButton.textContent="🎰 КРУТИТЬ ЕЩЁ РАЗ";
-replayButton.disabled=pendingPrizes.some(Boolean);
-replayButton.style.opacity=replayButton.disabled?".55":"1";
+replayButton.disabled=false;
+replayButton.style.opacity="1";
+replayButton.title="Незабранные призы автоматически попадут в инвентарь";
 replayButton.onclick=openCase;
 results.appendChild(replayButton);
 
@@ -4738,7 +4749,7 @@ if(button){button.textContent="✓ ВСЕ ПРИЗЫ ЗАБРАНЫ";button.disa
 
 save();
 const replayButton=document.getElementById("reopenSameCaseButton");
-if(replayButton){replayButton.disabled=pendingPrizes.some(Boolean);replayButton.style.opacity=replayButton.disabled?".55":"1";}
+if(replayButton){replayButton.disabled=false;replayButton.style.opacity="1";}
 }
 
 function claimPrize(i){
