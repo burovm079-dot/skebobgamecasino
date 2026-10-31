@@ -4084,37 +4084,46 @@ function openDailyCase(){
  });
 }
 
-/* Case opening sound: rising slot-machine sweep and reveal chime */
+/* Original cinematic case-opening sound: mechanical roll, latch, sparkle reveal */
 let caseSoundContext=null;
 function playCaseSound(reveal=false){
-  try{
-    const Ctx=window.AudioContext||window.webkitAudioContext;
-    if(!Ctx)return;
-    if(!caseSoundContext)caseSoundContext=new Ctx();
-    const ctx=caseSoundContext;
-    if(ctx.state==="suspended")ctx.resume();
-    const now=ctx.currentTime;
-    const make=(freq,endFreq,start,duration,volume,type)=>{
-      const osc=ctx.createOscillator(),gain=ctx.createGain();
-      osc.type=type||"sawtooth";
-      osc.frequency.setValueAtTime(freq,now+start);
-      osc.frequency.exponentialRampToValueAtTime(Math.max(30,endFreq),now+start+duration);
-      gain.gain.setValueAtTime(.0001,now+start);
-      gain.gain.exponentialRampToValueAtTime(volume,now+start+.025);
-      gain.gain.exponentialRampToValueAtTime(.0001,now+start+duration);
-      osc.connect(gain);gain.connect(ctx.destination);
-      osc.start(now+start);osc.stop(now+start+duration+.03);
-    };
-    if(!reveal){
-      make(110,720,0,.72,.045,"sawtooth");
-      make(330,990,.08,.55,.025,"triangle");
-      make(520,1300,.42,.45,.018,"square");
-    }else{
-      make(660,880,0,.32,.035,"sine");
-      make(880,1320,.12,.48,.028,"sine");
-      make(1320,1760,.25,.62,.018,"triangle");
-    }
-  }catch(e){}
+ try{
+  const Ctx=window.AudioContext||window.webkitAudioContext;if(!Ctx)return;
+  if(!caseSoundContext)caseSoundContext=new Ctx();
+  const ctx=caseSoundContext;if(ctx.state==="suspended")ctx.resume();
+  const now=ctx.currentTime;
+  const tone=(freq,end,start,duration,volume,wave="sine")=>{
+   const osc=ctx.createOscillator(),gain=ctx.createGain(),filter=ctx.createBiquadFilter();
+   osc.type=wave;osc.frequency.setValueAtTime(freq,now+start);
+   osc.frequency.exponentialRampToValueAtTime(Math.max(35,end),now+start+duration);
+   filter.type="lowpass";filter.frequency.setValueAtTime(wave==="sawtooth"?1250:2600,now+start);
+   gain.gain.setValueAtTime(.0001,now+start);
+   gain.gain.exponentialRampToValueAtTime(volume,now+start+.018);
+   gain.gain.exponentialRampToValueAtTime(.0001,now+start+duration);
+   osc.connect(filter);filter.connect(gain);gain.connect(ctx.destination);
+   osc.start(now+start);osc.stop(now+start+duration+.025);
+  };
+  if(!reveal){
+   // Deep motor spin and quick metallic ratchet pulses
+   tone(72,260,0,.95,.055,"sawtooth");
+   tone(145,520,.05,.82,.022,"triangle");
+   for(let i=0;i<11;i++){
+    const at=.08+i*.073;
+    tone(980+(i%3)*170,420,at,.045,.014,"square");
+   }
+   // Rising tension sweep
+   tone(210,880,.48,.62,.025,"sawtooth");
+   tone(420,1250,.62,.48,.012,"triangle");
+  }else{
+   // Heavy latch click followed by a bright reward shimmer
+   tone(190,68,0,.16,.07,"triangle");
+   tone(740,1180,.045,.32,.035,"sine");
+   tone(990,1480,.14,.42,.026,"sine");
+   tone(1480,1980,.26,.58,.019,"sine");
+   tone(590,880,.34,.52,.014,"triangle");
+   tone(1760,2200,.48,.36,.009,"sine");
+  }
+ }catch(e){}
 }
 
 /* =========================
