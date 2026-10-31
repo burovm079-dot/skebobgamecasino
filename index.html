@@ -2490,14 +2490,7 @@ class="hidden"
 >
 
 <h2>👤 ПРОФИЛЬ</h2>
-<div class="panel"><div class="small">ТВОЙ NICKNAME</div><strong id="profileNickname" style="display:block;font-size:22px;margin:8px 0 12px">Player</strong><details id="nicknameEditorDetails" style="margin-top:12px">
-<summary style="display:inline-block;list-style:none;cursor:pointer;background:var(--panel2);color:var(--text);border:2px solid var(--gold);border-radius:14px;padding:14px 18px;font-weight:900">✏️ ИЗМЕНИТЬ NICKNAME</summary>
-<div style="margin-top:14px;padding:14px;border:1px solid var(--border);border-radius:12px;background:var(--panel2)">
-<label for="changeNicknameInput" class="small">НОВЫЙ NICKNAME</label>
-<input id="changeNicknameInput" maxlength="18" placeholder="Новый nickname" autocomplete="nickname">
-<button type="button" id="saveNicknameButton" class="goldbtn" onclick="saveChangedNickname()">СОХРАНИТЬ</button><p id="nicknameSaveStatus" class="small" aria-live="polite"></p>
-</div>
-</details></div>
+<div class="panel"><div class="small">ТВОЙ NICKNAME</div><strong id="profileNickname" style="display:block;font-size:22px;margin:8px 0 12px">Player</strong></div>
 
 <div id="officialAdminEntry" class="panel hidden"><b>🛠 ПАНЕЛЬ ВЛАДЕЛЬЦА</b><div class="small">Управление оформлением и модерацией сайта</div><button class="goldbtn" onclick="showPage('adminLogin')">АДМИН-ПАНЕЛЬ</button></div>
 
@@ -7639,41 +7632,6 @@ function saveFirstNickname(){
  if(nick.length<2){alert("Ник должен содержать минимум 2 символа.");return;}
  if(bjNickTaken(nick)){alert("Данный никнейм уже занят");return;}
  requestOfficialNicknameCode(nick,true);
-}
-function changeNickname(){
- const modal=document.getElementById("changeNicknameModal");
- const input=document.getElementById("changeNicknameInput");
- if(!modal||!input){alert("Окно изменения nickname не найдено. Обнови страницу.");return;}
- input.value=getNickname();
- modal.style.display="flex";
- setTimeout(()=>input.focus(),100);
-}
-function closeChangeNickname(){
- const modal=document.getElementById("changeNicknameModal");
- if(modal)modal.style.display="none";
-}
-function saveChangedNickname(){
- const details=document.getElementById("nicknameEditorDetails");
- const modal=document.getElementById("changeNicknameModal");
- const modalInput=document.getElementById("changeNicknameModalInput");
- const input=modal&&modal.style.display==="flex"?modalInput:details?.querySelector("input");
- const status=document.getElementById("nicknameSaveStatus");
- const nick=String(input?.value||"").trim().replace(/\s+/g," ").slice(0,18);
- if(nick.length<2){if(status)status.textContent="Ник должен содержать минимум 2 символа.";return;}
- if(bjNickTaken(nick,bjOnlineId)){if(status)status.textContent="Данный никнейм уже занят.";return;}
- if(isProtectedOfficialNick(nick)){
-  if(status)status.textContent="Для SKEBOB OFFICIAL требуется подтверждение владельца.";
-  requestOfficialNicknameCode(nick,false);
-  return;
- }
- commitNickname(nick,false);
- if(getNickname()===nick){
-  if(status)status.textContent="Ник успешно изменён на: "+nick;
-  if(details)details.open=false;
-  if(modal)modal.style.display="none";
- }else{
-  if(status)status.textContent="Не удалось обновить ник. Попробуй ещё раз.";
- }
 }
 
 /* BLACKJACK ONLINE — Supabase Realtime, no wagers or payouts */
