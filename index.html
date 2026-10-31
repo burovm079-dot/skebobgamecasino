@@ -3083,7 +3083,7 @@ const nftCollections = [
  {name:"CryptoPunk #1",collection:"CryptoPunks",image:nftImage(1),market:"https://opensea.io/collection/cryptopunks",value:5357120,icon:"👾"},
  {name:"CryptoPunk #2",collection:"CryptoPunks",image:nftImage(2),market:"https://opensea.io/collection/cryptopunks",value:5357120,icon:"👾"},
  {name:"CryptoPunk #3",collection:"CryptoPunks",image:nftImage(3),market:"https://opensea.io/collection/cryptopunks",value:5357120,icon:"👾"},
- {name:"Bored Ape Yacht Club #1",collection:"Bored Ape Yacht Club",image:"https://i2c.seadn.io/ethereum/0xbc4ca0eda7647a8ab7c2061c2e118a18a936f13d/1",market:"https://opensea.io/item/ethereum/0xbc4ca0eda7647a8ab7c2061c2e118a18a936f13d/1",value:1093200,icon:"🐵"},
+ {name:"Bored Ape Yacht Club #1",collection:"Bored Ape Yacht Club",image:"https://i2c.seadn.io/ethereum/0xbc4ca0eda7647a8ab7c2061c2e118a18a936f13d/399ac6f35935d93930b68fa64cd307/5d399ac6f35935d93930b68fa64cd307.png?w=1000",market:"https://opensea.io/item/ethereum/0xbc4ca0eda7647a8ab7c2061c2e118a18a936f13d/1",value:1093200,icon:"🐵"},
  {name:"Mutant Ape Yacht Club",collection:"Mutant Ape Yacht Club",image:null,market:"https://opensea.io/collection/mutant-ape-yacht-club",value:168000,icon:"🧬"},
  {name:"Pudgy Penguin #2026",collection:"Pudgy Penguins",image:"https://i2c.seadn.io/ethereum/0xbd3531da5cf5857e7cfaa92426877b022e612cf8/941156d0c7937c7fb647c46946669891.png?w=1000",market:"https://opensea.io/item/ethereum/0xbd3531da5cf5857e7cfaa92426877b022e612cf8/2026",value:444800,icon:"🐧"},
  {name:"Azuki NFT",collection:"Azuki",image:null,market:"https://opensea.io/collection/azuki",value:39200,icon:"🎴"},
@@ -4233,6 +4233,7 @@ n=>`
 ${prizes[n].name}
 </b>
 <div class="small">${prizes[n].collection}</div>
+<a href="${prizes[n].market}" target="_blank" rel="noopener noreferrer" class="small" style="color:var(--gold)">Оригинал на OpenSea ↗</a>
 <p class="price">
 ${formatMoney(prizes[n].value)}
 </p>
@@ -4664,7 +4665,9 @@ state.inventory.map(
 <div class="item">
 
 <div class="inventory-nft-image">
-<img src="${p.image}" alt="${p.name}" onerror="this.style.display='none';this.parentElement.textContent='${p.icon}'">
+<a href="${p.market||'https://opensea.io'}" target="_blank" rel="noopener noreferrer" title="Открыть NFT на OpenSea">
+<img src="${p.image||''}" alt="${p.name}" onerror="this.style.display='none';this.parentElement.textContent='${p.icon}'">
+</a>
 </div>
 
 <div class="info">
