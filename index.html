@@ -6507,10 +6507,12 @@ async function startPlinkoGame(){
  }
  // The final deflection selects one of 13 payout pockets.
  const landing=position+(Math.random()<.5?0:1);
- const multiplier=PLINKO_MULTIPLIERS[plinkoRisk][landing];
- const slot=document.getElementById("plinkoSlot"+landing);
+ const payoutTable=PLINKO_MULTIPLIERS[plinkoRisk];
+  const safeLanding=Math.max(0,Math.min(payoutTable.length-1,landing));
+  const multiplier=Number(payoutTable[safeLanding])||0;
+ const slot=document.getElementById("plinkoSlot"+safeLanding);
  if(slot)slot.classList.add("hit");
- activeBall.style.left=(((landing+.5)/13)*100)+"%";
+ activeBall.style.left=(((safeLanding+.5)/payoutTable.length)*100)+"%";
  activeBall.style.top="101%";
  await plinkoWait(450);
  const reward=Math.floor(bet*multiplier);
@@ -6708,7 +6710,7 @@ async function startBlackjack(){
  for(const [key,hand] of first){bjDraw(hand);renderBj();await bjDelay(330)}
  bjRound.turn="you";bjBusy=false;renderBj();
  const dealerNatural=bjValue(bjRound.dealer)===21&&bjRound.dealer.length===2;
- if(dealerNatural){bjRound.turn="done";bjFinish();return}
+ if(dealerNatural){bjRound.turn="done";bjBusy=false;bjFinish();return}
  document.getElementById("bjStatus").textContent=count?"Карты розданы. Сначала ходишь ты, затем каждый игрок по очереди.":"Карты розданы. Твой ход!";
  if(bjValue(bjRound.you)===21){bjStand();return}
  if(bjValue(bjRound.dealer)===21){bjRound.turn="done";bjBusy=false;bjFinish();return}
@@ -7261,11 +7263,11 @@ function gamePay(bet,mult){
  registerWin(win);save();return win;
 }
 
-let ttt=[],tttBetValue=0,tttActive=false;
-function tttStart(){const b=gameBet("tttBet");if(!b){alert("Нужна ставка от 100 и достаточно средств");return}state.balance-=b;addTurnover(b);tttBetValue=b;ttt=Array(9).fill("");tttActive=true;save();tttRender();document.getElementById("tttStatus").textContent="Твой ход — ❌";}
+let ttt=[],tttBetValue=0,tttActive=false,tttBotThinking=false;
+function tttStart(){const b=gameBet("tttBet");if(!b){alert("Нужна ставка от 100 и достаточно средств");return}state.balance-=b;addTurnover(b);tttBetValue=b;ttt=Array(9).fill("");tttActive=true;tttBotThinking=false;save();tttRender();document.getElementById("tttStatus").textContent="Твой ход — ❌";}
 function tttWinner(a){for(const [x,y,z] of [[0,1,2],[3,4,5],[6,7,8],[0,3,6],[1,4,7],[2,5,8],[0,4,8],[2,4,6]])if(a[x]&&a[x]===a[y]&&a[y]===a[z])return a[x];return a.every(Boolean)?"draw":""}
-function tttRender(){const g=document.getElementById("tttGrid");g.innerHTML="";ttt.forEach((v,i)=>{const b=document.createElement("button");b.textContent=v||"　";b.style.cssText="aspect-ratio:1;font-size:35px;border-radius:10px;background:var(--panel2);color:var(--text);border:1px solid var(--border)";b.disabled=!!v||!tttActive;b.onclick=()=>tttMove(i);g.appendChild(b)})}
-function tttFinish(w){tttActive=false;if(w==="X"){const n=gamePay(tttBetValue,2);document.getElementById("tttStatus").textContent="🏆 Ты победил! Выплата "+n+" 🪙"}else if(w==="draw"){state.balance+=tttBetValue;save();document.getElementById("tttStatus").textContent="Ничья — ставка возвращена."}else{save();document.getElementById("tttStatus").textContent="🤖 Бот победил. Попробуй ещё!"}tttRender()}
+function tttRender(){const g=document.getElementById("tttGrid");g.innerHTML="";ttt.forEach((v,i)=>{const b=document.createElement("button");b.textContent=v||"　";b.style.cssText="aspect-ratio:1;font-size:35px;border-radius:10px;background:var(--panel2);color:var(--text);border:1px solid var(--border)";b.disabled=!!v||!tttActive||tttBotThinking;b.onclick=()=>tttMove(i);g.appendChild(b)})}
+function tttFinish(w){tttActive=false;tttBotThinking=false;if(w==="X"){const n=gamePay(tttBetValue,2);document.getElementById("tttStatus").textContent="🏆 Ты победил! Выплата "+n+" 🪙"}else if(w==="draw"){state.balance+=tttBetValue;save();document.getElementById("tttStatus").textContent="Ничья — ставка возвращена."}else{save();document.getElementById("tttStatus").textContent="🤖 Бот победил. Попробуй ещё!"}tttRender()}
 function tttMove(i){if(!tttActive||ttt[i])return;ttt[i]="X";let w=tttWinner(ttt);if(w){tttRender();tttFinish(w);return}let free=ttt.map((v,i)=>v? -1:i).filter(i=>i>=0);ttt[free[Math.floor(Math.random()*free.length)]]="O";w=tttWinner(ttt);tttRender();if(w)tttFinish(w);else document.getElementById("tttStatus").textContent="Твой ход — ❌"}
 
 function poolShot(){const b=gameBet("poolBet");if(!b){alert("Нужна ставка от 100");return}state.balance-=b;const a=+document.getElementById("poolAngle").value,p=+document.getElementById("poolPower").value;const chance=Math.max(5,65-Math.abs(a-90)*.45-Math.abs(p-65)*.35);const ok=Math.random()*100<chance;const m=ok?(p>85?3:2):0;const w=m?gamePay(b,m):0;if(!m)save();poolAnimFrame=0;const tick=()=>{poolAnimFrame++;drawPoolScene(true,a,p);if(poolAnimFrame<30)requestAnimationFrame(tick)};requestAnimationFrame(tick);document.getElementById("poolResult").textContent=ok?"🎱 Шар в лузе! Выплата "+w+" 🪙":"Шар не попал в лузу. Попробуй ещё!";}
@@ -7463,13 +7465,14 @@ function tttRender(){
  const g=document.getElementById("tttGrid");g.innerHTML="";
  ttt.forEach((v,i)=>{const b=document.createElement("button");b.textContent=v||"";
   b.style.cssText="aspect-ratio:1;font-size:clamp(32px,7vw,48px);font-weight:900;border-radius:13px;background:linear-gradient(145deg,#263746,#101a25);color:"+(v==="X"?"#66d9ff":"#ffb45c")+";border:1px solid #ffffff25;box-shadow:inset 0 2px 8px #ffffff12,0 4px 8px #0007;text-shadow:0 0 12px currentColor;transition:transform .15s";
-  b.disabled=!!v||!tttActive;b.onclick=()=>tttMove(i);g.appendChild(b)
+  b.disabled=!!v||!tttActive||tttBotThinking;b.onclick=()=>tttMove(i);g.appendChild(b)
  });
 }
 function tttMove(i){
- if(!tttActive||ttt[i])return;ttt[i]="X";let w=tttWinner(ttt);tttRender();if(w){tttFinish(w);return}
+ if(!tttActive||tttBotThinking||ttt[i])return;ttt[i]="X";let w=tttWinner(ttt);tttRender();if(w){tttFinish(w);return}
+ tttBotThinking=true;tttRender();
  document.getElementById("tttStatus").textContent="🤖 Бот анализирует позицию…";
- setTimeout(()=>{if(!tttActive)return;const move=tttBestMove(ttt,"O");if(move>=0)ttt[move]="O";w=tttWinner(ttt);tttRender();if(w)tttFinish(w);else document.getElementById("tttStatus").textContent="Твой ход — ❌"},420);
+ setTimeout(()=>{if(!tttActive){tttBotThinking=false;return}const move=tttBestMove(ttt,"O");if(move>=0)ttt[move]="O";w=tttWinner(ttt);tttBotThinking=false;tttRender();if(w)tttFinish(w);else document.getElementById("tttStatus").textContent="Твой ход — ❌"},420);
 }
 
 
