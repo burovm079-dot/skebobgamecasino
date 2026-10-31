@@ -2410,25 +2410,13 @@ balanceBeforeInfinite:null
 };
 
 try{
-
-const saved=
-JSON.parse(
-storageGet(
-"skebobSave"
-)
-);
-
-if(saved){
-
+const rawSaved=storageGet("skebobSave")||storageGet("skebobSaveBackup");
+const saved=rawSaved?JSON.parse(rawSaved):null;
+if(saved&&typeof saved==="object"){
 state={
 ...state,
 ...saved,
-
-stats:{
-...defaultStats,
-...(saved.stats||{})
-},
-
+stats:{...defaultStats,...(saved.stats||{})},
 admin:{
 alwaysWin:false,
 manualLevel:null,
@@ -2436,12 +2424,15 @@ infiniteBalance:false,
 balanceBeforeInfinite:null,
 ...(saved.admin||{})
 }
-
 };
-
 }
-
-}catch(e){}
+}catch(e){
+console.warn("Не удалось прочитать основное сохранение; пробуем резервную копию.",e);
+try{
+const backup=JSON.parse(storageGet("skebobSaveBackup")||"null");
+if(backup&&typeof backup==="object")state={...state,...backup,stats:{...defaultStats,...(backup.stats||{})},admin:{alwaysWin:false,manualLevel:null,infiniteBalance:false,balanceBeforeInfinite:null,...(backup.admin||{})}};
+}catch(backupError){console.warn("Резервное сохранение тоже недоступно.",backupError);}
+}
 
 // Время первого запуска казино: даёт новичку окно 24 часа для промокода.
 if(!Number.isFinite(Number(state.createdAt))||Number(state.createdAt)<=0)state.createdAt=Date.now();
@@ -2493,7 +2484,7 @@ let mineMultiplier=1;
 let dailyOpening=false;
 
 function storageGet(key){try{return window.localStorage.getItem(key)}catch(error){console.warn("Хранилище браузера недоступно:",error);return null}}
-function storageSet(key,value){try{window.localStorage.setItem(key,value);return true}catch(error){console.warn("Не удалось сохранить данные браузера:",error);return false}}
+function storageSet(key,value){try{window.localStorage.setItem(key,value);return window.localStorage.getItem(key)===String(value)}catch(error){console.warn("Не удалось сохранить данные браузера:",error);return false}}
 
 /* =========================
    SAVE
@@ -2508,18 +2499,19 @@ function formatMoney(amount){
 function setCurrency(value){storageSet("skebobCurrency",value==="USD"?"USD":"RUB");render();renderCases();const e=document.getElementById("currencySelect");if(e)e.value=getCurrency();if(typeof updateUpgradeInfo==="function")updateUpgradeInfo();if(typeof renderDailyTasks==="function")renderDailyTasks();}
 function loadCurrency(){const e=document.getElementById("currencySelect");if(e)e.value=getCurrency();}
 function save(){
-
 updateDailyTasks(false);
 let saved=false;
 try{
- storageSet("skebobSave",JSON.stringify(state));
- saved=true;
+ const payload=JSON.stringify(state);
+ const primarySaved=storageSet("skebobSave",payload);
+ const backupSaved=storageSet("skebobSaveBackup",payload);
+ saved=primarySaved||backupSaved;
+ if(!saved)console.warn("Браузер не разрешил сохранить игровой прогресс.");
 }catch(error){
  console.warn("Не удалось сохранить прогресс в этом браузере:",error);
 }
 render();
 return saved;
-
 }
 
 /* =========================
