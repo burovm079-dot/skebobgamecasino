@@ -1427,6 +1427,20 @@ body.light #caseList .case,body.light .panel{background:linear-gradient(145deg,#
  .bj-card.bj-new,.bj-bot .bj-card.bj-new,.bj-dealer .bj-card.bj-new{animation:none}
 }
 
+
+/* Blackjack card faces: classic playing-card treatment */
+.bj-card{position:relative;display:block;flex:0 0 auto;overflow:hidden;padding:5px 4px;border:1px solid #d8d8d8;background:linear-gradient(145deg,#fff 0%,#f8f7f2 72%,#e9e7df 100%);color:#171717;text-align:left;font-family:Georgia,serif;box-shadow:0 3px 7px #0008,inset 0 0 0 1px #ffffff}
+.bj-card-corner{position:absolute;top:4px;left:5px;display:flex;flex-direction:column;align-items:center;gap:0;line-height:.9;font-size:13px}
+.bj-card-corner i{font-style:normal;font-size:12px}
+.bj-card-center{position:absolute;inset:0;display:grid;place-items:center;font-size:31px;line-height:1}
+.bj-card-corner-bottom{top:auto;left:auto;right:5px;bottom:4px;transform:rotate(180deg)}
+.bj-card.bj-face-card{background:linear-gradient(135deg,#fffdf6,#e9e1ce);border:2px solid #d4b878;box-shadow:0 3px 8px #0008,inset 0 0 0 2px #fff}
+.bj-face-letter{display:grid;place-items:center;width:32px;height:38px;border:2px double currentColor;border-radius:5px;font-size:21px;background:linear-gradient(145deg,#fff,#e6dfcf);box-shadow:0 2px 5px #0002}
+.bj-card-back{display:grid;place-items:center;background:repeating-linear-gradient(45deg,#163b70 0 4px,#f4f0e4 4px 6px,#163b70 6px 10px);border:3px solid #f4f0e4;box-shadow:inset 0 0 0 2px #b89550,0 3px 8px #0008}
+.bj-card-back-pattern{display:grid;place-items:center;width:28px;height:38px;border:1px solid #e5c77d;border-radius:5px;background:#173d72;color:#f8d98b;font-size:20px;text-shadow:0 1px 3px #000}
+@media(max-width:560px){.bj-card-corner{font-size:11px;left:4px;top:4px}.bj-card-corner i{font-size:10px}.bj-card-center{font-size:26px}.bj-face-letter{width:27px;height:32px;font-size:18px}}
+@media(prefers-reduced-motion:reduce){.bj-card{scroll-behavior:auto}}
+
 </style>
 </head>
 
@@ -6715,7 +6729,13 @@ const BJ_SUITS=["♠","♥","♦","♣"],BJ_RANKS=["A","2","3","4","5","6","7","
 const BJ_NAMES=["LuckyFox","NeonCat","Mr_Potato","Shadow","Keksik","TurboMax","Bober","PixelKing","NoMercy","Lime","Vortex","MisterX","Zefir","DarkWolf","Banana"];
 function bjCard(){return {rank:BJ_RANKS[Math.floor(Math.random()*BJ_RANKS.length)],suit:BJ_SUITS[Math.floor(Math.random()*4)]}}
 function bjValue(hand){let total=0,aces=0;hand.forEach(c=>{if(c.rank==="A"){total+=11;aces++}else total+=["J","Q","K"].includes(c.rank)?10:Number(c.rank)});while(total>21&&aces){total-=10;aces--}return total}
-function bjCardHTML(c,hidden=false){if(hidden)return '<span class="bj-card">🂠</span>';const red=c.suit==="♥"||c.suit==="♦";return '<span class="bj-card '+(red?"red":"")+'">'+c.rank+c.suit+'</span>'}
+function bjCardHTML(c,hidden=false){
+ if(hidden)return '<span class="bj-card bj-card-back" role="img" aria-label="Закрытая карта"><span class="bj-card-back-pattern">✦</span></span>';
+ const red=c.suit==="♥"||c.suit==="♦",face=["J","Q","K"].includes(c.rank);
+ const label=c.rank==="A"?"Туз":c.rank==="J"?"Валет":c.rank==="Q"?"Дама":c.rank==="K"?"Король":c.rank;
+ const suitName={"♠":"пики","♥":"червы","♦":"бубны","♣":"трефы"}[c.suit]||"масть";
+ return '<span class="bj-card '+(red?"red":"")+(face?" bj-face-card":"")+'" role="img" aria-label="'+label+", "+suitName+'"><span class="bj-card-corner"><b>'+c.rank+'</b><i>'+c.suit+'</i></span><span class="bj-card-center">'+(face?'<b class="bj-face-letter">'+c.rank+'</b>':'<b>'+c.suit+'</b>')+'</span><span class="bj-card-corner bj-card-corner-bottom"><b>'+c.rank+'</b><i>'+c.suit+'</i></span></span>';
+}
 function bjHandHTML(hand,hideLast=false){return hand.map((c,i)=>bjCardHTML(c,hideLast&&i===1)).join("")}
 function bjDraw(hand){hand.push(bjCard())}
 function updateBjControls(){
