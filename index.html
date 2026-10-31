@@ -1505,16 +1505,17 @@ SKEBOB <span>CASINO</span>
 </p>
 
 <div class="daily-prizes">
-
-<div class="daily-prize">🪙 50</div>
-<div class="daily-prize">🪙 70</div>
-<div class="daily-prize">🪙 100</div>
-<div class="daily-prize">🪙 130</div>
-<div class="daily-prize">🪙 150</div>
-<div class="daily-prize">🪙 200</div>
-<div class="daily-prize">🪙 250</div>
-<div class="daily-prize">🪙 270</div>
-
+<div class="daily-prize">🪙 3</div>
+<div class="daily-prize">🪙 5</div>
+<div class="daily-prize">🪙 10</div>
+<div class="daily-prize">👕 Футболка</div>
+<div class="daily-prize">👟 Кроссовки</div>
+<div class="daily-prize">📿 Золотая цепь</div>
+<div class="daily-prize">🧢 Кепка</div>
+<div class="daily-prize">🎧 Наушники</div>
+<div class="daily-prize">🎨 Редкий скин</div>
+<div class="daily-prize">🧢 BEANZ NFT</div>
+<div class="daily-prize">🌎 Otherdeed NFT</div>
 </div>
 
 <a
@@ -3089,15 +3090,19 @@ Object.keys(prizeValueCaps).forEach(index=>{
 const DAILY_CASE_COOLDOWN=
 24*60*60*1000;
 
+// Награды ежедневного кейса: обычные игровые предметы, мелкие монеты и 2 NFT.
 const dailyPrizes=[
-50,
-70,
-100,
-130,
-150,
-200,
-250,
-270
+ {type:"coins",amount:3,name:"3 монеты",icon:"🪙",value:3},
+ {type:"coins",amount:5,name:"5 монет",icon:"🪙",value:5},
+ {type:"coins",amount:10,name:"10 монет",icon:"🪙",value:10},
+ {type:"item",id:"daily-shirt",name:"Футболка",collection:"Обычный подарок",icon:"👕",value:80,rarity:"Обычный"},
+ {type:"item",id:"daily-shoes",name:"Кроссовки",collection:"Обычный подарок",icon:"👟",value:120,rarity:"Обычный"},
+ {type:"item",id:"daily-chain",name:"Золотая цепь",collection:"Обычный подарок",icon:"📿",value:200,rarity:"Редкий"},
+ {type:"item",id:"daily-cap",name:"Кепка",collection:"Обычный подарок",icon:"🧢",value:100,rarity:"Обычный"},
+ {type:"item",id:"daily-headphones",name:"Наушники",collection:"Обычный подарок",icon:"🎧",value:300,rarity:"Эпический"},
+ {type:"item",id:"daily-skin",name:"Редкий скин",collection:"Обычный подарок",icon:"🎨",value:500,rarity:"Эпический"},
+ {type:"nft",...prizes[17]},
+ {type:"nft",...prizes[18]}
 ];
 
 /* =========================
@@ -4001,151 +4006,41 @@ String(s).padStart(2,"0");
 }
 
 function openDailyCase(){
-
-if(
-dailyOpening||
-!dailyAvailable()
-)return;
-
-dailyOpening=true;
-
-updateDailyCase();
-
-const prize=
-dailyPrizes[
-Math.floor(
-Math.random()*
-dailyPrizes.length
-)
-];
-
-const result=
-document.getElementById(
-"dailyResult"
-);
-
-let strip=[];
-
-for(
-let i=0;
-i<30;
-i++
-){
-
-strip.push(
-dailyPrizes[
-Math.floor(
-Math.random()*
-dailyPrizes.length
-)
-]
-);
-
-}
-
-strip[24]=prize;
-
-result.innerHTML=`
-
-<div class="roulette-row">
-
-<div class="roulette-box">
-
-<div
-class="roulette-track"
-id="dailyTrack"
->
-
-${strip.map(v=>`
-
-<div class="roulette-item">
-
-<div class="icon">
-🪙
-</div>
-
-<div class="name">
-${v} монет
-</div>
-
-</div>
-
-`).join("")}
-
-</div>
-
-</div>
-
-<div
-class="roulette-result"
-id="dailyFinal"
->
-🎰 Открываем...
-</div>
-
-</div>
-
-`;
-
-const box=
-result.querySelector(
-".roulette-box"
-);
-
-const track=
-document.getElementById(
-"dailyTrack"
-);
-
-requestAnimationFrame(()=>{
-
-const target=
-10+
-24*98+
-45-
-box.clientWidth/2;
-
-track.style.transition=
-"transform 4.5s cubic-bezier(.08,.75,.12,1)";
-
-track.style.transform=
-`translateX(-${target}px)`;
-
-setTimeout(()=>{
-
-track.children[24]
-.classList.add(
-"winner"
-);
-
-state.balance+=prize;
-
-/*
-Daily — это бесплатная награда,
-поэтому в уровень казино
-не считается.
-*/
-
-localStorage.setItem(
-"skebobDailyLastOpen",
-String(Date.now())
-);
-
-save();
-
-document.getElementById(
-"dailyFinal"
-).innerHTML=
-`🏆 <b>+${prize} 🪙</b>`;
-
-dailyOpening=false;
-
-updateDailyCase();
-
-},4550);
-
-});
-
+ if(dailyOpening||!dailyAvailable())return;
+ dailyOpening=true;
+ updateDailyCase();
+ const prize=dailyPrizes[Math.floor(Math.random()*dailyPrizes.length)];
+ const result=document.getElementById("dailyResult");
+ const strip=[];
+ for(let i=0;i<30;i++)strip.push(dailyPrizes[Math.floor(Math.random()*dailyPrizes.length)]);
+ strip[24]=prize;
+ const rewardMarkup=v=>`<div class="icon">${v.type==="nft"&&v.image?`<img src="${v.image}" alt="${v.name}" style="width:58px;height:58px;object-fit:cover;border-radius:8px" onerror="this.style.display='none'">`:v.icon||"🎁"}</div><div class="name">${v.name||"Подарок"}</div>`;
+ result.innerHTML=`<div class="roulette-row"><div class="roulette-box"><div class="roulette-track" id="dailyTrack">${strip.map(v=>`<div class="roulette-item">${rewardMarkup(v)}</div>`).join("")}</div></div><div class="roulette-result" id="dailyFinal">🎰 Открываем...</div></div>`;
+ const box=result.querySelector(".roulette-box");
+ const track=document.getElementById("dailyTrack");
+ requestAnimationFrame(()=>{
+  const target=10+24*98+45-box.clientWidth/2;
+  track.style.transition="transform 4.5s cubic-bezier(.08,.75,.12,1)";
+  track.style.transform=`translateX(-${target}px)`;
+  setTimeout(()=>{
+   track.children[24].classList.add("winner");
+   let finalText="";
+   if(prize.type==="coins"){
+    state.balance+=prize.amount;
+    finalText=`🏆 <b>+${prize.amount} 🪙 на баланс</b>`;
+   }else{
+    const item={...prize,id:Date.now()};
+    delete item.type;
+    state.inventory.push(item);
+    finalText=`🏆 <b>${prize.name} добавлен в инвентарь!</b>`;
+   }
+   localStorage.setItem("skebobDailyLastOpen",String(Date.now()));
+   save();
+   document.getElementById("dailyFinal").innerHTML=finalText;
+   dailyOpening=false;
+   updateDailyCase();
+  },4550);
+ });
 }
 
 /* Case opening sound: rising slot-machine sweep and reveal chime */
