@@ -4528,6 +4528,18 @@ backButton.textContent="← ВЕРНУТЬСЯ К КЕЙСАМ";
 backButton.onclick=()=>{results.classList.remove("case-opening-view");document.getElementById("caseList").classList.add("hidden");document.getElementById("caseDetail").classList.remove("hidden");document.getElementById("results").innerHTML="";};
 results.appendChild(backButton);
 
+// Явная кнопка повторного открытия этого же кейса.
+// Она активируется только после того, как все выпавшие предметы забраны.
+const replayButton=document.createElement("button");
+replayButton.className="goldbtn";
+replayButton.id="reopenSameCaseButton";
+replayButton.style.cssText="width:100%;margin:10px 0 18px;padding:16px;font-weight:900";
+replayButton.textContent="🎰 КРУТИТЬ ЕЩЁ РАЗ";
+replayButton.disabled=pendingPrizes.some(Boolean);
+replayButton.style.opacity=replayButton.disabled?".55":"1";
+replayButton.onclick=openCase;
+results.appendChild(replayButton);
+
 }
 
 },4550);
@@ -4555,6 +4567,8 @@ const button=document.querySelector("#results button[style*='width:100%']");
 if(button){button.textContent="✓ ВСЕ ПРИЗЫ ЗАБРАНЫ";button.disabled=true;}
 
 save();
+const replayButton=document.getElementById("reopenSameCaseButton");
+if(replayButton){replayButton.disabled=pendingPrizes.some(Boolean);replayButton.style.opacity=replayButton.disabled?".55":"1";}
 }
 
 function claimPrize(i){
@@ -4582,6 +4596,9 @@ rows[i].innerHTML=
 "<b style='color:#24cf78'>✓ ЗАБРАНО</b>";
 
 }
+
+const replayButton=document.getElementById("reopenSameCaseButton");
+if(replayButton){replayButton.disabled=pendingPrizes.some(Boolean);replayButton.style.opacity=replayButton.disabled?".55":"1";}
 
 }
 
