@@ -7734,7 +7734,7 @@ async function bjOnlineJoin(){
  bjOnlineChannel.on("presence",{event:"sync"},()=>{const state=bjOnlineChannel.presenceState();bjOnlineMembers=Object.values(state).flat().map(x=>({id:x.id,name:x.name,done:!!x.done})).slice(0,4);bjOnlineMembers.sort((a,b)=>a.id.localeCompare(b.id));bjOnlineHost=bjOnlineMembers[0]?.id===bjOnlineId;bjOnlineRender()});
  bjOnlineChannel.on("broadcast",{event:"round"},({payload})=>{if(payload.host!==bjOnlineMembers[0]?.id)return;bjOnlineRound={id:payload.id,finished:false};bjOnlineDealer={cards:payload.dealer,revealed:false};bjOnlineMyHand=[bjOnlineCard(),bjOnlineCard()];bjOnlineMyTurn=true;bjOnlineMyHand.length=0;bjOnlineDraw(bjOnlineMyHand);bjOnlineDraw(bjOnlineMyHand);bjOnlineRender();bjOnlineStatus("Раунд начался! Играй против общего дилера.")});
  bjOnlineChannel.on("broadcast",{event:"dealer-final"},({payload})=>{if(!bjOnlineRound||payload.round!==bjOnlineRound.id)return;bjOnlineDealer={cards:payload.cards,revealed:true};bjOnlineRound.finished=true;bjOnlineMyTurn=false;bjOnlineRender();bjOnlineShowResult()});
- bjOnlineChannel.on("broadcast",{event:"player-done"},({payload})=>{const p=bjOnlineMembers.find(x=>x.id===payload.id);if(p)p.done=true;bjOnlineRender()});
+ bjOnlineChannel.on("broadcast",{event:"player-done"},({payload})=>{const p=bjOnlineMembers.find(x=>x.id===payload.id);if(p)p.done=true;bjOnlineRender();if(bjOnlineHost)bjOnlineFinishDealer()});
  bjOnlineChannel.on("broadcast",{event:"room-full"},()=>bjOnlineStatus("Комната заполнена. Попробуй ещё раз."));
  bjOnlineStatus("Подключаемся к комнате…");
  const status=await bjOnlineChannel.subscribe(async st=>{
