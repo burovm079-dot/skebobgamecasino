@@ -202,6 +202,7 @@ text-align:center;
 }
 
 .prize-icon,.prizepic{font-size:34px}
+.nft-image-fallback{display:grid;place-items:center;font-size:48px;line-height:1;min-width:72px;min-height:72px}
 .prizepic img{display:block;width:min(190px,55vw);height:min(190px,55vw);object-fit:contain;border-radius:14px;margin:8px auto;border:1px solid var(--border);background:var(--panel2);box-shadow:0 5px 22px #0008}
 .roulette-item .icon{width:58px;height:58px;display:grid;place-items:center;overflow:hidden}
 .roulette-item .icon img{width:100%;height:100%;object-fit:contain;border-radius:7px}
@@ -3163,6 +3164,13 @@ const nftCollections = [
  {name:"Gift Box 2026",collection:"Telegram Gifts",image:"https://cdn.jsdelivr.net/gh/twitter/twemoji@latest/assets/72x72/1f381.png",market:"https://fragment.com/gifts",value:663,stars:390,icon:"🎁"},
  {name:"Blue Socks",collection:"Telegram Gifts",image:"https://cdn.jsdelivr.net/gh/twitter/twemoji@latest/assets/72x72/1f9e6.png",market:"https://fragment.com/gifts",value:799,stars:470,icon:"🧦"}
 ];
+function nftImageFallback(img,icon){
+ if(!img||img.dataset.fallbackDone)return;
+ img.dataset.fallbackDone="1";
+ const code=Array.from(icon||"🎁").map(ch=>ch.codePointAt(0).toString(16)).filter(cp=>cp!=="fe0f").join("-");
+ img.src="https://cdn.jsdelivr.net/gh/twitter/twemoji@latest/assets/72x72/"+code+".png";
+ img.onerror=()=>{img.onerror=null;const fallback=document.createElement("span");fallback.className="nft-image-fallback";fallback.textContent=icon||"🎁";img.replaceWith(fallback);};
+}
 const prizes=nftCollections.map((n,i)=>({...n,id:"nft-"+i,rarity:i<4?"Легендарный":i<7?"Эпический":i<12?"Редкий":i<16?"Необычный":"Обычный"}));
 
 const cases=[
@@ -4311,7 +4319,7 @@ n=>`
 <div class="prize-card">
 
 <div class="prize-icon">
-<img loading="lazy" src="${prizes[n].image}" alt="${prizes[n].name}" onerror="this.style.display='none';this.parentElement.textContent='${prizes[n].icon}'">
+<img loading="lazy" src="${prizes[n].image}" alt="${prizes[n].name}" onerror="nftImageFallback(this,'${prizes[n].icon}')">
 </div>
 
 <b>
@@ -4511,7 +4519,7 @@ ${strip.map(p=>`
 <div class="roulette-item">
 
 <div class="icon">
-<img src="${p.image}" alt="${p.name}" onerror="this.style.display='none';this.parentElement.textContent='${p.icon}'">
+<img src="${p.image}" alt="${p.name}" onerror="nftImageFallback(this,'${p.icon}')">
 </div>
 
 <div class="name">
@@ -4589,7 +4597,7 @@ row.querySelector(
 ).innerHTML=`
 
 <div class="prizepic">
-<img src="${won[i].image}" alt="${won[i].name}" onerror="this.style.display='none';this.parentElement.textContent='${won[i].icon}'">
+<img src="${won[i].image}" alt="${won[i].name}" onerror="nftImageFallback(this,'${won[i].icon}')">
 </div>
 
 <h3>
@@ -4752,7 +4760,7 @@ state.inventory.map(
 
 <div class="inventory-nft-image">
 <a href="${p.market||'https://opensea.io'}" target="_blank" rel="noopener noreferrer" title="Открыть NFT на OpenSea">
-<img loading="lazy" src="${p.image||''}" alt="${p.name}" onerror="this.style.display='none';this.parentElement.textContent='${p.icon}'">
+<img loading="lazy" src="${p.image||''}" alt="${p.name}" onerror="nftImageFallback(this,'${p.icon}')">
 </a>
 </div>
 
