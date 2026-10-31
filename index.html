@@ -1286,7 +1286,7 @@ SKEBOB <span>CASINO</span>
 <button onclick="showPage('slots',this)">🎰 СЛОТЫ</button>
 <button onclick="showPage('blackjack',this)">🃏 BLACKJACK</button>
 <button onclick="showPage('dice',this)">🎲 КОСТИ</button>
-<button onclick="showPage('battleship',this)">🚢 МОРСКОЙ БОЙ</button>
+
 <button onclick="showPage('tictactoe',this)">⭕ КРЕСТИКИ</button>
 
 <button onclick="showPage('billiards',this)">🎱 БИЛЬЯРД</button>
@@ -1299,16 +1299,6 @@ SKEBOB <span>CASINO</span>
 </div>
 
 <!-- NEW ARCADE GAMES -->
-<section id="battleship" class="hidden">
-<h2>🚢 МОРСКОЙ БОЙ</h2>
-<div class="panel">
-<p class="small">Два флота на отдельных полях 6×6. Ты и бот по очереди стреляете по полю соперника. Победитель забирает общий банк — две ставки.</p>
-<label>Ставка</label><input id="bsBet" type="number" min="100" step="100" value="100">
-<div id="bsStatus" class="small">Начни матч, чтобы разместить два флота.</div>
-<div class="small">ТВОЁ ПОЛЕ — флот и попадания бота</div><div id="bsOwnGrid" style="display:grid;grid-template-columns:repeat(6,1fr);gap:5px;margin:8px 0 16px"></div>
-<div class="small">ПОЛЕ БОТА — стреляй сюда</div><div id="bsGrid" style="display:grid;grid-template-columns:repeat(6,1fr);gap:5px;margin:8px 0 12px"></div>
-<button class="goldbtn" onclick="bsStart()">🚢 НАЧАТЬ МОРСКОЙ БОЙ</button>
-</div></section>
 <section id="tictactoe" class="hidden">
 <h2>⭕ КРЕСТИКИ-НОЛИКИ</h2>
 <div class="panel" style="text-align:center">
@@ -1339,13 +1329,6 @@ SKEBOB <span>CASINO</span>
 .chicken-panel{max-width:900px;margin:auto}.ch-hud{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin:14px 0}.ch-hud>div{background:var(--panel2);border:1px solid var(--border);border-radius:12px;padding:10px}.ch-hud span{display:block;font-size:10px;color:var(--muted);letter-spacing:1px}.ch-hud b{display:block;color:var(--gold);font-size:22px;margin-top:4px}.ch-canvas-wrap{position:relative;overflow:hidden;border:1px solid #52634b;border-radius:16px;background:#233d2a;box-shadow:inset 0 0 35px #0008}.ch-canvas-wrap canvas{display:block;width:100%;height:300px}.ch-scene-tag{position:absolute;left:12px;top:12px;padding:6px 10px;border-radius:8px;background:#07120dcc;color:#fff;font-size:11px;font-weight:900;letter-spacing:1px}.ch-controls{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-top:14px;text-align:left}.ch-controls label,.ch-controls input{grid-column:1/-1}.ch-controls button{width:100%;min-height:44px}.ch-result{min-height:24px;margin-top:12px}@media(max-width:560px){.ch-canvas-wrap canvas{height:240px}.ch-hud b{font-size:17px}.ch-hud span{font-size:8px}.ch-controls{grid-template-columns:1fr}}
 
 /* REALISM PASS: only the final six arcade games */
-#battleship .panel,#tictactoe .panel,#billiards .panel{background:linear-gradient(155deg,#202936,#101720 72%);border:1px solid #56677a;box-shadow:0 16px 36px #0005,inset 0 1px #ffffff12}
-#battleship h2,#tictactoe h2,#billiards h2,#chickenroad h2{letter-spacing:.04em;text-shadow:0 3px 12px #0008}
-#battleship #bsGrid{gap:6px!important;padding:12px;background:linear-gradient(145deg,#123a51,#092638);border:2px solid #5b8494;border-radius:16px;box-shadow:inset 0 0 28px #0009}
-#bsGrid button{position:relative!important;overflow:hidden;color:#e8f7ff!important;background:repeating-linear-gradient(0deg,#15506a,#15506a 2px,#17465c 3px,#17465c 20px)!important;border:1px solid #6b9bad!important;border-radius:8px!important;box-shadow:inset 0 2px 5px #ffffff20,0 3px 5px #0006;font-size:clamp(15px,4vw,25px)!important;transition:transform .14s,filter .14s}
-#bsGrid button:not(:disabled):hover{filter:brightness(1.3);transform:translateY(-2px)}
-#bsGrid button:disabled{opacity:1!important}
-#bsGrid button:has(+ .unused){outline:none}
 #tictactoe #tttGrid{max-width:360px!important;padding:12px;background:linear-gradient(145deg,#172b3b,#0b1722);border:1px solid #496175;border-radius:18px;box-shadow:inset 0 0 25px #0008}
 #tttGrid button{font-family:Arial,sans-serif!important;font-weight:900;min-height:82px;color:#e9f5ff!important;background:linear-gradient(145deg,#263c50,#172638)!important;border:1px solid #64809a!important;box-shadow:inset 0 1px #ffffff25,0 5px 9px #0005;transition:transform .16s,background .16s}
 #tttGrid button:not(:disabled):hover{transform:scale(1.035);background:linear-gradient(145deg,#36536b,#20384f)!important}
@@ -1355,8 +1338,6 @@ SKEBOB <span>CASINO</span>
 #chickenroad .ch-canvas-wrap{border:2px solid #6b806b;box-shadow:0 15px 32px #0008,inset 0 0 40px #0009}
 #chickenroad .ch-hud>div{background:linear-gradient(145deg,#273646,#121e2b);border-color:#53687a;box-shadow:inset 0 1px #ffffff18,0 5px 12px #0004}
 #chickenroad .ch-hud b{font-variant-numeric:tabular-nums;text-shadow:0 2px 8px #e9b94a44}
-#battleship .goldbtn,#tictactoe .goldbtn,#billiards .goldbtn,#chickenroad .goldbtn{box-shadow:0 5px 0 #8b641d,0 9px 18px #0005;transition:transform .12s,filter .12s}
-#battleship .goldbtn:active,#tictactoe .goldbtn:active,#billiards .goldbtn:active,#chickenroad .goldbtn:active{transform:translateY(3px);box-shadow:0 2px 0 #8b641d}
 @media(max-width:480px){#tttGrid button{min-height:68px}.real-game-canvas{border-radius:11px}}
 
 </style>
@@ -7033,10 +7014,7 @@ function diceImpactSound(){arcadeNoise(.095,.085,950);arcadeTone(180,.12,"triang
 /* SIX ARCADE MINI-GAMES */
 function gameBet(id){const v=Math.floor(Number(document.getElementById(id).value));return Number.isFinite(v)&&v>=100&&v<=state.balance?v:0}
 function gamePay(bet,mult){const win=Math.floor(bet*mult);state.balance+=win;registerWin(win);save();return win}
-let bsShips=[],bsHits=0,bsShots=[],bsStake=0,bsActive=false;
-function bsStart(){const b=gameBet("bsBet");if(!b){alert("Нужна ставка от 100 и достаточно средств");return}state.balance-=b;bsStake=b;bsShips=[];while(bsShips.length<5){let n=Math.floor(Math.random()*36);if(!bsShips.includes(n))bsShips.push(n)}bsHits=0;bsShots=[];bsActive=true;save();bsRender();document.getElementById("bsStatus").textContent="Найди 5 кораблей бота!";}
-function bsRender(){const g=document.getElementById("bsGrid");g.innerHTML="";for(let i=0;i<36;i++){const hit=bsShots.includes(i),b=document.createElement("button");b.textContent=hit?(bsShips.includes(i)?"💥":"🌊"):"　";b.style.cssText="aspect-ratio:1;border:1px solid var(--border);border-radius:7px;background:var(--panel2);font-size:20px";b.disabled=!bsActive||hit;b.onclick=()=>bsFire(i);g.appendChild(b)}}
-function bsFire(i){if(!bsActive)return;bsShots.push(i);if(bsShips.includes(i))bsHits++;if(bsHits===5){bsActive=false;const w=gamePay(bsStake,2);document.getElementById("bsStatus").textContent="🏆 Все корабли потоплены! Выплата "+w.toLocaleString("ru-RU")+" 🪙";}else if(bsShots.length>=24){bsActive=false;document.getElementById("bsStatus").textContent="Поражение! Корабли не найдены.";save()}else document.getElementById("bsStatus").textContent="Попаданий: "+bsHits+"/5 · Выстрелов: "+bsShots.length;bsRender()}
+
 let ttt=[],tttBetValue=0,tttActive=false;
 function tttStart(){const b=gameBet("tttBet");if(!b){alert("Нужна ставка от 100 и достаточно средств");return}state.balance-=b;tttBetValue=b;ttt=Array(9).fill("");tttActive=true;save();tttRender();document.getElementById("tttStatus").textContent="Твой ход — ❌";}
 function tttWinner(a){for(const [x,y,z] of [[0,1,2],[3,4,5],[6,7,8],[0,3,6],[1,4,7],[2,5,8],[0,4,8],[2,4,6]])if(a[x]&&a[x]===a[y]&&a[y]===a[z])return a[x];return a.every(Boolean)?"draw":""}
@@ -7171,45 +7149,27 @@ function poolShot(){
 
 /* Bowling pinfall animation with per-pin rotation and impact spread */
 /* FINAL SIX: smarter opponent and fleet placement */
-function bsBuildFleet(){
- const fleet=[],occupied=new Set(),sizes=[3,2,2,1,1];
- for(const size of sizes){let placed=false,tries=0;while(!placed&&tries++<300){
-  const horizontal=Math.random()<.5,row=Math.floor(Math.random()*6),col=Math.floor(Math.random()*6);
-  const cells=Array.from({length:size},(_,k)=>(row+(horizontal?0:k))*6+col+(horizontal?k:0));
-  if(cells.some(n=>Math.floor(n/6)>5||n%6>5||occupied.has(n)))continue;
-  cells.forEach(n=>occupied.add(n));fleet.push(cells);placed=true;
- }}
- return fleet.flat();
-}
-function bsStart(){
- const b=gameBet("bsBet");if(!b){alert("Нужна ставка от 100 и достаточно средств");return}
- state.balance-=b;bsStake=b;bsShips=bsBuildFleet();bsHits=0;bsShots=[];bsActive=true;save();bsRender();
- document.getElementById("bsStatus").textContent="Флот противника скрыт. Найди 9 палуб на поле 6×6.";
-}
-function bsRender(){
- const g=document.getElementById("bsGrid");g.innerHTML="";
- for(let i=0;i<36;i++){const hit=bsShots.includes(i),ship=bsShips.includes(i),b=document.createElement("button");
-  b.textContent=hit?(ship?"💥":"〰️"):"";b.setAttribute("aria-label",hit?(ship?"Попадание":"Вода"):"Неизвестная клетка");
-  b.style.cssText="aspect-ratio:1;border:1px solid "+(hit?(ship?"#ff8b55":"#78b8d8"):"var(--border)")+";border-radius:7px;background:"+(hit?(ship?"radial-gradient(circle,#ffcf77,#9b3826)":"linear-gradient(#438bb0,#174c70)"):"linear-gradient(145deg,#287da0,#104260)")+";font-size:20px;box-shadow:inset 0 2px 5px #ffffff22,0 2px 4px #0005;transition:transform .12s";
-  b.disabled=!bsActive||hit;b.onclick=()=>bsFire(i);g.appendChild(b);
- }
-}
-function bsFire(i){
- if(!bsActive||bsShots.includes(i))return;bsShots.push(i);const hit=bsShips.includes(i);if(hit)bsHits++;
- const status=document.getElementById("bsStatus");
- if(bsHits===9){bsActive=false;const w=gamePay(bsStake,2);status.textContent="🏆 Весь флот потоплен! 9/9 палуб · "+bsShots.length+" выстрелов · Выплата "+w.toLocaleString("ru-RU")+" 🪙";}
- else if(bsShots.length>=28){bsActive=false;status.textContent="Поражение. Найдено палуб: "+bsHits+"/9.";save()}
- else status.textContent=(hit?"💥 Попадание!":"🌊 Мимо — вода.")+" Палубы: "+bsHits+"/9 · Выстрелы: "+bsShots.length;
- bsRender();
-}
+
+
+
+
 function tttBestMove(board,player){
  const lines=[[0,1,2],[3,4,5],[6,7,8],[0,3,6],[1,4,7],[2,5,8],[0,4,8],[2,4,6]];
+ const order=[4,0,2,6,8,1,3,5,7];
  const winner=a=>{for(const [x,y,z] of lines)if(a[x]&&a[x]===a[y]&&a[y]===a[z])return a[x];return a.every(Boolean)?"draw":""};
- const minimax=(a,p)=>{const w=winner(a);if(w==="O")return {score:10};if(w==="X")return {score:-10};if(w==="draw")return {score:0};let best={score:p==="O"?-Infinity:Infinity,index:-1};
-  for(let i=0;i<9;i++)if(!a[i]){a[i]=p;const score=minimax(a,p==="O"?"X":"O").score;a[i]="";if((p==="O"&&score>best.score)||(p==="X"&&score<best.score))best={score,index:i}}
+ const solve=(a,p,depth)=>{
+  const w=winner(a);
+  if(w==="O")return {score:100-depth};
+  if(w==="X")return {score:depth-100};
+  if(w==="draw")return {score:0};
+  let best={score:p==="O"?-Infinity:Infinity,index:-1};
+  for(const i of order)if(!a[i]){
+   a[i]=p;const score=solve(a,p==="O"?"X":"O",depth+1).score;a[i]="";
+   if((p==="O"&&score>best.score)||(p==="X"&&score<best.score))best={score,index:i};
+  }
   return best;
  };
- return minimax(board.slice(),player).index;
+ return solve(board.slice(),player,0).index;
 }
 function tttRender(){
  const g=document.getElementById("tttGrid");g.innerHTML="";
@@ -7326,48 +7286,3 @@ setInterval(updateSecretDrop,1000);
     </html>
 
 /* TWO-FIELD BATTLESHIP: player vs bot, winner takes the 2x pot */
-let bsPlayerShips=[],bsBotShips=[],bsPlayerShots=[],bsBotShots=[],bsPlayerHits=0,bsBotHits=0,bsTurn="player";
-function bsStart(){
- const bet=gameBet("bsBet");if(!bet){alert("Нужна ставка от 100 и достаточно средств");return}
- state.balance-=bet;bsStake=bet;bsPlayerShips=bsBuildFleet();bsBotShips=bsBuildFleet();
- bsPlayerShots=[];bsBotShots=[];bsPlayerHits=0;bsBotHits=0;bsTurn="player";bsActive=true;save();bsRender();
- document.getElementById("bsStatus").textContent="Твой ход! Выбери клетку на поле бота.";
-}
-function bsRender(){
- const own=document.getElementById("bsOwnGrid"),enemy=document.getElementById("bsGrid");if(!own||!enemy)return;
- own.innerHTML="";enemy.innerHTML="";
- for(let i=0;i<36;i++){
-  const incoming=bsBotShots.includes(i),mine=bsPlayerShips.includes(i),a=document.createElement("div");
-  a.textContent=incoming?(mine?"💥":"🌊"):(mine?"🚢":"");
-  a.style.cssText="aspect-ratio:1;display:grid;place-items:center;border:1px solid #6b9bad;border-radius:7px;background:"+(incoming?(mine?"#843b32":"#174c70"):(mine?"#536b70":"#15506a"))+";font-size:clamp(14px,4vw,23px)";
-  own.appendChild(a);
-  const fired=bsPlayerShots.includes(i),b=document.createElement("button");
-  b.textContent=fired?(bsBotShips.includes(i)?"💥":"🌊"):"";
-  b.style.cssText="aspect-ratio:1;border:1px solid #6b9bad;border-radius:7px;background:"+(fired?(bsBotShips.includes(i)?"#843b32":"#174c70"):"#15506a")+";font-size:clamp(14px,4vw,23px)";
-  b.disabled=!bsActive||bsTurn!=="player"||fired;b.onclick=()=>bsFire(i);enemy.appendChild(b);
- }
-}
-function bsFire(i){
- if(!bsActive||bsTurn!=="player"||bsPlayerShots.includes(i))return;
- bsPlayerShots.push(i);if(bsBotShips.includes(i))bsPlayerHits++;
- if(bsPlayerHits===9){bsFinish("player");return}
- bsTurn="bot";bsRender();
- document.getElementById("bsStatus").textContent=(bsBotShips.includes(i)?"💥 Попадание! ":"🌊 Мимо. ")+"Бот выбирает цель…";
- setTimeout(bsBotFire,520);
-}
-function bsBotFire(){
- if(!bsActive)return;
- let choices=[];for(let i=0;i<36;i++)if(!bsBotShots.includes(i))choices.push(i);
- if(!choices.length){bsFinish("player");return}
- const i=choices[Math.floor(Math.random()*choices.length)];bsBotShots.push(i);
- if(bsPlayerShips.includes(i))bsBotHits++;
- if(bsBotHits===9){bsFinish("bot");return}
- bsTurn="player";bsRender();
- document.getElementById("bsStatus").textContent=(bsPlayerShips.includes(i)?"🤖 Бот попал! ":"🤖 Бот промахнулся. ")+"Твой ход.";
-}
-function bsFinish(winner){
- bsActive=false;bsRender();
- if(winner==="player"){const prize=gamePay(bsStake,2);document.getElementById("bsStatus").textContent="🏆 Ты победил! Бот потоплен. Забираешь банк: "+prize.toLocaleString("ru-RU")+" 🪙"}
- else{save();document.getElementById("bsStatus").textContent="🤖 Бот победил. Твой флот потоплен. Банк достаётся боту."}
-}
-
