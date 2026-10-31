@@ -7790,13 +7790,38 @@ function initNickname(){
  }
  updateNicknameUI();
 }
+let pendingOfficialNickname="",pendingOfficialFirst=false;
+function isProtectedOfficialNick(value){return String(value||"").trim().replace(/\s+/g," ").toLocaleUpperCase("ru")==="SKEBOB OFFICIAL";}
+function commitNickname(nick,isFirst){
+ if(!nicknameWrite(nick)){alert("Не удалось сохранить nickname. Проверь настройки хранения данных сайта.");return;}
+ if(isFirst){const m=document.getElementById("nicknameModal");if(m)m.style.display="none";}
+ updateNicknameUI();
+ if(bjOnlineChannel){bjOnlineChannel.track({id:bjOnlineId,name:nick,done:!bjOnlineMyTurn,joinedAt:bjOnlineJoinedAt,phase:bjOnlineRound&&!bjOnlineRound.finished?"playing":"waiting"});}
+}
+function requestOfficialNicknameCode(nick,isFirst){
+ if(!isProtectedOfficialNick(nick)){commitNickname(nick,isFirst);return;}
+ pendingOfficialNickname=nick;pendingOfficialFirst=isFirst;
+ const modal=document.getElementById("officialNickCodeModal"),input=document.getElementById("officialNickCodeInput");
+ if(input)input.value="";
+ if(modal)modal.style.display="flex";
+}
+function verifyOfficialNicknameCode(){
+ const input=document.getElementById("officialNickCodeInput");
+ if((input?.value||"").trim()!=="666666"){alert("Неверный код.");return;}
+ const nick=pendingOfficialNickname,isFirst=pendingOfficialFirst;
+ pendingOfficialNickname="";pendingOfficialFirst=false;
+ const modal=document.getElementById("officialNickCodeModal");if(modal)modal.style.display="none";
+ commitNickname(nick,isFirst);
+}
+function cancelOfficialNicknameCode(){
+ pendingOfficialNickname="";pendingOfficialFirst=false;
+ const modal=document.getElementById("officialNickCodeModal");if(modal)modal.style.display="none";
+}
 function saveFirstNickname(){
  const i=document.getElementById("nicknameInput"),nick=(i?.value||"").trim().replace(/\s+/g," ").slice(0,18);
  if(nick.length<2){alert("Ник должен содержать минимум 2 символа.");return;}
  if(bjNickTaken(nick)){alert("Данный никнейм уже занят");return;}
- if(!nicknameWrite(nick)){alert("Браузер не сохранил nickname. Разреши сохранение данных сайта и попробуй снова.");return;}
- const m=document.getElementById("nicknameModal");if(m)m.style.display="none";
- updateNicknameUI();
+ requestOfficialNicknameCode(nick,true);
 }
 function changeNickname(){
  const next=prompt("Введи новый nickname:",getNickname());
@@ -7804,8 +7829,7 @@ function changeNickname(){
  const nick=next.trim().replace(/\s+/g," ").slice(0,18);
  if(nick.length<2){alert("Ник должен содержать минимум 2 символа.");return;}
  if(bjNickTaken(nick,bjOnlineId)){alert("Данный никнейм уже занят");return;}
- if(!nicknameWrite(nick)){alert("Не удалось сохранить nickname в браузере. Проверь настройки хранения данных сайта.");return;}updateNicknameUI();
- if(bjOnlineChannel){bjOnlineChannel.track({id:bjOnlineId,name:nick,done:!bjOnlineMyTurn,joinedAt:bjOnlineJoinedAt,phase:bjOnlineRound&&!bjOnlineRound.finished?"playing":"waiting"});}
+ requestOfficialNicknameCode(nick,false);
 }
 
 /* BLACKJACK ONLINE — Supabase Realtime, no wagers or payouts */
@@ -7930,6 +7954,15 @@ document.addEventListener("DOMContentLoaded",initNickname);
   <p class="small">Этот ник будут видеть другие игроки.</p>
   <input id="nicknameInput" maxlength="18" placeholder="Твой nickname" autocomplete="nickname">
   <button class="goldbtn" onclick="saveFirstNickname()">СОХРАНИТЬ NICKNAME</button>
+ </div>
+</div>
+<div id="officialNickCodeModal" style="display:none;position:fixed;inset:0;z-index:21000;background:#000e;align-items:center;justify-content:center;padding:22px">
+ <div style="width:100%;max-width:420px;background:var(--panel);border:2px solid #258cf4;border-radius:18px;padding:22px;box-shadow:0 15px 50px #0009">
+  <h2 style="margin-top:0">🔒 Подтверждение SKEBOB OFFICIAL</h2>
+  <p class="small">Чтобы использовать этот nickname, введи код подтверждения.</p>
+  <input id="officialNickCodeInput" type="password" inputmode="numeric" maxlength="6" placeholder="Введите код">
+  <button class="goldbtn" onclick="verifyOfficialNicknameCode()">ПОДТВЕРДИТЬ</button>
+  <button class="secondary" style="width:100%;margin-top:8px" onclick="cancelOfficialNicknameCode()">ОТМЕНА</button>
  </div>
 </div>
 </body>
