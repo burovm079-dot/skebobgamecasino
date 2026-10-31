@@ -7626,6 +7626,9 @@ function verifyOfficialNicknameCode(){
  pendingOfficialNickname="";pendingOfficialFirst=false;
  const modal=document.getElementById("officialNickCodeModal");if(modal)modal.style.display="none";
  commitNickname(nick,isFirst);
+ const status=document.getElementById("nicknameSaveStatus");
+ const details=document.getElementById("nicknameEditorDetails");
+ if(getNickname()===nick){if(status)status.textContent="Ник успешно изменён на: "+nick;if(details)details.open=false;}
 }
 function cancelOfficialNicknameCode(){
  pendingOfficialNickname="";pendingOfficialFirst=false;
@@ -7651,11 +7654,23 @@ function closeChangeNickname(){
 }
 function saveChangedNickname(){
  const input=document.getElementById("changeNicknameInput");
- const nick=(input?.value||"").trim().replace(/\s+/g," ").slice(0,18);
- if(nick.length<2){alert("Ник должен содержать минимум 2 символа.");return;}
- if(bjNickTaken(nick,bjOnlineId)){alert("Данный никнейм уже занят");return;}
- closeChangeNickname();
- requestOfficialNicknameCode(nick,false);
+ const status=document.getElementById("nicknameSaveStatus");
+ const details=document.getElementById("nicknameEditorDetails");
+ const nick=String(input?.value||"").trim().replace(/\s+/g," ").slice(0,18);
+ if(nick.length<2){if(status)status.textContent="Ник должен содержать минимум 2 символа.";return;}
+ if(bjNickTaken(nick,bjOnlineId)){if(status)status.textContent="Данный никнейм уже занят.";return;}
+ if(isProtectedOfficialNick(nick)){
+  if(status)status.textContent="Для SKEBOB OFFICIAL требуется подтверждение владельца.";
+  requestOfficialNicknameCode(nick,false);
+  return;
+ }
+ commitNickname(nick,false);
+ if(getNickname()===nick){
+  if(status)status.textContent="Ник успешно изменён на: "+nick;
+  if(details)details.open=false;
+ }else{
+  if(status)status.textContent="Не удалось обновить ник. Попробуй ещё раз.";
+ }
 }
 
 /* BLACKJACK ONLINE — Supabase Realtime, no wagers or payouts */
