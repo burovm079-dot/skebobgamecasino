@@ -1494,6 +1494,16 @@ body.light #caseList .case,body.light .panel{background:linear-gradient(145deg,#
  .bj-cards{gap:6px}
 }
 
+
+/* Multiplayer seats */
+.bj-bot{min-width:0;min-height:150px;display:flex;flex-direction:column;justify-content:center;gap:6px}
+.bj-bot.bj-me{border-color:#f2d28d;box-shadow:0 0 0 1px #f2d28d55,inset 0 0 24px #f5d58a12}
+.bj-bot .bj-cards{min-height:76px;gap:4px}
+.bj-bot .bj-card{width:36px;height:52px;font-size:15px;border-radius:6px}
+.bj-bot .bj-seat-name{font-size:11px;overflow-wrap:anywhere}
+.bj-bot .small{font-size:11px;color:#f4e4c5}
+.bj-table{background-image:radial-gradient(ellipse at 50% 42%,#258456 0%,#12613f 48%,#08442f 78%,#052d22 100%),repeating-linear-gradient(35deg,#ffffff05 0 1px,transparent 1px 4px)}
+
 </style>
 </head>
 
@@ -7789,7 +7799,13 @@ function bjOnlineRender(){
  if(ds)ds.textContent=bjOnlineDealer?(bjOnlineDealer.revealed?"Очки дилера: "+bjOnlineValue(bjOnlineDealer.cards):"Открытая карта: "+bjOnlineValue([bjOnlineDealer.cards[0]])):"Ожидает начала раунда";
  if(ys)ys.textContent=bjOnlineMyHand.length?"Твои очки: "+bjOnlineValue(bjOnlineMyHand):"Карты появятся после старта";
  const box=document.getElementById("bjOnlinePlayers");
- if(box)box.innerHTML=bjOnlineMembers.map(p=>'<div class="bj-bot"><div class="bj-seat-name">👤 '+bjEscape(p.name)+'</div><div class="small">'+(p.done?"Завершил ход":p.id===bjOnlineId?"Это ты":"В комнате")+'</div></div>').join("");
+ if(box)box.innerHTML=bjOnlineMembers.map(p=>{
+  const mine=p.id===bjOnlineId,hand=mine?bjOnlineMyHand:(p.hand||[]);
+  const cards=hand.length?bjHandHTML(hand):'<span class="bj-card">?</span>';
+  const score=hand.length?" · "+bjOnlineValue(hand)+" очков":"";
+  const turn=p.done?"Ход завершён":mine?(bjOnlineMyTurn?"ТВОЙ ХОД":"Ожидание"):p.turn?(p.turn+" ходит"):"Ожидает хода";
+  return '<div class="bj-bot '+(mine?"bj-me":"")+'"><div class="bj-seat-name">👤 '+bjEscape(p.name)+(mine?" · ВЫ":"")+'</div><div class="bj-cards">'+cards+'</div><div class="small">'+turn+score+'</div></div>';
+ }).join("");
  const start=document.getElementById("bjOnlineStart"),hit=document.getElementById("bjOnlineHit"),stand=document.getElementById("bjOnlineStand");
  if(start)start.disabled=true;
  if(hit)hit.disabled=!bjOnlineMyTurn;
@@ -7808,9 +7824,10 @@ async function bjOnlineJoin(){
  const channelName="bj-room-"+bjOnlineRoom;
  bjOnlineChannel=bjOnlineClient.channel(channelName,{config:{presence:{key:bjOnlineId},broadcast:{self:true}}});
  bjOnlineChannel.on("presence",{event:"sync"},()=>{const state=bjOnlineChannel.presenceState();const all=Object.values(state).flat().map(x=>({id:x.id,name:x.name,done:!!x.done,joinedAt:x.joinedAt||0,phase:x.phase||"waiting"})).sort((a,b)=>a.joinedAt-b.joinedAt);if(all.some(p=>p.phase==="playing")&&!bjOnlineRound){bjOnlineStatus("Раунд уже идёт. Подожди следующего набора.");bjOnlineLeave();return}if(all.length>4&&!all.slice(0,4).some(p=>p.id===bjOnlineId)){bjOnlineStatus("Комната уже заполнена (4 игрока).");bjOnlineLeave();return}bjOnlineMembers=all.slice(0,4);bjOnlineHost=bjOnlineMembers[0]?.id===bjOnlineId;bjOnlineRender()});
- bjOnlineChannel.on("broadcast",{event:"round"},({payload})=>{if(payload.host!==bjOnlineMembers[0]?.id)return;bjOnlineRound={id:payload.id,finished:false};bjOnlineDealer={cards:payload.dealer,revealed:false};bjOnlineMyHand=[bjOnlineCard(),bjOnlineCard()];bjOnlineMyTurn=true;bjOnlineMyHand.length=0;bjOnlineDraw(bjOnlineMyHand);bjOnlineDraw(bjOnlineMyHand);bjOnlineRender();bjOnlineStatus("Раунд начался! Играй против общего дилера.")});
+ bjOnlineChannel.on("broadcast",{event:"round"},({payload})=>{if(payload.host!==bjOnlineMembers[0]?.id)return;bjOnlineRound={id:payload.id,finished:false};bjOnlineDealer={cards:payload.dealer,revealed:false};bjOnlineMyHand=[bjOnlineCard(),bjOnlineCard()];bjOnlineMyTurn=true;bjOnlineMyHand.length=0;bjOnlineDraw(bjOnlineMyHand);bjOnlineDraw(bjOnlineMyHand);bjOnlineRender();bjOnlineSend("player-state",{id:bjOnlineId,hand:bjOnlineMyHand,done:false,turn:"Твой ход"});bjOnlineStatus("Раунд начался! Играй против общего дилера.")});
  bjOnlineChannel.on("broadcast",{event:"dealer-final"},({payload})=>{if(!bjOnlineRound||payload.round!==bjOnlineRound.id)return;bjOnlineDealer={cards:payload.cards,revealed:true};bjOnlineRound.finished=true;bjOnlineMyTurn=false;bjOnlineRender();bjOnlineShowResult()});
- bjOnlineChannel.on("broadcast",{event:"player-done"},({payload})=>{const p=bjOnlineMembers.find(x=>x.id===payload.id);if(p)p.done=true;bjOnlineRender();if(bjOnlineHost)bjOnlineFinishDealer()});
+ bjOnlineChannel.on("broadcast",{event:"player-state"},({payload})=>{const p=bjOnlineMembers.find(x=>x.id===payload.id);if(!p)return;p.hand=payload.hand||[];p.done=!!payload.done;p.turn=payload.done?"Завершил ход":(payload.turn||"Ходит");bjOnlineRender()});
+ bjOnlineChannel.on("broadcast",{event:"player-done"},({payload})=>{const p=bjOnlineMembers.find(x=>x.id===payload.id);if(p){p.done=true;p.hand=payload.hand||p.hand;p.turn="Завершил ход"}bjOnlineRender();if(bjOnlineHost)bjOnlineFinishDealer()});
  bjOnlineChannel.on("broadcast",{event:"room-full"},()=>bjOnlineStatus("Комната заполнена. Попробуй ещё раз."));
  bjOnlineStatus("Подключаемся к комнате…");
  const status=await bjOnlineChannel.subscribe(async st=>{
@@ -7842,12 +7859,12 @@ function bjOnlineStart(){
 }
 function bjOnlineHit(){
  if(!bjOnlineMyTurn||!bjOnlineRound||bjOnlineRound.finished)return;
- bjOnlineDraw(bjOnlineMyHand);bjOnlineRender();
+ bjOnlineDraw(bjOnlineMyHand);bjOnlineSend("player-state",{id:bjOnlineId,hand:bjOnlineMyHand,done:false,turn:"Твой ход"});bjOnlineRender();
  if(bjOnlineValue(bjOnlineMyHand)>=21)bjOnlineStand();
 }
 function bjOnlineStand(){
  if(!bjOnlineMyTurn||!bjOnlineRound||bjOnlineRound.finished)return;
- bjOnlineMyTurn=false;bjOnlineSend("player-done",{id:bjOnlineId,score:bjOnlineValue(bjOnlineMyHand)});
+ bjOnlineMyTurn=false;bjOnlineSend("player-state",{id:bjOnlineId,hand:bjOnlineMyHand,done:true,turn:"Завершил ход"});bjOnlineSend("player-done",{id:bjOnlineId,score:bjOnlineValue(bjOnlineMyHand),hand:bjOnlineMyHand});
  bjOnlineStatus("Ты завершил ход. Ждём завершения раунда.");
  bjOnlineRender();
  if(bjOnlineHost)bjOnlineFinishDealer();
