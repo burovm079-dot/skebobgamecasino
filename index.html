@@ -3164,16 +3164,7 @@ const nftCollections = [
  {name:"Blue Socks",collection:"Telegram Gifts",image:"https://cdn.jsdelivr.net/gh/twitter/twemoji@latest/assets/72x72/1f9e6.png",market:"https://fragment.com/gifts",value:799,stars:470,icon:"🧦"}
 ];
 const prizes=nftCollections.map((n,i)=>({...n,id:"nft-"+i,rarity:i<4?"Легендарный":i<7?"Эпический":i<12?"Редкий":i<16?"Необычный":"Обычный"}));
-const telegramGiftStart=21;
-const telegramGiftEnd=telegramGiftStart+57;
-const telegramGifts=nftCollections.slice(telegramGiftStart,telegramGiftEnd);
-telegramGifts.forEach((gift,i)=>{
- const prizeIndex=telegramGiftStart+i;
- const minimumCasePrice=Math.ceil(gift.value/1.5);
- cases.forEach(c=>{
-  if(!c.secret&&c.price>=minimumCasePrice&&c.price<=minimumCasePrice*3&&!c.items.includes(prizeIndex))c.items.push(prizeIndex);
- });
-});
+
 const cases=[
  {name:"TINY PIXEL",icon:"🧩",price:150,desc:"Самый доступный набор NFT",items:[18,19,20]},
  {name:"STARTER DROP",icon:"🌱",price:250,desc:"Первые коллекционные аватары",items:[16,17,18,19,20]},
@@ -3205,6 +3196,17 @@ const cases=[
  {name:"NFT WHALE",icon:"🐳",price:1096000,desc:"Премиальная подборка blue-chip NFT",items:[0,4,5,6]},
  {name:"SKEBOB GRAIL",icon:"🏆",price:5357000,desc:"Самые дорогие коллекционные NFT в игре",items:[0,1,2,3,4]}
 ];
+
+const telegramGiftStart=21;
+const telegramGiftEnd=telegramGiftStart+57;
+const telegramGifts=nftCollections.slice(telegramGiftStart,telegramGiftEnd);
+telegramGifts.forEach((gift,i)=>{
+ const prizeIndex=telegramGiftStart+i;
+ const minimumCasePrice=Math.ceil(gift.value/1.5);
+ cases.forEach(c=>{
+  if(!c.secret&&c.price>=minimumCasePrice&&c.price<=minimumCasePrice*3&&!c.items.includes(prizeIndex))c.items.push(prizeIndex);
+ });
+});
 // Жёсткое соотношение игровой стоимости возможных призов.
 const prizeValueCaps={};
 cases.forEach(c=>{
