@@ -7230,8 +7230,13 @@ async function playDice(){
  arena.innerHTML=players.map((p,i)=>'<div class="dice-seat" id="diceSeat'+i+'"><div class="dice-avatar">'+p.avatar+'</div><div class="dice-name">'+p.name+'</div><div class="dice-cubes" id="diceCubes'+i+'">🎲 🎲</div><div class="dice-total" id="diceTotal'+i+'">?</div></div>').join("");
  document.getElementById("diceResult").textContent="Кости летят...";
  for(let t=0;t<18;t++){if(t%2===0)diceRattleSound();players.forEach((p,i)=>{const el=document.getElementById("diceCubes"+i);el.innerHTML='<span class="dice-cube rolling">'+diceFaces[Math.floor(Math.random()*6)]+'</span><span class="dice-cube rolling">'+diceFaces[Math.floor(Math.random()*6)]+'</span>'});await new Promise(r=>setTimeout(r,75+t*9))}
- for(let i=0;i<players.length;i++){diceImpactSound();const p=players[i];p.a=1+Math.floor(Math.random()*6);p.b=1+Math.floor(Math.random()*6);p.total=p.a+p.b;const el=document.getElementById("diceCubes"+i);el.innerHTML='<span class="dice-cube">'+diceFaces[p.a-1]+'</span><span class="dice-cube">'+diceFaces[p.b-1]+'</span>';document.getElementById("diceTotal"+i).textContent=p.total;await new Promise(r=>setTimeout(r,180))}
- const max=Math.max(...players.map(p=>p.total)),winners=players.filter(p=>p.total===max),winner=winners[Math.floor(Math.random()*winners.length)],pool=bet*players.length;
+ let max,winners;
+ do{
+  for(let i=0;i<players.length;i++){diceImpactSound();const p=players[i];p.a=1+Math.floor(Math.random()*6);p.b=1+Math.floor(Math.random()*6);p.total=p.a+p.b;const el=document.getElementById("diceCubes"+i);el.innerHTML='<span class="dice-cube">'+diceFaces[p.a-1]+'</span><span class="dice-cube">'+diceFaces[p.b-1]+'</span>';document.getElementById("diceTotal"+i).textContent=p.total;await new Promise(r=>setTimeout(r,180))}
+  max=Math.max(...players.map(p=>p.total));winners=players.filter(p=>p.total===max);
+  if(winners.length>2){document.getElementById("diceResult").textContent="🎲 Максимум выпал сразу у "+winners.length+" игроков — переброс кубиков!";await new Promise(r=>setTimeout(r,900))}
+ }while(winners.length>2);
+ const winner=winners[Math.floor(Math.random()*winners.length)],pool=bet*players.length;
  document.getElementById("diceSeat"+players.indexOf(winner)).classList.add("winner");if(winner.you)state.balance+=pool;
  save();render();document.getElementById("diceResult").textContent=(winner.you?"🏆 ТЫ ПОБЕДИЛ!":"🤖 Победитель: "+winner.name)+" · "+max+" очков · "+(winner.you?"+"+pool.toLocaleString("ru-RU"):"банк забран")+" 🪙";
  diceBusy=false;
