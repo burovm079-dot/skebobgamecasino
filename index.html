@@ -3104,6 +3104,17 @@ const nftCollections = [
 ];
 const prizes=nftCollections.map((n,i)=>({...n,id:"nft-"+i,rarity:i<4?"Легендарный":i<7?"Эпический":i<12?"Редкий":i<16?"Необычный":"Обычный"}));
 const cases=[
+ {name:"TINY PIXEL",icon:"🧩",price:150,desc:"Самый доступный набор NFT",items:[18,19,20]},
+ {name:"STARTER DROP",icon:"🌱",price:250,desc:"Первые коллекционные аватары",items:[16,17,18,19,20]},
+ {name:"NEON BOX",icon:"💡",price:600,desc:"Яркие NFT из популярных коллекций",items:[14,15,16,17,18,19,20]},
+ {name:"ART HUNTER",icon:"🎨",price:1200,desc:"Подборка цифрового арта и аватаров",items:[12,13,14,15,16,17,18]},
+ {name:"PIXEL ELITE",icon:"👾",price:1800,desc:"Коллекционные пиксельные и игровые NFT",items:[11,12,13,14,15,16,17]},
+ {name:"BLUE CHIP BOX",icon:"💎",price:2500,desc:"Известные NFT-коллекции начального уровня",items:[9,10,11,12,13,14,15,16]},
+ {name:"AVATAR CLUB",icon:"🧢",price:3500,desc:"Аватары из известных NFT-проектов",items:[8,9,10,11,12,13,14,15]},
+ {name:"COLLECTOR PRO",icon:"🏅",price:4500,desc:"Расширенная коллекция цифровых предметов",items:[7,8,9,10,11,12,13,14]},
+ {name:"GOLDEN DROP",icon:"🌟",price:6000,desc:"Премиальная подборка NFT-аватаров",items:[6,7,8,9,10,11,12,13]},
+ {name:"SAPPHIRE CASE",icon:"🔷",price:7500,desc:"Редкие представители популярных коллекций",items:[5,6,7,8,9,10,11,12]},
+ {name:"ROYAL NFT",icon:"👑",price:10000,desc:"Лучшие призы в линейке кейсов до 10 000 ₽",items:[4,5,6,7,8,9,10,11]}
  {name:"MICRO NFT",icon:"🪙",price:80,desc:"Начальный дроп — недорогие цифровые коллекционные предметы",items:[16,18,19,20]},
  {name:"PIXEL START",icon:"👾",price:400,desc:"Доступные NFT и небольшие коллекции",items:[14,15,16,17,18,19,20]},
  {name:"COLLECTOR",icon:"🎨",price:800,desc:"Подборка недорогих коллекционных NFT",items:[14,15,16,17,18,19,20]},
@@ -3127,7 +3138,7 @@ const cases=[
 const prizeValueCaps={};
 cases.forEach(c=>{
  c.items.forEach(index=>{
-  const cap=Math.floor(c.price*1.7);
+  const cap=Math.floor(c.price*1.5);
   prizeValueCaps[index]=prizeValueCaps[index]===undefined?cap:Math.min(prizeValueCaps[index],cap);
  });
 });
