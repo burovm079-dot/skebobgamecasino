@@ -2741,10 +2741,10 @@ id="profileBalance"
 <p class="small">До 4 игроков в комнате. Каждый играет отдельно против общего дилера. Только бесплатная игра — без ставок и выплат.</p>
 <div class="panel">
  <div class="bj-actions">
-  <button class="game-main" id="bjOnlineJoin" onclick="bjOnlineJoin()">🌐 НАЙТИ ИГРОКОВ</button>
-  <button class="secondary" id="bjOnlineLeave" onclick="bjOnlineLeave()" disabled>ВЫЙТИ</button>
+  <button class="game-main" id="bjOnlineJoin" onclick="bjOnlineJoin()">🎮 ИГРАТЬ</button>
+  <button class="secondary" id="bjOnlineLeave" onclick="bjOnlineLeave()" disabled>ВЫЙТИ ИЗ ИГРЫ</button>
  </div>
- <div class="game-status" id="bjOnlineStatus">Подключись к комнате. Поиск длится до 60 секунд.</div>
+ <div class="game-status" id="bjOnlineStatus">Нажми «Играть», чтобы войти в очередь на следующий раунд.</div>
  <div class="small" id="bjOnlineRoomLabel">Комната: —</div>
  <div id="bjOnlinePlayers" class="bj-players"></div>
  <div class="small" id="bjOnlineCountdown"></div>
@@ -7787,7 +7787,7 @@ async function bjOnlineLeave(){
  bjOnlineChannel=null;bjOnlineRoom="";bjOnlineMembers=[];bjOnlineRound=null;bjOnlineMyHand=[];bjOnlineDealer=null;bjOnlineMyTurn=false;
  document.getElementById("bjOnlineJoin").disabled=false;document.getElementById("bjOnlineLeave").disabled=true;
  document.getElementById("bjOnlineRoomLabel").textContent="Комната: —";document.getElementById("bjOnlineCountdown").textContent="";
- bjOnlineStatus("Ты вышел из комнаты.");bjOnlineRender();
+ bjOnlineStatus("Ты вышел из игры. Когда будешь готов — нажми «Играть».");bjOnlineRender();
 }
 function bjOnlineStart(){
  if(!bjOnlineHost||!bjOnlineChannel||bjOnlineMembers.length===0)return;
