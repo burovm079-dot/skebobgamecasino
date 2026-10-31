@@ -2490,7 +2490,7 @@ class="hidden"
 >
 
 <h2>👤 ПРОФИЛЬ</h2>
-<div class="panel"><div class="small">ТВОЙ NICKNAME</div><strong id="profileNickname" style="display:block;font-size:22px;margin:8px 0 12px">Player</strong><button type="button" id="changeNicknameButton" class="secondary">✏️ ИЗМЕНИТЬ NICKNAME</button></div>
+<div class="panel"><div class="small">ТВОЙ NICKNAME</div><strong id="profileNickname" style="display:block;font-size:22px;margin:8px 0 12px">Player</strong><button type="button" id="changeNicknameButton" class="secondary" onclick="var m=document.getElementById('changeNicknameModal');var i=document.getElementById('changeNicknameInput');if(m&&i){i.value=(typeof getNickname==='function'?getNickname():'Player');m.style.display='flex';}else{alert('Окно изменения nickname не найдено. Обнови страницу.');}">✏️ ИЗМЕНИТЬ NICKNAME</button></div>
 
 <div id="officialAdminEntry" class="panel hidden"><b>🛠 ПАНЕЛЬ ВЛАДЕЛЬЦА</b><div class="small">Управление оформлением и модерацией сайта</div><button class="goldbtn" onclick="showPage('adminLogin')">АДМИН-ПАНЕЛЬ</button></div>
 
@@ -7759,7 +7759,7 @@ function bjOnlineShowResult(){
 }
 
 // Загружаем сохранённый ник после появления окна регистрации в DOM.
-document.addEventListener("DOMContentLoaded",()=>{initNickname();const button=document.getElementById("changeNicknameButton");if(button)button.addEventListener("click",()=>{try{changeNickname();}catch(error){console.error("Nickname editor error:",error);alert("Не удалось открыть изменение nickname. Обнови страницу и попробуй ещё раз.");}});});
+document.addEventListener("DOMContentLoaded",initNickname);
 
 </script>
 
