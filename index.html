@@ -1826,91 +1826,35 @@ id="upgrade"
 class="hidden"
 >
 
-<h2>🎯 MONEY UPGRADE</h2>
+<h2>🎯 УЛУЧШЕНИЕ ПРЕДМЕТОВ</h2>
 
 <div class="panel">
 
-<div
-class="upgrade-circle"
-id="upgradeCircle"
->
-
-<div
-class="upgrade-arrow"
-id="upgradeArrow"
-></div>
-
+<div class="upgrade-circle" id="upgradeCircle">
 <div class="upgrade-center">
-
-<strong id="chanceText">
-45%
-</strong>
-
-<span id="upgradeValues">
-100 → 200 🪙
-</span>
-
+<strong id="chanceText">100%</strong>
+<span id="upgradeValues">Выбери предмет</span>
+</div>
 </div>
 
-</div>
+<div class="small">ПРЕДМЕТ ИЗ ИНВЕНТАРЯ</div>
+<select id="upgradeItemSelect" onchange="updateUpgradeInfo()">
+<option value="">Сначала выбери предмет</option>
+</select>
 
-<div class="small">
-СУММА
-</div>
-
-<input
-type="number"
-id="upgradeStake"
-value="100"
-min="1"
-oninput="updateUpgradeInfo()"
->
-
-<p
-id="commissionText"
-class="small"
-></p>
-
-<div class="small">
-МНОЖИТЕЛЬ
-</div>
-
+<div class="small">УЛУЧШЕНИЕ ЦЕННОСТИ</div>
 <div class="multiplier-grid">
-
-<button onclick="setMultiplier(1.2,this)">
-x1.2
-</button>
-
-<button onclick="setMultiplier(1.5,this)">
-x1.5
-</button>
-
-<button
-class="active"
-onclick="setMultiplier(2,this)"
->
-x2
-</button>
-
+<button onclick="setMultiplier(1.2,this)">x1.2</button>
+<button onclick="setMultiplier(1.5,this)">x1.5</button>
+<button class="active" onclick="setMultiplier(2,this)">x2</button>
 <button onclick="setMultiplier(3,this)">x3</button>
 <button onclick="setMultiplier(5,this)">x5</button>
 <button onclick="setMultiplier(10,this)">x10</button>
-
 </div>
 
-<button
-class="goldbtn"
-id="upgradeButton"
-onclick="spinUpgrade()"
->
-АПГРЕЙД
-</button>
-
-<div
-id="upgradeStatus"
-class="game-status"
-></div>
-
+<p id="commissionText" class="small">Улучшение гарантировано и не тратит очки.</p>
+<button class="goldbtn" id="upgradeButton" onclick="spinUpgrade()">УЛУЧШИТЬ ПРЕДМЕТ</button>
+<div id="upgradeStatus" class="game-status"></div>
 </div>
 
 </section>
@@ -4856,200 +4800,63 @@ save();
 ========================= */
 
 function setMultiplier(m,b){
-
 if(upgradeBusy)return;
-
 multiplier=m;
-
-document
-.querySelectorAll(
-".multiplier-grid button"
-)
-.forEach(
-x=>x.classList.remove(
-"active"
-)
-);
-
-b.classList.add(
-"active"
-);
-
+document.querySelectorAll(".multiplier-grid button").forEach(x=>x.classList.remove("active"));
+if(b)b.classList.add("active");
 updateUpgradeInfo();
+}
 
+function refreshUpgradeItems(){
+const select=document.getElementById("upgradeItemSelect");
+if(!select)return;
+const previous=select.value;
+select.innerHTML='<option value="">Выбери предмет</option>';
+state.inventory.forEach((item,index)=>{
+const option=document.createElement("option");
+option.value=String(index);
+option.textContent=(item.name||"Предмет")+" — "+formatMoney(Number(item.value)||0)+" (уровень "+(Number(item.level)||1)+")";
+select.appendChild(option);
+});
+if(previous!==""&&state.inventory[Number(previous)])select.value=previous;
+updateUpgradeInfo();
 }
 
 function updateUpgradeInfo(){
-
-const stake=
-Math.max(
-0,
-Number(
-document.getElementById(
-"upgradeStake"
-).value
-)||0
-);
-
-const chance=
-Math.min(
-90,
-Math.max(
-5,
-Math.floor(
-90/multiplier
-)
-)
-);
-
-document.getElementById(
-"chanceText"
-).textContent=
-chance+
-"%";
-
-document.getElementById(
-"upgradeValues"
-).textContent=
-stake+
-" → "+
-Math.floor(
-stake*multiplier
-)+
-" 🪙";
-
-document.getElementById(
-"upgradeCircle"
-).style.setProperty(
-"--chance",
-chance+"%"
-);
-
-document.getElementById(
-"commissionText"
-).textContent=
-
-state.admin.alwaysWin
-?
-"🎯 ADMIN: всегда выигрыш"
-:
-"Шанс успеха: "+
-chance+
-"%";
-
+const select=document.getElementById("upgradeItemSelect");
+const index=select?Number(select.value):-1;
+const item=select&&select.value!==""?state.inventory[index]:null;
+const chance=document.getElementById("chanceText");
+const values=document.getElementById("upgradeValues");
+const button=document.getElementById("upgradeButton");
+if(chance)chance.textContent="100%";
+if(values)values.textContent=item
+?formatMoney(Number(item.value)||0)+" → "+formatMoney(Math.floor((Number(item.value)||0)*multiplier))
+:"Выбери предмет";
+if(button)button.disabled=!item||upgradeBusy;
 }
 
 function spinUpgrade(){
-
 if(upgradeBusy)return;
-
-const stake=
-Math.floor(
-Number(
-document.getElementById(
-"upgradeStake"
-).value
-)
-);
-
-if(
-stake<=0||
-stake>state.balance
-){
-
-alert(
-"Проверь сумму."
-);
-
+const select=document.getElementById("upgradeItemSelect");
+const index=select&&select.value!==""?Number(select.value):-1;
+const item=state.inventory[index];
+if(!item){
+const status=document.getElementById("upgradeStatus");
+if(status)status.textContent="Сначала выбери предмет из инвентаря.";
 return;
-
 }
-
 upgradeBusy=true;
-
-const chance=
-Math.min(
-90,
-Math.max(
-5,
-Math.floor(
-90/multiplier
-)
-)
-);
-
-state.balance-=stake;
-
-addTurnover(stake);
-
+item.level=(Number(item.level)||1)+1;
+item.value=Math.max(0,Math.floor((Number(item.value)||0)*multiplier));
 state.stats.upgrades++;
-
-save();
-
-const won=
-state.admin.alwaysWin
-||
-Math.random()*100<
-chance;
-
-const arrow=
-document.getElementById(
-"upgradeArrow"
-);
-
-arrow.style.transition=
-"none";
-
-arrow.style.transform=
-"rotate(0deg)";
-
-void arrow.offsetWidth;
-
-arrow.style.transition=
-"transform 4s cubic-bezier(.12,.7,.15,1)";
-
-arrow.style.transform=
-`rotate(${7*360+Math.random()*360}deg)`;
-
-setTimeout(()=>{
-
-if(won){
-
-const reward=
-Math.floor(
-stake*
-multiplier
-);
-
-state.balance+=reward;
-
 state.stats.upgradeWins++;
 addDailyTaskProgress("upgrade");
-
-registerWin(reward);
-
-document.getElementById(
-"upgradeStatus"
-).textContent=
-"🏆 ПОБЕДА! +"+
-reward+
-" 🪙";
-
-}else{
-
-document.getElementById(
-"upgradeStatus"
-).textContent=
-"❌ ПРОИГРЫШ";
-
-}
-
 save();
-
+const status=document.getElementById("upgradeStatus");
+if(status)status.textContent="✓ Предмет улучшен! Новый уровень: "+item.level;
 upgradeBusy=false;
-
-},4000);
-
+refreshUpgradeItems();
 }
 
 /* =========================
