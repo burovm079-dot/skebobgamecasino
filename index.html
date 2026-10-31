@@ -7254,7 +7254,7 @@ function tttMove(i){if(!tttActive||ttt[i])return;ttt[i]="X";let w=tttWinner(ttt)
 
 function poolShot(){const b=gameBet("poolBet");if(!b){alert("Нужна ставка от 100");return}state.balance-=b;const a=+document.getElementById("poolAngle").value,p=+document.getElementById("poolPower").value;const chance=Math.max(5,65-Math.abs(a-90)*.45-Math.abs(p-65)*.35);const ok=Math.random()*100<chance;const m=ok?(p>85?3:2):0;const w=m?gamePay(b,m):0;if(!m)save();poolAnimFrame=0;const tick=()=>{poolAnimFrame++;drawPoolScene(true,a,p);if(poolAnimFrame<30)requestAnimationFrame(tick)};requestAnimationFrame(tick);document.getElementById("poolResult").textContent=ok?"🎱 Шар в лузе! Выплата "+w+" 🪙":"Шар не попал в лузу. Попробуй ещё!";}
 
-let chBetValue=0,chMult=1,chActive=false,chStepCount=0,chAnim=0,chCrash=false;
+let chBetValue=0,chMult=1,chActive=false,chStepCount=0,chAnim=0,chCrash=false,chStepLock=false;
 let chAudio=null,chSoundOn=true,chTrafficNodes=null;
 function chAudioReady(){if(!chSoundOn)return null;try{if(!chAudio){const AC=window.AudioContext||window.webkitAudioContext;if(!AC)return null;chAudio=new AC()}if(chAudio.state==="suspended")chAudio.resume().catch(()=>{});return chAudio}catch(e){return null}}
 function chTone(freq,duration,gain,type="sine",when=0,endFreq=null){const a=chAudioReady();if(!a)return;const o=a.createOscillator(),g=a.createGain(),t=a.currentTime+when;o.type=type;o.frequency.setValueAtTime(freq,t);if(endFreq)o.frequency.exponentialRampToValueAtTime(endFreq,t+duration);g.gain.setValueAtTime(.0001,t);g.gain.exponentialRampToValueAtTime(gain,t+.018);g.gain.exponentialRampToValueAtTime(.0001,t+duration);o.connect(g);g.connect(a.destination);o.start(t);o.stop(t+duration+.03)}
@@ -7294,7 +7294,7 @@ function chDraw(){
    c.restore();
   }
  }
- const progress=Math.min(chStepCount,12),startY=h*.96,endY=h*.025,cy=startY-(startY-endY)*(progress/12),cx=w*.5,scale=.8+progress/12*.18;
+ const progress=Math.min(chStepCount,5),startY=h*.96,endY=h*.025,cy=startY-(startY-endY)*(progress/5),cx=w*.5,scale=.8+progress/12*.18;
  c.save();c.translate(cx,cy);c.scale(scale,scale);
  c.fillStyle="#0007";c.beginPath();c.ellipse(0,18,22,7,0,0,Math.PI*2);c.fill();
  c.strokeStyle="#b77a28";c.lineWidth=4;c.beginPath();c.moveTo(-7,10);c.lineTo(-9,22);c.moveTo(7,10);c.lineTo(9,22);c.stroke();
@@ -7311,7 +7311,36 @@ function chDraw(){
 }
 function chAnimate(){chAnim+=1;chDraw()}setInterval(chAnimate,45);
 function chickenStart(){if(chActive)return;const b=gameBet("chBet");if(!b){alert("Нужна ставка от 100 и достаточно средств");return}chAudioReady();chStartTraffic();state.balance-=b;chBetValue=b;chMult=1;chStepCount=0;chActive=true;chCrash=false;save();document.getElementById("chMultiplier").textContent="x1.00";document.getElementById("chDistance").textContent="0 / 12";document.getElementById("chPotential").textContent=b.toLocaleString("ru-RU")+" ₽";document.getElementById("chScene").textContent="ДОРОГА ОТКРЫТА";document.getElementById("chStart").disabled=true;document.getElementById("chStep").disabled=false;document.getElementById("chCash").disabled=true;document.getElementById("chResult").textContent="Поток машин движется. Выбери момент для следующего шага.";chDraw()}
-function chickenStep(){if(!chActive)return;chCluck();const risk=Math.min(.42,.14+chStepCount*.022);if(Math.random()<risk){chActive=false;chStopTraffic();chTone(95,.45,.2,"sawtooth");chCrash=true;document.getElementById("chScene").textContent="АВАРИЯ";document.getElementById("chResult").textContent="🚨 Курица попала под машину. Ставка потеряна.";document.getElementById("chStep").disabled=true;document.getElementById("chCash").disabled=true;document.getElementById("chStart").disabled=false;save();chDraw();return}chStepCount++;chMult=+(chMult*1.35).toFixed(2);document.getElementById("chMultiplier").textContent="x"+chMult.toFixed(2);document.getElementById("chDistance").textContent=chStepCount+" / 12";document.getElementById("chPotential").textContent=Math.floor(chBetValue*chMult).toLocaleString("ru-RU")+" ₽";document.getElementById("chCash").disabled=false;document.getElementById("chResult").textContent="Полоса пройдена! Продолжить или забрать выигрыш?";document.getElementById("chScene").textContent="БЕЗОПАСНО · "+chStepCount+"/12";if(chStepCount>=12)chickenCash();chDraw()}
+function chickenStep(){
+ if(!chActive||chStepLock)return;
+ chStepLock=true;
+ try{
+  chCluck();
+  const cv=document.getElementById("chCanvas"),w=cv?cv.clientWidth||700:700,carW=Math.max(34,Math.min(68,w*.082));
+  const lane=4-chStepCount,dir=lane%2?1:-1,speed=.72+lane*.16,period=w+carW+90,center=w*.5;
+  let collision=false;
+  for(let j=0;j<2;j++){
+   let raw=(j*(w*.62)+chAnim*speed*dir*1.65)%period;if(raw<0)raw+=period;
+   const x=dir>0?raw-carW:w-raw;
+   const carCenter=x+carW*.5;
+   if(carCenter+carW*.38>center-17&&carCenter-carW*.38<center+17)collision=true;
+  }
+  if(collision){
+   chActive=false;chStopTraffic();chTone(95,.45,.2,"sawtooth");chCrash=true;
+   document.getElementById("chScene").textContent="АВАРИЯ";
+   document.getElementById("chResult").textContent="🚨 Машина проехала слишком близко. Ставка потеряна.";
+   document.getElementById("chStep").disabled=true;document.getElementById("chCash").disabled=true;document.getElementById("chStart").disabled=false;save();chDraw();return;
+  }
+  chStepCount++;chMult=+(chMult*1.35).toFixed(2);
+  document.getElementById("chMultiplier").textContent="x"+chMult.toFixed(2);
+  document.getElementById("chDistance").textContent=chStepCount+" / 5";
+  document.getElementById("chPotential").textContent=Math.floor(chBetValue*chMult).toLocaleString("ru-RU")+" ₽";
+  document.getElementById("chCash").disabled=false;
+  document.getElementById("chResult").textContent="Полоса пройдена! Продолжить или забрать выигрыш?";
+  document.getElementById("chScene").textContent="БЕЗОПАСНО · "+chStepCount+"/5";
+  chDraw();if(chStepCount>=5)chickenCash();
+ }finally{chStepLock=false}
+}
 function chickenCash(){if(!chActive)return;chActive=false;chStopTraffic();chTone(880,.12,.09,"sine");chTone(1175,.22,.08,"sine",.12);const w=gamePay(chBetValue,chMult);document.getElementById("chResult").textContent="🏆 Выигрыш зачислен: "+w.toLocaleString("ru-RU")+" 🪙";document.getElementById("chStep").disabled=true;document.getElementById("chCash").disabled=true;document.getElementById("chStart").disabled=false;document.getElementById("chScene").textContent="ПЕРЕХОД ЗАВЕРШЁН"}
 
 
