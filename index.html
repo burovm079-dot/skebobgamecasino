@@ -1288,9 +1288,9 @@ SKEBOB <span>CASINO</span>
 <button onclick="showPage('dice',this)">🎲 КОСТИ</button>
 <button onclick="showPage('battleship',this)">🚢 МОРСКОЙ БОЙ</button>
 <button onclick="showPage('tictactoe',this)">⭕ КРЕСТИКИ</button>
-<button onclick="showPage('darts',this)">🎯 ДАРТС</button>
+
 <button onclick="showPage('billiards',this)">🎱 БИЛЬЯРД</button>
-<button onclick="showPage('bowling',this)">🎳 БОУЛИНГ</button>
+
 <button onclick="showPage('chickenroad',this)">🐔 CHICKEN ROAD</button>
 
 
@@ -1302,10 +1302,11 @@ SKEBOB <span>CASINO</span>
 <section id="battleship" class="hidden">
 <h2>🚢 МОРСКОЙ БОЙ</h2>
 <div class="panel">
-<p class="small">Найди все 5 кораблей бота на поле 6×6. За победу — x2 от ставки.</p>
+<p class="small">Два флота на отдельных полях 6×6. Ты и бот по очереди стреляете по полю соперника. Победитель забирает общий банк — две ставки.</p>
 <label>Ставка</label><input id="bsBet" type="number" min="100" step="100" value="100">
-<div id="bsStatus" class="small">Начни игру и ищи корабли!</div>
-<div id="bsGrid" style="display:grid;grid-template-columns:repeat(6,1fr);gap:5px;margin:12px 0"></div>
+<div id="bsStatus" class="small">Начни матч, чтобы разместить два флота.</div>
+<div class="small">ТВОЁ ПОЛЕ — флот и попадания бота</div><div id="bsOwnGrid" style="display:grid;grid-template-columns:repeat(6,1fr);gap:5px;margin:8px 0 16px"></div>
+<div class="small">ПОЛЕ БОТА — стреляй сюда</div><div id="bsGrid" style="display:grid;grid-template-columns:repeat(6,1fr);gap:5px;margin:8px 0 12px"></div>
 <button class="goldbtn" onclick="bsStart()">🚢 НАЧАТЬ МОРСКОЙ БОЙ</button>
 </div></section>
 <section id="tictactoe" class="hidden">
@@ -1317,31 +1318,14 @@ SKEBOB <span>CASINO</span>
 <div id="tttGrid" style="display:grid;grid-template-columns:repeat(3,1fr);gap:7px;max-width:300px;margin:14px auto"></div>
 <button class="goldbtn" onclick="tttStart()">НОВАЯ ИГРА</button>
 </div></section>
-<section id="darts" class="hidden">
-<h2>🎯 ДАРТС</h2><div class="panel">
-<p class="small">Выставь точность броска. Чем ближе к центру, тем больше награда.</p>
-<label>Ставка</label><input id="dartBet" type="number" min="100" step="100" value="100">
-<label>Прицел</label><input id="dartAim" type="range" min="0" max="100" value="50">
-<label>Сила броска</label><input id="dartPower" type="range" min="1" max="100" value="65">
-<canvas id="dartCanvas" class="real-game-canvas dart-scene" aria-label="Детализированная мишень для дартса"></canvas><button class="goldbtn" onclick="dartThrow()">🎯 БРОСИТЬ ДРОТИК</button><div id="dartResult" class="small"></div>
-</div></section>
 <section id="billiards" class="hidden">
 <h2>🎱 БИЛЬЯРД</h2><div class="panel">
-<p class="small">Тренировочный режим пула против бота появится здесь: настрой направление и силу, прицелься по шару и сыграй полноценную партию 8-ball.</p>
+<p class="small">Матч 8-ball против бота. Забивай свои шары, затем чёрную восьмёрку. Победитель забирает общий банк — две ставки.</p>
 <label>Ставка за матч</label><input id="poolBet" type="number" min="100" step="100" value="100">
 <label>Угол прицеливания</label><input id="poolAngle" type="range" min="0" max="359" value="0">
 <label>Сила удара</label><input id="poolPower" type="range" min="1" max="100" value="55">
 <canvas id="poolCanvas" class="real-game-canvas pool-scene" aria-label="Бильярдный стол: нажми на стол для прицеливания"></canvas>
 <div class="game-actions"><button class="goldbtn" onclick="poolStart()">НОВАЯ ПАРТИЯ</button><button class="goldbtn" id="poolHitBtn" onclick="poolShot()" disabled>УДАРИТЬ КИЕМ</button></div><div id="poolResult" class="small">Начни партию, затем нажми на стол для прицеливания.</div>
-</div></section>
-<section id="bowling" class="hidden">
-<h2>🎳 БОУЛИНГ</h2><div class="panel">
-<p class="small">Настрой направление и силу. Больше сбитых кеглей — выше выплата.</p>
-<label>Ставка</label><input id="bowlBet" type="number" min="100" step="100" value="100">
-<label>Направление</label><input id="bowlAim" type="range" min="0" max="100" value="50">
-<label>Сила броска</label><input id="bowlPower" type="range" min="1" max="100" value="75">
-<canvas id="bowlCanvas" class="real-game-canvas bowl-scene" aria-label="Кегельная дорожка"></canvas><div id="bowlPins" style="text-align:center;font-size:18px;margin:12px">ГОТОВ К БРОСКУ</div>
-<button class="goldbtn" onclick="bowlThrow()">БРОСИТЬ ШАР</button><div id="bowlResult" class="small"></div>
 </div></section>
 <section id="chickenroad" class="hidden">
 <h2>🐔 CHICKEN ROAD</h2><div class="panel chicken-panel">
@@ -1355,8 +1339,8 @@ SKEBOB <span>CASINO</span>
 .chicken-panel{max-width:900px;margin:auto}.ch-hud{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin:14px 0}.ch-hud>div{background:var(--panel2);border:1px solid var(--border);border-radius:12px;padding:10px}.ch-hud span{display:block;font-size:10px;color:var(--muted);letter-spacing:1px}.ch-hud b{display:block;color:var(--gold);font-size:22px;margin-top:4px}.ch-canvas-wrap{position:relative;overflow:hidden;border:1px solid #52634b;border-radius:16px;background:#233d2a;box-shadow:inset 0 0 35px #0008}.ch-canvas-wrap canvas{display:block;width:100%;height:300px}.ch-scene-tag{position:absolute;left:12px;top:12px;padding:6px 10px;border-radius:8px;background:#07120dcc;color:#fff;font-size:11px;font-weight:900;letter-spacing:1px}.ch-controls{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-top:14px;text-align:left}.ch-controls label,.ch-controls input{grid-column:1/-1}.ch-controls button{width:100%;min-height:44px}.ch-result{min-height:24px;margin-top:12px}@media(max-width:560px){.ch-canvas-wrap canvas{height:240px}.ch-hud b{font-size:17px}.ch-hud span{font-size:8px}.ch-controls{grid-template-columns:1fr}}
 
 /* REALISM PASS: only the final six arcade games */
-#battleship .panel,#tictactoe .panel,#darts .panel,#billiards .panel,#bowling .panel{background:linear-gradient(155deg,#202936,#101720 72%);border:1px solid #56677a;box-shadow:0 16px 36px #0005,inset 0 1px #ffffff12}
-#battleship h2,#tictactoe h2,#darts h2,#billiards h2,#bowling h2,#chickenroad h2{letter-spacing:.04em;text-shadow:0 3px 12px #0008}
+#battleship .panel,#tictactoe .panel,#billiards .panel{background:linear-gradient(155deg,#202936,#101720 72%);border:1px solid #56677a;box-shadow:0 16px 36px #0005,inset 0 1px #ffffff12}
+#battleship h2,#tictactoe h2,#billiards h2,#chickenroad h2{letter-spacing:.04em;text-shadow:0 3px 12px #0008}
 #battleship #bsGrid{gap:6px!important;padding:12px;background:linear-gradient(145deg,#123a51,#092638);border:2px solid #5b8494;border-radius:16px;box-shadow:inset 0 0 28px #0009}
 #bsGrid button{position:relative!important;overflow:hidden;color:#e8f7ff!important;background:repeating-linear-gradient(0deg,#15506a,#15506a 2px,#17465c 3px,#17465c 20px)!important;border:1px solid #6b9bad!important;border-radius:8px!important;box-shadow:inset 0 2px 5px #ffffff20,0 3px 5px #0006;font-size:clamp(15px,4vw,25px)!important;transition:transform .14s,filter .14s}
 #bsGrid button:not(:disabled):hover{filter:brightness(1.3);transform:translateY(-2px)}
@@ -1366,15 +1350,13 @@ SKEBOB <span>CASINO</span>
 #tttGrid button{font-family:Arial,sans-serif!important;font-weight:900;min-height:82px;color:#e9f5ff!important;background:linear-gradient(145deg,#263c50,#172638)!important;border:1px solid #64809a!important;box-shadow:inset 0 1px #ffffff25,0 5px 9px #0005;transition:transform .16s,background .16s}
 #tttGrid button:not(:disabled):hover{transform:scale(1.035);background:linear-gradient(145deg,#36536b,#20384f)!important}
 .real-game-canvas{display:block;width:100%;height:auto;aspect-ratio:16/10;margin:14px 0;border-radius:15px;border:2px solid #65778a;box-shadow:0 12px 26px #0008,inset 0 0 25px #0008;background:#101820}
-.dart-scene{max-height:390px;background:radial-gradient(ellipse,#303a43,#101820)}
 .pool-scene{aspect-ratio:16/9;background:#075333}
-.bowl-scene{aspect-ratio:16/10;background:#151b26}
-#darts input[type=range],#billiards input[type=range],#bowling input[type=range]{accent-color:#e8b84f}
+#billiards input[type=range]{accent-color:#e8b84f}
 #chickenroad .ch-canvas-wrap{border:2px solid #6b806b;box-shadow:0 15px 32px #0008,inset 0 0 40px #0009}
 #chickenroad .ch-hud>div{background:linear-gradient(145deg,#273646,#121e2b);border-color:#53687a;box-shadow:inset 0 1px #ffffff18,0 5px 12px #0004}
 #chickenroad .ch-hud b{font-variant-numeric:tabular-nums;text-shadow:0 2px 8px #e9b94a44}
-#battleship .goldbtn,#tictactoe .goldbtn,#darts .goldbtn,#billiards .goldbtn,#bowling .goldbtn,#chickenroad .goldbtn{box-shadow:0 5px 0 #8b641d,0 9px 18px #0005;transition:transform .12s,filter .12s}
-#battleship .goldbtn:active,#tictactoe .goldbtn:active,#darts .goldbtn:active,#billiards .goldbtn:active,#bowling .goldbtn:active,#chickenroad .goldbtn:active{transform:translateY(3px);box-shadow:0 2px 0 #8b641d}
+#battleship .goldbtn,#tictactoe .goldbtn,#billiards .goldbtn,#chickenroad .goldbtn{box-shadow:0 5px 0 #8b641d,0 9px 18px #0005;transition:transform .12s,filter .12s}
+#battleship .goldbtn:active,#tictactoe .goldbtn:active,#billiards .goldbtn:active,#chickenroad .goldbtn:active{transform:translateY(3px);box-shadow:0 2px 0 #8b641d}
 @media(max-width:480px){#tttGrid button{min-height:68px}.real-game-canvas{border-radius:11px}}
 
 </style>
@@ -7351,35 +7333,9 @@ function poolResolveMatch(p,who){
  document.getElementById("poolResult").textContent=(p.length?"Забито шаров: "+p.length+". ":"Без забитых шаров. ")+(poolMatch.turn==="player"?"Твой ход.":"Ход бота…");
  if(poolMatch.turn==="bot")setTimeout(poolBotMove,650);else document.getElementById("poolHitBtn").disabled=false;
 }
-function poolEndMatch(who){poolMatch.over=true;document.getElementById("poolHitBtn").disabled=true;if(who==="player"){const prize=gamePay(poolMatch.bet,1.8);document.getElementById("poolResult").textContent="Победа! Выплата "+prize+" 🪙"}else{save();document.getElementById("poolResult").textContent="Бот выиграл партию. Начни новую игру."}}
+function poolEndMatch(who){poolMatch.over=true;document.getElementById("poolHitBtn").disabled=true;if(who==="player"){const prize=gamePay(poolMatch.bet,2);document.getElementById("poolResult").textContent="Победа! Выплата "+prize+" 🪙"}else{save();document.getElementById("poolResult").textContent="Бот выиграл партию. Начни новую игру."}}
 function poolBotMove(){if(!poolMatch||poolMatch.over)return;const q=poolBodies[0],t=poolBodies.filter(b=>b.active&&b.kind==="bot").sort((a,b)=>Math.hypot(a.x-q.x,a.y-q.y)-Math.hypot(b.x-q.x,b.y-q.y))[0];if(!t){poolEndMatch("player");return}const a=Math.atan2(-(t.y-q.y),t.x-q.x)+(Math.random()-.5)*.16;q.vx=Math.cos(a)*.007;q.vy=-Math.sin(a)*.007;poolRunMatch("bot")}
 
-
-/* DARTS: deterministic board scoring from the actual throw coordinates */
-function dartThrow(){
- const bet=gameBet("dartBet");if(!bet){alert("Нужна ставка от 100");return}
- state.balance-=bet;
- const aim=+document.getElementById("dartAim").value,power=+document.getElementById("dartPower").value;
- const dx=(aim-50)/50*.43,dy=(power-60)/55*.38;
- const radius=Math.hypot(dx,dy),score=radius<.075?50:radius<.17?25:radius<.29?10:radius<.43?5:0;
- const mult=score===50?3:score===25?1.5:score===10?0.5:0,win=mult?gamePay(bet,mult):0;if(!mult)save();
- const tx=Math.max(.04,Math.min(.96,.5+dx)),ty=Math.max(.04,Math.min(.96,.5+dy));
- let n=0;const fly=()=>{n++;const t=n/24,e=1-Math.pow(1-t,2);drawDartScene(.5+(tx-.5)*e,.5+(ty-.5)*e,true);if(n<24)requestAnimationFrame(fly);else document.getElementById("dartResult").textContent="🎯 Попадание: "+score+" очков · "+(win?"Выплата "+win+" 🪙":"Мимо или слабое попадание")};
- requestAnimationFrame(fly);
-}
-/* BOWLING: repeatable pin count based on lane aim and throw power */
-function bowlThrow(){
- const bet=gameBet("bowlBet");if(!bet){alert("Нужна ставка от 100");return}
- state.balance-=bet;const aim=+document.getElementById("bowlAim").value,power=+document.getElementById("bowlPower").value;
- const lateral=Math.abs(aim-50),speedError=Math.abs(power-82);
- const pins=Math.max(0,Math.min(10,Math.round(10-lateral/6.5-speedError/13)));
- const mult=pins===10?3:pins>=8?2:pins>=6?1:0,win=mult?gamePay(bet,mult):0;if(!mult)save();
- bowlKnockState=Array.from({length:10},(_,i)=>i<pins?.58+i*.018:2);
- let n=0;const tick=()=>{n++;drawBowlingScene(n/32,pins);if(n<32)requestAnimationFrame(tick);else drawBowlingScene(1,pins)};
- requestAnimationFrame(tick);
- document.getElementById("bowlPins").textContent=(pins===10?"STRIKE":"СБИТО КЕГЛЕЙ: "+pins)+" / 10";
- document.getElementById("bowlResult").textContent=(pins===10?"STRIKE! ":"Сбито кеглей: "+pins+" · ")+(win?"Выплата "+win+" 🪙":"Без выигрыша");
-}
 
 /* =========================
    START
@@ -7425,3 +7381,50 @@ setInterval(updateSecretDrop,1000);
 
 </body>
     </html>
+
+/* TWO-FIELD BATTLESHIP: player vs bot, winner takes the 2x pot */
+let bsPlayerShips=[],bsBotShips=[],bsPlayerShots=[],bsBotShots=[],bsPlayerHits=0,bsBotHits=0,bsTurn="player";
+function bsStart(){
+ const bet=gameBet("bsBet");if(!bet){alert("Нужна ставка от 100 и достаточно средств");return}
+ state.balance-=bet;bsStake=bet;bsPlayerShips=bsBuildFleet();bsBotShips=bsBuildFleet();
+ bsPlayerShots=[];bsBotShots=[];bsPlayerHits=0;bsBotHits=0;bsTurn="player";bsActive=true;save();bsRender();
+ document.getElementById("bsStatus").textContent="Твой ход! Выбери клетку на поле бота.";
+}
+function bsRender(){
+ const own=document.getElementById("bsOwnGrid"),enemy=document.getElementById("bsGrid");if(!own||!enemy)return;
+ own.innerHTML="";enemy.innerHTML="";
+ for(let i=0;i<36;i++){
+  const incoming=bsBotShots.includes(i),mine=bsPlayerShips.includes(i),a=document.createElement("div");
+  a.textContent=incoming?(mine?"💥":"🌊"):(mine?"🚢":"");
+  a.style.cssText="aspect-ratio:1;display:grid;place-items:center;border:1px solid #6b9bad;border-radius:7px;background:"+(incoming?(mine?"#843b32":"#174c70"):(mine?"#536b70":"#15506a"))+";font-size:clamp(14px,4vw,23px)";
+  own.appendChild(a);
+  const fired=bsPlayerShots.includes(i),b=document.createElement("button");
+  b.textContent=fired?(bsBotShips.includes(i)?"💥":"🌊"):"";
+  b.style.cssText="aspect-ratio:1;border:1px solid #6b9bad;border-radius:7px;background:"+(fired?(bsBotShips.includes(i)?"#843b32":"#174c70"):"#15506a")+";font-size:clamp(14px,4vw,23px)";
+  b.disabled=!bsActive||bsTurn!=="player"||fired;b.onclick=()=>bsFire(i);enemy.appendChild(b);
+ }
+}
+function bsFire(i){
+ if(!bsActive||bsTurn!=="player"||bsPlayerShots.includes(i))return;
+ bsPlayerShots.push(i);if(bsBotShips.includes(i))bsPlayerHits++;
+ if(bsPlayerHits===9){bsFinish("player");return}
+ bsTurn="bot";bsRender();
+ document.getElementById("bsStatus").textContent=(bsBotShips.includes(i)?"💥 Попадание! ":"🌊 Мимо. ")+"Бот выбирает цель…";
+ setTimeout(bsBotFire,520);
+}
+function bsBotFire(){
+ if(!bsActive)return;
+ let choices=[];for(let i=0;i<36;i++)if(!bsBotShots.includes(i))choices.push(i);
+ if(!choices.length){bsFinish("player");return}
+ const i=choices[Math.floor(Math.random()*choices.length)];bsBotShots.push(i);
+ if(bsPlayerShips.includes(i))bsBotHits++;
+ if(bsBotHits===9){bsFinish("bot");return}
+ bsTurn="player";bsRender();
+ document.getElementById("bsStatus").textContent=(bsPlayerShips.includes(i)?"🤖 Бот попал! ":"🤖 Бот промахнулся. ")+"Твой ход.";
+}
+function bsFinish(winner){
+ bsActive=false;bsRender();
+ if(winner==="player"){const prize=gamePay(bsStake,2);document.getElementById("bsStatus").textContent="🏆 Ты победил! Бот потоплен. Забираешь банк: "+prize.toLocaleString("ru-RU")+" 🪙"}
+ else{save();document.getElementById("bsStatus").textContent="🤖 Бот победил. Твой флот потоплен. Банк достаётся боту."}
+}
+
