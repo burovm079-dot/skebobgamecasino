@@ -1513,10 +1513,7 @@ SKEBOB <span>CASINO</span>
 <div class="daily-prize">🪙 3</div>
 <div class="daily-prize">🪙 5</div>
 <div class="daily-prize">🪙 10</div>
-<div class="daily-prize">👕 Футболка</div>
-<div class="daily-prize">👟 Кроссовки</div>
 <div class="daily-prize">📿 Золотая цепь</div>
-<div class="daily-prize">🧢 Кепка</div>
 <div class="daily-prize">🎧 Наушники</div>
 <div class="daily-prize">🎨 Редкий скин</div>
 <div class="daily-prize">🧢 BEANZ NFT</div>
@@ -3053,15 +3050,14 @@ const nftCollections = [
  {name:"Nakamigo #0001",collection:"Nakamigos",image:"https://dl-migration-assets.s3.eu-central-1.amazonaws.com/images/1772087923060.webp",value:7200,icon:"🧢"},
  {name:"BEANZ #0001",collection:"BEANZ Official",image:"https://pbs.twimg.com/media/FygvKxmakAAiB-e?format=jpg&name=large",value:2480,icon:"🫘"},
  {name:"Otherdeed #0001",collection:"Otherdeed for Otherside",image:"https://pbs.twimg.com/media/FygvKxmakAAiB-e?format=jpg&name=large",value:5040,icon:"🌎"},
- {name:"OnChain Hoodie #0001",collection:"OnChainHoodies",image:"https://substackcdn.com/image/fetch/%24s_%21Mf0v%21%2Cf_auto%2Cq_auto%3Agood%2Cfl_progressive%3Asteep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2F83b485ef-ccfb-4508-bb78-dfafc0a52ad0_1600x796.png",value:800,icon:"👕"},
  {name:"Trencher Pack #0001",collection:"Trencher Packs",image:"https://files.amberblocks.com/thumbnail/chnbzaa92ook5tnj/posts/pw43pite3id9ypvc/f94fg2yyku02jgfdtkzqgd4aflrwsxi3/nft-quay-tro-lai.jpg",value:720,icon:"🎒"},
  {name:"Bobos #0001",collection:"Bobos",image:"https://magnft.com/wp-content/uploads/2024/11/what-is-pudgy-penguins-2024-1-nfts.webp",value:2000,icon:"🎨"},
  {name:"The Memes #0001",collection:"The Memes by 6529",image:"https://pbs.twimg.com/media/FygvKxmakAAiB-e?format=jpg&name=large",value:2560,icon:"🌀"}
 ];
 const prizes=nftCollections.map((n,i)=>({...n,id:"nft-"+i,rarity:i<4?"Легендарный":i<7?"Эпический":i<12?"Редкий":i<16?"Необычный":"Обычный"}));
 const cases=[
- {name:"MICRO NFT",icon:"🪙",price:80,desc:"Начальный дроп — недорогие цифровые коллекционные предметы",items:[17,18,19]},
- {name:"PIXEL START",icon:"👾",price:400,desc:"Доступные NFT и небольшие коллекции",items:[14,15,16,17,18]},
+ {name:"MICRO NFT",icon:"🪙",price:80,desc:"Начальный дроп — недорогие цифровые коллекционные предметы",items:[16,18,19]},
+ {name:"PIXEL START",icon:"👾",price:400,desc:"Доступные NFT и небольшие коллекции",items:[14,15,16,18,19]},
  {name:"COLLECTOR",icon:"🎨",price:800,desc:"Подборка недорогих коллекционных NFT",items:[14,15,16,18,19]},
  {name:"ART DROP",icon:"🖼️",price:1600,desc:"Цифровое искусство и коллекционные серии",items:[13,14,15,18,19]},
  {name:"AVATAR BOX",icon:"🧢",price:4000,desc:"Аватары из известных NFT-проектов",items:[12,13,14,15,16]},
@@ -3073,7 +3069,7 @@ const cases=[
  {name:"MEGA COLLECTOR",icon:"🧊",price:80000,desc:"Meebits и другие заметные коллекции",items:[5,6,7,8]},
  {name:"MILADY CLUB",icon:"👩‍🎤",price:144000,desc:"Коллекционные аватары высокого уровня",items:[5,11,12]},
  {name:"MUTANT LAB",icon:"🧬",price:168000,desc:"Mutant Ape Yacht Club и редкие аватары",items:[5,6,11]},
- {name:"PUDGY PARTY",icon:"🐧",price:448000,desc:"Коллекция Pudgy Penguins",items:[6,13,17]},
+ {name:"PUDGY PARTY",icon:"🐧",price:448000,desc:"Коллекция Pudgy Penguins",items:[6,13,18]},
  {name:"APE SOCIETY",icon:"🐵",price:1096000,desc:"Bored Ape Yacht Club и близкие по уровню коллекции",items:[4,5,6]},
  {name:"PUNK LEGACY",icon:"👑",price:5357000,desc:"Легендарные CryptoPunks",items:[0,1,2,3]},
  {name:"NFT WHALE",icon:"🐳",price:1096000,desc:"Премиальная подборка blue-chip NFT",items:[0,4,5,6]},
@@ -3102,10 +3098,7 @@ const dailyPrizes=[
  {type:"coins",amount:3,name:"3 монеты",icon:"🪙",value:3,weight:1},
  {type:"coins",amount:5,name:"5 монет",icon:"🪙",value:5,weight:1},
  {type:"coins",amount:10,name:"10 монет",icon:"🪙",value:10,weight:1},
- {type:"item",id:"daily-shirt",name:"Футболка",collection:"Обычный подарок",icon:"👕",value:80,rarity:"Обычный",weight:1},
- {type:"item",id:"daily-shoes",name:"Кроссовки",collection:"Обычный подарок",icon:"👟",value:120,rarity:"Обычный",weight:1},
  {type:"item",id:"daily-chain",name:"Золотая цепь",collection:"Обычный подарок",icon:"📿",value:200,rarity:"Редкий",weight:1},
- {type:"item",id:"daily-cap",name:"Кепка",collection:"Обычный подарок",icon:"🧢",value:100,rarity:"Обычный",weight:1},
  {type:"item",id:"daily-headphones",name:"Наушники",collection:"Обычный подарок",icon:"🎧",value:300,rarity:"Эпический",weight:1},
  {type:"item",id:"daily-skin",name:"Редкий скин",collection:"Обычный подарок",icon:"🎨",value:500,rarity:"Эпический",weight:1},
  {type:"nft",...prizes[17],weight:1},
