@@ -4854,7 +4854,7 @@ p.value||0
 state.balance+=value;
 
 state.stats.itemsSold++;
-state.dailyTasks.progress.sales++;
+addDailyTaskProgress("sales",1);
 
 state.stats.soldValue+=value;
 
@@ -4894,7 +4894,7 @@ total.toLocaleString(
 state.balance+=total;
 
 state.stats.itemsSold+=count;
-state.dailyTasks.progress.sales+=count;
+addDailyTaskProgress("sales",count);
 
 state.stats.soldValue+=total;
 
