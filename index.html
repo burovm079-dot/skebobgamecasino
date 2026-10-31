@@ -7653,9 +7653,9 @@ function closeChangeNickname(){
  if(modal)modal.style.display="none";
 }
 function saveChangedNickname(){
- const input=document.getElementById("changeNicknameInput");
- const status=document.getElementById("nicknameSaveStatus");
  const details=document.getElementById("nicknameEditorDetails");
+ const input=details?.querySelector("input");
+ const status=document.getElementById("nicknameSaveStatus");
  const nick=String(input?.value||"").trim().replace(/\s+/g," ").slice(0,18);
  if(nick.length<2){if(status)status.textContent="Ник должен содержать минимум 2 символа.";return;}
  if(bjNickTaken(nick,bjOnlineId)){if(status)status.textContent="Данный никнейм уже занят.";return;}
