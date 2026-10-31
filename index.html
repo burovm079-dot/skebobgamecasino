@@ -3073,6 +3073,19 @@ const cases=[
  {name:"NFT WHALE",icon:"🐳",price:1096000,desc:"Премиальная подборка blue-chip NFT",items:[0,4,5,6]},
  {name:"SKEBOB GRAIL",icon:"🏆",price:5357000,desc:"Самые дорогие коллекционные NFT в игре",items:[0,1,2,3,4]}
 ];
+// Жёсткое соотношение: стоимость любого возможного приза в кейсе
+// не выше 1.7 цены открытия этого кейса. Один NFT имеет одну игровую
+// оценку во всех кейсах, поэтому берём минимальный допустимый предел.
+const prizeValueCaps={};
+cases.forEach(c=>{
+ c.items.forEach(index=>{
+  const cap=Math.floor(c.price*1.7);
+  prizeValueCaps[index]=prizeValueCaps[index]===undefined?cap:Math.min(prizeValueCaps[index],cap);
+ });
+});
+Object.keys(prizeValueCaps).forEach(index=>{
+ prizes[Number(index)].value=Math.min(prizes[Number(index)].value,prizeValueCaps[index]);
+});
 const DAILY_CASE_COOLDOWN=
 24*60*60*1000;
 
