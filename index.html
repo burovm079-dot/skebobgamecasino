@@ -2446,6 +2446,7 @@ class="hidden"
 >
 
 <h2>👤 ПРОФИЛЬ</h2>
+<div class="panel"><div class="small">ТВОЙ NICKNAME</div><strong id="profileNickname" style="display:block;font-size:22px;margin:8px 0 12px">Player</strong><button class="secondary" onclick="changeNickname()">✏️ ИЗМЕНИТЬ NICKNAME</button></div>
 
 <div class="profile-hero">
 
@@ -2739,12 +2740,6 @@ id="profileBalance"
 <h2>🃏 BLACKJACK ONLINE</h2>
 <p class="small">До 4 игроков в комнате. Каждый играет отдельно против общего дилера. Только бесплатная игра — без ставок и выплат.</p>
 <div class="panel">
- <label for="bjOnlineName">ТВОЁ ИМЯ</label>
- <input id="bjOnlineName" maxlength="18" placeholder="Например, Player123">
- <div class="game-control">
-  <label for="bjRoomCode">КОД КОМНАТЫ (оставь пустым для поиска)</label>
-  <input id="bjRoomCode" maxlength="6" placeholder="Автоматический подбор">
- </div>
  <div class="bj-actions">
   <button class="game-main" id="bjOnlineJoin" onclick="bjOnlineJoin()">🌐 НАЙТИ ИГРОКОВ</button>
   <button class="secondary" id="bjOnlineLeave" onclick="bjOnlineLeave()" disabled>ВЫЙТИ</button>
@@ -7696,12 +7691,50 @@ setInterval(updateSecretDrop,1000);
 
 
 
+
+/* PLAYER NICKNAME */
+const NICKNAME_KEY="skebobNickname";
+function randomNickname(){
+ const names=["Shadow","Lucky","Pixel","Nova","Tiger","Storm","Frost","Comet","Raven","Flash"];
+ return names[Math.floor(Math.random()*names.length)]+String(100+Math.floor(Math.random()*9900));
+}
+function getNickname(){return storageGet(NICKNAME_KEY)||"Player";}
+function updateNicknameUI(){
+ const p=document.getElementById("profileNickname");if(p)p.textContent=getNickname();
+}
+function initNickname(){
+ let nick=storageGet(NICKNAME_KEY);
+ if(!nick){
+  // Players with an existing saved profile get an automatic nickname.
+  if(storageGet("skebobSave")){nick=randomNickname();storageSet(NICKNAME_KEY,nick);}
+  else{
+   const m=document.getElementById("nicknameModal");
+   if(m){m.style.display="flex";const i=document.getElementById("nicknameInput");if(i)setTimeout(()=>i.focus(),250);}
+  }
+ }
+ updateNicknameUI();
+}
+function saveFirstNickname(){
+ const i=document.getElementById("nicknameInput"),nick=(i?.value||"").trim().replace(/\s+/g," ").slice(0,18);
+ if(nick.length<2){alert("Ник должен содержать минимум 2 символа.");return;}
+ storageSet(NICKNAME_KEY,nick);
+ const m=document.getElementById("nicknameModal");if(m)m.style.display="none";
+ updateNicknameUI();
+}
+function changeNickname(){
+ const next=prompt("Введи новый nickname:",getNickname());
+ if(next===null)return;
+ const nick=next.trim().replace(/\s+/g," ").slice(0,18);
+ if(nick.length<2){alert("Ник должен содержать минимум 2 символа.");return;}
+ storageSet(NICKNAME_KEY,nick);updateNicknameUI();
+}
+
 /* BLACKJACK ONLINE — Supabase Realtime, no wagers or payouts */
 const BJ_ONLINE_URL="https://quglxnyhtqoojzbimtmv.supabase.co";
 const BJ_ONLINE_KEY="sb_publishable_qm5CyU510e0Yu1ayUq4tlw_je8hQhbL";
 let bjOnlineClient=null,bjOnlineChannel=null,bjOnlineRoom="",bjOnlineId="",bjOnlineHost=false;
 let bjOnlineMembers=[],bjOnlineTimer=null,bjOnlineSeconds=60,bjOnlineRound=null,bjOnlineMyHand=[],bjOnlineDealer=null,bjOnlineMyTurn=false;
-const bjOnlineName=()=>((document.getElementById("bjOnlineName")?.value||"").trim().slice(0,18)||"Player");
+const bjOnlineName=()=>getNickname();
 const bjOnlineCard=()=>({rank:["A","2","3","4","5","6","7","8","9","10","J","Q","K"][Math.floor(Math.random()*13)],suit:["♠","♥","♦","♣"][Math.floor(Math.random()*4)]});
 function bjOnlineValue(hand){let n=0,a=0;for(const c of hand){if(c.rank==="A"){n+=11;a++}else n+=["J","Q","K"].includes(c.rank)?10:Number(c.rank)}while(n>21&&a-- >0)n-=10;return n}
 function bjOnlineDraw(hand){hand.push(bjOnlineCard())}
@@ -7727,7 +7760,7 @@ async function bjOnlineJoin(){
  if(!window.supabase?.createClient){bjOnlineStatus("Не удалось загрузить Supabase. Обнови страницу и попробуй снова.");return}
  bjOnlineClient=bjOnlineClient||window.supabase.createClient(BJ_ONLINE_URL,BJ_ONLINE_KEY);
  bjOnlineId=crypto.randomUUID?crypto.randomUUID():String(Date.now())+Math.random();
- bjOnlineRoom=(document.getElementById("bjRoomCode").value.trim().toUpperCase()||"QUICK");
+ bjOnlineRoom="QUICK";
  bjOnlineHost=false;bjOnlineMembers=[];bjOnlineRound=null;bjOnlineMyHand=[];bjOnlineSeconds=60;
  const channelName="bj-room-"+bjOnlineRoom;
  bjOnlineChannel=bjOnlineClient.channel(channelName,{config:{presence:{key:bjOnlineId},broadcast:{self:true}}});
@@ -7794,6 +7827,15 @@ function bjOnlineShowResult(){
 
 </script>
 
+
+<div id="nicknameModal" style="display:none;position:fixed;inset:0;z-index:20000;background:#000d;align-items:center;justify-content:center;padding:22px">
+ <div style="width:100%;max-width:440px;background:var(--panel);border:2px solid var(--gold);border-radius:20px;padding:22px;box-shadow:0 15px 50px #0009">
+  <h2 style="margin-top:0">👋 Придумайте nickname</h2>
+  <p class="small">Этот ник будут видеть другие игроки.</p>
+  <input id="nicknameInput" maxlength="18" placeholder="Твой nickname" autocomplete="nickname">
+  <button class="goldbtn" onclick="saveFirstNickname()">СОХРАНИТЬ NICKNAME</button>
+ </div>
+</div>
 </body>
     </html>
 
