@@ -1398,6 +1398,35 @@ body.light #caseList .case,body.light .panel{background:linear-gradient(145deg,#
 .splash-footer{color:#c45bff;font-size:14px;font-weight:900;letter-spacing:7px}
 @media(max-height:700px){.splash-coins{margin-bottom:12px}.splash-promo{margin-top:24px;padding:17px 12px}.splash-loader{margin:32px 0 15px}}
 
+
+/* BLACKJACK: responsive layout and accessibility polish */
+.bj-table{width:100%;box-sizing:border-box;overflow:hidden}
+.bj-card{flex:0 0 auto;user-select:none}
+.bj-seat-name{font-size:clamp(12px,2.8vw,15px)}
+.bj-dealer .small,.bj-you .small{color:#f2f5f3}
+.bj-actions button{min-height:44px}
+.bj-actions button:focus-visible,.bj-table button:focus-visible{outline:3px solid #ffe08a;outline-offset:3px}
+@media(max-width:560px){
+ .bj-table{padding:12px 8px;border-width:3px;border-radius:18px;min-height:0}
+ .bj-cards{gap:5px;min-height:72px}
+ .bj-card{width:clamp(37px,11vw,48px);height:clamp(55px,16vw,70px);font-size:clamp(17px,5vw,21px);border-radius:7px}
+ .bj-players{grid-template-columns:repeat(auto-fit,minmax(112px,1fr));gap:6px}
+ .bj-bot{padding:7px 4px;min-width:0}
+ .bj-bot .bj-cards{gap:4px;min-height:60px}
+ .bj-bot .bj-card{width:clamp(30px,8vw,38px);height:clamp(44px,12vw,55px);font-size:clamp(14px,4vw,17px)}
+ .bj-divider{letter-spacing:2px;font-size:10px}
+ .bj-actions{gap:7px}
+ .bj-actions>*{min-width:calc(50% - 7px);font-size:12px;padding:11px 7px}
+}
+@media(max-width:360px){
+ .bj-table{padding:9px 5px}
+ .bj-players{grid-template-columns:repeat(2,minmax(0,1fr))}
+ .bj-actions>*{min-width:100%}
+}
+@media(prefers-reduced-motion:reduce){
+ .bj-card.bj-new,.bj-bot .bj-card.bj-new,.bj-dealer .bj-card.bj-new{animation:none}
+}
+
 </style>
 </head>
 
