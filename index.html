@@ -1558,7 +1558,6 @@ rel="noopener noreferrer"
 <button onclick="showPage('billiards',this)">🎱 БИЛЬЯРД</button>
 
 <button onclick="showPage('chickenroad',this)">🐔 CHICKEN ROAD</button>
-<button onclick="showPage('skebobcow',this)">🐄 SKEBOB COW</button>
 
 
 
@@ -1592,33 +1591,10 @@ rel="noopener noreferrer"
 <div class="ch-controls"><label>Ставка</label><input id="chBet" type="number" min="100" step="100" value="100"><button class="goldbtn" id="chStart" onclick="chickenStart()">▶ НАЧАТЬ ПЕРЕХОД</button><button class="goldbtn" id="chStep" onclick="chickenStep()" disabled>🐔 СЛЕДУЮЩАЯ ПОЛОСА</button><button class="secondary" id="chCash" onclick="chickenCash()" disabled>ЗАБРАТЬ ВЫИГРЫШ</button></div>
 <div id="chResult" class="small ch-result">Выбери ставку и начни игру.</div>
 </div></section>
-<section id="skebobcow" class="hidden">
-<h2>🐄 SKEBOB COW ROAD</h2>
-<div class="panel cow-road-panel">
- <p class="small">Помоги корове SKEBOB перейти шоссе. Уклоняйся от машин и доберись до финиша. Чем дальше прошла корова, тем больше очков!</p>
- <div class="cow-road-hud"><div><span>ОЧКИ</span><b id="cowScore">0</b></div><div><span>РЕКОРД</span><b id="cowBest">0</b></div><div><span>ПОЛОСА</span><b id="cowLane">СТАРТ</b></div></div>
- <div class="cow-road-wrap"><canvas id="cowRoadCanvas" aria-label="Аркадная дорога с движущимися машинами и коровой SKEBOB"></canvas><div class="cow-road-banner" id="cowRoadBanner">ГОТОВ К ПЕРЕХОДУ</div></div>
- <div class="cow-road-controls"><button class="goldbtn" id="cowStart" onclick="cowStartGame()">▶ НАЧАТЬ</button><button class="goldbtn" id="cowStep" onclick="cowStepForward()" disabled>🐄 ШАГ ВПЕРЁД</button><button class="secondary" onclick="cowResetGame()">↻ ЗАНОВО</button></div>
- <p class="small" id="cowRoadStatus" aria-live="polite">Нажми «Начать», затем двигайся вперёд между машинами. Можно также использовать стрелку вверх.</p>
-</div>
-</section>
 <style>
 .chicken-panel{max-width:900px;margin:auto}.ch-hud{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin:14px 0}.ch-hud>div{background:var(--panel2);border:1px solid var(--border);border-radius:12px;padding:10px}.ch-hud span{display:block;font-size:10px;color:var(--muted);letter-spacing:1px}.ch-hud b{display:block;color:var(--gold);font-size:22px;margin-top:4px}.ch-canvas-wrap{position:relative;overflow:hidden;border:1px solid #52634b;border-radius:16px;background:#233d2a;box-shadow:inset 0 0 35px #0008}.ch-canvas-wrap canvas{display:block;width:100%;height:300px}.ch-scene-tag{position:absolute;left:12px;top:12px;padding:6px 10px;border-radius:8px;background:#07120dcc;color:#fff;font-size:11px;font-weight:900;letter-spacing:1px}.ch-sound-row{display:flex;align-items:center;gap:10px;margin:10px 0}.ch-sound-row button{font-weight:900}.ch-sound-row span{font-size:11px}
 .ch-controls{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-top:14px;text-align:left}.ch-controls label,.ch-controls input{grid-column:1/-1}.ch-controls button{width:100%;min-height:44px}.ch-result{min-height:24px;margin-top:12px}@media(max-width:560px){.ch-canvas-wrap canvas{height:240px}.ch-hud b{font-size:17px}.ch-hud span{font-size:8px}.ch-controls{grid-template-columns:1fr}}
 
-/* SKEBOB COW ROAD — standalone no-stakes arcade */
-.cow-road-panel{max-width:900px;margin:auto}
-.cow-road-hud{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin:14px 0}
-.cow-road-hud>div{background:linear-gradient(145deg,#273646,#121e2b);border:1px solid #53687a;border-radius:12px;padding:10px;text-align:center}
-.cow-road-hud span{display:block;color:#b8c8d8;font-size:10px;letter-spacing:1px}
-.cow-road-hud b{display:block;color:#ffdc79;font-size:20px;margin-top:5px}
-.cow-road-wrap{position:relative;overflow:hidden;border:2px solid #718094;border-radius:16px;background:#315c37;box-shadow:0 12px 26px #0008}
-.cow-road-wrap canvas{display:block;width:100%;height:auto;aspect-ratio:16/10;touch-action:pan-y}
-.cow-road-banner{position:absolute;left:10px;top:10px;padding:7px 10px;border-radius:8px;background:#09131ddd;color:white;font-size:11px;font-weight:900;letter-spacing:1px}
-.cow-road-controls{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-top:12px}
-.cow-road-controls button{min-height:48px}
-@media(max-width:480px){.cow-road-hud b{font-size:17px}.cow-road-controls{grid-template-columns:1fr}.cow-road-wrap canvas{aspect-ratio:4/3}}
-@media(prefers-reduced-motion:reduce){.cow-road-wrap *{animation:none!important;transition:none!important}}
 
 /* REALISM PASS: only the final six arcade games */
 #tictactoe #tttGrid{max-width:360px!important;padding:12px;background:linear-gradient(145deg,#172b3b,#0b1722);border:1px solid #496175;border-radius:18px;box-shadow:inset 0 0 25px #0008}
@@ -3678,8 +3654,6 @@ function updateDailyTasks(shouldSave=true){
  if(shouldSave){try{storageSet("skebobSave",JSON.stringify(state));}catch(error){console.warn("Не удалось сохранить ежедневные задания:",error);}}
 }
 function claimDailyTask(id){
- cowResetGame();
-
 updateDailyTasks();const task=state.dailyTasks.tasks.find(t=>t.id===id);if(!task)return;
  const d=state.dailyTasks;if((d.progress[id]||0)<task.target||d.claimed.includes(id))return;
  d.claimed.push(id);state.balance+=DAILY_TASK_REWARD;save();renderDailyTasks();
@@ -7648,32 +7622,6 @@ function poolBotMove(){if(!poolMatch||poolMatch.over)return;const q=poolBodies[0
 
 
 
-
-/* SKEBOB COW ROAD — non-wagering arcade game */
-let cowGame={active:false,lane:0,score:0,best:0,last:0,raf:0,cars:[]};
-function cowCanvas(){const c=document.getElementById("cowRoadCanvas");if(!c)return null;const w=c.clientWidth||640,h=Math.round(w*10/16),d=Math.min(window.devicePixelRatio||1,2);c.width=Math.round(w*d);c.height=Math.round(h*d);const x=c.getContext("2d");x.setTransform(d,0,0,d,0,0);return {c,x,w,h}}
-function cowMakeCars(w,h){const lanes=5;return Array.from({length:lanes},(_,i)=>({lane:i,x:((i%2)?-1:1)*(90+i*73),speed:(i%2?-1:1)*(1.5+(i%3)*.55),emoji:["🚗","🚙","🚕","🚓","🚐"][i%5],color:["#e44f4f","#4b9de5","#f2b83d","#8e70d8","#52bd86"][i%5]}))}
-function cowDraw(){const z=cowCanvas();if(!z)return;const {x:c,w,h}=z,top=h*.13,bottom=h*.87,roadH=bottom-top,laneH=roadH/5;
- c.fillStyle="#397044";c.fillRect(0,0,w,h);
- for(let i=0;i<5;i++){const y=top+i*laneH;c.fillStyle=i%2?"#303944":"#39434d";c.fillRect(0,y,w,laneH);c.strokeStyle="#ffffff8a";c.lineWidth=2;c.setLineDash([18,14]);c.beginPath();c.moveTo(0,y+laneH);c.lineTo(w,y+laneH);c.stroke();c.setLineDash([])}
- c.fillStyle="#f0d58a";c.fillRect(0,top-5,w,5);c.fillRect(0,bottom,w,5);
- c.font="bold 12px Arial";c.fillStyle="#fff";c.textAlign="left";c.fillText("СТАРТ",10,h-8);c.textAlign="right";c.fillText("ФИНИШ",w-10,top-10);
- cowGame.cars.forEach(car=>{const y=top+car.lane*laneH+laneH*.2;c.font="30px Arial";c.textAlign="center";c.fillText(car.emoji,car.x,y+laneH*.48)});
- const cy=bottom-laneH*.5-cowGame.lane*laneH;c.font="42px Arial";c.textAlign="center";c.fillText("🐄",w*.5,cy+12);
-
-}
-function cowUpdate(t){if(!cowGame.active)return;const z=cowCanvas();if(!z)return;const w=z.w,h=z.h,top=h*.13,laneH=(h*.74)/5,dt=Math.min(2,(t-cowGame.last)/16.67||1);cowGame.last=t;
- cowGame.cars.forEach(car=>{car.x+=car.speed*dt*2.2;if(car.speed>0&&car.x>w+65)car.x=-65;if(car.speed<0&&car.x< -65)car.x=w+65});
- const y=h*.87-laneH*.5-cowGame.lane*laneH;const hit=cowGame.cars.some(car=>car.lane===cowGame.lane&&Math.abs(car.x-w*.5)<36);
- cowDraw();
- if(hit){cowGame.active=false;document.getElementById("cowRoadBanner").textContent="МАШИНА ПРОЕХАЛА РЯДОМ";document.getElementById("cowRoadStatus").textContent="Попробуй ещё раз! Твой результат: "+cowGame.score+" очков.";document.getElementById("cowStart").disabled=false;document.getElementById("cowStep").disabled=true;return}
- cowGame.raf=requestAnimationFrame(cowUpdate)
-}
-function cowStartGame(){cancelAnimationFrame(cowGame.raf);const z=cowCanvas();if(!z)return;cowGame.active=true;cowGame.lane=0;cowGame.score=0;cowGame.last=performance.now();cowGame.cars=cowMakeCars(z.w,z.h);document.getElementById("cowScore").textContent="0";document.getElementById("cowLane").textContent="СТАРТ";document.getElementById("cowRoadBanner").textContent="В ПУТИ";document.getElementById("cowRoadStatus").textContent="Двигайся вперёд, когда дорога свободна.";document.getElementById("cowStart").disabled=true;document.getElementById("cowStep").disabled=false;cowGame.raf=requestAnimationFrame(cowUpdate)}
-function cowStepForward(){if(!cowGame.active)return;cowGame.lane++;cowGame.score+=10;if(cowGame.score>cowGame.best)cowGame.best=cowGame.score;document.getElementById("cowScore").textContent=String(cowGame.score);document.getElementById("cowBest").textContent=String(cowGame.best);document.getElementById("cowLane").textContent=cowGame.lane>=5?"ФИНИШ":(cowGame.lane+"/5");if(cowGame.lane>=5){cowGame.active=false;cancelAnimationFrame(cowGame.raf);document.getElementById("cowRoadBanner").textContent="ФИНИШ! SKEBOB ДОШЛА!";document.getElementById("cowRoadStatus").textContent="Отлично! Ты набрал "+cowGame.score+" очков.";document.getElementById("cowStart").disabled=false;document.getElementById("cowStep").disabled=true;cowDraw();return}cowDraw()}
-function cowResetGame(){cowGame.active=false;cancelAnimationFrame(cowGame.raf);cowGame.lane=0;cowGame.score=0;document.getElementById("cowScore").textContent="0";document.getElementById("cowLane").textContent="СТАРТ";document.getElementById("cowRoadBanner").textContent="ГОТОВ К ПЕРЕХОДУ";document.getElementById("cowRoadStatus").textContent="Нажми «Начать», затем двигайся вперёд между машинами.";document.getElementById("cowStart").disabled=false;document.getElementById("cowStep").disabled=true;const z=cowCanvas();if(z){cowGame.cars=cowMakeCars(z.w,z.h);cowDraw()}}
-document.addEventListener("keydown",e=>{if(e.key==="ArrowUp"&&document.getElementById("skebobcow")&&!document.getElementById("skebobcow").classList.contains("hidden")){e.preventDefault();cowStepForward()}});
-window.addEventListener("resize",()=>{if(document.getElementById("skebobcow")&&!document.getElementById("skebobcow").classList.contains("hidden")){const z=cowCanvas();if(z){cowGame.cars=cowMakeCars(z.w,z.h);cowDraw()}}});
 
 /* =========================
    START
