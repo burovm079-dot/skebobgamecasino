@@ -977,6 +977,15 @@ transform:translateX(26px);
 .profile-hero.bg-emerald{background:linear-gradient(145deg,#123d37,#10231f 80%)}
 .profile-hero.bg-sunset{background:linear-gradient(145deg,#67304d,#342044 65%,#171326)}
 .profile-hero.bg-midnight{background:linear-gradient(145deg,#172e50,#101827 75%)}
+.profile-hero.accent-gold .profile-level-name{color:#f4c75e;text-shadow:0 0 14px #f4c75e55}
+.profile-hero.accent-purple .profile-level-name{color:#d39aff;text-shadow:0 0 14px #b45cff66}
+.profile-hero.accent-cyan .profile-level-name{color:#78e5ff;text-shadow:0 0 14px #42d9ff66}
+.profile-hero.accent-green .profile-level-name{color:#7de6a2;text-shadow:0 0 14px #42d97866}
+.profile-hero.accent-pink .profile-level-name{color:#ff91c8;text-shadow:0 0 14px #ff62b266}
+.profile-hero.accent-orange .profile-level-name{color:#ffb46b;text-shadow:0 0 14px #ff8a4266}
+.profile-style-heading{display:flex;align-items:center;justify-content:space-between;gap:10px}
+.profile-style-toggle{flex:0 0 auto;padding:8px 12px;border:1px solid var(--border2);border-radius:10px;background:var(--panel2);color:var(--text);font-weight:800}
+.profile-style-content[hidden]{display:none!important}
 .profile-custom-section{margin:12px 0}
 .profile-style-options{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;margin-top:9px}
 .profile-style-btn{min-width:0;padding:11px 8px;border:1px solid var(--border2);border-radius:12px;background:var(--panel2);color:var(--text);text-align:left;font-size:12px}
@@ -2595,12 +2604,15 @@ id="profileLevelProgressText"
 
 </div>
 
-<div class="panel profile-custom-section">
- <h3>🎨 ОФОРМЛЕНИЕ ПРОФИЛЯ</h3>
- <div class="profile-style-preview" id="profileStylePreview"><div class="sample">👤</div><div><b>Твой стиль</b><div class="small">Предпросмотр оформления</div></div></div>
- <div class="small">РАМКА ПРОФИЛЯ</div><div class="profile-style-options" id="profileFrameOptions"></div>
- <div class="small" style="margin-top:14px">ФОН ПРОФИЛЯ</div><div class="profile-style-options" id="profileBackgroundOptions"></div>
- <div class="small" id="profileStyleStatus" style="margin-top:9px">Выбранное оформление сохраняется автоматически.</div>
+<div class="panel profile-custom-section" id="profileCustomization">
+ <div class="profile-style-heading"><h3>🎨 ОФОРМЛЕНИЕ ПРОФИЛЯ</h3><button type="button" class="profile-style-toggle" id="profileStyleToggle" onclick="toggleProfileStylePanel()">Свернуть</button></div>
+ <div class="profile-style-content" id="profileStyleContent">
+  <div class="profile-style-preview" id="profileStylePreview"><div class="sample">👤</div><div><b>Твой стиль</b><div class="small">Предпросмотр оформления</div></div></div>
+  <div class="small">РАМКА ПРОФИЛЯ</div><div class="profile-style-options" id="profileFrameOptions"></div>
+  <div class="small" style="margin-top:14px">ФОН ПРОФИЛЯ</div><div class="profile-style-options" id="profileBackgroundOptions"></div>
+  <div class="small" style="margin-top:14px">ЦВЕТ ИМЕНИ / АКЦЕНТА</div><div class="profile-style-options" id="profileAccentOptions"></div>
+  <div class="small" id="profileStyleStatus" style="margin-top:9px">Выбранное оформление сохраняется автоматически.</div>
+ </div>
 </div>
 <div class="profile-grid">
 
@@ -3575,6 +3587,8 @@ balanceBeforeInfinite:null,
 if(!state.profileStyle||typeof state.profileStyle!=="object")state.profileStyle={};
 if(!["classic","gold","neon","ice","rose"].includes(state.profileStyle.frame))state.profileStyle.frame="classic";
 if(!["default","space","emerald","sunset","midnight"].includes(state.profileStyle.background))state.profileStyle.background="default";
+if(!["gold","purple","cyan","green","pink","orange"].includes(state.profileStyle.accent))state.profileStyle.accent="gold";
+if(typeof state.profileStyle.collapsed!=="boolean")state.profileStyle.collapsed=false;
 
 // Время первого запуска казино: даёт новичку окно 24 часа для промокода.
 if(!Number.isFinite(Number(state.createdAt))||Number(state.createdAt)<=0)state.createdAt=Date.now();
@@ -3979,6 +3993,14 @@ const PROFILE_FRAME_OPTIONS=[
  {id:"ice",name:"Ледяная",icon:"🧊"},
  {id:"rose",name:"Розовая",icon:"🌸"}
 ];
+const PROFILE_ACCENT_OPTIONS=[
+ {id:"gold",name:"Золотой",icon:"🟡"},
+ {id:"purple",name:"Фиолетовый",icon:"💜"},
+ {id:"cyan",name:"Голубой",icon:"🩵"},
+ {id:"green",name:"Зелёный",icon:"💚"},
+ {id:"pink",name:"Розовый",icon:"🩷"},
+ {id:"orange",name:"Оранжевый",icon:"🧡"}
+];
 const PROFILE_BACKGROUND_OPTIONS=[
  {id:"default",name:"Классический",icon:"🌑"},
  {id:"space",name:"Космос",icon:"🌌"},
@@ -3990,17 +4012,24 @@ function applyProfileStyle(){
  const hero=document.querySelector(".profile-hero");
  if(!hero)return;
  const style=state.profileStyle||{frame:"classic",background:"default"};
- hero.classList.remove("frame-gold","frame-neon","frame-ice","frame-rose","bg-space","bg-emerald","bg-sunset","bg-midnight");
+ hero.classList.remove("frame-gold","frame-neon","frame-ice","frame-rose","bg-space","bg-emerald","bg-sunset","bg-midnight","accent-gold","accent-purple","accent-cyan","accent-green","accent-pink","accent-orange");
  if(style.frame!=="classic")hero.classList.add("frame-"+style.frame);
  if(style.background!=="default")hero.classList.add("bg-"+style.background);
+ hero.classList.add("accent-"+(PROFILE_ACCENT_OPTIONS.some(x=>x.id===style.accent)?style.accent:"gold"));
 }
 function renderProfileStyleOptions(){
  const style=state.profileStyle||{frame:"classic",background:"default"};
  const frameRoot=document.getElementById("profileFrameOptions");
  const bgRoot=document.getElementById("profileBackgroundOptions");
+ const accentRoot=document.getElementById("profileAccentOptions");
  const render=(items,selected,type)=>items.map(item=>`<button type="button" class="profile-style-btn ${selected===item.id?"active":""}" onclick="setProfileStyle('${type}','${item.id}')">${item.icon} ${item.name} ${selected===item.id?"✓":""}</button>`).join("");
  if(frameRoot)frameRoot.innerHTML=render(PROFILE_FRAME_OPTIONS,style.frame,"frame");
  if(bgRoot)bgRoot.innerHTML=render(PROFILE_BACKGROUND_OPTIONS,style.background,"background");
+ if(accentRoot)accentRoot.innerHTML=render(PROFILE_ACCENT_OPTIONS,style.accent||"gold","accent");
+ const content=document.getElementById("profileStyleContent");
+ const toggle=document.getElementById("profileStyleToggle");
+ if(content)content.hidden=!!style.collapsed;
+ if(toggle)toggle.textContent=style.collapsed?"Развернуть":"Свернуть";
  const preview=document.getElementById("profileStylePreview");
  if(preview){preview.className="profile-style-preview";const sample=preview.querySelector(".sample");if(sample){sample.className="sample";sample.textContent="👤";const temp=document.createElement("div");temp.className="profile-hero";applyProfileStyleToElement(temp);sample.style.border="2px solid "+({gold:"#f4c75e",neon:"#c45cff",ice:"#70d8ff",rose:"#ff78ad",classic:"var(--border2)"}[style.frame]||"var(--border2)");sample.style.background=({space:"linear-gradient(145deg,#41205e,#171326)",emerald:"linear-gradient(145deg,#123d37,#10231f)",sunset:"linear-gradient(145deg,#67304d,#342044)",midnight:"linear-gradient(145deg,#172e50,#101827)",default:"var(--panel)"}[style.background]||"var(--panel)");}}
 }
@@ -4009,8 +4038,17 @@ function applyProfileStyleToElement(element){
  if(style.frame&&style.frame!=="classic")element.classList.add("frame-"+style.frame);
  if(style.background&&style.background!=="default")element.classList.add("bg-"+style.background);
 }
+function toggleProfileStylePanel(){
+ if(!state.profileStyle||typeof state.profileStyle!=="object")state.profileStyle={frame:"classic",background:"default",accent:"gold"};
+ state.profileStyle.collapsed=!state.profileStyle.collapsed;
+ const content=document.getElementById("profileStyleContent");
+ const button=document.getElementById("profileStyleToggle");
+ if(content)content.hidden=state.profileStyle.collapsed;
+ if(button)button.textContent=state.profileStyle.collapsed?"Развернуть":"Свернуть";
+ save();
+}
 function setProfileStyle(type,value){
- const allowed=type==="frame"?PROFILE_FRAME_OPTIONS: type==="background"?PROFILE_BACKGROUND_OPTIONS:null;
+ const allowed=type==="frame"?PROFILE_FRAME_OPTIONS:type==="background"?PROFILE_BACKGROUND_OPTIONS:type==="accent"?PROFILE_ACCENT_OPTIONS:null;
  if(!allowed||!allowed.some(item=>item.id===value))return;
  if(!state.profileStyle||typeof state.profileStyle!=="object")state.profileStyle={frame:"classic",background:"default"};
  state.profileStyle[type]=value;
