@@ -968,6 +968,23 @@ background:#ffae19;
 transform:translateX(26px);
 }
 
+/* PROFILE CUSTOMIZATION */
+.profile-hero.frame-gold{border:2px solid #f4c75e;box-shadow:0 0 0 3px #f4c75e22,0 0 22px #f4c75e35}
+.profile-hero.frame-neon{border:2px solid #c45cff;box-shadow:0 0 0 3px #c45cff22,0 0 24px #b52dff55}
+.profile-hero.frame-ice{border:2px solid #70d8ff;box-shadow:0 0 0 3px #70d8ff22,0 0 22px #70d8ff44}
+.profile-hero.frame-rose{border:2px solid #ff78ad;box-shadow:0 0 0 3px #ff78ad22,0 0 22px #ff78ad44}
+.profile-hero.bg-space{background:radial-gradient(ellipse at 50% 0%,#41205e,#171326 72%)}
+.profile-hero.bg-emerald{background:linear-gradient(145deg,#123d37,#10231f 80%)}
+.profile-hero.bg-sunset{background:linear-gradient(145deg,#67304d,#342044 65%,#171326)}
+.profile-hero.bg-midnight{background:linear-gradient(145deg,#172e50,#101827 75%)}
+.profile-custom-section{margin:12px 0}
+.profile-style-options{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;margin-top:9px}
+.profile-style-btn{min-width:0;padding:11px 8px;border:1px solid var(--border2);border-radius:12px;background:var(--panel2);color:var(--text);text-align:left;font-size:12px}
+.profile-style-btn.active{border:2px solid var(--gold);background:color-mix(in srgb,var(--gold) 12%,var(--panel2))}
+.profile-style-preview{display:flex;align-items:center;gap:10px;margin:10px 0;padding:12px;border-radius:13px;background:var(--panel2)}
+.profile-style-preview .sample{width:42px;height:42px;border-radius:50%;display:grid;place-items:center;font-size:23px;flex:0 0 42px}
+@media(max-width:380px){.profile-style-options{grid-template-columns:1fr}}
+
 /* PROFILE */
 
 .profile-hero{
@@ -2578,6 +2595,13 @@ id="profileLevelProgressText"
 
 </div>
 
+<div class="panel profile-custom-section">
+ <h3>🎨 ОФОРМЛЕНИЕ ПРОФИЛЯ</h3>
+ <div class="profile-style-preview" id="profileStylePreview"><div class="sample">👤</div><div><b>Твой стиль</b><div class="small">Предпросмотр оформления</div></div></div>
+ <div class="small">РАМКА ПРОФИЛЯ</div><div class="profile-style-options" id="profileFrameOptions"></div>
+ <div class="small" style="margin-top:14px">ФОН ПРОФИЛЯ</div><div class="profile-style-options" id="profileBackgroundOptions"></div>
+ <div class="small" id="profileStyleStatus" style="margin-top:9px">Выбранное оформление сохраняется автоматически.</div>
+</div>
 <div class="profile-grid">
 
 <div class="profile-card">
@@ -3547,6 +3571,11 @@ balanceBeforeInfinite:null,
 
 }catch(e){}
 
+// Настройки оформления профиля: безопасные значения по умолчанию для старых сохранений.
+if(!state.profileStyle||typeof state.profileStyle!=="object")state.profileStyle={};
+if(!["classic","gold","neon","ice","rose"].includes(state.profileStyle.frame))state.profileStyle.frame="classic";
+if(!["default","space","emerald","sunset","midnight"].includes(state.profileStyle.background))state.profileStyle.background="default";
+
 // Время первого запуска казино: даёт новичку окно 24 часа для промокода.
 if(!Number.isFinite(Number(state.createdAt))||Number(state.createdAt)<=0)state.createdAt=Date.now();
 
@@ -3943,10 +3972,62 @@ title.textContent=
    PROFILE
 ========================= */
 
+const PROFILE_FRAME_OPTIONS=[
+ {id:"classic",name:"Без рамки",icon:"▫️"},
+ {id:"gold",name:"Золотая",icon:"🟡"},
+ {id:"neon",name:"Неоновая",icon:"💜"},
+ {id:"ice",name:"Ледяная",icon:"🧊"},
+ {id:"rose",name:"Розовая",icon:"🌸"}
+];
+const PROFILE_BACKGROUND_OPTIONS=[
+ {id:"default",name:"Классический",icon:"🌑"},
+ {id:"space",name:"Космос",icon:"🌌"},
+ {id:"emerald",name:"Изумруд",icon:"💚"},
+ {id:"sunset",name:"Закат",icon:"🌇"},
+ {id:"midnight",name:"Полночь",icon:"🌃"}
+];
+function applyProfileStyle(){
+ const hero=document.querySelector(".profile-hero");
+ if(!hero)return;
+ const style=state.profileStyle||{frame:"classic",background:"default"};
+ hero.classList.remove("frame-gold","frame-neon","frame-ice","frame-rose","bg-space","bg-emerald","bg-sunset","bg-midnight");
+ if(style.frame!=="classic")hero.classList.add("frame-"+style.frame);
+ if(style.background!=="default")hero.classList.add("bg-"+style.background);
+}
+function renderProfileStyleOptions(){
+ const style=state.profileStyle||{frame:"classic",background:"default"};
+ const frameRoot=document.getElementById("profileFrameOptions");
+ const bgRoot=document.getElementById("profileBackgroundOptions");
+ const render=(items,selected,type)=>items.map(item=>`<button type="button" class="profile-style-btn ${selected===item.id?"active":""}" onclick="setProfileStyle('${type}','${item.id}')">${item.icon} ${item.name} ${selected===item.id?"✓":""}</button>`).join("");
+ if(frameRoot)frameRoot.innerHTML=render(PROFILE_FRAME_OPTIONS,style.frame,"frame");
+ if(bgRoot)bgRoot.innerHTML=render(PROFILE_BACKGROUND_OPTIONS,style.background,"background");
+ const preview=document.getElementById("profileStylePreview");
+ if(preview){preview.className="profile-style-preview";const sample=preview.querySelector(".sample");if(sample){sample.className="sample";sample.textContent="👤";const temp=document.createElement("div");temp.className="profile-hero";applyProfileStyleToElement(temp);sample.style.border="2px solid "+({gold:"#f4c75e",neon:"#c45cff",ice:"#70d8ff",rose:"#ff78ad",classic:"var(--border2)"}[style.frame]||"var(--border2)");sample.style.background=({space:"linear-gradient(145deg,#41205e,#171326)",emerald:"linear-gradient(145deg,#123d37,#10231f)",sunset:"linear-gradient(145deg,#67304d,#342044)",midnight:"linear-gradient(145deg,#172e50,#101827)",default:"var(--panel)"}[style.background]||"var(--panel)");}}
+}
+function applyProfileStyleToElement(element){
+ const style=state.profileStyle||{};
+ if(style.frame&&style.frame!=="classic")element.classList.add("frame-"+style.frame);
+ if(style.background&&style.background!=="default")element.classList.add("bg-"+style.background);
+}
+function setProfileStyle(type,value){
+ const allowed=type==="frame"?PROFILE_FRAME_OPTIONS: type==="background"?PROFILE_BACKGROUND_OPTIONS:null;
+ if(!allowed||!allowed.some(item=>item.id===value))return;
+ if(!state.profileStyle||typeof state.profileStyle!=="object")state.profileStyle={frame:"classic",background:"default"};
+ state.profileStyle[type]=value;
+ save();
+ applyProfileStyle();
+ renderProfileStyleOptions();
+ const status=document.getElementById("profileStyleStatus");
+ if(status)status.textContent="✅ Оформление сохранено!";
+}
+
 function renderProfile(){
 
 const info=
 getLevelInfo();
+
+applyProfileStyle();
+renderProfileStyleOptions();
 
 const setText=(id,value)=>{
 
