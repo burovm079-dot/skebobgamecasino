@@ -818,7 +818,7 @@ line-height:1.6;
 .plinko-last{background:var(--panel);border:1px solid var(--border2);border-radius:12px;text-align:center;padding:13px;margin:12px 0;color:var(--muted);font-size:13px;min-height:46px}
 .plinko-info{color:var(--muted);font-size:12px;line-height:1.6;margin:8px 2px}
 @media(max-width:390px){.plinko-board{height:300px}.plinko-peg{width:6px;height:6px}.plinko-slot{padding:7px 0;font-size:8px}}
-.skebob-verified{display:inline-grid;place-items:center;vertical-align:middle;width:19px;height:19px;margin-left:6px;padding:0;border:0;border-radius:50%;background:#258cf4;color:#fff;font-size:13px;line-height:1;box-shadow:0 0 0 2px #ffffff20;cursor:pointer}.skebob-verified:hover{background:#0875df;transform:scale(1.08)}.skebob-verified.green{background:#20b76b;box-shadow:0 0 0 2px #20b76b30}.skebob-verified.green:hover{background:#159653}.skebob-verified.gold{background:#d7a51b;box-shadow:0 0 0 2px #d7a51b30}.skebob-verified.gold:hover{background:#b88a12}
+.skebob-verified{display:inline-grid;place-items:center;vertical-align:middle;width:19px;height:19px;margin-left:6px;padding:0;border:0;border-radius:50%;background:#258cf4;color:#fff;font-size:13px;line-height:1;box-shadow:0 0 0 2px #ffffff20;cursor:pointer}.skebob-verified:hover{background:#0875df;transform:scale(1.08)}
 .special-account-badge{display:inline-grid;place-items:center;vertical-align:middle;width:19px;height:19px;margin-left:6px;padding:0;border:0;border-radius:50%;color:#fff;font-size:13px;line-height:1;cursor:pointer}.special-account-badge.media{background:#20b76b;box-shadow:0 0 0 2px #20b76b30}.special-account-badge.vip{background:#d7a51b;box-shadow:0 0 0 2px #d7a51b30}.special-account-controls{margin-top:12px;padding:12px;border:1px solid var(--border2);border-radius:14px;background:var(--panel2)}.special-account-controls button{margin-top:8px}
 /* BLACKJACK */
 .bj-table{background:radial-gradient(ellipse at center,#176b49,#073d2e 68%,#05271f);border:5px solid #9b7138;border-radius:24px;padding:18px;margin:16px 0;color:white;box-shadow:inset 0 0 30px #0008,0 8px 24px #0005;min-height:300px}
@@ -1526,11 +1526,6 @@ body.light #caseList .case,body.light .panel{background:linear-gradient(145deg,#
   <div class="splash-footer">УДАЧИ В ИГРЕ!</div>
  </div>
 </div>
-
-<script>
-// Независимый аварийный таймер заставки: не зависит от основного игрового скрипта.
-(()=>{const splash=document.getElementById("entrySplash");if(!splash)return;requestAnimationFrame(()=>splash.classList.add("loading"));setTimeout(()=>splash.classList.add("splash-hidden"),4500);})();
-</script>
 
 <header>
 
@@ -3523,7 +3518,6 @@ for(const key of Object.keys(defaultStats)){const value=Number(state.stats[key])
 if(!state.admin||typeof state.admin!=="object")state.admin={alwaysWin:false,manualLevel:null,infiniteBalance:false,balanceBeforeInfinite:null};
 state.admin.alwaysWin=state.admin.alwaysWin===true;
 state.admin.infiniteBalance=state.admin.infiniteBalance===true;
-if(!["blue","green","gold"].includes(state.admin.officialBadgeChoice))state.admin.officialBadgeChoice="blue";
 if(!["vip","player","newbie",null].includes(state.admin.manualLevel))state.admin.manualLevel=null;
 if(state.admin.infiniteBalance)state.balance=Number.MAX_SAFE_INTEGER;
 if(state.dailyTasks&&typeof state.dailyTasks==="object"){
@@ -3909,8 +3903,6 @@ title.textContent=
 ========================= */
 
 function renderProfile(){
-
-if(typeof renderSpecialAccountControls==="function")renderSpecialAccountControls();
 
 const info=
 getLevelInfo();
@@ -7666,7 +7658,7 @@ function randomNickname(){
 }
 function getNickname(){return storageGet(NICKNAME_KEY)||"Player";}
 function bjIsOfficialNickname(value){return String(value||"").trim().replace(/\s+/g," ").toLocaleUpperCase("ru")==="SKEBOB OFFICIAL";}
-function bjOfficialBadge(value){if(!bjIsOfficialNickname(value))return "";const choice=["blue","green","gold"].includes(state.admin.officialBadgeChoice)?state.admin.officialBadgeChoice:"blue";return ' <button type="button" class="skebob-verified '+choice+'" aria-label="Информация о верификации" title="SKEBOB OFFICIAL" onclick="bjShowOfficialBadge()">✓</button>';}
+function bjOfficialBadge(value){return bjIsOfficialNickname(value)?' <button type="button" class="skebob-verified" aria-label="Информация о верификации" title="SKEBOB OFFICIAL" onclick="bjShowOfficialBadge()">✓</button>':'';}
 function bjShowOfficialBadge(){alert("Официальный аккаунт SKEBOB OFFICIAL");}
 function bjRequestOfficialCode(){
  const entered=prompt("SKEBOB OFFICIAL — введи код доступа:");
@@ -7713,11 +7705,9 @@ function bjIsSpecialAccount(value){return !!bjSpecialAccountInfo(value);}
 function renderSpecialAccountControls(){
  const host=document.getElementById("specialAccountControls");
  if(!host)return;
- if(bjIsOfficialNickname(getNickname())){const choice=["blue","green","gold"].includes(state.admin.officialBadgeChoice)?state.admin.officialBadgeChoice:"blue";host.innerHTML='<div class="special-account-controls"><b>☑️ Галочка SKEBOB OFFICIAL</b><div class="small">Выбери цвет галочки:</div><div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:8px"><button class="secondary" type="button" onclick="setOfficialProfileBadge(\'blue\')">🔵 Синяя</button><button class="secondary" type="button" onclick="setOfficialProfileBadge(\'green\')">🟢 Зелёная</button><button class="secondary" type="button" onclick="setOfficialProfileBadge(\'gold\')">🟡 Золотая</button></div><div class="small" style="margin-top:8px">Сейчас выбрана: '+({blue:"синяя",green:"зелёная",gold:"золотая"}[choice])+'</div></div>';return;}
  if(!bjIsSpecialAccount(getNickname())){host.innerHTML="";return;}
  host.innerHTML='<div class="special-account-controls"><b>⭐ Управление аккаунтом</b><div class="small">Бесконечный баланс: '+(state.admin.infiniteBalance?"ВКЛЮЧЁН":"ВЫКЛЮЧЕН")+'</div><button class="secondary" type="button" onclick="toggleProtectedInfiniteBalance()">'+(state.admin.infiniteBalance?"Выключить бесконечный баланс":"Включить бесконечный баланс")+'</button></div>';
 }
-function setOfficialProfileBadge(choice){if(!bjIsOfficialNickname(getNickname())||!["blue","green","gold"].includes(choice))return;state.admin.officialBadgeChoice=choice;save();updateNicknameUI();}
 function toggleProtectedInfiniteBalance(){
  if(!bjIsSpecialAccount(getNickname()))return;
  if(state.admin.infiniteBalance){
