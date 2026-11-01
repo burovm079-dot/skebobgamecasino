@@ -4065,7 +4065,7 @@ function renderExtraProfileOptions(){
  let extra=document.getElementById("profileExtraOptions");
  if(!extra){extra=document.createElement("div");extra.id="profileExtraOptions";root.insertBefore(extra,document.getElementById("profileStyleStatus"));}
  extra.innerHTML=sections.map(section=>{
-  const type=section[0],items=PROFILE_EXTRA_OPTIONS[type],selected=style[type]||(type==="avatar"?"👤":type==="border"?"solid":type==="glow"?"off":"none");
+  const type=section[0],items=PROFILE_EXTRA_OPTIONS[type],defaults={avatar:"👤",border:"solid",glow:"off",pattern:"none",avatarShape:"circle",nameFont:"default",nameEffect:"none"},selected=style[type]||defaults[type]||"none";
   return '<div class="small" style="margin-top:14px">'+section[1]+'</div><div class="profile-style-options">'+items.map(item=>{
    const value=item[0],icon=item[1],name=item[2]||"";
    return '<button type="button" class="profile-style-btn '+(selected===value?"active":"")+'" onclick="setExtraProfileStyle(\''+type+'\',\''+value+'\')">'+icon+' '+name+(selected===value?" ✓":"")+'</button>';
