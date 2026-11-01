@@ -5057,201 +5057,103 @@ save();
    UPGRADE
 ========================= */
 
+function getUpgradeChance(value){
+const safeMultiplier=[1.2,1.5,2,3,5,10].includes(Number(value))?Number(value):2;
+return Math.min(90,Math.max(5,Math.floor(90/safeMultiplier)));
+}
+
+function setUpgradeControlsDisabled(disabled){
+const stakeInput=document.getElementById("upgradeStake");
+const upgradeButton=document.getElementById("upgradeButton");
+if(stakeInput)stakeInput.disabled=disabled;
+if(upgradeButton)upgradeButton.disabled=disabled;
+document.querySelectorAll(".multiplier-grid button").forEach(button=>button.disabled=disabled);
+}
+
 function setMultiplier(m,b){
-
 if(upgradeBusy)return;
-
-multiplier=m;
-
-document
-.querySelectorAll(
-".multiplier-grid button"
-)
-.forEach(
-x=>x.classList.remove(
-"active"
-)
-);
-
-b.classList.add(
-"active"
-);
-
+const allowed=[1.2,1.5,2,3,5,10];
+multiplier=allowed.includes(Number(m))?Number(m):2;
+document.querySelectorAll(".multiplier-grid button").forEach(x=>x.classList.remove("active"));
+if(b)b.classList.add("active");
+else{
+const selected=[...document.querySelectorAll(".multiplier-grid button")].find(x=>x.textContent.trim().toLowerCase()==="x"+multiplier);
+if(selected)selected.classList.add("active");
+}
 updateUpgradeInfo();
-
 }
 
 function updateUpgradeInfo(){
-
-const stake=
-Math.max(
-0,
-Number(
-document.getElementById(
-"upgradeStake"
-).value
-)||0
-);
-
-const chance=
-Math.min(
-90,
-Math.max(
-5,
-Math.floor(
-90/multiplier
-)
-)
-);
-
-document.getElementById(
-"chanceText"
-).textContent=
-chance+
-"%";
-
-document.getElementById(
-"upgradeValues"
-).textContent=
-stake+
-" → "+
-Math.floor(
-stake*multiplier
-)+
-" 🪙";
-
-document.getElementById(
-"upgradeCircle"
-).style.setProperty(
-"--chance",
-chance+"%"
-);
-
-document.getElementById(
-"commissionText"
-).textContent=
-
-state.admin.alwaysWin
-?
-"🎯 ADMIN: всегда выигрыш"
-:
-"Шанс успеха: "+
-chance+
-"%";
-
+const input=document.getElementById("upgradeStake");
+const stake=input?Math.max(0,Math.floor(Number(input.value)||0)):0;
+const safeMultiplier=[1.2,1.5,2,3,5,10].includes(Number(multiplier))?Number(multiplier):2;
+multiplier=safeMultiplier;
+const chance=getUpgradeChance(safeMultiplier);
+const chanceText=document.getElementById("chanceText");
+const values=document.getElementById("upgradeValues");
+const circle=document.getElementById("upgradeCircle");
+const commission=document.getElementById("commissionText");
+if(chanceText)chanceText.textContent=chance+"%";
+if(values)values.textContent=stake.toLocaleString("ru-RU")+" → "+Math.floor(stake*safeMultiplier).toLocaleString("ru-RU")+" 🪙";
+if(circle)circle.style.setProperty("--chance",chance+"%");
+if(commission)commission.textContent=state.admin?.alwaysWin?"🎯 ADMIN: всегда выигрыш":"Шанс успеха: "+chance+"%";
 }
 
 function spinUpgrade(){
-
 if(upgradeBusy)return;
-
-const stake=
-Math.floor(
-Number(
-document.getElementById(
-"upgradeStake"
-).value
-)
-);
-
-if(
-stake<=0||
-stake>state.balance
-){
-
-alert(
-"Проверь сумму."
-);
-
+const input=document.getElementById("upgradeStake");
+const stake=input?Number(input.value):NaN;
+const safeMultiplier=[1.2,1.5,2,3,5,10].includes(Number(multiplier))?Number(multiplier):2;
+if(!Number.isSafeInteger(stake)||stake<=0||stake>state.balance){
+alert("Проверь сумму: введи целое число монет в пределах баланса.");
 return;
-
 }
+
+const chance=getUpgradeChance(safeMultiplier);
+const arrow=document.getElementById("upgradeArrow");
+const status=document.getElementById("upgradeStatus");
+const button=document.getElementById("upgradeButton");
+if(!arrow||!status||!button)return;
 
 upgradeBusy=true;
-
-const chance=
-Math.min(
-90,
-Math.max(
-5,
-Math.floor(
-90/multiplier
-)
-)
-);
+setUpgradeControlsDisabled(true);
+status.textContent="🎯 Апгрейд запущен…";
 
 state.balance-=stake;
-
 addTurnover(stake);
-
 state.stats.upgrades++;
-
 save();
 
-const won=
-state.admin.alwaysWin
-||
-Math.random()*100<
-chance;
+const isAdminWin=Boolean(state.admin?.alwaysWin);
+const winningAngle=Math.random()*360;
+const won=isAdminWin||winningAngle<chance*3.6;
+const finalAngle=isAdminWin?Math.random()*chance*3.6:winningAngle;
 
-const arrow=
-document.getElementById(
-"upgradeArrow"
-);
-
-arrow.style.transition=
-"none";
-
-arrow.style.transform=
-"rotate(0deg)";
-
+arrow.style.transition="none";
+arrow.style.transform="rotate(0deg)";
 void arrow.offsetWidth;
+arrow.style.transition="transform 4s cubic-bezier(.12,.7,.15,1)";
+arrow.style.transform="rotate("+(7*360+finalAngle)+"deg)";
 
-arrow.style.transition=
-"transform 4s cubic-bezier(.12,.7,.15,1)";
-
-arrow.style.transform=
-`rotate(${7*360+Math.random()*360}deg)`;
-
-setTimeout(()=>{
-
+window.setTimeout(()=>{
+try{
 if(won){
-
-const reward=
-Math.floor(
-stake*
-multiplier
-);
-
+const reward=Math.floor(stake*safeMultiplier);
 state.balance+=reward;
-
 state.stats.upgradeWins++;
 addDailyTaskProgress("upgrade");
-
 registerWin(reward);
-
-document.getElementById(
-"upgradeStatus"
-).textContent=
-"🏆 ПОБЕДА! +"+
-reward+
-" 🪙";
-
+status.textContent="🏆 ПОБЕДА! +"+reward.toLocaleString("ru-RU")+" 🪙";
 }else{
-
-document.getElementById(
-"upgradeStatus"
-).textContent=
-"❌ ПРОИГРЫШ";
-
+status.textContent="❌ ПРОИГРЫШ. Попробуй ещё раз.";
 }
-
 save();
-
+}finally{
 upgradeBusy=false;
-
-},4000);
-
+setUpgradeControlsDisabled(false);
+updateUpgradeInfo();
+}
+},4100);
 }
 
 /* =========================
