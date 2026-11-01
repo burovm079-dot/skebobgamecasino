@@ -1005,6 +1005,15 @@ transform:translateX(26px);
 .profile-hero.pattern-diagonal{background-image:repeating-linear-gradient(135deg,#ffffff0c 0 2px,transparent 2px 12px)}
 .profile-custom-avatar{display:none;vertical-align:middle;place-items:center;width:42px;height:42px;margin-right:8px;border-radius:50%;background:var(--panel2);font-size:25px}
 .profile-identity-card{position:relative;overflow:hidden;transition:background .2s,border .2s,box-shadow .2s}
+.profile-banner{height:76px;width:100%;margin:-16px -16px 16px;width:calc(100% + 32px);background:transparent;overflow:hidden;position:relative;border-radius:inherit}
+.profile-identity-card.banner-aurora .profile-banner{background:radial-gradient(ellipse at 18% 120%,#5ef0c5aa,transparent 48%),radial-gradient(ellipse at 80% -20%,#8b5cffbb,transparent 55%),linear-gradient(115deg,#102d42,#17203d 55%,#173d43)}
+.profile-identity-card.banner-nebula .profile-banner{background:radial-gradient(circle at 25% 35%,#f5a6ff99 0 2px,transparent 4px),radial-gradient(ellipse at 70% 80%,#6943c9,transparent 50%),linear-gradient(120deg,#10112e,#39235b,#15152d)}
+.profile-identity-card.banner-flame .profile-banner{background:radial-gradient(ellipse at 50% 120%,#ffdb70,transparent 28%),linear-gradient(125deg,#4a1010,#c33a19 48%,#24101a)}
+.profile-identity-card.banner-ocean .profile-banner{background:radial-gradient(ellipse at 20% 110%,#75f2e0aa,transparent 45%),linear-gradient(120deg,#082b49,#087b9b 55%,#102f60)}
+.profile-identity-card.banner-gold .profile-banner{background:radial-gradient(ellipse at 50% 120%,#ffe8a0aa,transparent 40%),linear-gradient(120deg,#38240b,#b17a19 50%,#35200b)}
+.profile-identity-card.banner-cyber .profile-banner{background:linear-gradient(120deg,#11152f,#4925a1 48%,#087e91);background-size:200% 100%}
+.profile-identity-card .profile-banner:after{content:"";position:absolute;inset:0;background:repeating-linear-gradient(135deg,#ffffff0a 0 2px,transparent 2px 13px)}
+
 .profile-identity-card.frame-gold{border:2px solid #f4c75e;box-shadow:0 0 0 3px #f4c75e22,0 0 22px #f4c75e35}
 .profile-identity-card.frame-neon{border:2px solid #c45cff;box-shadow:0 0 0 3px #c45cff22,0 0 24px #b52dff55}
 .profile-identity-card.frame-ice{border:2px solid #70d8ff;box-shadow:0 0 0 3px #70d8ff22,0 0 22px #70d8ff44}
@@ -2608,7 +2617,7 @@ class="hidden"
 >
 
 <h2>👤 ПРОФИЛЬ</h2>
-<div class="panel profile-identity-card"><div class="small">ТВОЙ NICKNAME</div><span id="profileCustomAvatar" class="profile-custom-avatar" aria-hidden="true"></span><strong id="profileNickname" style="display:block;font-size:22px;margin:8px 0 12px">Player</strong><button class="secondary" onclick="changeNickname()">✏️ ИЗМЕНИТЬ NICKNAME</button></div>
+<div class="panel profile-identity-card"><div class="profile-banner" id="profileBanner" aria-hidden="true"></div><div class="small">ТВОЙ NICKNAME</div><span id="profileCustomAvatar" class="profile-custom-avatar" aria-hidden="true"></span><strong id="profileNickname" style="display:block;font-size:22px;margin:8px 0 12px">Player</strong><button class="secondary" onclick="changeNickname()">✏️ ИЗМЕНИТЬ NICKNAME</button></div>
 <div id="specialAccountControls"></div>
 
 <div class="profile-hero">
@@ -4056,11 +4065,12 @@ const PROFILE_EXTRA_OPTIONS={
  pattern:[["none","▫️","Без узора"],["dots","🔘","Точки"],["grid","▦","Сетка"],["diagonal","〰️","Диагонали"]],
  avatarShape:[["circle","⚪","Круг"],["rounded","▢","Скруглённый"],["square","◻️","Квадрат"]],
  nameFont:[["default","Aa","Обычный"],["serif","𝑨𝒂","Элегантный"],["mono","𝙰𝚊","Моно"]],
- nameEffect:[["none","А","Без эффекта"],["shadow","✨","Тень"],["underline","〰️","Подчёркнутый"],["italic","𝑨","Курсив"]]
+ nameEffect:[["none","А","Без эффекта"],["shadow","✨","Тень"],["underline","〰️","Подчёркнутый"],["italic","𝑨","Курсив"]],
+ banner:[["none","▫️","Без баннера"],["aurora","🌌","Северное сияние"],["nebula","🪐","Туманность"],["flame","🔥","Пламя"],["ocean","🌊","Океан"],["gold","✨","Золотой"],["cyber","⚡","Кибер"]]
 };
 function renderExtraProfileOptions(){
  const style=state.profileStyle||{};
- const sections=[["avatar","АВАТАР ПРОФИЛЯ"],["border","СТИЛЬ РАМКИ"],["glow","СВЕЧЕНИЕ"],["pattern","УЗОР ФОНА"],["avatarShape","ФОРМА АВАТАРА"],["nameFont","ШРИФТ НИКА"],["nameEffect","ЭФФЕКТ НИКА"]];
+ const sections=[["avatar","АВАТАР ПРОФИЛЯ"],["border","СТИЛЬ РАМКИ"],["glow","СВЕЧЕНИЕ"],["pattern","УЗОР ФОНА"],["avatarShape","ФОРМА АВАТАРА"],["nameFont","ШРИФТ НИКА"],["nameEffect","ЭФФЕКТ НИКА"],["banner","БАННЕР ПРОФИЛЯ"]];
  const root=document.getElementById("profileStyleContent");if(!root)return;
  let extra=document.getElementById("profileExtraOptions");
  if(!extra){extra=document.createElement("div");extra.id="profileExtraOptions";root.insertBefore(extra,document.getElementById("profileStyleStatus"));}
@@ -4083,7 +4093,7 @@ function applyProfileStyle(){
  const card=document.querySelector(".profile-identity-card");
  if(!card)return;
  const style=state.profileStyle||{frame:"classic",background:"default"};
- card.classList.remove("frame-gold","frame-neon","frame-ice","frame-rose","bg-space","bg-emerald","bg-sunset","bg-midnight","accent-gold","accent-purple","accent-cyan","accent-green","accent-pink","accent-orange","border-double","border-dashed","border-inset","glow-soft","glow-strong","glow-rainbow","pattern-dots","pattern-grid","pattern-diagonal","avatar-rounded","avatar-square","name-font-serif","name-font-mono","name-effect-shadow","name-effect-underline","name-effect-italic");
+ card.classList.remove("frame-gold","frame-neon","frame-ice","frame-rose","bg-space","bg-emerald","bg-sunset","bg-midnight","accent-gold","accent-purple","accent-cyan","accent-green","accent-pink","accent-orange","border-double","border-dashed","border-inset","glow-soft","glow-strong","glow-rainbow","pattern-dots","pattern-grid","pattern-diagonal","avatar-rounded","avatar-square","name-font-serif","name-font-mono","name-effect-shadow","name-effect-underline","name-effect-italic","banner-aurora","banner-nebula","banner-flame","banner-ocean","banner-gold","banner-cyber");
  if(style.frame!=="classic")card.classList.add("frame-"+style.frame);
  if(style.background!=="default")card.classList.add("bg-"+style.background);
  card.classList.add("accent-"+(PROFILE_ACCENT_OPTIONS.some(x=>x.id===style.accent)?style.accent:"gold"));
@@ -4093,6 +4103,7 @@ function applyProfileStyle(){
  if(["rounded","square"].includes(style.avatarShape))card.classList.add("avatar-"+style.avatarShape);
  if(["serif","mono"].includes(style.nameFont))card.classList.add("name-font-"+style.nameFont);
  if(["shadow","underline","italic"].includes(style.nameEffect))card.classList.add("name-effect-"+style.nameEffect);
+ if(["aurora","nebula","flame","ocean","gold","cyber"].includes(style.banner))card.classList.add("banner-"+style.banner);
  const avatar=document.getElementById("profileCustomAvatar");
  if(avatar){avatar.textContent=PROFILE_EXTRA_OPTIONS.avatar.some(x=>x[0]===(style.avatar||"👤"))?(style.avatar||"👤"):"👤";avatar.style.display="inline-grid";}
  const name=document.getElementById("profileNickname");
