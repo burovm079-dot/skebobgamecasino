@@ -1526,6 +1526,15 @@ body.light #caseList .case,body.light .panel{background:linear-gradient(145deg,#
   <div class="splash-footer">УДАЧИ В ИГРЕ!</div>
  </div>
 </div>
+<script>
+/* Safety fallback: hide the splash even if a later game initializer fails. */
+(()=>{
+ const splash=document.getElementById("entrySplash");
+ if(!splash)return;
+ requestAnimationFrame(()=>splash.classList.add("loading"));
+ setTimeout(()=>splash.classList.add("splash-hidden"),4500);
+})();
+</script>
 
 <header>
 
