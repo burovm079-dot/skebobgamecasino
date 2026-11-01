@@ -7790,14 +7790,14 @@ const BJ_ONLINE_URL="https://quglxnyhtqoojzbimtmv.supabase.co";
 const BJ_ONLINE_KEY="sb_publishable_qm5CyU510e0Yu1ayUq4tlw_je8hQhbL";
 let bjOnlineClient=null,bjOnlineChannel=null,bjOnlineRoom="",bjOnlineId="",bjOnlineHost=false;
 let bjOnlineMembers=[],bjOnlineTimer=null,bjOnlineSeconds=60,bjOnlineRound=null,bjOnlineMyHand=[],bjOnlineDealer=null,bjOnlineMyTurn=false,bjOnlineJoinedAt=0;
-let bjOnlineBetLocked=false;
+let bjOnlineRoundLocked=false;
 function bjNormalizeNick(value){return String(value||"").trim().replace(/\\s+/g," ").toLocaleLowerCase("ru");}
 function bjNickTaken(value,excludeId=""){const wanted=bjNormalizeNick(value);if(!wanted||!bjOnlineChannel)return false;const state=bjOnlineChannel.presenceState();return Object.values(state).flat().some(p=>p.id!==excludeId&&bjNormalizeNick(p.name)===wanted);}
 const bjOnlineName=()=>getNickname();
 const bjOnlineCard=()=>({rank:["A","2","3","4","5","6","7","8","9","10","J","Q","K"][Math.floor(Math.random()*13)],suit:["♠","♥","♦","♣"][Math.floor(Math.random()*4)]});
 function bjOnlineValue(hand){let n=0,a=0;for(const c of hand){if(c.rank==="A"){n+=11;a++}else n+=["J","Q","K"].includes(c.rank)?10:Number(c.rank)}while(n>21&&a-- >0)n-=10;return n}
 function bjOnlineDraw(hand){hand.push(bjOnlineCard())}
-function bjOnlinePublishState(){if(!bjOnlineChannel||!bjOnlineRound||bjOnlineRound.finished)return;bjOnlineSend("player-state",{id:bjOnlineId,hand:bjOnlineMyHand,bet:bjOnlineCurrentBet,done:!bjOnlineMyTurn,turn:bjOnlineMyTurn?"Твой ход":"Завершил ход"})}
+function bjOnlinePublishState(){if(!bjOnlineChannel||!bjOnlineRound||bjOnlineRound.finished)return;bjOnlineSend("player-state",{id:bjOnlineId,hand:bjOnlineMyHand,done:!bjOnlineMyTurn,turn:bjOnlineMyTurn?"Твой ход":"Завершил ход"})}
 function bjOnlineRender(){
  const d=document.getElementById("bjOnlineDealerCards"),y=document.getElementById("bjOnlineYourCards");
  if(d)d.innerHTML=bjOnlineDealer?bjHandHTML(bjOnlineDealer.cards||[],!bjOnlineDealer.revealed):'<span class="bj-card">?</span>';
@@ -7860,7 +7860,7 @@ async function bjOnlineLeave(){
 }
 function bjOnlineBeginRound(payload){
  if(bjOnlineRound?.id===payload.id)return false;
- bjOnlineBetLocked=true;
+ bjOnlineRoundLocked=true;
  bjOnlineRound={id:payload.id,finished:false};bjOnlineDealer={cards:payload.dealer,revealed:false};bjOnlineMyHand=[bjOnlineCard(),bjOnlineCard()];bjOnlineMyTurn=true;
  bjOnlineChannel.track({id:bjOnlineId,name:bjOnlineName(),done:false,joinedAt:bjOnlineJoinedAt,phase:"playing"});
  bjOnlinePublishState();bjOnlineRender();bjOnlineStatus("Раунд начался! Удачи.");return true;
@@ -7902,7 +7902,7 @@ function bjOnlineShowResult(){
  else if(p===d)result="Ничья.";
  else result="Дилер победил.";
  const el=document.getElementById("bjOnlineResult");if(el)el.textContent=result+" Твои очки: "+p+" · Дилер: "+d;
- bjOnlineBetLocked=false;bjOnlineRender();bjOnlineStatus("Раунд завершён.");
+ bjOnlineRoundLocked=false;bjOnlineRender();bjOnlineStatus("Раунд завершён.");
 }
 
 document.addEventListener("DOMContentLoaded",initNickname,{once:true});
