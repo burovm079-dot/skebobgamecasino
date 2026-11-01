@@ -21,7 +21,7 @@ button{border:0;border-radius:11px;padding:13px 16px;font-weight:800;font-size:1
 <h1>🎲 Игра в кости</h1>
 <p class="sub">Создай комнату и сыграй с друзьями. До 6 игроков, без ставок и денежных призов — только очки.</p>
 <section class="panel" id="setup">
-<label for="nick">Твой ник</label><input id="nick" maxlength="18" placeholder="Например, Игрок123" autocomplete="nickname">
+<label for="supabaseKey">Supabase publishable key (публичный ключ)</label><input id="supabaseKey" type="password" autocomplete="off" placeholder="sb_publishable_..."><label for="nick">Твой ник</label><input id="nick" maxlength="18" placeholder="Например, Игрок123" autocomplete="nickname">
 <div class="row">
 <div><label for="room">Код комнаты</label><input id="room" maxlength="12" placeholder="Например, DICE7" autocapitalize="characters"></div>
 <button id="join">Войти в комнату</button>
@@ -44,7 +44,7 @@ button{border:0;border-radius:11px;padding:13px 16px;font-weight:800;font-size:1
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
 const SUPABASE_URL = "https://pvlkcgdayxvxzvbnbuih.supabase.co";
-const SUPABASE_PUBLISHABLE_KEY = "ВСТАВЬ_СЮДА_СВОЙ_SUPABASE_PUBLISHABLE_KEY";
+let SUPABASE_PUBLISHABLE_KEY = "";
 const $ = id => document.getElementById(id);
 let client=null, channel=null, myId="", myName="", roomCode="", members=[], hostId="", round=null, isJoined=false;
 const diceFaces=["⚀","⚁","⚂","⚃","⚄","⚅"];
@@ -77,9 +77,10 @@ async function join(){
  if(isJoined)return;
  myName=$("nick").value.trim().replace(/\s+/g," ").slice(0,18);
  roomCode=$("room").value.trim().toUpperCase().replace(/[^A-Z0-9_-]/g,"").slice(0,12);
+ SUPABASE_PUBLISHABLE_KEY=$("supabaseKey").value.trim();
  if(!myName||!roomCode){setStatus("Укажи ник и код комнаты.");return}
  if(!window.supabase?.createClient){setStatus("Не удалось загрузить Supabase. Обнови страницу.");return}
- if(SUPABASE_PUBLISHABLE_KEY.startsWith("ВСТАВЬ_")){setStatus("Нужен твой Supabase publishable key — добавь его в настройку страницы.");return}
+ if(!SUPABASE_PUBLISHABLE_KEY.startsWith("sb_publishable_")){setStatus("Вставь публичный Supabase publishable key из настроек проекта.");return}
  $("join").disabled=true;
  try{
   client=window.supabase.createClient(SUPABASE_URL,SUPABASE_PUBLISHABLE_KEY);
