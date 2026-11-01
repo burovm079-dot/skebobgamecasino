@@ -1,0 +1,114 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Игра в кости — SKEBOB</title>
+<style>
+:root{color-scheme:dark;--bg:#0b0f18;--panel:#151d2b;--line:#2b3b52;--text:#f4f7fb;--muted:#9eacc0;--accent:#79d7ff;--gold:#ffd36b;--green:#7ce0a5}
+*{box-sizing:border-box}body{margin:0;background:radial-gradient(circle at top,#172b43,var(--bg) 58%);color:var(--text);font:16px Arial,sans-serif;min-height:100vh}
+main{width:min(720px,100%);margin:auto;padding:28px 16px 50px}h1{text-align:center;margin:4px 0 8px;font-size:clamp(26px,6vw,38px)}.sub{text-align:center;color:var(--muted);line-height:1.5;margin:0 0 22px}
+.panel{background:#151d2beF;border:1px solid var(--line);border-radius:18px;padding:17px;margin:13px 0;box-shadow:0 12px 30px #0003}
+label{display:block;color:var(--muted);font-size:13px;margin:10px 0 5px}input{width:100%;padding:13px;border-radius:11px;border:1px solid var(--line);background:#0d1420;color:var(--text);font-size:16px}
+button{border:0;border-radius:11px;padding:13px 16px;font-weight:800;font-size:15px;cursor:pointer;background:var(--accent);color:#07111a}button:disabled{opacity:.4;cursor:not-allowed}.secondary{background:#253449;color:var(--text);border:1px solid var(--line)}.row{display:flex;gap:9px;align-items:end}.row>*{flex:1;min-width:0}
+.status{color:var(--muted);font-size:13px;line-height:1.5;min-height:20px}.players{display:grid;gap:8px}.player{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:11px 12px;background:#0d1420;border:1px solid var(--line);border-radius:12px}.player small{color:var(--muted)}.host{color:var(--gold);font-size:12px;font-weight:bold}.score{font-size:22px;font-weight:900;color:var(--gold)}
+.dice{font-size:clamp(56px,15vw,90px);text-align:center;line-height:1.2;margin:10px 0}.center{text-align:center}.muted{color:var(--muted)}.winner{color:var(--green);font-weight:900}.hidden{display:none!important}.notice{font-size:12px;color:var(--muted);line-height:1.5;text-align:center;margin-top:18px}
+@media(max-width:480px){.row{flex-direction:column;align-items:stretch}.row button{width:100%}}
+</style>
+</head>
+<body>
+<main>
+<h1>🎲 Игра в кости</h1>
+<p class="sub">Создай комнату и сыграй с друзьями. До 6 игроков, без ставок и денежных призов — только очки.</p>
+<section class="panel" id="setup">
+<label for="supabaseKey">Supabase publishable key (публичный ключ)</label><input id="supabaseKey" type="password" autocomplete="off" placeholder="sb_publishable_..."><label for="nick">Твой ник</label><input id="nick" maxlength="18" placeholder="Например, Игрок123" autocomplete="nickname">
+<div class="row">
+<div><label for="room">Код комнаты</label><input id="room" maxlength="12" placeholder="Например, DICE7" autocapitalize="characters"></div>
+<button id="join">Войти в комнату</button>
+</div>
+<p class="status" id="setupStatus" aria-live="polite">Введи ник и код комнаты. Одинаковый код приведёт игроков в одну комнату.</p>
+</section>
+<section class="panel hidden" id="lobby">
+<div class="row"><div><strong id="roomTitle">Комната</strong><div class="status" id="roomStatus">Подключение…</div></div><button class="secondary" id="copyRoom">Скопировать код</button></div>
+<h3>Игроки <span class="muted" id="count">(0/6)</span></h3>
+<div class="players" id="players"></div>
+<div class="center" style="margin-top:16px"><button id="start" disabled>Начать раунд</button> <button class="secondary" id="leave">Выйти</button></div>
+</section>
+<section class="panel hidden" id="game">
+<div class="center"><div class="muted" id="roundLabel">Раунд</div><div class="dice" id="myDie">🎲</div><button id="roll">Бросить кость</button><p class="status" id="gameStatus" aria-live="polite">Твой ход!</p></div>
+<h3>Результаты</h3><div class="players" id="scores"></div>
+<div class="center" style="margin-top:16px"><button class="secondary" id="next" disabled>Следующий раунд (крупье)</button></div>
+</section>
+<p class="notice">Игра использует Supabase Realtime для синхронизации комнаты. Не вводи пароли или личные данные.</p>
+</main>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script>
+const SUPABASE_URL = "https://pvlkcgdayxvxzvbnbuih.supabase.co";
+let SUPABASE_PUBLISHABLE_KEY = "";
+const $ = id => document.getElementById(id);
+let client=null, channel=null, myId="", myName="", roomCode="", members=[], hostId="", round=null, isJoined=false;
+const diceFaces=["⚀","⚁","⚂","⚃","⚄","⚅"];
+function setStatus(message){$("setupStatus").textContent=message}
+function safeText(value){return String(value).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]))}
+function orderedMembers(){return [...members].sort((a,b)=>(a.joinedAt||0)-(b.joinedAt||0)).slice(0,6)}
+function isHost(){return !!myId&&hostId===myId}
+function renderMembers(){
+ const list=orderedMembers();hostId=list[0]?.id||"";
+ $("count").textContent="("+list.length+"/6)";
+ $("players").innerHTML=list.map(p=>'<div class="player"><span>'+safeText(p.name)+(p.id===hostId?' <span class="host">КРУПЬЕ</span>':'')+'</span><small>'+(p.id===myId?'это ты':'в комнате')+'</small></div>').join("")||'<div class="muted">Пока никого нет</div>';
+ $("start").disabled=!isHost()||list.length<2||!!round;
+ $("next").disabled=!isHost()||!round||!round.finished;
+}
+function renderRound(){
+ if(!round){$("game").classList.add("hidden");$("lobby").classList.remove("hidden");renderMembers();return}
+ $("lobby").classList.add("hidden");$("game").classList.remove("hidden");
+ $("roundLabel").textContent="Комната "+roomCode+" · раунд";
+ const myScore=round.rolls[myId];
+ $("myDie").textContent=myScore?diceFaces[myScore-1]:"🎲";
+ $("roll").disabled=!round.players.some(p=>p.id===myId)||!!myScore||round.finished;
+ $("gameStatus").textContent=round.finished?"Раунд завершён!":myScore?"Ты выбросил "+myScore+". Ждём остальных…":"Твой ход — бросай кость!";
+ const scored=round.players.map(p=>({...p,value:round.rolls[p.id]||0})).sort((a,b)=>b.value-a.value);
+ $("scores").innerHTML=scored.map(p=>'<div class="player"><span>'+safeText(p.name)+(p.id===myId?' (ты)':'')+'</span><strong class="score">'+(p.value?diceFaces[p.value-1]:"—")+'</strong></div>').join("");
+ if(round.finished){const top=Math.max(...scored.map(p=>p.value));const winners=scored.filter(p=>p.value===top);$("gameStatus").innerHTML='<span class="winner">Победитель: '+winners.map(p=>safeText(p.name)).join(", ")+' ('+top+')</span>'}
+ renderMembers();
+}
+function send(event,payload){if(channel)channel.send({type:"broadcast",event,payload})}
+async function join(){
+ if(isJoined)return;
+ myName=$("nick").value.trim().replace(/\s+/g," ").slice(0,18);
+ roomCode=$("room").value.trim().toUpperCase().replace(/[^A-Z0-9_-]/g,"").slice(0,12);
+ SUPABASE_PUBLISHABLE_KEY=$("supabaseKey").value.trim();
+ if(!myName||!roomCode){setStatus("Укажи ник и код комнаты.");return}
+ if(!window.supabase?.createClient){setStatus("Не удалось загрузить Supabase. Обнови страницу.");return}
+ if(!SUPABASE_PUBLISHABLE_KEY.startsWith("sb_publishable_")){setStatus("Вставь публичный Supabase publishable key из настроек проекта.");return}
+ $("join").disabled=true;
+ try{
+  client=window.supabase.createClient(SUPABASE_URL,SUPABASE_PUBLISHABLE_KEY);
+  myId=crypto.randomUUID();
+  channel=client.channel("dice-room-"+roomCode,{config:{presence:{key:myId},broadcast:{self:false}}});
+  channel.on("presence",{event:"sync"},()=>{const state=channel.presenceState();members=Object.values(state).flat().map(x=>({id:x.id,name:x.name,joinedAt:x.joinedAt}));renderMembers();});
+  channel.on("broadcast",{event:"start"},({payload})=>{if(payload?.round?.room===roomCode){round=payload.round;renderRound()}});
+  channel.on("broadcast",{event:"roll"},({payload})=>{if(!round||payload?.roundId!==round.id||!round.players.some(p=>p.id===payload.playerId)||round.rolls[payload.playerId])return;round.rolls[payload.playerId]=payload.value;finishIfReady();renderRound()});
+  channel.on("broadcast",{event:"reset"},({payload})=>{if(payload?.room===roomCode){round=null;renderRound()}});
+  channel.subscribe(async status=>{if(status==="SUBSCRIBED"){isJoined=true;await channel.track({id:myId,name:myName,joinedAt:Date.now()});$("setup").classList.add("hidden");$("lobby").classList.remove("hidden");$("roomTitle").textContent="Комната "+roomCode;$("roomStatus").textContent="Ты подключён. Отправь друзьям код комнаты."}});
+ }catch(e){setStatus("Ошибка подключения: "+(e?.message||"попробуй ещё раз"));$("join").disabled=false}
+}
+function finishIfReady(){if(!round)return;const all=round.players.every(p=>!!round.rolls[p.id]);if(all)round.finished=true}
+function startRound(){
+ const list=orderedMembers();if(!isHost()||list.length<2||round)return;
+ round={id:crypto.randomUUID(),room:roomCode,players:list.map(p=>({id:p.id,name:p.name})),rolls:{},finished:false};
+ send("start",{round});renderRound();
+}
+function roll(){
+ if(!round||round.finished||round.rolls[myId]||!round.players.some(p=>p.id===myId))return;
+ const value=crypto.getRandomValues(new Uint32Array(1))[0]%6+1;
+ round.rolls[myId]=value;finishIfReady();send("roll",{roundId:round.id,playerId:myId,value});renderRound();
+}
+async function leave(){if(channel){await channel.untrack();await client.removeChannel(channel)}channel=null;client=null;isJoined=false;members=[];round=null;myId="";$("setup").classList.remove("hidden");$("lobby").classList.add("hidden");$("game").classList.add("hidden");$("join").disabled=false;setStatus("Ты вышел из комнаты.")}
+$("join").addEventListener("click",join);$("start").addEventListener("click",startRound);$("roll").addEventListener("click",roll);
+$("next").addEventListener("click",()=>{if(isHost()&&round?.finished){send("reset",{room:roomCode});round=null;renderRound()}});
+$("leave").addEventListener("click",leave);
+$("copyRoom").addEventListener("click",async()=>{try{await navigator.clipboard.writeText(roomCode);$("roomStatus").textContent="Код комнаты скопирован: "+roomCode}catch{$("roomStatus").textContent="Код комнаты: "+roomCode}});
+</script>
+</body>
+</html>
