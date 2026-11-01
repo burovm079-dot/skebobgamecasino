@@ -7805,7 +7805,7 @@ function bjOnlineRender(){
   const score=hand.length?" · "+bjOnlineValue(hand)+" очков":"";
   const turn=p.done?"Ход завершён":mine?(bjOnlineMyTurn?"ТВОЙ ХОД":"Ожидание"):p.turn?(p.turn+" ходит"):"Ожидает хода";
   const active=mine?bjOnlineMyTurn:(!p.done&&!!p.turn&&p.turn!=="Ожидает хода");
-  return '<div class="bj-bot '+(mine?"bj-me ":"")+(active?"bj-turn":"")+'"><div class="bj-seat-name">👤 '+bjEscape(p.name)+bjOfficialBadge(p.name)+(mine?" · ВЫ":"")+'</div><div class="bj-cards">'+cards+'</div><div class="small">'+turn+score+'</div></div>';
+  return '<div class="bj-bot '+(mine?"bj-me ":"")+(active?"bj-turn":"")+'"><div class="bj-seat-name">👤 '+bjEscape(p.name)+bjOfficialBadge(p.name)+bjSpecialAccountBadge(p.name)+(mine?" · ВЫ":"")+'</div><div class="bj-cards">'+cards+'</div><div class="small">'+turn+score+'</div></div>';
  }).join("");
  const start=document.getElementById("bjOnlineStart"),hit=document.getElementById("bjOnlineHit"),stand=document.getElementById("bjOnlineStand");
  if(start)start.disabled=true;
