@@ -1630,6 +1630,41 @@ body.light #caseList .case,body.light .panel{background:linear-gradient(145deg,#
 .bj-bot .small{font-size:11px;color:#f4e4c5}
 .bj-table{background-image:radial-gradient(ellipse at 50% 42%,#258456 0%,#12613f 48%,#08442f 78%,#052d22 100%),repeating-linear-gradient(35deg,#ffffff05 0 1px,transparent 1px 4px)}
 
+
+/* GLOBAL GLASS LAYER — фон виден сквозь интерфейс */
+body{
+--panel:rgba(25,26,32,.72);
+--panel2:rgba(34,35,43,.66);
+--panel3:rgba(21,24,33,.70);
+--input:rgba(34,35,42,.68);
+background:transparent!important;
+}
+body.light{
+--panel:rgba(255,255,255,.76);
+--panel2:rgba(233,235,241,.70);
+--panel3:rgba(255,255,255,.74);
+--input:rgba(241,242,246,.72);
+}
+header,.balance,.panel,.case,.game-stat,.game-control,.plane-panel,
+.pick-panel,.plinko-panel,.crash-panel,.roulette-result,.game-card,
+.profile-identity-card,.nav button,.secondary,header button,
+.quantity button,.multiplier-grid button,.bet-presets button,
+.mine-cell,.prize-card,.daily-prize,.special-account-controls{
+-webkit-backdrop-filter:blur(12px);
+backdrop-filter:blur(12px);
+}
+header{background:rgba(10,10,18,.34)!important}
+body.light header{background:rgba(255,255,255,.48)!important}
+.nav button,header button,.secondary,.quantity button,
+.multiplier-grid button,.bet-presets button,.mine-cell{
+background-color:var(--panel2)!important;
+}
+.panel,.case,.balance,.game-stat,.game-control,.plane-panel,
+.pick-panel,.plinko-panel,.crash-panel,.roulette-result,
+.profile-identity-card,.special-account-controls{
+background-color:var(--panel)!important;
+}
+
 </style>
 </head>
 
