@@ -7860,16 +7860,23 @@ async function bjOnlineLeave(){
  document.getElementById("bjOnlineRoomLabel").textContent="Комната: —";document.getElementById("bjOnlineCountdown").textContent="";
  bjOnlineStatus("Ты вышел из игры. Когда будешь готов — нажми «Играть».");bjOnlineRender();
 }
+function bjOnlineReadBet(){
+ const input=document.getElementById("bjOnlineBet");
+ if(!input||input.value.trim()==="")return null;
+ const bet=Number(input.value);
+ return Number.isSafeInteger(bet)&&bet>=10&&bet<=1000000?bet:null;
+}
 function bjOnlineBetChanged(){
  const input=document.getElementById("bjOnlineBet");if(!input)return;
- const value=Math.floor(Number(input.value));
- if(Number.isFinite(value))bjOnlineCurrentBet=Math.max(10,Math.min(1000000,value));
+ const value=Number(input.value);
+ input.setCustomValidity(input.value.trim()===""||!Number.isSafeInteger(value)||value<10||value>1000000?"Ставка должна быть целым числом от 10 до 1 000 000 🪙.":"");
+ bjOnlineCurrentBet=bjOnlineReadBet()??10;
  bjOnlineRender();
 }
 function bjOnlineBeginRound(payload){
  if(bjOnlineRound?.id===payload.id)return;
- const input=document.getElementById("bjOnlineBet"),bet=Math.floor(Number(input?.value));
- if(!Number.isFinite(bet)||bet<10||bet>1000000||bet>state.balance){
+ const bet=bjOnlineReadBet();
+ if(bet===null||bet>state.balance){
   bjOnlineRound={id:payload.id,finished:false};bjOnlineDealer={cards:payload.dealer,revealed:false};bjOnlineMyHand=[];bjOnlineMyTurn=false;bjOnlineBetLocked=true;
   bjOnlineStatus("Недостаточно виртуальных монет или ставка вне диапазона. Этот раунд пропущен.");
   bjOnlineSend("player-done",{id:bjOnlineId,score:0,hand:[],bet:0});bjOnlineRender();return;
@@ -7881,8 +7888,8 @@ function bjOnlineBeginRound(payload){
 }
 function bjOnlineStart(){
  if(!bjOnlineHost||!bjOnlineChannel||bjOnlineMembers.length===0)return;
- const bet=Math.floor(Number(document.getElementById("bjOnlineBet")?.value));
- if(!Number.isFinite(bet)||bet<10||bet>1000000||bet>state.balance){bjOnlineStatus("Выбери ставку от 10 до 1 000 000 🪙, не превышающую твой баланс.");return;}
+ const bet=bjOnlineReadBet();
+ if(bet===null||bet>state.balance){bjOnlineStatus("Ставка должна быть целым числом от 10 до 1 000 000 🪙 и не превышать твой баланс.");document.getElementById("bjOnlineBet")?.reportValidity();return;}
  const payload={id:Date.now().toString(),host:bjOnlineId,dealer:[bjOnlineCard(),bjOnlineCard()]};
  bjOnlineBeginRound(payload);bjOnlineSend("round",payload);
 }
