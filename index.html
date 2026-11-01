@@ -7704,17 +7704,14 @@ function bjSpecialAccountBadge(value){
 }
 function bjShowSpecialAccountBadge(kind){alert(kind==="media"?"Медиа-партнёр":"VIP-пользователь");}
 function bjIsSpecialAccount(value){return !!bjSpecialAccountInfo(value);}
-function bjCanManageSpecialProfile(nick=getNickname()){
- return bjIsSpecialAccount(nick)||bjIsOfficialNickname(nick);
-}
 function renderSpecialAccountControls(){
  const host=document.getElementById("specialAccountControls");
  if(!host)return;
- if(!bjCanManageSpecialProfile()){host.innerHTML="";return;}
+ if(!bjIsSpecialAccount(getNickname())){host.innerHTML="";return;}
  host.innerHTML='<div class="special-account-controls"><b>⭐ Управление аккаунтом</b><div class="small">Бесконечный баланс: '+(state.admin.infiniteBalance?"ВКЛЮЧЁН":"ВЫКЛЮЧЕН")+'</div><button class="secondary" type="button" onclick="toggleProtectedInfiniteBalance()">'+(state.admin.infiniteBalance?"Выключить бесконечный баланс":"Включить бесконечный баланс")+'</button></div>';
 }
 function toggleProtectedInfiniteBalance(){
- if(!bjCanManageSpecialProfile())return;
+ if(!bjIsSpecialAccount(getNickname()))return;
  if(state.admin.infiniteBalance){
   const restore=Number(state.admin.balanceBeforeInfinite);
   state.balance=Number.isFinite(restore)?Math.max(0,Math.floor(restore)):20;
