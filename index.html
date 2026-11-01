@@ -1028,6 +1028,13 @@ transform:translateX(26px);
 .profile-identity-card.accent-green #profileNickname{color:#7de6a2}
 .profile-identity-card.accent-pink #profileNickname{color:#ff91c8}
 .profile-identity-card.accent-orange #profileNickname{color:#ffb46b}
+.profile-identity-card.avatar-rounded .profile-custom-avatar{border-radius:14px}
+.profile-identity-card.avatar-square .profile-custom-avatar{border-radius:5px}
+.profile-identity-card.name-font-serif #profileNickname{font-family:Georgia,serif;letter-spacing:.3px}
+.profile-identity-card.name-font-mono #profileNickname{font-family:ui-monospace,monospace;letter-spacing:-.5px}
+.profile-identity-card.name-effect-shadow #profileNickname{text-shadow:0 2px 12px currentColor}
+.profile-identity-card.name-effect-underline #profileNickname{text-decoration:underline;text-decoration-thickness:2px;text-underline-offset:5px}
+.profile-identity-card.name-effect-italic #profileNickname{font-style:italic}
 /* PROFILE */
 
 .profile-hero{
@@ -4046,11 +4053,14 @@ const PROFILE_EXTRA_OPTIONS={
  avatar:[["👤","Игрок"],["😎","Крутой"],["👑","Король"],["🐺","Волк"],["🐉","Дракон"],["🦊","Лиса"],["👻","Призрак"],["🤖","Робот"],["💎","Алмаз"],["🔥","Огонь"]],
  border:[["solid","▬","Классика"],["double","▣","Двойная"],["dashed","┄","Пунктир"],["inset","▤","Объёмная"]],
  glow:[["off","🌫️","Нет"],["soft","✨","Мягкое"],["strong","⚡","Яркое"],["rainbow","🌈","Радужное"]],
- pattern:[["none","▫️","Без узора"],["dots","🔘","Точки"],["grid","▦","Сетка"],["diagonal","〰️","Диагонали"]]
+ pattern:[["none","▫️","Без узора"],["dots","🔘","Точки"],["grid","▦","Сетка"],["diagonal","〰️","Диагонали"]],
+ avatarShape:[["circle","⚪","Круг"],["rounded","▢","Скруглённый"],["square","◻️","Квадрат"]],
+ nameFont:[["default","Aa","Обычный"],["serif","𝑨𝒂","Элегантный"],["mono","𝙰𝚊","Моно"]],
+ nameEffect:[["none","А","Без эффекта"],["shadow","✨","Тень"],["underline","〰️","Подчёркнутый"],["italic","𝑨","Курсив"]]
 };
 function renderExtraProfileOptions(){
  const style=state.profileStyle||{};
- const sections=[["avatar","АВАТАР ПРОФИЛЯ"],["border","СТИЛЬ РАМКИ"],["glow","СВЕЧЕНИЕ"],["pattern","УЗОР ФОНА"]];
+ const sections=[["avatar","АВАТАР ПРОФИЛЯ"],["border","СТИЛЬ РАМКИ"],["glow","СВЕЧЕНИЕ"],["pattern","УЗОР ФОНА"],["avatarShape","ФОРМА АВАТАРА"],["nameFont","ШРИФТ НИКА"],["nameEffect","ЭФФЕКТ НИКА"]];
  const root=document.getElementById("profileStyleContent");if(!root)return;
  let extra=document.getElementById("profileExtraOptions");
  if(!extra){extra=document.createElement("div");extra.id="profileExtraOptions";root.insertBefore(extra,document.getElementById("profileStyleStatus"));}
@@ -4073,13 +4083,16 @@ function applyProfileStyle(){
  const card=document.querySelector(".profile-identity-card");
  if(!card)return;
  const style=state.profileStyle||{frame:"classic",background:"default"};
- card.classList.remove("frame-gold","frame-neon","frame-ice","frame-rose","bg-space","bg-emerald","bg-sunset","bg-midnight","accent-gold","accent-purple","accent-cyan","accent-green","accent-pink","accent-orange","border-double","border-dashed","border-inset","glow-soft","glow-strong","glow-rainbow","pattern-dots","pattern-grid","pattern-diagonal");
+ card.classList.remove("frame-gold","frame-neon","frame-ice","frame-rose","bg-space","bg-emerald","bg-sunset","bg-midnight","accent-gold","accent-purple","accent-cyan","accent-green","accent-pink","accent-orange","border-double","border-dashed","border-inset","glow-soft","glow-strong","glow-rainbow","pattern-dots","pattern-grid","pattern-diagonal","avatar-rounded","avatar-square","name-font-serif","name-font-mono","name-effect-shadow","name-effect-underline","name-effect-italic");
  if(style.frame!=="classic")card.classList.add("frame-"+style.frame);
  if(style.background!=="default")card.classList.add("bg-"+style.background);
  card.classList.add("accent-"+(PROFILE_ACCENT_OPTIONS.some(x=>x.id===style.accent)?style.accent:"gold"));
  if(["double","dashed","inset"].includes(style.border))card.classList.add("border-"+style.border);
  if(["soft","strong","rainbow"].includes(style.glow))card.classList.add("glow-"+style.glow);
  if(["dots","grid","diagonal"].includes(style.pattern))card.classList.add("pattern-"+style.pattern);
+ if(["rounded","square"].includes(style.avatarShape))card.classList.add("avatar-"+style.avatarShape);
+ if(["serif","mono"].includes(style.nameFont))card.classList.add("name-font-"+style.nameFont);
+ if(["shadow","underline","italic"].includes(style.nameEffect))card.classList.add("name-effect-"+style.nameEffect);
  const avatar=document.getElementById("profileCustomAvatar");
  if(avatar){avatar.textContent=PROFILE_EXTRA_OPTIONS.avatar.some(x=>x[0]===(style.avatar||"👤"))?(style.avatar||"👤"):"👤";avatar.style.display="inline-grid";}
  const name=document.getElementById("profileNickname");
