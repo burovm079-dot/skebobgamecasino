@@ -4025,7 +4025,7 @@ const PROFILE_EXTRA_OPTIONS={
 };
 function renderExtraProfileOptions(){
  const style=state.profileStyle||{};
- const sections=[["avatar","АВАТАР"],["border","СТИЛЬ РАМКИ"],["glow","СВЕЧЕНИЕ"],["pattern","УЗОР ФОНА"]];
+ const sections=[["avatar","ЗНАЧОК УРОВНЯ"],["border","СТИЛЬ РАМКИ"],["glow","СВЕЧЕНИЕ"],["pattern","УЗОР ФОНА"]];
  const root=document.getElementById("profileStyleContent");if(!root)return;
  let extra=document.getElementById("profileExtraOptions");
  if(!extra){extra=document.createElement("div");extra.id="profileExtraOptions";root.insertBefore(extra,document.getElementById("profileStyleStatus"));}
