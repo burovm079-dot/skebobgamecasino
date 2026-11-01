@@ -2803,7 +2803,7 @@ id="profileBalance"
 <p class="small">До 4 игроков в комнате. Каждый играет отдельно против общего дилера. Только бесплатная игра — без ставок и выплат.</p>
 <div class="panel">
  <label for="bjOnlineBet">Твоя виртуальная ставка (10–1 000 000 🪙)</label>
- <input id="bjOnlineBet" type="number" min="10" max="1000000" step="1" required value="10" inputmode="numeric" oninput="bjOnlineBetChanged()" onchange="bjOnlineBetChanged()">
+ <input id="bjOnlineBet" type="number" min="1" max="1000000" step="1" required value="10" inputmode="numeric" oninput="bjOnlineBetChanged()" onchange="bjOnlineBetChanged()">
  <div class="small" id="bjOnlineBalance">Баланс: —</div>
  <div class="bj-actions">
   <button class="game-main" id="bjOnlineJoin" onclick="bjOnlineJoin()">🎮 ИГРАТЬ</button>
@@ -5443,7 +5443,9 @@ document.getElementById(
 );
 
 if(
+!Number.isSafeInteger(bet)||
 bet<1||
+!Number.isFinite(state.balance)||
 bet>state.balance
 ){
 
@@ -6097,7 +6099,9 @@ document.getElementById(
 );
 
 if(
+!Number.isSafeInteger(bet)||
 bet<10||
+!Number.isFinite(state.balance)||
 bet>state.balance
 ){
 
@@ -6457,7 +6461,7 @@ function pickaxeBreakCell(row,col,depth){
 async function startPickaxeGame(){
  if(pickaxeBusy)return;
  const bet=Math.floor(Number(document.getElementById("pickaxeBet").value));
- if(!Number.isFinite(bet)||bet<10||bet>state.balance){alert("Недостаточно монет или неверная ставка.");return;}
+ if(!Number.isSafeInteger(bet)||bet<10||!Number.isFinite(state.balance)||bet>state.balance){alert("Недостаточно монет или неверная ставка.");return;}
  state.balance-=bet;addTurnover(bet);state.stats.pickaxeGames++;save();
  pickaxeBusy=true;pickaxeBet=bet;pickaxeCurrentWin=0;pickaxeHits=0;pickaxeDepth=0;pickaxeHealth=PICK_MAX_HP;
  createPickaxeMine();renderPickaxeMine();updatePickaxeStats();updatePickaxeControls();
@@ -6622,8 +6626,9 @@ function updateBattleInfo(){const c=cases[Number(document.getElementById("battle
 function battleWait(ms){return new Promise(resolve=>setTimeout(resolve,ms));}
 async function startCaseBattle(){
  if(battleBusy)return;
- const caseIndex=Number(document.getElementById("battleCase").value),rounds=Number(document.getElementById("battleRounds").value),c=cases[caseIndex],cost=c.price*rounds;
- if(!Number.isInteger(rounds)||cost>state.balance){alert("Не хватает монет для этого батла!");return;}
+ const caseIndex=Number(document.getElementById("battleCase").value),rounds=Number(document.getElementById("battleRounds").value),c=cases[caseIndex];
+ const cost=c?c.price*rounds:NaN;
+ if(!Number.isInteger(rounds)||rounds<1||!Number.isSafeInteger(cost)||cost<1||!Number.isFinite(state.balance)||cost>state.balance){alert("Не хватает монет для этого батла!");return;}
  battleBusy=true;state.balance-=cost;addTurnover(cost);save();updateBattleInfo();
  const players=[{name:"ТЫ",icon:"😎",total:0,drops:[]},{name:"БОТ MAX",icon:"🤖",total:0,drops:[]}];
  if(battleMode===3)players.push({name:"БОТ PRO",icon:"👾",total:0,drops:[]});
@@ -7864,13 +7869,13 @@ function bjOnlineReadBet(){
  const input=document.getElementById("bjOnlineBet");
  if(!input||input.value.trim()==="")return null;
  const bet=Number(input.value);
- return Number.isSafeInteger(bet)&&bet>=10&&bet<=1000000?bet:null;
+ return Number.isSafeInteger(bet)&&bet>=1&&bet<=1000000?bet:null;
 }
 function bjOnlineBetChanged(){
  const input=document.getElementById("bjOnlineBet");if(!input)return;
  const value=Number(input.value);
- const invalid=input.value.trim()===""||!Number.isSafeInteger(value)||value<10||value>1000000;
- input.setCustomValidity(invalid?"Минимальная ставка — 10 🪙, максимальная — 1 000 000 🪙. Введи целое число.":"");
+ const invalid=input.value.trim()===""||!Number.isSafeInteger(value)||value<1||value>1000000;
+ input.setCustomValidity(invalid?"Минимальная ставка — 1 🪙, максимальная — 1 000 000 🪙. Введи целое число.":"");
  bjOnlineCurrentBet=bjOnlineReadBet()??10;
  bjOnlineRender();
 }
@@ -7879,7 +7884,7 @@ function bjOnlineBeginRound(payload){
  const bet=bjOnlineReadBet();
  if(bet===null||bet>state.balance){
   bjOnlineBetLocked=false;
-  bjOnlineStatus("Раунд не начат: ставка должна быть от 10 до 1 000 000 🪙 и не превышать баланс.");
+  bjOnlineStatus("Раунд не начат: ставка должна быть от 1 до 1 000 000 🪙 и не превышать баланс.");
   bjOnlineRender();return false;
  }
  bjOnlineCurrentBet=bet;state.balance-=bet;bjOnlineBetSettled=false;bjOnlineBetLocked=true;save();
@@ -7891,7 +7896,7 @@ function bjOnlineStart(){
  if(!bjOnlineHost||!bjOnlineChannel||bjOnlineMembers.length===0)return;
  const input=document.getElementById("bjOnlineBet"),bet=bjOnlineReadBet();
  if(bet===null||bet>state.balance||!input?.checkValidity()){
-  bjOnlineBetChanged();bjOnlineStatus("Игра не начнётся: минимальная ставка — 10 🪙. Исправь сумму и попробуй снова.");input?.reportValidity();return;
+  bjOnlineBetChanged();bjOnlineStatus("Игра не начнётся: минимальная ставка — 1 🪙. Исправь сумму и попробуй снова.");input?.reportValidity();return;
  }
  const payload={id:Date.now().toString(),host:bjOnlineId,dealer:[bjOnlineCard(),bjOnlineCard()]};
  if(!bjOnlineBeginRound(payload))return;
