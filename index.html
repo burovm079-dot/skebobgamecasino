@@ -819,6 +819,7 @@ line-height:1.6;
 .plinko-info{color:var(--muted);font-size:12px;line-height:1.6;margin:8px 2px}
 @media(max-width:390px){.plinko-board{height:300px}.plinko-peg{width:6px;height:6px}.plinko-slot{padding:7px 0;font-size:8px}}
 .skebob-verified{display:inline-grid;place-items:center;vertical-align:middle;width:19px;height:19px;margin-left:6px;padding:0;border:0;border-radius:50%;background:#258cf4;color:#fff;font-size:13px;line-height:1;box-shadow:0 0 0 2px #ffffff20;cursor:pointer}.skebob-verified:hover{background:#0875df;transform:scale(1.08)}
+.special-account-badge{display:inline-grid;place-items:center;vertical-align:middle;width:19px;height:19px;margin-left:6px;padding:0;border:0;border-radius:50%;color:#fff;font-size:13px;line-height:1;cursor:pointer}.special-account-badge.media{background:#20b76b;box-shadow:0 0 0 2px #20b76b30}.special-account-badge.vip{background:#d7a51b;box-shadow:0 0 0 2px #d7a51b30}.special-account-controls{margin-top:12px;padding:12px;border:1px solid var(--border2);border-radius:14px;background:var(--panel2)}.special-account-controls button{margin-top:8px}
 /* BLACKJACK */
 .bj-table{background:radial-gradient(ellipse at center,#176b49,#073d2e 68%,#05271f);border:5px solid #9b7138;border-radius:24px;padding:18px;margin:16px 0;color:white;box-shadow:inset 0 0 30px #0008,0 8px 24px #0005;min-height:300px}
 .bj-dealer,.bj-you{text-align:center;padding:8px}.bj-seat-name{font-weight:900;letter-spacing:1px;margin-bottom:8px}.bj-cards{display:flex;justify-content:center;gap:7px;flex-wrap:wrap;min-height:82px;align-items:center}.bj-card{width:53px;height:76px;border-radius:8px;background:#fff;color:#181818;display:grid;place-items:center;font-size:22px;font-weight:900;box-shadow:0 3px 8px #0007;border:1px solid #ddd}.bj-card.red{color:#d3263e}.bj-card.bj-new{animation:bjCardFly .48s cubic-bezier(.18,.78,.25,1) both;transform-origin:center;will-change:transform,opacity}@keyframes bjCardFly{0%{opacity:0;transform:translate(115px,-155px) rotate(24deg) scale(.72);filter:brightness(1.35)}65%{opacity:1;transform:translate(-8px,7px) rotate(-5deg) scale(1.04)}82%{transform:translate(3px,-2px) rotate(2deg) scale(.99)}100%{opacity:1;transform:translate(0,0) rotate(0) scale(1);filter:none}}.bj-bot .bj-card.bj-new{animation-name:bjBotCardFly}.bj-dealer .bj-card.bj-new{animation-name:bjDealerCardFly}@keyframes bjBotCardFly{0%{opacity:0;transform:translate(70px,-95px) rotate(20deg) scale(.7)}70%{opacity:1;transform:translate(-4px,4px) rotate(-3deg)}100%{transform:none}}@keyframes bjDealerCardFly{0%{opacity:0;transform:translate(0,-150px) rotate(18deg) scale(.7)}70%{opacity:1;transform:translate(0,5px) rotate(-3deg)}100%{transform:none}}.bj-divider{text-align:center;color:#e9d39b;font-size:11px;letter-spacing:4px;border-top:1px solid #ffffff40;border-bottom:1px solid #ffffff40;padding:8px;margin:6px 0}.bj-players{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:8px}.bj-bot{background:#0003;border:1px solid #ffffff35;border-radius:12px;padding:8px;text-align:center;color:white}.bj-players{grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin:14px 0}.bj-bot{min-width:0;padding:12px 6px;background:linear-gradient(145deg,#145c42,#073526);border:2px solid #c39a53;box-shadow:inset 0 0 14px #0005,0 4px 10px #0004}.bj-bot.bj-me{border-color:#ffe18a;box-shadow:0 0 0 2px #ffe18a55,0 0 18px #f4c75e55}.bj-bot.bj-turn{border-color:#42f59b;box-shadow:0 0 0 2px #42f59b55,0 0 18px #24cf7855}.bj-bot .bj-seat-name{font-size:12px;overflow-wrap:anywhere}.bj-bot .bj-cards{gap:4px;min-height:76px}.bj-bot .bj-card{width:clamp(27px,8vw,42px);height:clamp(42px,12vw,60px);font-size:clamp(12px,3.5vw,18px)}@media(max-width:380px){.bj-players{grid-template-columns:1fr}}.bj-bot .bj-cards{min-height:70px}.bj-bot .bj-card{width:40px;height:58px;font-size:17px}.bj-actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}.bj-actions>*{flex:1;min-width:110px}
@@ -2502,6 +2503,7 @@ class="hidden"
 
 <h2>👤 ПРОФИЛЬ</h2>
 <div class="panel"><div class="small">ТВОЙ NICKNAME</div><strong id="profileNickname" style="display:block;font-size:22px;margin:8px 0 12px">Player</strong><button class="secondary" onclick="changeNickname()">✏️ ИЗМЕНИТЬ NICKNAME</button></div>
+<div id="specialAccountControls"></div>
 
 <div class="profile-hero">
 
@@ -7663,10 +7665,70 @@ function bjRequestOfficialCode(){
  if(entered!=="666666"){alert("Неверный код. Вход в официальный аккаунт запрещён.");return false;}
  return true;
 }
-function updateNicknameUI(){
- const p=document.getElementById("profileNickname");if(p)p.innerHTML=bjEscape(getNickname())+bjOfficialBadge(getNickname());
+const BJ_SPECIAL_ACCOUNTS={
+ "duck":{kind:"media",hash:"871f561409d7b1bc319bb3a421e321d6339eecfd3fdaba67c36414d30a382512"},
+ "mario":{kind:"media",hash:"2292e9be49eed67272dab1d6be1927f4902feee08740c57f9b2836b5abb9b8cf"},
+ "garik":{kind:"media",hash:"d714944e6d70244ab614ccdad1ec9e9ddea1e327b8bc45beb82ec79968f6fabe"},
+ "cat":{kind:"media",hash:"536ce0edc43908722e442b418253153ca0d1f044a9f16cc4695dab282129073f"},
+ "vip1":{kind:"vip",hash:"a8f15f67870a1aa86ab03b3d101a5c62fe794b68142fe55ca2b97bddb8631601"},
+ "vip2":{kind:"vip",hash:"8c74bd592448c217c5725fa57be526d9c49ef7a8f7edb95f73b050dd97bbe3ab"},
+ "vip3":{kind:"vip",hash:"1407d612bac871fff1b8aa1c3f50879a98abe48932047eaab1dd540ddb7c2560"},
+ "vip4":{kind:"vip",hash:"05d340e5e109b4159425f8088c33783dd6044afed9d64afd395b4442f3c219b4"},
+ "vip5":{kind:"vip",hash:"70d5bbd12828fd13f9ea1fe021e7ba7be44ab43fb2197c9ede7d11465202ce20"}
+};
+function bjSpecialAccountInfo(value){return BJ_SPECIAL_ACCOUNTS[String(value||"").trim().replace(/\s+/g," ").toLocaleLowerCase("ru")]||null;}
+async function bjSpecialPasswordMatches(nick,password){
+ const info=bjSpecialAccountInfo(nick);
+ if(!info||!window.crypto?.subtle||!window.TextEncoder)return false;
+ const bytes=new TextEncoder().encode(String(password));
+ const digest=await crypto.subtle.digest("SHA-256",bytes);
+ const actual=Array.from(new Uint8Array(digest),b=>b.toString(16).padStart(2,"0")).join("");
+ return actual===info.hash;
 }
-function initNickname(){
+async function bjRequestSpecialAccountPassword(nick){
+ if(!bjSpecialAccountInfo(nick))return true;
+ const entered=prompt("Аккаунт "+nick+" защищён паролем. Введи пароль для входа:");
+ if(entered===null)return false;
+ const ok=await bjSpecialPasswordMatches(nick,entered);
+ if(!ok)alert("Неверный пароль. Вход в этот аккаунт запрещён.");
+ return ok;
+}
+function bjSpecialAccountBadge(value){
+ const info=bjSpecialAccountInfo(value);
+ if(!info)return "";
+ const kind=info.kind==="media"?"media":"vip";
+ const title=info.kind==="media"?"Медиа-партнёр":"VIP-пользователь";
+ return ' <button type="button" class="special-account-badge '+kind+'" aria-label="'+title+'" title="'+title+'" onclick="bjShowSpecialAccountBadge(\''+kind+'\')">✓</button>';
+}
+function bjShowSpecialAccountBadge(kind){alert(kind==="media"?"Медиа-партнёр":"VIP-пользователь");}
+function bjIsSpecialAccount(value){return !!bjSpecialAccountInfo(value);}
+function renderSpecialAccountControls(){
+ const host=document.getElementById("specialAccountControls");
+ if(!host)return;
+ if(!bjIsSpecialAccount(getNickname())){host.innerHTML="";return;}
+ host.innerHTML='<div class="special-account-controls"><b>⭐ Управление аккаунтом</b><div class="small">Бесконечный баланс: '+(state.admin.infiniteBalance?"ВКЛЮЧЁН":"ВЫКЛЮЧЕН")+'</div><button class="secondary" type="button" onclick="toggleProtectedInfiniteBalance()">'+(state.admin.infiniteBalance?"Выключить бесконечный баланс":"Включить бесконечный баланс")+'</button></div>';
+}
+function toggleProtectedInfiniteBalance(){
+ if(!bjIsSpecialAccount(getNickname()))return;
+ if(state.admin.infiniteBalance){
+  const restore=Number(state.admin.balanceBeforeInfinite);
+  state.balance=Number.isFinite(restore)?Math.max(0,Math.floor(restore)):20;
+  state.admin.infiniteBalance=false;
+  state.admin.balanceBeforeInfinite=null;
+ }else{
+  state.admin.balanceBeforeInfinite=Number(state.balance)||0;
+  state.admin.infiniteBalance=true;
+  state.balance=Number.MAX_SAFE_INTEGER;
+ }
+ save();
+ renderSpecialAccountControls();
+}
+function updateNicknameUI(){
+ const p=document.getElementById("profileNickname");
+ if(p)p.innerHTML=bjEscape(getNickname())+bjOfficialBadge(getNickname())+bjSpecialAccountBadge(getNickname());
+ renderSpecialAccountControls();
+}
+async function initNickname(){
  let nick=storageGet(NICKNAME_KEY);
  if(!nick){
   if(storageGet("skebobSave")){nick=randomNickname();storageSet(NICKNAME_KEY,nick);}
@@ -7675,24 +7737,39 @@ function initNickname(){
    if(m){m.style.display="flex";const i=document.getElementById("nicknameInput");if(i)setTimeout(()=>i.focus(),250);}
   }
  }
+ if(nick&&bjIsSpecialAccount(nick)&&!(await bjRequestSpecialAccountPassword(nick))){
+  nick=randomNickname();storageSet(NICKNAME_KEY,nick);
+ }
+ if(state.admin.infiniteBalance&&!bjIsSpecialAccount(nick)){
+  const restore=Number(state.admin.balanceBeforeInfinite);
+  state.balance=Number.isFinite(restore)?Math.max(0,Math.floor(restore)):20;
+  state.admin.infiniteBalance=false;state.admin.balanceBeforeInfinite=null;save();
+ }
  updateNicknameUI();
 }
-function saveFirstNickname(){
+async function saveFirstNickname(){
  const i=document.getElementById("nicknameInput"),nick=(i?.value||"").trim().replace(/\s+/g," ").slice(0,18);
  if(nick.length<2){alert("Ник должен содержать минимум 2 символа.");return;}
  if(bjNickTaken(nick)){alert("Этот nickname уже занят игроком за столом. Придумай другой.");return;}
+ if(bjIsSpecialAccount(nick)&&!(await bjRequestSpecialAccountPassword(nick)))return;
  if(!storageSet(NICKNAME_KEY,nick)){alert("Не удалось сохранить nickname. Попробуй ещё раз.");return;}
  const m=document.getElementById("nicknameModal");if(m)m.style.display="none";
  updateNicknameUI();
 }
-function changeNickname(){
+async function changeNickname(){
  const next=prompt("Введи новый nickname:",getNickname());
  if(next===null)return;
  const nick=next.trim().replace(/\s+/g," ").slice(0,18);
  if(nick.length<2){alert("Ник должен содержать минимум 2 символа.");return;}
  if(bjNickTaken(nick,bjOnlineId)){alert("Этот nickname уже занят игроком за столом. Придумай другой.");return;}
+ if(bjIsSpecialAccount(nick)&&!(await bjRequestSpecialAccountPassword(nick)))return;
  if(bjIsOfficialNickname(nick)&&!bjRequestOfficialCode())return;
  if(!storageSet(NICKNAME_KEY,nick)){alert("Не удалось сохранить nickname. Попробуй ещё раз.");return;}
+ if(state.admin.infiniteBalance&&!bjIsSpecialAccount(nick)){
+  const restore=Number(state.admin.balanceBeforeInfinite);
+  state.balance=Number.isFinite(restore)?Math.max(0,Math.floor(restore)):20;
+  state.admin.infiniteBalance=false;state.admin.balanceBeforeInfinite=null;save();
+ }
  updateNicknameUI();
  if(bjOnlineChannel){bjOnlineChannel.track({id:bjOnlineId,name:nick,done:!bjOnlineMyTurn,joinedAt:bjOnlineJoinedAt,phase:bjOnlineRound&&!bjOnlineRound.finished?"playing":"waiting"});}
 }
@@ -7807,7 +7884,7 @@ function bjOnlineShowResult(){
  bjOnlineStatus("Раунд завершён. Результат рассчитан только для твоей руки.");
 }
 
-initNickname();
+document.addEventListener("DOMContentLoaded",initNickname,{once:true});
 </script>
 
 
