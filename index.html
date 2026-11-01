@@ -3904,6 +3904,9 @@ title.textContent=
 
 function renderProfile(){
 
+// Всегда обновляем специальные настройки при открытии/перерисовке профиля.
+if(typeof renderSpecialAccountControls==="function")renderSpecialAccountControls();
+
 const info=
 getLevelInfo();
 
