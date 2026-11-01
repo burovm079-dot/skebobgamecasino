@@ -7763,9 +7763,8 @@ async function initNickname(){
    if(m){m.style.display="flex";const i=document.getElementById("nicknameInput");if(i)setTimeout(()=>i.focus(),250);}
   }
  }
- if(nick&&bjIsSpecialAccount(nick)&&!(await bjRequestSpecialAccountPassword(nick))){
-  nick=randomNickname();storageSet(NICKNAME_KEY,nick);
- }
+ // Пароль специальных аккаунтов проверяется при выборе ника в профиле,
+ // а не при каждом обычном входе с уже сохранённым ником.
  if(state.admin.infiniteBalance&&!bjCanManageSpecialProfile(nick)){
   const restore=Number(state.admin.balanceBeforeInfinite);
   state.balance=Number.isFinite(restore)?Math.max(0,Math.floor(restore)):20;
