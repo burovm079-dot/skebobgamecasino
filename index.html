@@ -994,6 +994,15 @@ transform:translateX(26px);
 .profile-style-preview .sample{width:42px;height:42px;border-radius:50%;display:grid;place-items:center;font-size:23px;flex:0 0 42px}
 @media(max-width:380px){.profile-style-options{grid-template-columns:1fr}}
 
+.profile-hero.border-double{border:4px double var(--gold)}
+.profile-hero.border-dashed{border:2px dashed var(--gold)}
+.profile-hero.border-inset{border:4px ridge var(--gold)}
+.profile-hero.glow-soft{box-shadow:0 0 18px #f4c75e44}
+.profile-hero.glow-strong{box-shadow:0 0 30px #f4c75e99,0 0 55px #f4c75e44}
+.profile-hero.glow-rainbow{border-color:#d58cff;box-shadow:0 0 24px #d58cff88,0 0 42px #65dfff55}
+.profile-hero.pattern-dots{background-image:radial-gradient(#ffffff22 1px,transparent 1px);background-size:16px 16px}
+.profile-hero.pattern-grid{background-image:linear-gradient(#ffffff12 1px,transparent 1px),linear-gradient(90deg,#ffffff12 1px,transparent 1px);background-size:22px 22px}
+.profile-hero.pattern-diagonal{background-image:repeating-linear-gradient(135deg,#ffffff0c 0 2px,transparent 2px 12px)}
 /* PROFILE */
 
 .profile-hero{
@@ -4008,14 +4017,45 @@ const PROFILE_BACKGROUND_OPTIONS=[
  {id:"sunset",name:"Закат",icon:"🌇"},
  {id:"midnight",name:"Полночь",icon:"🌃"}
 ];
+const PROFILE_EXTRA_OPTIONS={
+ avatar:[["👤","Игрок"],["😎","Крутой"],["👑","Король"],["🐺","Волк"],["🐉","Дракон"],["🦊","Лиса"],["👻","Призрак"],["🤖","Робот"],["💎","Алмаз"],["🔥","Огонь"]],
+ border:[["solid","▬","Классика"],["double","▣","Двойная"],["dashed","┄","Пунктир"],["inset","▤","Объёмная"]],
+ glow:[["off","🌫️","Нет"],["soft","✨","Мягкое"],["strong","⚡","Яркое"],["rainbow","🌈","Радужное"]],
+ pattern:[["none","▫️","Без узора"],["dots","🔘","Точки"],["grid","▦","Сетка"],["diagonal","〰️","Диагонали"]]
+};
+function renderExtraProfileOptions(){
+ const style=state.profileStyle||{};
+ const sections=[["avatar","АВАТАР"],["border","СТИЛЬ РАМКИ"],["glow","СВЕЧЕНИЕ"],["pattern","УЗОР ФОНА"]];
+ const root=document.getElementById("profileStyleContent");if(!root)return;
+ let extra=document.getElementById("profileExtraOptions");
+ if(!extra){extra=document.createElement("div");extra.id="profileExtraOptions";root.insertBefore(extra,document.getElementById("profileStyleStatus"));}
+ extra.innerHTML=sections.map(section=>{
+  const type=section[0],items=PROFILE_EXTRA_OPTIONS[type],selected=style[type]||(type==="avatar"?"👤":type==="border"?"solid":type==="glow"?"off":"none");
+  return '<div class="small" style="margin-top:14px">'+section[1]+'</div><div class="profile-style-options">'+items.map(item=>{
+   const value=item[0],icon=item[1],name=item[2]||"";
+   return '<button type="button" class="profile-style-btn '+(selected===value?"active":"")+'" onclick="setExtraProfileStyle(\''+type+'\',\''+value+'\')">'+icon+' '+name+(selected===value?" ✓":"")+'</button>';
+  }).join("")+'</div>';
+ }).join("");
+}
+function setExtraProfileStyle(type,value){
+ const items=PROFILE_EXTRA_OPTIONS[type];if(!items||!items.some(item=>item[0]===value))return;
+ if(!state.profileStyle||typeof state.profileStyle!=="object")state.profileStyle={};
+ state.profileStyle[type]=value;save();applyProfileStyle();renderExtraProfileOptions();
+ const status=document.getElementById("profileStyleStatus");if(status)status.textContent="✅ Оформление сохранено!";
+}
+
 function applyProfileStyle(){
  const hero=document.querySelector(".profile-hero");
  if(!hero)return;
  const style=state.profileStyle||{frame:"classic",background:"default"};
- hero.classList.remove("frame-gold","frame-neon","frame-ice","frame-rose","bg-space","bg-emerald","bg-sunset","bg-midnight","accent-gold","accent-purple","accent-cyan","accent-green","accent-pink","accent-orange");
+ hero.classList.remove("frame-gold","frame-neon","frame-ice","frame-rose","bg-space","bg-emerald","bg-sunset","bg-midnight","accent-gold","accent-purple","accent-cyan","accent-green","accent-pink","accent-orange");hero.classList.remove("border-double","border-dashed","border-inset","glow-soft","glow-strong","glow-rainbow","pattern-dots","pattern-grid","pattern-diagonal");
  if(style.frame!=="classic")hero.classList.add("frame-"+style.frame);
  if(style.background!=="default")hero.classList.add("bg-"+style.background);
  hero.classList.add("accent-"+(PROFILE_ACCENT_OPTIONS.some(x=>x.id===style.accent)?style.accent:"gold"));
+ if(["double","dashed","inset"].includes(style.border))hero.classList.add("border-"+style.border);
+ if(["soft","strong","rainbow"].includes(style.glow))hero.classList.add("glow-"+style.glow);
+ if(["dots","grid","diagonal"].includes(style.pattern))hero.classList.add("pattern-"+style.pattern);
+ const avatar=document.getElementById("profileLevelIcon");if(avatar)avatar.textContent=PROFILE_EXTRA_OPTIONS.avatar.some(x=>x[0]===(style.avatar||"👤"))?(style.avatar||"👤"):"🌱";
 }
 function renderProfileStyleOptions(){
  const style=state.profileStyle||{frame:"classic",background:"default"};
@@ -4066,6 +4106,7 @@ getLevelInfo();
 
 applyProfileStyle();
 renderProfileStyleOptions();
+renderExtraProfileOptions();
 
 const setText=(id,value)=>{
 
