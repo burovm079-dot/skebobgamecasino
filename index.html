@@ -1003,6 +1003,31 @@ transform:translateX(26px);
 .profile-hero.pattern-dots{background-image:radial-gradient(#ffffff22 1px,transparent 1px);background-size:16px 16px}
 .profile-hero.pattern-grid{background-image:linear-gradient(#ffffff12 1px,transparent 1px),linear-gradient(90deg,#ffffff12 1px,transparent 1px);background-size:22px 22px}
 .profile-hero.pattern-diagonal{background-image:repeating-linear-gradient(135deg,#ffffff0c 0 2px,transparent 2px 12px)}
+.profile-custom-avatar{display:none;vertical-align:middle;place-items:center;width:42px;height:42px;margin-right:8px;border-radius:50%;background:var(--panel2);font-size:25px}
+.profile-identity-card{position:relative;overflow:hidden;transition:background .2s,border .2s,box-shadow .2s}
+.profile-identity-card.frame-gold{border:2px solid #f4c75e;box-shadow:0 0 0 3px #f4c75e22,0 0 22px #f4c75e35}
+.profile-identity-card.frame-neon{border:2px solid #c45cff;box-shadow:0 0 0 3px #c45cff22,0 0 24px #b52dff55}
+.profile-identity-card.frame-ice{border:2px solid #70d8ff;box-shadow:0 0 0 3px #70d8ff22,0 0 22px #70d8ff44}
+.profile-identity-card.frame-rose{border:2px solid #ff78ad;box-shadow:0 0 0 3px #ff78ad22,0 0 22px #ff78ad44}
+.profile-identity-card.bg-space{background:radial-gradient(ellipse at 50% 0%,#41205e,#171326 72%)}
+.profile-identity-card.bg-emerald{background:linear-gradient(145deg,#123d37,#10231f 80%)}
+.profile-identity-card.bg-sunset{background:linear-gradient(145deg,#67304d,#342044 65%,#171326)}
+.profile-identity-card.bg-midnight{background:linear-gradient(145deg,#172e50,#101827 75%)}
+.profile-identity-card.border-double{border:4px double var(--gold)}
+.profile-identity-card.border-dashed{border:2px dashed var(--gold)}
+.profile-identity-card.border-inset{border:4px ridge var(--gold)}
+.profile-identity-card.glow-soft{box-shadow:0 0 18px #f4c75e44}
+.profile-identity-card.glow-strong{box-shadow:0 0 30px #f4c75e99,0 0 55px #f4c75e44}
+.profile-identity-card.glow-rainbow{border-color:#d58cff;box-shadow:0 0 24px #d58cff88,0 0 42px #65dfff55}
+.profile-identity-card.pattern-dots{background-image:radial-gradient(#ffffff22 1px,transparent 1px);background-size:16px 16px}
+.profile-identity-card.pattern-grid{background-image:linear-gradient(#ffffff12 1px,transparent 1px),linear-gradient(90deg,#ffffff12 1px,transparent 1px);background-size:22px 22px}
+.profile-identity-card.pattern-diagonal{background-image:repeating-linear-gradient(135deg,#ffffff0c 0 2px,transparent 2px 12px)}
+.profile-identity-card.accent-gold #profileNickname{color:#f4c75e}
+.profile-identity-card.accent-purple #profileNickname{color:#d39aff}
+.profile-identity-card.accent-cyan #profileNickname{color:#78e5ff}
+.profile-identity-card.accent-green #profileNickname{color:#7de6a2}
+.profile-identity-card.accent-pink #profileNickname{color:#ff91c8}
+.profile-identity-card.accent-orange #profileNickname{color:#ffb46b}
 /* PROFILE */
 
 .profile-hero{
@@ -2576,7 +2601,7 @@ class="hidden"
 >
 
 <h2>👤 ПРОФИЛЬ</h2>
-<div class="panel"><div class="small">ТВОЙ NICKNAME</div><strong id="profileNickname" style="display:block;font-size:22px;margin:8px 0 12px">Player</strong><button class="secondary" onclick="changeNickname()">✏️ ИЗМЕНИТЬ NICKNAME</button></div>
+<div class="panel profile-identity-card"><div class="small">ТВОЙ NICKNAME</div><span id="profileCustomAvatar" class="profile-custom-avatar" aria-hidden="true"></span><strong id="profileNickname" style="display:block;font-size:22px;margin:8px 0 12px">Player</strong><button class="secondary" onclick="changeNickname()">✏️ ИЗМЕНИТЬ NICKNAME</button></div>
 <div id="specialAccountControls"></div>
 
 <div class="profile-hero">
@@ -2614,12 +2639,12 @@ id="profileLevelProgressText"
 </div>
 
 <div class="panel profile-custom-section" id="profileCustomization">
- <div class="profile-style-heading"><h3>🎨 ОФОРМЛЕНИЕ КАРТОЧКИ УРОВНЯ</h3><button type="button" class="profile-style-toggle" id="profileStyleToggle" onclick="toggleProfileStylePanel()">Свернуть</button></div>
+ <div class="profile-style-heading"><h3>🎨 ОФОРМЛЕНИЕ ПРОФИЛЯ</h3><button type="button" class="profile-style-toggle" id="profileStyleToggle" onclick="toggleProfileStylePanel()">Свернуть</button></div>
  <div class="profile-style-content" id="profileStyleContent">
-  <div class="profile-style-preview" id="profileStylePreview"><div class="sample">👤</div><div><b>Твоя карточка VIP</b><div class="small">Предпросмотр оформления уровня</div></div></div>
-  <div class="small">РАМКА КАРТОЧКИ VIP</div><div class="profile-style-options" id="profileFrameOptions"></div>
-  <div class="small" style="margin-top:14px">ФОН КАРТОЧКИ VIP</div><div class="profile-style-options" id="profileBackgroundOptions"></div>
-  <div class="small" style="margin-top:14px">ЦВЕТ НАЗВАНИЯ УРОВНЯ / АКЦЕНТА</div><div class="profile-style-options" id="profileAccentOptions"></div>
+  <div class="profile-style-preview" id="profileStylePreview"><div class="sample">👤</div><div><b>Твой профиль</b><div class="small">Предпросмотр оформления профиля</div></div></div>
+  <div class="small">РАМКА ПРОФИЛЯ</div><div class="profile-style-options" id="profileFrameOptions"></div>
+  <div class="small" style="margin-top:14px">ФОН ПРОФИЛЯ</div><div class="profile-style-options" id="profileBackgroundOptions"></div>
+  <div class="small" style="margin-top:14px">ЦВЕТ ИМЕНИ / АКЦЕНТА</div><div class="profile-style-options" id="profileAccentOptions"></div>
   <div class="small" id="profileStyleStatus" style="margin-top:9px">Выбранное оформление сохраняется автоматически.</div>
  </div>
 </div>
@@ -4025,7 +4050,7 @@ const PROFILE_EXTRA_OPTIONS={
 };
 function renderExtraProfileOptions(){
  const style=state.profileStyle||{};
- const sections=[["avatar","ЗНАЧОК УРОВНЯ"],["border","СТИЛЬ РАМКИ"],["glow","СВЕЧЕНИЕ"],["pattern","УЗОР ФОНА"]];
+ const sections=[["avatar","АВАТАР ПРОФИЛЯ"],["border","СТИЛЬ РАМКИ"],["glow","СВЕЧЕНИЕ"],["pattern","УЗОР ФОНА"]];
  const root=document.getElementById("profileStyleContent");if(!root)return;
  let extra=document.getElementById("profileExtraOptions");
  if(!extra){extra=document.createElement("div");extra.id="profileExtraOptions";root.insertBefore(extra,document.getElementById("profileStyleStatus"));}
@@ -4045,17 +4070,20 @@ function setExtraProfileStyle(type,value){
 }
 
 function applyProfileStyle(){
- const hero=document.querySelector(".profile-hero");
- if(!hero)return;
+ const card=document.querySelector(".profile-identity-card");
+ if(!card)return;
  const style=state.profileStyle||{frame:"classic",background:"default"};
- hero.classList.remove("frame-gold","frame-neon","frame-ice","frame-rose","bg-space","bg-emerald","bg-sunset","bg-midnight","accent-gold","accent-purple","accent-cyan","accent-green","accent-pink","accent-orange");hero.classList.remove("border-double","border-dashed","border-inset","glow-soft","glow-strong","glow-rainbow","pattern-dots","pattern-grid","pattern-diagonal");
- if(style.frame!=="classic")hero.classList.add("frame-"+style.frame);
- if(style.background!=="default")hero.classList.add("bg-"+style.background);
- hero.classList.add("accent-"+(PROFILE_ACCENT_OPTIONS.some(x=>x.id===style.accent)?style.accent:"gold"));
- if(["double","dashed","inset"].includes(style.border))hero.classList.add("border-"+style.border);
- if(["soft","strong","rainbow"].includes(style.glow))hero.classList.add("glow-"+style.glow);
- if(["dots","grid","diagonal"].includes(style.pattern))hero.classList.add("pattern-"+style.pattern);
- const avatar=document.getElementById("profileLevelIcon");if(avatar)avatar.textContent=PROFILE_EXTRA_OPTIONS.avatar.some(x=>x[0]===(style.avatar||"👤"))?(style.avatar||"👤"):"🌱";
+ card.classList.remove("frame-gold","frame-neon","frame-ice","frame-rose","bg-space","bg-emerald","bg-sunset","bg-midnight","accent-gold","accent-purple","accent-cyan","accent-green","accent-pink","accent-orange","border-double","border-dashed","border-inset","glow-soft","glow-strong","glow-rainbow","pattern-dots","pattern-grid","pattern-diagonal");
+ if(style.frame!=="classic")card.classList.add("frame-"+style.frame);
+ if(style.background!=="default")card.classList.add("bg-"+style.background);
+ card.classList.add("accent-"+(PROFILE_ACCENT_OPTIONS.some(x=>x.id===style.accent)?style.accent:"gold"));
+ if(["double","dashed","inset"].includes(style.border))card.classList.add("border-"+style.border);
+ if(["soft","strong","rainbow"].includes(style.glow))card.classList.add("glow-"+style.glow);
+ if(["dots","grid","diagonal"].includes(style.pattern))card.classList.add("pattern-"+style.pattern);
+ const avatar=document.getElementById("profileCustomAvatar");
+ if(avatar){avatar.textContent=PROFILE_EXTRA_OPTIONS.avatar.some(x=>x[0]===(style.avatar||"👤"))?(style.avatar||"👤"):"👤";avatar.style.display="inline-grid";}
+ const name=document.getElementById("profileNickname");
+ if(name)name.style.color=({gold:"#f4c75e",purple:"#d39aff",cyan:"#78e5ff",green:"#7de6a2",pink:"#ff91c8",orange:"#ffb46b"}[style.accent||"gold"]||"");
 }
 function renderProfileStyleOptions(){
  const style=state.profileStyle||{frame:"classic",background:"default"};
