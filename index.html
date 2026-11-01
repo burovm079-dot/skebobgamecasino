@@ -1527,6 +1527,11 @@ body.light #caseList .case,body.light .panel{background:linear-gradient(145deg,#
  </div>
 </div>
 
+<script>
+// Независимый аварийный таймер заставки: не зависит от основного игрового скрипта.
+(()=>{const splash=document.getElementById("entrySplash");if(!splash)return;requestAnimationFrame(()=>splash.classList.add("loading"));setTimeout(()=>splash.classList.add("splash-hidden"),4500);})();
+</script>
+
 <header>
 
 <div class="logo">
