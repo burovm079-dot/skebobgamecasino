@@ -1372,6 +1372,22 @@ body.light #caseList .case,body.light .panel{background:linear-gradient(145deg,#
 }
 
 
+/* COLLECTION BOOK */
+.collection-overview strong{display:block;color:var(--gold);font-size:25px;margin:5px 0 10px}
+.collection-progress{height:10px;border-radius:20px;background:var(--panel3);overflow:hidden;border:1px solid var(--border2)}
+#collectionProgressBar{height:100%;width:0;background:linear-gradient(90deg,#8e43ce,#f4c75e);transition:width .25s}
+.collection-group{margin:14px 0}
+.collection-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:9px}
+.collection-card{min-width:0;padding:10px 6px;text-align:center;border:1px solid var(--border2);border-radius:12px;background:var(--panel);overflow:hidden}
+.collection-card img{width:66px;height:66px;object-fit:contain;border-radius:9px;display:block;margin:0 auto 7px}
+.collection-card .collection-icon{font-size:48px;line-height:66px}
+.collection-card b{display:block;font-size:11px;overflow-wrap:anywhere}
+.collection-card .small{font-size:10px}
+.collection-card.missing{opacity:.48;filter:grayscale(1)}
+.collection-card.owned{border-color:#b88a35;box-shadow:inset 0 0 14px #d8a83a18}
+.collection-status{color:var(--green);font-weight:800;font-size:10px;margin-top:5px}
+@media(max-width:420px){.collection-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
+
 /* NFT artwork in cases and inventory */
 #caseList .case .pic img{width:82px;height:82px;object-fit:cover;border-radius:13px;border:1px solid #c59bff;box-shadow:0 5px 18px #0008}
 .prize-card .prize-icon img{width:100%;max-width:112px;aspect-ratio:1;object-fit:cover;border-radius:10px;display:block;margin:0 auto 8px}
@@ -1552,6 +1568,7 @@ SKEBOB <span>CASINO</span>
 <button onclick="showPage('tasks')">📋 ЗАДАНИЯ</button>
 
 <button onclick="showPage('inventory')">🎒 ИНВЕНТАРЬ</button>
+<button onclick="showPage('collection',this)">🏆 КОЛЛЕКЦИЯ</button>
 
 <button onclick="showPage('profile')">👤 ПРОФИЛЬ</button>
 
@@ -2502,6 +2519,18 @@ onclick="sellAllItems()"
 
 <div id="inventoryList"></div>
 
+</section>
+
+<!-- COLLECTION -->
+<section id="collection" class="hidden">
+<h2>🏆 КОЛЛЕКЦИЯ ПОДАРКОВ</h2>
+<div class="panel collection-overview">
+ <div class="small">СОБРАНО ПРЕДМЕТОВ</div>
+ <strong id="collectionProgress">0 / 0</strong>
+ <div class="collection-progress"><div id="collectionProgressBar"></div></div>
+ <p class="small">Собирай виртуальные предметы из кейсов и ежедневных наград. Повторные предметы тоже остаются в инвентаре.</p>
+</div>
+<div id="collectionGroups"></div>
 </section>
 
 <!-- PROFILE -->
@@ -3772,6 +3801,7 @@ renderAdminSettings();
 
 function showPage(id,button){
 if(id==="tasks")renderDailyTasks();
+if(id==="collection")renderCollection();
 
 document
 .querySelectorAll(
@@ -4949,6 +4979,33 @@ if(replayButton){replayButton.disabled=pendingPrizes.some(Boolean);replayButton.
 /* =========================
    INVENTORY
 ========================= */
+
+function renderCollection(){
+ const root=document.getElementById("collectionGroups");
+ if(!root)return;
+ const catalog=[
+  ...prizes.map(p=>({name:p.name,collection:p.collection,image:p.image,icon:p.icon})),
+  {name:"Мишка",collection:"Telegram Gifts",icon:"🧸"},
+  {name:"Сердечко",collection:"Telegram Gifts",icon:"❤️"}
+ ];
+ const owned=state.inventory||[];
+ const total=catalog.length;
+ const collected=catalog.filter(item=>owned.some(x=>x.name===item.name&&x.collection===item.collection)).length;
+ const progress=document.getElementById("collectionProgress");
+ const bar=document.getElementById("collectionProgressBar");
+ if(progress)progress.textContent=collected+" / "+total;
+ if(bar)bar.style.width=(total?collected/total*100:0)+"%";
+ const groups={};
+ catalog.forEach(item=>(groups[item.collection||"Другое"]??=[]).push(item));
+ root.innerHTML=Object.entries(groups).map(([name,items])=>{
+  const count=items.filter(item=>owned.some(x=>x.name===item.name&&x.collection===item.collection)).length;
+  return `<div class="panel collection-group"><h3>${name}</h3><div class="small">Собрано: ${count} / ${items.length}</div><div class="collection-grid">${items.map(item=>{
+   const has=owned.some(x=>x.name===item.name&&x.collection===item.collection);
+   const visual=item.image?`<img loading="lazy" src="${item.image}" alt="">`:`<div class="collection-icon">${item.icon||"🎁"}</div>`;
+   return `<div class="collection-card ${has?"owned":"missing"}">${visual}<b>${item.name}</b><div class="collection-status">${has?"✓ ЕСТЬ":"НЕ НАЙДЕНО"}</div></div>`;
+  }).join("")}</div></div>`;
+ }).join("");
+}
 
 function renderInventory(){
 
