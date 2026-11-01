@@ -1526,15 +1526,6 @@ body.light #caseList .case,body.light .panel{background:linear-gradient(145deg,#
   <div class="splash-footer">УДАЧИ В ИГРЕ!</div>
  </div>
 </div>
-<script>
-/* Safety fallback: hide the splash even if a later game initializer fails. */
-(()=>{
- const splash=document.getElementById("entrySplash");
- if(!splash)return;
- requestAnimationFrame(()=>splash.classList.add("loading"));
- setTimeout(()=>splash.classList.add("splash-hidden"),4500);
-})();
-</script>
 
 <header>
 
@@ -3912,9 +3903,6 @@ title.textContent=
 ========================= */
 
 function renderProfile(){
-
-// Всегда обновляем специальные настройки при открытии/перерисовке профиля.
-if(typeof renderSpecialAccountControls==="function")renderSpecialAccountControls();
 
 const info=
 getLevelInfo();
@@ -7670,13 +7658,7 @@ function randomNickname(){
 }
 function getNickname(){return storageGet(NICKNAME_KEY)||"Player";}
 function bjIsOfficialNickname(value){return String(value||"").trim().replace(/\s+/g," ").toLocaleUpperCase("ru")==="SKEBOB OFFICIAL";}
-function bjOfficialBadge(value){
- if(!bjIsOfficialNickname(value))return "";
- const choice=state?.admin?.officialBadgeChoice||"blue";
- if(choice==="media")return ' <button type="button" class="special-account-badge media" aria-label="Медиа-партнёр" title="Медиа-партнёр" onclick="bjShowSpecialAccountBadge(\'media\')">✓</button>';
- if(choice==="vip")return ' <button type="button" class="special-account-badge vip" aria-label="VIP-пользователь" title="VIP-пользователь" onclick="bjShowSpecialAccountBadge(\'vip\')">✓</button>';
- return ' <button type="button" class="skebob-verified" aria-label="Информация о верификации" title="SKEBOB OFFICIAL" onclick="bjShowOfficialBadge()">✓</button>';
-}
+function bjOfficialBadge(value){return bjIsOfficialNickname(value)?' <button type="button" class="skebob-verified" aria-label="Информация о верификации" title="SKEBOB OFFICIAL" onclick="bjShowOfficialBadge()">✓</button>':'';}
 function bjShowOfficialBadge(){alert("Официальный аккаунт SKEBOB OFFICIAL");}
 function bjRequestOfficialCode(){
  const entered=prompt("SKEBOB OFFICIAL — введи код доступа:");
@@ -7720,34 +7702,14 @@ function bjSpecialAccountBadge(value){
 }
 function bjShowSpecialAccountBadge(kind){alert(kind==="media"?"Медиа-партнёр":"VIP-пользователь");}
 function bjIsSpecialAccount(value){return !!bjSpecialAccountInfo(value);}
-function bjCanManageSpecialProfile(value){
- return bjIsSpecialAccount(value)||bjIsOfficialNickname(value);
-}
 function renderSpecialAccountControls(){
  const host=document.getElementById("specialAccountControls");
  if(!host)return;
- const nick=getNickname(),official=bjIsOfficialNickname(nick);
- if(!bjCanManageSpecialProfile(nick)){host.innerHTML="";return;}
- let html='<div class="special-account-controls"><b>⭐ Управление аккаунтом</b><div class="small">Бесконечный баланс: '+(state.admin.infiniteBalance?"ВКЛЮЧЁН":"ВЫКЛЮЧЕН")+'</div><button class="secondary" type="button" onclick="toggleProtectedInfiniteBalance()">'+(state.admin.infiniteBalance?"Выключить бесконечный баланс":"Включить бесконечный баланс")+'</button>';
- if(official){
-  const choice=state.admin.officialBadgeChoice||"blue";
-  html+='<div style="margin-top:12px"><b>Галочка профиля</b><div class="small">Выбери один из трёх существующих вариантов</div><select id="officialBadgeChoice" style="width:100%;margin-top:8px"><option value="blue" '+(choice==="blue"?"selected":"")+'>Синяя — SKEBOB OFFICIAL</option><option value="media" '+(choice==="media"?"selected":"")+'>Зелёная — Медиа-партнёр</option><option value="vip" '+(choice==="vip"?"selected":"")+'>Золотая — VIP-пользователь</option></select><button class="secondary" type="button" onclick="setOfficialProfileBadge()">Применить галочку</button></div>';
- }
- html+='</div>';
- host.innerHTML=html;
-}
-function setOfficialProfileBadge(){
- if(!bjIsOfficialNickname(getNickname()))return;
- const select=document.getElementById("officialBadgeChoice");
- const choice=select?.value;
- if(!["blue","media","vip"].includes(choice))return;
- state.admin.officialBadgeChoice=choice;
- save();
- updateNicknameUI();
- renderSpecialAccountControls();
+ if(!bjIsSpecialAccount(getNickname())){host.innerHTML="";return;}
+ host.innerHTML='<div class="special-account-controls"><b>⭐ Управление аккаунтом</b><div class="small">Бесконечный баланс: '+(state.admin.infiniteBalance?"ВКЛЮЧЁН":"ВЫКЛЮЧЕН")+'</div><button class="secondary" type="button" onclick="toggleProtectedInfiniteBalance()">'+(state.admin.infiniteBalance?"Выключить бесконечный баланс":"Включить бесконечный баланс")+'</button></div>';
 }
 function toggleProtectedInfiniteBalance(){
- if(!bjCanManageSpecialProfile(getNickname()))return;
+ if(!bjIsSpecialAccount(getNickname()))return;
  if(state.admin.infiniteBalance){
   const restore=Number(state.admin.balanceBeforeInfinite);
   state.balance=Number.isFinite(restore)?Math.max(0,Math.floor(restore)):20;
@@ -7775,9 +7737,10 @@ async function initNickname(){
    if(m){m.style.display="flex";const i=document.getElementById("nicknameInput");if(i)setTimeout(()=>i.focus(),250);}
   }
  }
- // Пароль специальных аккаунтов проверяется при выборе ника в профиле,
- // а не при каждом обычном входе с уже сохранённым ником.
- if(state.admin.infiniteBalance&&!bjCanManageSpecialProfile(nick)){
+ if(nick&&bjIsSpecialAccount(nick)&&!(await bjRequestSpecialAccountPassword(nick))){
+  nick=randomNickname();storageSet(NICKNAME_KEY,nick);
+ }
+ if(state.admin.infiniteBalance&&!bjIsSpecialAccount(nick)){
   const restore=Number(state.admin.balanceBeforeInfinite);
   state.balance=Number.isFinite(restore)?Math.max(0,Math.floor(restore)):20;
   state.admin.infiniteBalance=false;state.admin.balanceBeforeInfinite=null;save();
@@ -7802,7 +7765,7 @@ async function changeNickname(){
  if(bjIsSpecialAccount(nick)&&!(await bjRequestSpecialAccountPassword(nick)))return;
  if(bjIsOfficialNickname(nick)&&!bjRequestOfficialCode())return;
  if(!storageSet(NICKNAME_KEY,nick)){alert("Не удалось сохранить nickname. Попробуй ещё раз.");return;}
- if(state.admin.infiniteBalance&&!bjCanManageSpecialProfile(nick)){
+ if(state.admin.infiniteBalance&&!bjIsSpecialAccount(nick)){
   const restore=Number(state.admin.balanceBeforeInfinite);
   state.balance=Number.isFinite(restore)?Math.max(0,Math.floor(restore)):20;
   state.admin.infiniteBalance=false;state.admin.balanceBeforeInfinite=null;save();
