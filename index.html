@@ -1633,11 +1633,26 @@ body.light #caseList .case,body.light .panel{background:linear-gradient(145deg,#
 
 /* GLOBAL GLASS LAYER — фон виден сквозь интерфейс */
 body{
---panel:rgba(25,26,32,.72);
---panel2:rgba(34,35,43,.66);
---panel3:rgba(21,24,33,.70);
---input:rgba(34,35,42,.68);
-background:transparent!important;
+--panel:rgba(25,26,32,.58);
+--panel2:rgba(34,35,43,.52);
+--panel3:rgba(21,24,33,.58);
+--input:rgba(34,35,42,.56);
+background:
+radial-gradient(ellipse at 18% 28%,rgba(128,55,190,.48),transparent 38%),
+radial-gradient(ellipse at 82% 22%,rgba(70,42,150,.44),transparent 36%),
+radial-gradient(ellipse at 58% 82%,rgba(165,65,185,.34),transparent 42%),
+linear-gradient(135deg,#090711 0%,#17102b 48%,#090914 100%)!important;
+background-size:180% 180%,180% 180%,180% 180%,220% 220%!important;
+background-attachment:fixed!important;
+animation:skebobBodyBackground 32s ease-in-out infinite alternate!important;
+}
+@keyframes skebobBodyBackground{
+0%{background-position:0% 15%,100% 0%,30% 100%,0% 50%}
+50%{background-position:100% 75%,0% 90%,80% 10%,100% 50%}
+100%{background-position:20% 100%,90% 10%,0% 70%,0% 50%}
+}
+@media(prefers-reduced-motion:reduce){
+body{animation:none!important}
 }
 body.light{
 --panel:rgba(255,255,255,.76);
