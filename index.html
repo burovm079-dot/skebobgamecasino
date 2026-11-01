@@ -38,10 +38,37 @@ body.light{
 
 body{
 margin:0;
-background:var(--bg);
+background:transparent;
 color:var(--text);
 font-family:Arial,sans-serif;
-transition:background .25s,color .25s;
+transition:color .25s;
+position:relative;
+isolation:isolate;
+}
+
+/* Бесконечный беззвучный фиолетовый фон */
+body::before{
+content:"";
+position:fixed;
+inset:-18%;
+z-index:-1;
+pointer-events:none;
+background:
+radial-gradient(ellipse at 18% 28%,rgba(128,55,190,.42),transparent 38%),
+radial-gradient(ellipse at 82% 22%,rgba(70,42,150,.38),transparent 36%),
+radial-gradient(ellipse at 58% 82%,rgba(165,65,185,.28),transparent 42%),
+linear-gradient(135deg,#090711 0%,#17102b 48%,#090914 100%);
+background-size:140% 140%;
+animation:skebobAmbientDrift 32s ease-in-out infinite alternate;
+will-change:background-position,transform;
+}
+@keyframes skebobAmbientDrift{
+0%{background-position:0% 15%;transform:scale(1) rotate(0deg)}
+50%{background-position:100% 75%;transform:scale(1.08) rotate(2deg)}
+100%{background-position:20% 100%;transform:scale(1.02) rotate(-2deg)}
+}
+@media(prefers-reduced-motion:reduce){
+body::before{animation:none}
 }
 
 button{cursor:pointer;font-weight:800}
