@@ -1897,6 +1897,18 @@ main{max-width:none!important;margin:0 18px 0 258px!important;padding:8px 12px 4
  .home-game-art{flex-basis:100px!important;font-size:65px!important}
 }
 </style>
+
+<style id="skebob-sidebar-utilities-v3">
+header .header-actions{display:none!important}
+.home-nav{padding-top:155px!important}
+.home-nav:after{content:"SKEBOB GAME";display:block;margin-top:auto;padding:13px 5px 8px;text-align:center;color:#d9b5ff;font-size:11px;font-weight:800;letter-spacing:2px;border-top:1px solid #8b2bd766}
+.home-nav .sidebar-caption{position:absolute;top:112px;left:10px;right:10px;text-align:center;color:#ffd75a;font-weight:900;letter-spacing:2px;font-size:13px}
+.home-nav button,.home-nav a{display:block;box-sizing:border-box;flex:0 0 auto!important;width:100%!important;min-width:0!important;min-height:49px;padding:12px 10px!important;text-align:left!important;font-size:14px!important;text-decoration:none!important;border:1px solid #7130a0!important;border-radius:12px!important;background:linear-gradient(110deg,#220044,#130025)!important;color:#f5eaff!important}
+.home-nav button:active,.home-nav a:active{background:linear-gradient(100deg,#a900ff,#5700c8)!important}
+.home-nav .sidebar-buy-admin{margin-top:8px;color:#ffdf7a!important;border-color:#9c7627!important;background:linear-gradient(110deg,#49340a,#251900)!important}
+@media(max-width:900px){.home-nav{padding-top:120px!important}.home-nav .sidebar-caption{top:86px;font-size:10px}.home-nav button,.home-nav a{font-size:11px!important;min-height:44px;padding:10px 6px!important;overflow-wrap:anywhere}}
+@media(max-width:480px){.home-nav{padding-top:102px!important}.home-nav .sidebar-caption{top:73px;font-size:9px}.home-nav button,.home-nav a{font-size:9px!important;min-height:40px;padding:8px 4px!important}}
+</style>
 </head>
 
 <body>
@@ -1982,23 +1994,15 @@ rel="noopener noreferrer"
 <main>
 
 <div class="nav home-nav reference-menu">
-<button class="active" data-page="home" onclick="showPage('home',this)">🏠 ГЛАВНАЯ</button>
-<button  data-page="cases" onclick="showPage('cases',this)">🎁 КЕЙСЫ</button>
-<button  data-page="upgrade" onclick="showPage('upgrade',this)">🎯 UPGRADE</button>
-<button  data-page="mines" onclick="showPage('mines',this)">💣 MINES</button>
-<button  data-page="plane" onclick="showPage('plane',this)">✈️ САМОЛЁТ</button>
-<button  data-page="pickaxe" onclick="showPage('pickaxe',this)">⛏ КИРКА</button>
-<button  data-page="plinko" onclick="showPage('plinko',this)">🔴 PLINKO</button>
-<button  data-page="race" onclick="showPage('race',this)">🏁 RACE</button>
-<button  data-page="crash" onclick="showPage('crash',this)">📈 КРАШ</button>
-<button  data-page="battles" onclick="showPage('battles',this)">⚔️ БАТЛЫ</button>
-<button  data-page="slots" onclick="showPage('slots',this)">🎰 СЛОТЫ</button>
-<button  data-page="blackjack" onclick="showPage('blackjack',this)">🃏 BLACKJACK</button>
-<button  data-page="dice" onclick="showPage('dice',this)">🎲 КОСТИ</button>
-<button  data-page="tictactoe" onclick="showPage('tictactoe',this)">⭕ КРЕСТИКИ</button>
-<button  data-page="billiards" onclick="showPage('billiards',this)">🎱 БИЛЬЯРД</button>
-<button  data-page="chickenroad" onclick="showPage('chickenroad',this)">🐔 CHICKEN ROAD</button>
-<button  data-page="skebobTap" onclick="showPage('skebobTap',this)">👆 SKEBOB TAP</button>
+  <div class="sidebar-caption">SKEBOB MENU</div>
+  <button type="button" onclick="openPromoPage()">🎟 ПРОМО</button>
+  <button type="button" onclick="showPage('tasks')">📋 ЗАДАНИЯ</button>
+  <button type="button" onclick="showPage('inventory')">🎒 ИНВЕНТАРЬ</button>
+  <button type="button" onclick="showPage('collection',this)">🏆 КОЛЛЕКЦИЯ</button>
+  <button type="button" onclick="showPage('profile')">👤 ПРОФИЛЬ</button>
+  <button type="button" onclick="showPage('settings')">⚙️ НАСТРОЙКИ</button>
+  <button class="header-media-partner" type="button" onclick="window.open('https://t.me/skebobcasino/5','_blank','noopener,noreferrer')">📢 МЕДИА ПАРТНЁР</button>
+  <a class="sidebar-buy-admin" href="https://t.me/ggggg06767" target="_blank" rel="noopener noreferrer">🛒 КУПИТЬ АДМИН ПАНЕЛЬ</a>
 </div>
 
 <section id="home" class="home-dashboard">
