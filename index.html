@@ -1857,6 +1857,7 @@ body.legacy-page-active .nav,body.legacy-page-active .balance,body.legacy-page-a
  <div class="splash-progress" aria-hidden="true"><span></span></div>
 </div>
 
+<script>
 /* Branded in-game dialogs replace browser popups that expose the site domain */
 function skebobDialog(type,message,defaultValue=""){return new Promise(resolve=>{const root=document.getElementById("skebobDialog");if(!root){resolve(type==="confirm"?false:type==="prompt"?null:undefined);return;}const title=root.querySelector("[data-dialog-title]"),body=root.querySelector("[data-dialog-message]"),field=root.querySelector("[data-dialog-input]"),cancel=root.querySelector("[data-dialog-cancel]"),ok=root.querySelector("[data-dialog-ok]");title.textContent=type==="confirm"?"Подтверждение":type==="prompt"?"Введите данные":"Уведомление";body.textContent=String(message??"");field.style.display=type==="prompt"?"block":"none";field.value=defaultValue??"";cancel.style.display=type==="alert"?"none":"";root.style.display="flex";const finish=value=>{root.style.display="none";ok.onclick=null;cancel.onclick=null;root.onkeydown=null;resolve(value);};ok.onclick=()=>finish(type==="prompt"?field.value:type==="confirm");cancel.onclick=()=>finish(type==="prompt"?null:false);root.onkeydown=e=>{if(e.key==="Escape"&&type!=="alert"){e.preventDefault();finish(type==="prompt"?null:false)}else if(e.key==="Enter"){e.preventDefault();finish(type==="prompt"?field.value:type==="confirm")}};setTimeout(()=>{(type==="prompt"?field:ok).focus()},30)})}
 window.alert=message=>{void skebobDialog("alert",message)};
