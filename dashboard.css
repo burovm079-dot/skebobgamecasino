@@ -13,7 +13,7 @@ body.dashboard-home{background:#07020f!important;color:#fff!important}
 .sk-side .sk-side-admin{display:block;margin-top:auto;border:1px solid #9b45ff;background:linear-gradient(110deg,#27103c,#160825);color:#ffd36a;text-decoration:none;text-align:center;padding:14px 7px;border-radius:15px;font-weight:900;font-size:13px;box-shadow:0 0 16px #8d00ff33}
 .sk-side-crown{margin-top:10px;text-align:center;font-size:66px;color:#c15cff;text-shadow:0 0 28px #9e00ff}
 .sk-work{min-width:0;padding:12px 20px 34px;background:radial-gradient(ellipse at 75% 105%,#6d00d94a,transparent 38%),radial-gradient(ellipse at 12% 15%,#5700a52b,transparent 38%),#080313}
-.sk-top{display:grid;grid-template-columns:minmax(260px,1.5fr) minmax(190px,.8fr) minmax(180px,.7fr) 64px;gap:14px;align-items:center;margin-bottom:25px}
+.sk-top{display:grid;grid-template-columns:minmax(0,1fr);gap:14px;align-items:center;margin-bottom:25px}
 .sk-vip,.sk-coins,.sk-user,.sk-bell{min-height:60px;border:1px solid #a52aff;border-radius:17px;background:linear-gradient(120deg,#260748,#10051f);box-shadow:0 0 17px #8500ff44,inset 0 0 12px #8f00ff33}
 .sk-vip{display:flex;align-items:center;gap:13px;padding:9px 15px}
 .sk-vip-crown{font-size:39px;color:#ffcf43;filter:drop-shadow(0 0 9px #ffae00)}
@@ -21,7 +21,7 @@ body.dashboard-home{background:#07020f!important;color:#fff!important}
 .sk-vip-line{display:flex;justify-content:space-between;gap:8px;font-size:16px;white-space:nowrap}
 .sk-progress{height:12px;margin-top:8px;background:#08020f;border-radius:20px;overflow:hidden}
 .sk-progress span{display:block;width:72%;height:100%;border-radius:20px;background:linear-gradient(90deg,#a500ff,#ff9be9);box-shadow:0 0 12px #dc63ff}
-.sk-coins{display:flex;align-items:center;justify-content:center;gap:12px;padding:8px;color:#ffd34f;font-weight:900;font-size:18px;white-space:nowrap}
+.sk-coins{display:flex;align-items:center;justify-content:flex-start;gap:12px;padding:8px;color:#ffd34f;font-weight:900;font-size:18px;white-space:nowrap}
 .sk-coin{font-size:38px;filter:drop-shadow(0 0 8px #ff9d00)}
 .sk-coins button{width:40px;height:40px;border:0;border-radius:12px;background:linear-gradient(140deg,#d000ff,#7000c9);color:#fff;font-size:29px;font-weight:900;box-shadow:0 0 15px #a000ff88;cursor:pointer}
 .sk-user{display:flex;align-items:center;gap:10px;padding:8px 12px;color:#fff;font-weight:800;white-space:nowrap}
