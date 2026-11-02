@@ -8150,7 +8150,6 @@ function renderSpecialAccountControls(){
   html+='<div class="small">Бесконечный баланс: '+(state.admin.infiniteBalance?"ВКЛЮЧЁН":"ВЫКЛЮЧЕН")+'</div><button class="secondary" type="button" onclick="toggleProtectedInfiniteBalance()">'+(state.admin.infiniteBalance?"Выключить бесконечный баланс":"Включить бесконечный баланс")+'</button>';
  }
  if(isOfficial){
-  html+='<div class="small" style="margin-top:10px">Бесконечный баланс: '+(state.admin.infiniteBalance?"ВКЛЮЧЁН":"ВЫКЛЮЧЕН")+'</div><button class="secondary" type="button" onclick="toggleProtectedInfiniteBalance()">'+(state.admin.infiniteBalance?"Выключить бесконечный баланс":"Включить бесконечный баланс")+'</button>';
   const selectedBadge=storageGet(BJ_OFFICIAL_BADGE_KEY)||"blue";
   html+='<div class="small" style="margin-top:10px">Цвет официальной галочки</div>';
   html+='<div class="verified-choice-row">';
