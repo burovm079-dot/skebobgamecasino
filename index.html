@@ -681,9 +681,23 @@ background:linear-gradient(180deg,#143a6d,#2866a0 48%,#d79b72 73%,#124d72 74%,#0
 .plane-world .cloud{filter:drop-shadow(0 3px 3px #0005);opacity:.55;animation:planeCloudDrift 12s linear infinite}
 .plane-world .cloud2{animation-duration:17s}.plane-world .cloud3{animation-duration:21s}
 @keyframes planeCloudDrift{from{translate:100px 0}to{translate:-180px 0}}
-.plane-object{left:38%;bottom:40%;font-size:54px;transform:rotate(-12deg);transition:left .45s linear,bottom .45s linear,transform .45s linear}
-.plane-object.flying{animation:planeCruise .55s ease-in-out infinite alternate}
-@keyframes planeCruise{from{transform:translateY(-4px) rotate(-9deg)}to{transform:translateY(4px) rotate(-15deg)}}
+/* 3D-like flight scene: the aircraft has a drawn model while the world scrolls beneath it */
+.plane-world{perspective:900px;background:linear-gradient(180deg,#07347e 0%,#1768b4 42%,#a8d7ed 67%,#397ca4 69%,#06416f 100%);--flight-progress:0}
+.plane-world:after{content:"";position:absolute;left:-20%;right:-20%;bottom:9%;height:27%;z-index:2;pointer-events:none;background:repeating-linear-gradient(176deg,#b6e8ff38 0 2px,transparent 2px 15px),linear-gradient(180deg,#2479a7,#063b68);clip-path:polygon(0 25%,100% 0,100% 100%,0 100%);transform:translateX(calc(var(--flight-progress)*-22%)) scaleX(1.18)}
+.plane-world .cloud{z-index:3;filter:drop-shadow(0 5px 5px #001b3b66);opacity:.9;transition:transform .25s linear}
+.plane-world .cloud1{transform:translateX(calc(var(--flight-progress)*-32%)) scale(1.2)}
+.plane-world .cloud2{transform:translateX(calc(var(--flight-progress)*-48%)) scale(1.5)}
+.plane-world .cloud3{transform:translateX(calc(var(--flight-progress)*-65%)) scale(1.1)}
+.plane-object{left:17%;bottom:27%;width:132px;height:74px;font-size:0;z-index:10;transform:rotate(-9deg);transition:left .28s linear,bottom .28s linear,transform .28s linear;filter:drop-shadow(0 9px 7px #00152c99)}
+.plane-model{display:block;width:100%;height:100%;overflow:visible}
+.plane-object.flying{animation:planeBank .7s ease-in-out infinite alternate}
+.plane-object.flying .plane-model{animation:planeEngine .16s ease-in-out infinite alternate}
+@keyframes planeBank{from{margin-top:-3px;transform:rotate(-7deg)}to{margin-top:4px;transform:rotate(-13deg)}}
+@keyframes planeEngine{from{filter:brightness(1)}to{filter:brightness(1.13)}}
+.plane-world .plane-multiplier{z-index:12}
+.plane-world .plane-flight-hud{z-index:18}
+.plane-world .plane-event{z-index:20}
+.plane-world .plane-sea{display:none}
 .plane-world .plane-multiplier{top:23%;left:50%;font-size:24px;text-shadow:0 0 15px #fff8}
 .plane-world .plane-flight-hud{top:auto;bottom:8px;left:9px;right:9px}
 .plane-world .plane-event{top:43%;z-index:20}
@@ -2427,8 +2441,20 @@ id="planeEvent"
 <div
 class="plane-object"
 id="planeObject"
+aria-label="Самолёт"
 >
-✈️
+<svg class="plane-model" viewBox="0 0 180 100" role="img" aria-label="Красно-жёлтый самолёт">
+ <defs>
+  <linearGradient id="planeRed" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ff6258"/><stop offset="1" stop-color="#a91624"/></linearGradient>
+  <linearGradient id="planeGold" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fff18a"/><stop offset="1" stop-color="#e99b20"/></linearGradient>
+ </defs>
+ <path d="M14 48 L70 40 L95 9 Q101 3 107 11 L101 39 L150 43 Q169 45 173 51 Q169 57 150 58 L101 61 L108 88 Q103 96 96 89 L70 61 L14 56 Q4 53 14 48Z" fill="url(#planeRed)" stroke="#64131b" stroke-width="3"/>
+ <path d="M69 43 L101 14 L94 43Z M70 58 L100 86 L94 57Z" fill="url(#planeGold)" stroke="#8e5713" stroke-width="2"/>
+ <path d="M23 48 L75 48 L91 51 L75 55 L23 55Z" fill="url(#planeGold)"/>
+ <path d="M112 44 L148 47 L112 49Z" fill="#ffe36a"/>
+ <circle cx="163" cy="51" r="3" fill="#fff5c2"/>
+ <path d="M7 39 Q-3 51 7 63" fill="none" stroke="#dceeff" stroke-width="3" stroke-linecap="round" opacity=".75"/>
+</svg>
 </div>
 
 </div>
@@ -6418,9 +6444,11 @@ document.getElementById(
 plane.className=
 "plane-object";
 
-plane.style.left="38%";
-plane.style.bottom="40%";
-plane.style.transform="rotate(-12deg)";
+plane.style.left="17%";
+plane.style.bottom="27%";
+plane.style.transform="rotate(-9deg)";
+const world=document.querySelector(".plane-world");
+if(world)world.style.setProperty("--flight-progress","0");
 const tokens=document.getElementById("planeTokenLayer");if(tokens)tokens.innerHTML="";
 
 document.getElementById(
@@ -6660,14 +6688,19 @@ i++
 ){
 
 const progress=(i+1)/events;
-const distance=Math.round(200+progress*1800);
-const altitude=(2.5+Math.random()*8.5).toFixed(1).replace(".",",");
-document.getElementById("planeDistance").textContent=distance+" м";
-document.getElementById("planeAltitude").textContent=altitude+" м";
+const distance=Math.round(450+progress*12450);
+const altitude=(120+Math.pow(progress,1.35)*4380).toFixed(0);
+document.getElementById("planeDistance").textContent=distance.toLocaleString("ru-RU")+" м";
+document.getElementById("planeAltitude").textContent=altitude.toLocaleString("ru-RU")+" м";
 
-plane.style.left=(36+Math.sin(progress*Math.PI*2)*5)+"%";
-plane.style.bottom=(39+progress*20+Math.sin(progress*Math.PI*3)*5)+"%";
-plane.style.transform="rotate("+(-12-progress*5)+"deg)";
+/* The aircraft travels across the scene on a climbing diagonal; the camera/world scrolls in the opposite direction. */
+const world=document.querySelector(".plane-world");
+if(world)world.style.setProperty("--flight-progress",String(progress));
+const x=17+progress*55;
+const y=27+progress*31+Math.sin(progress*Math.PI*2)*3.5;
+plane.style.left=x+"%";
+plane.style.bottom=y+"%";
+plane.style.transform="rotate("+(-9-progress*8)+"deg) scale("+(1+progress*.16)+")";
 const token=document.createElement("span");token.className="plane-token";token.textContent=Math.random()<.72?"+"+["1","2","5","10"][Math.floor(Math.random()*4)]:"×"+planeMultiplier.toFixed(1);token.style.left=(58+Math.random()*25)+"%";token.style.top=(25+Math.random()*45)+"%";document.getElementById("planeTokenLayer")?.appendChild(token);setTimeout(()=>token.remove(),1600);
 
 await planeWait(600);
@@ -6698,11 +6731,9 @@ document.getElementById(
 "show"
 );
 
-plane.style.left=
-"70%";
-
-plane.style.bottom=
-"47%";
+plane.style.left="77%";
+plane.style.bottom="58%";
+plane.style.transform="rotate(2deg) scale(1.12)";
 
 status.textContent=
 "🛬 Заходим на посадку...";
