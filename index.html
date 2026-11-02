@@ -681,7 +681,7 @@ background:linear-gradient(180deg,#143a6d,#2866a0 48%,#d79b72 73%,#124d72 74%,#0
 .plane-world .cloud{filter:drop-shadow(0 3px 3px #0005);opacity:.55;animation:planeCloudDrift 12s linear infinite}
 .plane-world .cloud2{animation-duration:17s}.plane-world .cloud3{animation-duration:21s}
 @keyframes planeCloudDrift{from{translate:100px 0}to{translate:-180px 0}}
-/* 3D-like flight scene: the aircraft has a drawn model while the world scrolls beneath it */
+#plane2dCanvas{position:absolute;inset:0;width:100%;height:100%;z-index:5;pointer-events:none}\n/* 3D-like flight scene: the aircraft has a drawn model while the world scrolls beneath it */
 .plane-world{perspective:900px;background:linear-gradient(180deg,#07347e 0%,#1768b4 42%,#a8d7ed 67%,#397ca4 69%,#06416f 100%);--flight-progress:0}
 .plane-world:after{content:"";position:absolute;left:-20%;right:-20%;bottom:9%;height:27%;z-index:2;pointer-events:none;background:repeating-linear-gradient(176deg,#b6e8ff38 0 2px,transparent 2px 15px),linear-gradient(180deg,#2479a7,#063b68);clip-path:polygon(0 25%,100% 0,100% 100%,0 100%);transform:translateX(calc(var(--flight-progress)*-22%)) scaleX(1.18)}
 .plane-world .cloud{z-index:3;filter:drop-shadow(0 5px 5px #001b3b66);opacity:.9;transition:transform .25s linear}
@@ -6320,12 +6320,13 @@ function initPlane3D(){
  function resize(){const d=Math.min(window.devicePixelRatio||1,2),w=Math.max(1,host.clientWidth),h=Math.max(1,host.clientHeight);canvas.width=w*d;canvas.height=h*d;canvas.style.width="100%";canvas.style.height="100%";ctx.setTransform(d,0,0,d,0,0);plane2d.w=w;plane2d.h=h;}
  resize();if(window.ResizeObserver)new ResizeObserver(resize).observe(host);else window.addEventListener("resize",resize);
  function drawCloud(x,y,z){ctx.save();ctx.translate(x,y);ctx.scale(z,z);ctx.fillStyle="#9db8ed";ctx.globalAlpha=.36;ctx.beginPath();ctx.ellipse(0,7,32,10,0,0,Math.PI*2);ctx.ellipse(-17,0,18,13,0,0,Math.PI*2);ctx.ellipse(2,-10,23,18,0,0,Math.PI*2);ctx.ellipse(23,0,18,12,0,0,Math.PI*2);ctx.fill();ctx.restore();}
- function drawCarrier(x,y,scale){ctx.save();ctx.translate(x,y);ctx.scale(scale,scale);
-  ctx.fillStyle="#26374d";ctx.beginPath();ctx.moveTo(-100,0);ctx.lineTo(104,0);ctx.lineTo(88,18);ctx.lineTo(-78,18);ctx.closePath();ctx.fill();
-  ctx.fillStyle="#a8b4c4";ctx.fillRect(-96,-5,190,7);ctx.fillStyle="#586c83";ctx.fillRect(-65,-16,98,10);
-  ctx.fillStyle="#c4ccd5";ctx.fillRect(-14,-31,32,16);ctx.fillRect(-5,-39,9,8);ctx.fillStyle="#e6edf5";ctx.fillRect(-11,-35,4,4);ctx.fillRect(2,-35,4,4);
-  ctx.fillStyle="#f3d46a";ctx.fillRect(-86,-7,3,2);ctx.fillRect(74,-7,3,2);
-  ctx.strokeStyle="#fff";ctx.lineWidth=1;ctx.beginPath();ctx.moveTo(-75,-6);ctx.lineTo(75,-6);ctx.stroke();ctx.restore();
+ function drawDeck(x,y,scale){
+  ctx.save();ctx.translate(x,y);ctx.scale(scale,scale);
+  ctx.fillStyle="#27384c";ctx.beginPath();ctx.moveTo(-105,0);ctx.lineTo(105,0);ctx.lineTo(92,10);ctx.lineTo(-92,10);ctx.closePath();ctx.fill();
+  ctx.fillStyle="#c3cfda";ctx.fillRect(-105,-5,210,6);
+  ctx.fillStyle="#f5d66b";ctx.fillRect(-88,-4,14,2);ctx.fillRect(72,-4,14,2);
+  ctx.strokeStyle="#f8fbff";ctx.lineWidth=1.5;ctx.setLineDash([10,8]);ctx.beginPath();ctx.moveTo(-60,-2);ctx.lineTo(75,-2);ctx.stroke();ctx.setLineDash([]);
+  ctx.restore();
  }
  function drawPlane(x,y,angle,t,damaged){ctx.save();ctx.translate(x,y);ctx.rotate(angle);ctx.scale(1.05,1.05);
   const trail=ctx.createLinearGradient(-75,0,-10,0);trail.addColorStop(0,"rgba(86,174,255,0)");trail.addColorStop(1,"rgba(130,205,255,.8)");ctx.strokeStyle=trail;ctx.lineWidth=4;ctx.beginPath();ctx.moveTo(-80,1);ctx.lineTo(-12,1);ctx.stroke();
@@ -6339,21 +6340,21 @@ function initPlane3D(){
   ctx.restore();
  }
  function drawRocket(r){ctx.save();ctx.translate(r.x*plane2d.w,r.y*plane2d.h);ctx.rotate(r.angle);ctx.shadowColor="#ff6a25";ctx.shadowBlur=13;const flame=ctx.createLinearGradient(-31,0,-9,0);flame.addColorStop(0,"rgba(255,55,20,0)");flame.addColorStop(1,"#fff2a0");ctx.fillStyle=flame;ctx.beginPath();ctx.moveTo(-34,0);ctx.lineTo(-10,-4);ctx.lineTo(-10,4);ctx.closePath();ctx.fill();ctx.fillStyle="#ffb54b";ctx.fillRect(-13,-3,22,6);ctx.fillStyle="#d92732";ctx.beginPath();ctx.moveTo(8,-6);ctx.lineTo(19,0);ctx.lineTo(8,6);ctx.closePath();ctx.fill();ctx.fillStyle="#ff6842";ctx.beginPath();ctx.moveTo(-8,-3);ctx.lineTo(-15,-9);ctx.lineTo(-3,-4);ctx.moveTo(-8,3);ctx.lineTo(-15,9);ctx.lineTo(-3,4);ctx.fill();ctx.restore();}
- function drawBonus(b,t){ctx.save();ctx.translate(b.x,b.y);ctx.shadowColor=b.color;ctx.shadowBlur=13;ctx.strokeStyle=b.color;ctx.lineWidth=2;ctx.globalAlpha=.85;ctx.beginPath();for(let i=0;i<16;i++){const an=i*Math.PI/8,r=i%2?b.r*.65:b.r;ctx.moveTo(Math.cos(an)*r*.45,Math.sin(an)*r*.45);ctx.lineTo(Math.cos(an)*r,Math.sin(an)*r);}ctx.stroke();ctx.fillStyle="#f6fbff";ctx.font="900 "+(b.r*.9)+"px Arial";ctx.textAlign="center";ctx.textBaseline="middle";ctx.fillText(b.label,0,1);ctx.restore();}
+ function drawBonus(b,t){const x=b.x*plane2d.w,y=b.y*plane2d.h,rad=Math.max(18,b.r*1.15);ctx.save();ctx.translate(x,y);ctx.shadowColor=b.color;ctx.shadowBlur=20;ctx.fillStyle="rgba(5,18,54,.88)";ctx.strokeStyle=b.color;ctx.lineWidth=3;ctx.beginPath();ctx.arc(0,0,rad+5,0,Math.PI*2);ctx.fill();ctx.stroke();ctx.fillStyle=b.color;ctx.globalAlpha=.22;ctx.beginPath();ctx.arc(0,0,rad,0,Math.PI*2);ctx.fill();ctx.globalAlpha=1;ctx.fillStyle="#fff";ctx.font="900 "+Math.max(17,rad*.95)+"px Arial";ctx.textAlign="center";ctx.textBaseline="middle";ctx.fillText(b.label,0,1);ctx.restore();}
  function frame(ts){plane2dFrame=requestAnimationFrame(frame);const w=plane2d.w,h=plane2d.h,t=ts/1000;if(!w||!h)return;
   ctx.clearRect(0,0,w,h);const sky=ctx.createLinearGradient(0,0,0,h);sky.addColorStop(0,"#071b63");sky.addColorStop(.62,"#173a91");sky.addColorStop(1,"#527db3");ctx.fillStyle=sky;ctx.fillRect(0,0,w,h);
   const sim=planeSim;const scroll=sim?sim.distance*.18:t*7;
   plane2d.clouds.forEach((c,i)=>{const x=((c.x*w-scroll*(.35+i%3*.12))%(w+100)+(w+100))%(w+100)-50;drawCloud(x,c.y*h,c.s);});
   const seaY=h*.84;ctx.fillStyle="#082c64";ctx.fillRect(0,seaY,w,h-seaY);ctx.strokeStyle="#7eb9e8";ctx.globalAlpha=.25;for(let i=0;i<8;i++){const y=seaY+7+i*5,off=(scroll+i*41)%(w+60);ctx.beginPath();ctx.moveTo(w-off,y);ctx.lineTo(w-off+27,y);ctx.stroke();}ctx.globalAlpha=1;
   if(sim){const sx=sim.x*w,sy=sim.y*h;
-   if(sim.phase==="ready"){drawCarrier(w*.2,seaY*.98,.85);drawPlane(w*.2,seaY-16,-.03,t,false);}
-   else {if(sim.showCarrier)drawCarrier(w*.82,seaY*.98,.85);
+   if(sim.phase==="ready"){drawDeck(w*.2,seaY*.98,.85);drawPlane(w*.2,seaY-16,-.03,t,false);}
+   else {if(sim.showCarrier)drawDeck(w*.82,seaY*.98,.85);
     sim.bonuses.forEach(b=>drawBonus(b,t));sim.rockets.forEach(drawRocket);
     drawPlane(sx,sy,sim.angle,t,sim.damage>0);
-    if(sim.phase==="approach"||sim.phase==="landed"||sim.phase==="short"||sim.phase==="over"||sim.phase==="rolloff"){const cx=w*.82,cy=seaY-17;drawCarrier(cx,cy,.85);}
+    if(sim.phase==="approach"||sim.phase==="landed"||sim.phase==="short"||sim.phase==="over"||sim.phase==="rolloff"){const cx=w*.82,cy=seaY-17;drawDeck(cx,cy,.85);}
     if(sim.phase==="crash"){ctx.fillStyle="#ff754b";ctx.shadowColor="#ff4d2e";ctx.shadowBlur=24;ctx.beginPath();ctx.arc(sx,sy,15+Math.sin(t*16)*4,0,Math.PI*2);ctx.fill();}
    }
-  } else {drawCarrier(w*.2,seaY*.98,.85);drawPlane(w*.2,seaY-16,-.03,t,false);}
+  } else {drawDeck(w*.2,seaY*.98,.85);drawPlane(w*.2,seaY-16,-.03,t,false);}
   if(sim&&sim.hitFlash>0){ctx.fillStyle="rgba(255,70,50,"+(sim.hitFlash*.22)+")";ctx.fillRect(0,0,w,h);}
  }
  frame(0);
@@ -6432,8 +6433,8 @@ function updatePlaneFlight(){
    if(!r.hit&&dist<.058){r.hit=true;planeMultiplier=Math.max(.1,planeMultiplier/2);sim.damage++;sim.targetY=Math.min(.80,sim.targetY+.15);sim.vy+=.10;sim.hitFlash=1;planeEvent("🚀 РАКЕТА ДОГНАЛА САМОЛЁТ · МНОЖИТЕЛЬ /2");}
   });
   sim.bonuses=sim.bonuses.filter(b=>b.x>-.1&&!b.hit);sim.rockets=sim.rockets.filter(r=>r.x>-.1&&!r.hit);
-  if(sim.bonuses.length<9&&Math.random()<.075){const vals=[{label:"1",kind:"boost",factor:1.1,color:"#e8f7ff",r:15},{label:"2",kind:"boost",factor:2,color:"#75caff",r:17},{label:"×3",kind:"boost",factor:3,color:"#b5f5ff",r:19},{label:"×5",kind:"boost",factor:5,color:"#55c8ff",r:21},{label:"×10",kind:"boost",factor:10,color:"#4b8fff",r:24},{label:"/2",kind:"hit",factor:.5,color:"#ff5757",r:17}];const v=vals[Math.floor(Math.random()*vals.length)];sim.bonuses.push({x:1.08,y:.12+Math.random()*.72,...v,hit:false});}
-  if(sim.rockets.length<8&&Math.random()<.105){const fromTop=Math.random()<.35;sim.rockets.push({x:1.08,y:fromTop?-.04:.08+Math.random()*.84,speed:.48+Math.random()*.28,angle:Math.PI,hit:false});}
+  if(sim.bonuses.length<10&&Math.random()<.14){const vals=[{label:"1",kind:"boost",factor:1.1,color:"#e8f7ff",r:15},{label:"2",kind:"boost",factor:2,color:"#75caff",r:17},{label:"×3",kind:"boost",factor:3,color:"#b5f5ff",r:19},{label:"×5",kind:"boost",factor:5,color:"#55c8ff",r:21},{label:"×10",kind:"boost",factor:10,color:"#4b8fff",r:24},{label:"/2",kind:"hit",factor:.5,color:"#ff5757",r:17}];const v=vals[Math.floor(Math.random()*vals.length)];sim.bonuses.push({x:1.04,y:.18+Math.random()*.58,...v,hit:false});}
+  if(sim.rockets.length<10&&Math.random()<.16){const fromTop=Math.random()<.35;sim.rockets.push({x:1.04,y:fromTop?-.02:.08+Math.random()*.82,speed:.62+Math.random()*.32,angle:Math.PI,hit:false});}
   if(sim.hitFlash>0)sim.hitFlash=Math.max(0,sim.hitFlash-.07);
   planeMultiplier=Math.min(1000,planeMultiplier+dt*.018);planeSetHud("В ПОЛЁТЕ","✈️ Лови бонусы и уклоняйся от ракет. Авианосец появится впереди.","#ffcf58");
   if(elapsed>=23)planeBeginApproach();
