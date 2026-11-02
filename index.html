@@ -2697,7 +2697,7 @@ class="hidden"
 >
 
 <h2>👤 ПРОФИЛЬ</h2>
-<div class="panel profile-identity-card"><div class="profile-banner" id="profileBanner" aria-hidden="true"></div><div class="small">ТВОЙ NICKNAME</div><span id="profileCustomAvatar" class="profile-custom-avatar" aria-hidden="true"></span><strong id="profileNickname" style="display:block;font-size:22px;margin:8px 0 12px">Player</strong><button class="secondary" onclick="changeNickname()">✏️ ИЗМЕНИТЬ NICKNAME</button><div id="officialInfiniteBalanceControl" hidden style="margin-top:12px"><div class="small" id="officialInfiniteBalanceStatus">Бесконечный баланс выключен</div><button class="secondary" id="officialInfiniteBalanceButton" type="button" style="width:100%;margin-top:8px" onclick="toggleProtectedInfiniteBalance()">♾️ ВКЛЮЧИТЬ БЕСКОНЕЧНЫЙ БАЛАНС</button></div></div>
+<div class="panel profile-identity-card"><div class="profile-banner" id="profileBanner" aria-hidden="true"></div><div class="small">ТВОЙ NICKNAME</div><span id="profileCustomAvatar" class="profile-custom-avatar" aria-hidden="true"></span><strong id="profileNickname" style="display:block;font-size:22px;margin:8px 0 12px">Player</strong><button class="secondary" onclick="changeNickname()">✏️ ИЗМЕНИТЬ NICKNAME</button><div id="officialInfiniteBalanceControl" style="display:none;margin-top:12px"><div class="small" id="officialInfiniteBalanceStatus">Бесконечный баланс выключен</div><button class="secondary" id="officialInfiniteBalanceButton" type="button" style="width:100%;margin-top:8px" onclick="toggleProtectedInfiniteBalance()">♾️ ВКЛЮЧИТЬ БЕСКОНЕЧНЫЙ БАЛАНС</button></div></div>
 <div id="specialAccountControls"></div>
 
 <div class="profile-hero">
@@ -8207,7 +8207,7 @@ function updateNicknameUI(){
  const officialBalanceControl=document.getElementById("officialInfiniteBalanceControl");
  if(officialBalanceControl){
   const allowed=bjIsOfficialNickname(nick);
-  officialBalanceControl.hidden=!allowed;
+  officialBalanceControl.style.display=allowed?"block":"none";
   const status=document.getElementById("officialInfiniteBalanceStatus");
   const button=document.getElementById("officialInfiniteBalanceButton");
   if(status)status.textContent="Бесконечный баланс: "+(state.admin.infiniteBalance?"ВКЛЮЧЁН":"ВЫКЛЮЧЕН");
