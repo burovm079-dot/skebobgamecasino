@@ -1747,6 +1747,16 @@ body.light #caseList .case,body.light .panel{background:linear-gradient(145deg,#
 .plane-token{z-index:9;font-size:14px;color:#fff;text-shadow:0 1px 5px #001}
 @media(max-width:420px){.plane-world{height:280px!important}.plane-world .plane-object{width:52px;height:34px}}
 
+/* WebGL 3D flight renderer */
+.plane-world{height:300px!important;position:relative!important;isolation:isolate;background:#071b56!important}
+.plane-world #plane3dCanvas{position:absolute;inset:0;width:100%;height:100%;display:block;z-index:1}
+.plane-world>.plane-sun,.plane-world>.cloud,.plane-world>.plane-sea,.plane-world>.carrier,.plane-world>.landing-carrier,.plane-world>#planeObject{display:none!important}
+.plane-world .plane-flight-hud{z-index:5;top:auto;bottom:7px;left:7px;right:7px;justify-content:flex-start}
+.plane-world .plane-multiplier{z-index:5;top:15%;left:53%;font-size:17px;padding:5px 12px}
+.plane-world .plane-event{z-index:7}
+.plane-world .plane-token-layer{position:absolute;inset:0;z-index:4;pointer-events:none}
+@media(max-width:420px){.plane-world{height:280px!important}}
+
 /* GLOBAL GLASS LAYER — фон виден сквозь интерфейс */
 body{
 --panel:rgba(25,26,32,.58);
@@ -3587,6 +3597,7 @@ onclick="adminGive()"
 
 <!-- Supabase Realtime client for no-stakes blackjack rooms -->
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.min.js"></script>
 <script>
 
 /* =========================
@@ -6290,6 +6301,99 @@ updateMineStats();
    PLANE
 ========================= */
 
+
+/* THREE.JS airplane scene inspired by the supplied 3D flight reference */
+let plane3d=null,plane3dProgress=0,plane3dFrame=0;
+function initPlane3D(){
+ const host=document.querySelector(".plane-world");
+ if(!host||!window.THREE||plane3d)return;
+ try{
+  const T=window.THREE,scene=new T.Scene();
+  scene.background=new T.Color(0x08245f);
+  scene.fog=new T.Fog(0x164b91,42,190);
+  const camera=new T.PerspectiveCamera(48,1,.1,500);
+  camera.position.set(0,7,22);
+  const renderer=new T.WebGLRenderer({antialias:true,alpha:false});
+  renderer.setPixelRatio(Math.min(window.devicePixelRatio||1,1.7));
+  renderer.shadowMap.enabled=true;
+  renderer.shadowMap.type=T.PCFSoftShadowMap;
+  renderer.outputColorSpace=T.SRGBColorSpace;
+  renderer.domElement.id="plane3dCanvas";
+  host.insertBefore(renderer.domElement,host.firstChild);
+  scene.add(new T.HemisphereLight(0xc8e4ff,0x23324a,2.0));
+  const sun=new T.DirectionalLight(0xffedc6,2.4);sun.position.set(-18,30,12);sun.castShadow=true;scene.add(sun);
+  const oceanMat=new T.MeshStandardMaterial({color:0x07527f,roughness:.42,metalness:.16});
+  const ocean=new T.Mesh(new T.PlaneGeometry(700,700,1,1),oceanMat);ocean.rotation.x=-Math.PI/2;ocean.position.y=-5;ocean.receiveShadow=true;scene.add(ocean);
+  const grid=new T.GridHelper(600,80,0x2b86ad,0x14577c);grid.position.y=-4.92;grid.material.transparent=true;grid.material.opacity=.23;scene.add(grid);
+  // distant horizon haze
+  const haze=new T.Mesh(new T.PlaneGeometry(700,18),new T.MeshBasicMaterial({color:0x8ac9e4,transparent:true,opacity:.32,side:T.DoubleSide}));
+  haze.position.set(0,3,-105);scene.add(haze);
+  // low-poly aircraft carrier at the start of the flight
+  const ship=new T.Group();scene.add(ship);
+  const hull=new T.Mesh(new T.BoxGeometry(15,1.25,4.1),new T.MeshStandardMaterial({color:0x293b50,roughness:.75}));hull.position.y=-3.8;hull.castShadow=true;hull.receiveShadow=true;ship.add(hull);
+  const deck=new T.Mesh(new T.BoxGeometry(15.8,.28,4.35),new T.MeshStandardMaterial({color:0x65788b,roughness:.8}));deck.position.y=-3.1;deck.castShadow=true;ship.add(deck);
+  const runway=new T.Mesh(new T.BoxGeometry(13,.035,.13),new T.MeshBasicMaterial({color:0xe5e8df}));runway.position.set(0,-2.94,.15);ship.add(runway);
+  for(let i=0;i<9;i++){const mark=new T.Mesh(new T.BoxGeometry(.55,.04,.09),new T.MeshBasicMaterial({color:0xf5d78a}));mark.position.set(-5.5+i*1.35,-2.91,-.75);ship.add(mark)}
+  const island=new T.Group();ship.add(island);
+  const base=new T.Mesh(new T.BoxGeometry(1.35,2.2,1.4),new T.MeshStandardMaterial({color:0xd0d5d8}));base.position.set(4,-1.9,-1.1);island.add(base);
+  const bridge=new T.Mesh(new T.BoxGeometry(1.1,.55,1.1),new T.MeshStandardMaterial({color:0x354c62}));bridge.position.set(4,-.55,-1.1);island.add(bridge);
+  for(let i=0;i<3;i++){const mast=new T.Mesh(new T.CylinderGeometry(.035,.05,.8,6),new T.MeshStandardMaterial({color:0xcbd5de}));mast.position.set(3.65+i*.3,.12,-1.1);island.add(mast)}
+  // red/yellow propeller aircraft, built from 3D geometry
+  const aircraft=new T.Group();scene.add(aircraft);
+  const red=new T.MeshStandardMaterial({color:0xc92327,roughness:.48,metalness:.12});
+  const brightRed=new T.MeshStandardMaterial({color:0xf04432,roughness:.4});
+  const yellow=new T.MeshStandardMaterial({color:0xffd34e,roughness:.4});
+  const glass=new T.MeshStandardMaterial({color:0x9ed9f3,metalness:.35,roughness:.16});
+  const body=new T.Mesh(new T.CylinderGeometry(.27,.34,4.2,10),red);body.rotation.z=Math.PI/2;aircraft.add(body);
+  const nose=new T.Mesh(new T.ConeGeometry(.29,.75,10),yellow);nose.rotation.z=-Math.PI/2;nose.position.x=2.42;aircraft.add(nose);
+  const tail=new T.Mesh(new T.BoxGeometry(.8,.12,1.5),yellow);tail.position.set(-1.55,.18,0);aircraft.add(tail);
+  const wing=new T.Mesh(new T.BoxGeometry(1.1,.13,5.3),brightRed);wing.position.set(.1,-.04,0);aircraft.add(wing);
+  const wingStripe=new T.Mesh(new T.BoxGeometry(1.13,.145,.34),yellow);wingStripe.position.set(.1,.035,0);aircraft.add(wingStripe);
+  const rearWing=new T.Mesh(new T.BoxGeometry(.55,.11,2.2),yellow);rearWing.position.set(-1.55,.16,0);aircraft.add(rearWing);
+  const cockpit=new T.Mesh(new T.SphereGeometry(.38,12,8),glass);cockpit.scale.set(1.5,.68,.72);cockpit.position.set(.55,.38,0);aircraft.add(cockpit);
+  const prop=new T.Group();prop.position.set(2.83,0,0);aircraft.add(prop);
+  const hub=new T.Mesh(new T.SphereGeometry(.12,8,8),yellow);prop.add(hub);
+  for(let i=0;i<3;i++){const blade=new T.Mesh(new T.BoxGeometry(.08,1.2,.18),new T.MeshStandardMaterial({color:0x252b35}));blade.rotation.x=i*Math.PI/3;prop.add(blade)}
+  aircraft.traverse(o=>{if(o.isMesh){o.castShadow=true;o.receiveShadow=true}});
+  // clouds made of soft clusters of spheres
+  const clouds=[];
+  for(let i=0;i<20;i++){
+   const g=new T.Group(),mat=new T.MeshStandardMaterial({color:0xe7f2ff,roughness:1});
+   const count=4+(i%3);
+   for(let j=0;j<count;j++){const s=new T.Mesh(new T.SphereGeometry(.8+(j%2)*.35,10,8),mat);s.position.set((j-(count-1)/2)*.8,Math.sin(j*2)*.18,Math.cos(j*3)*.3);s.scale.y=.62;g.add(s)}
+   g.position.set((Math.random()-.5)*65,3+Math.random()*19,-12-Math.random()*150);g.scale.setScalar(.8+Math.random()*1.2);scene.add(g);clouds.push(g);
+  }
+  // floating glowing multiplier gates along the route
+  const gates=[];
+  for(let i=0;i<7;i++){
+   const g=new T.Group(),ring=new T.Mesh(new T.TorusGeometry(1.05,.09,8,28),new T.MeshStandardMaterial({color:0x5ecbff,emissive:0x167dff,emissiveIntensity:1.8}));
+   g.add(ring);const core=new T.Mesh(new T.SphereGeometry(.12,8,8),new T.MeshBasicMaterial({color:0xffffff}));g.add(core);
+   g.position.set(5+(i%2)*5,5+(i%3)*2,-22-i*18);scene.add(g);gates.push(g);
+  }
+  const clock=new T.Clock();
+  function resize(){const w=Math.max(1,host.clientWidth),h=Math.max(1,host.clientHeight);renderer.setSize(w,h,false);camera.aspect=w/h;camera.updateProjectionMatrix()}
+  resize();new ResizeObserver(resize).observe(host);
+  plane3d={scene,camera,renderer,aircraft,ship,clouds,gates,prop,ocean,clock};
+  function draw(){
+   plane3dFrame=requestAnimationFrame(draw);
+   const t=clock.getElapsedTime(),p=plane3dProgress;
+   aircraft.position.set(-3+p*11,1+p*8,-5-p*20);
+   aircraft.rotation.z=-.08-p*.13+Math.sin(t*2)*.025;
+   aircraft.rotation.x=Math.sin(t*1.4)*.035;
+   prop.rotation.x=t*24;
+   camera.position.set(-1+p*7,7+p*5,22-p*12);
+   camera.lookAt(aircraft.position.x+1,aircraft.position.y-.2,aircraft.position.z-13);
+   ship.position.set(-2,-.4,2-p*15);ship.scale.setScalar(Math.max(.12,1-p*.78));
+   clouds.forEach((g,i)=>{g.position.z+=.045+(i%4)*.012;if(g.position.z>28){g.position.z=-150;g.position.x=(Math.random()-.5)*65}});
+   gates.forEach((g,i)=>{g.rotation.z=t*.55;g.position.z+=.025;if(g.position.z>20)g.position.z=-140});
+   ocean.position.z=(p*9)%20;
+   renderer.render(scene,camera);
+  }
+  draw();
+ }catch(err){console.warn("3D plane scene unavailable",err)}
+}
+function updatePlane3D(progress){plane3dProgress=Math.max(0,Math.min(1,Number(progress)||0));if(!plane3d)initPlane3D()}
+
 let planeBusy=false;
 
 let planeBet=1000;
@@ -6514,6 +6618,7 @@ document.getElementById(
 );
 
 planeMultiplier=1;
+updatePlane3D(0);
 const distance=document.getElementById("planeDistance");
 const altitude=document.getElementById("planeAltitude");
 if(distance)distance.textContent="0 м";
@@ -6681,6 +6786,9 @@ planeBusy=true;
 planeBet=bet;
 
 planeMultiplier=1;
+plane3dProgress=0;
+initPlane3D();
+updatePlane3D(0);
 
 resetPlaneVisual();
 
@@ -6744,6 +6852,7 @@ i++
 ){
 
 const progress=(i+1)/events;
+updatePlane3D(progress);
 const distance=Math.round(progress*5000);
 const altitude=(progress*600).toFixed(0);
 document.getElementById("planeDistance").textContent=distance.toLocaleString("ru-RU")+" м";
