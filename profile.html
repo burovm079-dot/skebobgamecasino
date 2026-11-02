@@ -15,7 +15,7 @@ main{width:min(720px,calc(100% - 28px));margin:34px auto}.card{background:var(--
 .hero{text-align:center;padding:32px 20px}.avatar{font-size:58px}.eyebrow{color:var(--muted);font-size:12px;letter-spacing:1.4px;font-weight:800;margin-top:12px}
 h1{font-size:27px;margin:9px 0 7px}.muted{color:var(--muted);line-height:1.5}.verified{display:inline-grid;place-items:center;vertical-align:middle;width:20px;height:20px;margin-left:7px;border-radius:50%;background:#258cf4;color:white;font-size:13px;font-weight:900}
 .field{display:flex;gap:9px;margin-top:12px}.field input{flex:1;min-width:0;padding:12px;border-radius:10px;border:1px solid var(--border);background:var(--panel2);color:var(--text)}
-.notice{font-size:13px;color:var(--muted);margin-top:12px}.actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:14px}.primary{background:#493819;color:#ffda7c;border-color:#80652e}
+.notice{font-size:13px;color:var(--muted);margin-top:12px}.official-tools{display:none}.official-tools button{width:100%;margin-top:12px;background:#493819;color:#ffda7c;border-color:#80652e}.nft-result{margin-top:12px;font-size:13px;color:var(--muted)}.actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:14px}.primary{background:#493819;color:#ffda7c;border-color:#80652e}
 footer{text-align:center;color:var(--muted);font-size:12px;padding:20px}
 @media(max-width:480px){.field{flex-direction:column}.field button{width:100%}header{padding:14px}}
 </style>
@@ -31,20 +31,46 @@ footer{text-align:center;color:var(--muted);font-size:12px;padding:20px}
 <h2>О верификации</h2>
 <div class="muted">Синяя отметка отображается рядом с именем SKEBOB OFFICIAL. Она является элементом оформления этой страницы и сама по себе не подтверждает личность владельца.</div>
 </section>
+<section class="card official-tools" id="officialTools">
+<h2>⭐ Инструменты SKEBOB OFFICIAL</h2>
+<div class="muted">Выдать все NFT из основного каталога игры в инвентарь этого браузера.</div>
+<button class="primary" id="giveAllNfts" type="button">🎁 ВЫДАТЬ ВСЕ NFT</button>
+<div class="nft-result" id="nftResult" aria-live="polite"></div>
+</section>
 </main>
 <footer>SKEBOB • Страница профиля</footer>
 <script>
 (function(){
  const shown=document.getElementById('shownNick');
  const official='SKEBOB OFFICIAL';
+ const nftCatalog=[{"name":"CryptoPunk #0","collection":"CryptoPunks","value":5357120,"icon":"👾","id":"nft-0","rarity":"Легендарный"},{"name":"CryptoPunk #1","collection":"CryptoPunks","value":5357120,"icon":"👾","id":"nft-1","rarity":"Легендарный"},{"name":"CryptoPunk #2","collection":"CryptoPunks","value":5357120,"icon":"👾","id":"nft-2","rarity":"Легендарный"},{"name":"CryptoPunk #3","collection":"CryptoPunks","value":5357120,"icon":"👾","id":"nft-3","rarity":"Легендарный"},{"name":"Bored Ape Yacht Club #1","collection":"Bored Ape Yacht Club","value":1093200,"icon":"🐵","id":"nft-4","rarity":"Эпический"},{"name":"Mutant Ape Yacht Club #17396","collection":"Mutant Ape Yacht Club","value":168000,"icon":"🧬","id":"nft-5","rarity":"Эпический"},{"name":"Pudgy Penguin #1","collection":"Pudgy Penguins","value":444800,"icon":"🐧","id":"nft-6","rarity":"Эпический"},{"name":"Azuki #1","collection":"Azuki","value":39200,"icon":"🎴","id":"nft-7","rarity":"Редкий"},{"name":"Moonbird #1","collection":"Moonbirds","value":42400,"icon":"🦉","id":"nft-8","rarity":"Редкий"},{"name":"Doodles #1","collection":"Doodles","value":45600,"icon":"🖍️","id":"nft-9","rarity":"Редкий"},{"name":"CloneX #1","collection":"Clone X","value":24800,"icon":"🧑‍🚀","id":"nft-10","rarity":"Редкий"},{"name":"Cool Cats #1","collection":"Cool Cats","value":18400,"icon":"🐱","id":"nft-11","rarity":"Редкий"},{"name":"Milady Maker #1","collection":"Milady Maker","value":143200,"icon":"👩‍🎤","id":"nft-12","rarity":"Необычный"},{"name":"Meebit #1","collection":"Meebits","value":50400,"icon":"🧊","id":"nft-13","rarity":"Необычный"},{"name":"Lil Pudgy #1","collection":"Lil Pudgys","value":17600,"icon":"🐣","id":"nft-14","rarity":"Необычный"},{"name":"Nakamigo #1","collection":"Nakamigos","value":7200,"icon":"🧢","id":"nft-15","rarity":"Необычный"},{"name":"BEANZ #1","collection":"BEANZ Official","value":2480,"icon":"🫘","id":"nft-16","rarity":"Обычный"},{"name":"Otherdeed #1","collection":"Otherdeed for Otherside","value":5040,"icon":"🌎","id":"nft-17","rarity":"Обычный"},{"name":"Bored Ape Kennel Club #1","collection":"Bored Ape Kennel Club","value":720,"icon":"🐕","id":"nft-18","rarity":"Обычный"},{"name":"Bored Ape Chemistry Club #1","collection":"Bored Ape Chemistry Club","value":2000,"icon":"🧪","id":"nft-19","rarity":"Обычный"},{"name":"The Memes by 6529 #5","collection":"The Memes by 6529","value":2560,"icon":"🌀","id":"nft-20","rarity":"Обычный"}];
+ const tools=document.getElementById('officialTools');
+ function currentNick(){return localStorage.getItem('skebobProfileNickname')||localStorage.getItem('skebobNickname')||'Player';}
+ function isOfficial(){return currentNick().trim().replace(/\\s+/g,' ').toLocaleUpperCase('ru')===official;}
+ function giveAllNfts(){
+  if(!isOfficial()){alert('Функция доступна только профилю SKEBOB OFFICIAL.');return;}
+  let save={};
+  try{save=JSON.parse(localStorage.getItem('skebobSave')||'{}')||{};}catch(e){}
+  if(!Array.isArray(save.inventory))save.inventory=[];
+  const owned=new Set(save.inventory.map(x=>String(x.name||'')+'::'+String(x.collection||'')));
+  let added=0;
+  nftCatalog.forEach(item=>{
+   const key=item.name+'::'+item.collection;
+   if(owned.has(key))return;
+   save.inventory.push({...item,instanceId:'official-'+item.id+'-'+Date.now()});
+   owned.add(key);added++;
+  });
+  localStorage.setItem('skebobSave',JSON.stringify(save));
+  document.getElementById('nftResult').textContent=added?'Готово! Добавлено NFT: '+added+'.':'Все NFT каталога уже есть в инвентаре.';
+ }
  function render(){
-  const nick=localStorage.getItem('skebobProfileNickname')||'Player';
+  const nick=currentNick();
   shown.textContent=nick;
   if(nick.trim().toLocaleUpperCase('ru')===official){
    const mark=document.createElement('span');mark.className='verified';mark.textContent='✓';mark.title='SKEBOB OFFICIAL';mark.setAttribute('aria-label','Отметка SKEBOB OFFICIAL');shown.appendChild(mark);
   }
  }
- document.getElementById('themeButton').addEventListener('click',function(){
+ document.getElementById('giveAllNfts').addEventListener('click',giveAllNfts);\n document.getElementById('themeButton').addEventListener('click',function(){
   document.body.classList.toggle('light');
   localStorage.setItem('skebobProfileLight',document.body.classList.contains('light')?'1':'0');
  });
