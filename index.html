@@ -999,7 +999,7 @@ transform:translateX(26px);
 .profile-hero.frame-gold{border:2px solid #f4c75e;box-shadow:0 0 0 3px #f4c75e22,0 0 22px #f4c75e35}
 .profile-hero.frame-neon{border:2px solid #c45cff;box-shadow:0 0 0 3px #c45cff22,0 0 24px #b52dff55}
 .profile-hero.frame-ice{border:2px solid #70d8ff;box-shadow:0 0 0 3px #70d8ff22,0 0 22px #70d8ff44}
-.profile-hero.frame-rose{border:2px solid #ff78ad;box-shadow:0 0 0 3px #ff78ad22,0 0 22px #ff78ad44}
+.profile-hero.frame-rose{border:2px solid #ff78ad;box-shadow:0 0 0 3px #ff78ad22,0 0 22px #ff78ad44}\n.collection-achievement-banner{margin:12px auto 0;padding:9px 12px;border:1px solid #ffe16b;border-radius:12px;color:#ffe16b;font-weight:900;text-align:center;background:#ffe16b12}\n.profile-hero.frame-legend{border:2px solid #ffe16b;box-shadow:0 0 0 4px #ffe16b33,0 0 28px #ffc40099;position:relative}\n.profile-hero.frame-legend:after{content:"🏆 ЛЕГЕНДА КОЛЛЕКЦИИ";display:block;color:#ffe16b;font-weight:900;letter-spacing:1px;margin-top:12px;text-shadow:0 0 12px #ffc40088}
 .profile-hero.bg-space{background:radial-gradient(ellipse at 50% 0%,#41205e,#171326 72%)}
 .profile-hero.bg-emerald{background:linear-gradient(145deg,#123d37,#10231f 80%)}
 .profile-hero.bg-sunset{background:linear-gradient(145deg,#67304d,#342044 65%,#171326)}
@@ -2719,6 +2719,7 @@ id="profileLevelDescription"
 >
 Начальный уровень казино
 </div>
+<div id="collectionAchievementBanner" class="collection-achievement-banner" hidden>🏆 ЛЕГЕНДА КОЛЛЕКЦИИ — ВСЕ NFT СОБРАНЫ!</div>
 
 <div class="level-progress">
 <div id="profileLevelProgress"></div>
@@ -3712,7 +3713,7 @@ balanceBeforeInfinite:null,
 
 // Настройки оформления профиля: безопасные значения по умолчанию для старых сохранений.
 if(!state.profileStyle||typeof state.profileStyle!=="object")state.profileStyle={};
-if(!["classic","gold","neon","ice","rose"].includes(state.profileStyle.frame))state.profileStyle.frame="classic";
+if(!["classic","gold","neon","ice","rose","legend"].includes(state.profileStyle.frame)|| (state.profileStyle.frame==="legend"&&!state.collectionAchievement?.unlocked))state.profileStyle.frame="classic";
 if(!["default","space","emerald","sunset","midnight"].includes(state.profileStyle.background))state.profileStyle.background="default";
 if(!["gold","purple","cyan","green","pink","orange"].includes(state.profileStyle.accent))state.profileStyle.accent="gold";
 if(typeof state.profileStyle.collapsed!=="boolean")state.profileStyle.collapsed=false;
@@ -3783,6 +3784,7 @@ function setCurrency(value){storageSet("skebobCurrency",value==="USD"?"USD":"RUB
 function loadCurrency(){const e=document.getElementById("currencySelect");if(e)e.value=getCurrency();}
 function save(){
 
+checkAllNftAchievement();
 updateDailyTasks(false);
 let saved=false;
 try{
@@ -4118,7 +4120,7 @@ const PROFILE_FRAME_OPTIONS=[
  {id:"gold",name:"Золотая",icon:"🟡"},
  {id:"neon",name:"Неоновая",icon:"💜"},
  {id:"ice",name:"Ледяная",icon:"🧊"},
- {id:"rose",name:"Розовая",icon:"🌸"}
+ {id:"rose",name:"Розовая",icon:"🌸"},\n {id:"legend",name:"Легенда коллекции",icon:"🏆"}
 ];
 const PROFILE_ACCENT_OPTIONS=[
  {id:"gold",name:"Золотой",icon:"🟡"},
@@ -4192,7 +4194,7 @@ function renderProfileStyleOptions(){
  const bgRoot=document.getElementById("profileBackgroundOptions");
  const accentRoot=document.getElementById("profileAccentOptions");
  const render=(items,selected,type)=>items.map(item=>`<button type="button" class="profile-style-btn ${selected===item.id?"active":""}" onclick="setProfileStyle('${type}','${item.id}')">${item.icon} ${item.name} ${selected===item.id?"✓":""}</button>`).join("");
- if(frameRoot)frameRoot.innerHTML=render(PROFILE_FRAME_OPTIONS,style.frame,"frame");
+ if(frameRoot)frameRoot.innerHTML=render(PROFILE_FRAME_OPTIONS.filter(item=>item.id!=="legend"||state.collectionAchievement?.unlocked),style.frame,"frame");
  if(bgRoot)bgRoot.innerHTML=render(PROFILE_BACKGROUND_OPTIONS,style.background,"background");
  if(accentRoot)accentRoot.innerHTML=render(PROFILE_ACCENT_OPTIONS,style.accent||"gold","accent");
  const content=document.getElementById("profileStyleContent");
@@ -4218,7 +4220,7 @@ function toggleProfileStylePanel(){
 }
 function setProfileStyle(type,value){
  const allowed=type==="frame"?PROFILE_FRAME_OPTIONS:type==="background"?PROFILE_BACKGROUND_OPTIONS:type==="accent"?PROFILE_ACCENT_OPTIONS:null;
- if(!allowed||!allowed.some(item=>item.id===value))return;
+ if(!allowed||!allowed.some(item=>item.id===value)||(type==="frame"&&value==="legend"&&!state.collectionAchievement?.unlocked))return;
  if(!state.profileStyle||typeof state.profileStyle!=="object")state.profileStyle={frame:"classic",background:"default"};
  state.profileStyle[type]=value;
  save();
@@ -4232,6 +4234,8 @@ function renderProfile(){
 
 const info=
 getLevelInfo();
+const collectionBanner=document.getElementById("collectionAchievementBanner");
+if(collectionBanner)collectionBanner.hidden=!state.collectionAchievement?.unlocked;
 
 applyProfileStyle();
 renderProfileStyleOptions();
@@ -5268,6 +5272,20 @@ if(replayButton){replayButton.disabled=pendingPrizes.some(Boolean);replayButton.
 /* =========================
    INVENTORY
 ========================= */
+
+function checkAllNftAchievement(){
+ if(state.collectionAchievement?.unlocked)return false;
+ const catalog=[...nftCollections,{name:"Мишка",collection:"Telegram Gifts"},{name:"Сердечко",collection:"Telegram Gifts"}];
+ const owned=state.inventory||[];
+ const complete=catalog.every(item=>owned.some(x=>x.name===item.name&&x.collection===item.collection));
+ if(!complete)return false;
+ state.collectionAchievement={unlocked:true,unlockedAt:Date.now()};
+ state.collectionAchievementNotified=true;
+ if(!state.profileStyle||typeof state.profileStyle!=="object")state.profileStyle={frame:"classic",background:"default",accent:"gold"};
+ state.profileStyle.frame="legend";
+ setTimeout(()=>alert("🎉 ВЫ СОБРАЛИ ВСЕ NFT ИГРЫ!\n\n🏆 Вам открыт статус «ЛЕГЕНДА КОЛЛЕКЦИИ» и эксклюзивная рамка профиля!"),0);
+ return true;
+}
 
 function renderCollection(){
  const root=document.getElementById("collectionGroups");
