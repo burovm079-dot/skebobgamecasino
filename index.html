@@ -1750,7 +1750,9 @@ body.light #caseList .case,body.light .panel{background:linear-gradient(145deg,#
 /* WebGL 3D flight renderer */
 .plane-world{height:300px!important;position:relative!important;isolation:isolate;background:#071b56!important}
 .plane-world #plane3dCanvas{position:absolute;inset:0;width:100%;height:100%;display:block;z-index:1}
-.plane-world>.plane-sun,.plane-world>.cloud,.plane-world>.plane-sea,.plane-world>.carrier,.plane-world>.landing-carrier,.plane-world>#planeObject{display:none!important}
+.plane-world>.plane-sun,.plane-world>.cloud,.plane-world>.plane-sea,.plane-world>.carrier,.plane-world>.landing-carrier{display:none!important}
+.plane-world>#planeObject{display:block!important;position:absolute;left:23%;bottom:43%;width:58px;height:37px;z-index:2;font-size:0}
+.plane-world.plane3d-ready>#planeObject{display:none!important}
 .plane-world .plane-flight-hud{z-index:5;top:auto;bottom:7px;left:7px;right:7px;justify-content:flex-start}
 .plane-world .plane-multiplier{z-index:5;top:15%;left:53%;font-size:17px;padding:5px 12px}
 .plane-world .plane-event{z-index:7}
@@ -6320,6 +6322,7 @@ function initPlane3D(){
   renderer.outputColorSpace=T.SRGBColorSpace;
   renderer.domElement.id="plane3dCanvas";
   host.insertBefore(renderer.domElement,host.firstChild);
+  host.classList.add("plane3d-ready");
   scene.add(new T.HemisphereLight(0xc8e4ff,0x23324a,2.0));
   const sun=new T.DirectionalLight(0xffedc6,2.4);sun.position.set(-18,30,12);sun.castShadow=true;scene.add(sun);
   const oceanMat=new T.MeshStandardMaterial({color:0x07527f,roughness:.42,metalness:.16});
