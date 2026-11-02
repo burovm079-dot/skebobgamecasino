@@ -6422,6 +6422,17 @@ function updatePlaneFlight(){
   // Вода начинается примерно на отметке 84% высоты сцены: касание воды = проигрыш.
   if(sim.y>=.80){sim.y=.80;sim.altitude=0;planeCrash();return;}
   sim.altitude=Math.max(0,Math.min(1,(.90-sim.y)/.72));
+  // Объекты появляются на протяжении всего полёта с небольшими случайными интервалами.
+  if(elapsed>=sim.nextBonusAt&&sim.bonuses.length<3){
+   const choices=[{label:"+1",factor:1.15},{label:"×2",factor:2},{label:"×3",factor:3},{label:"×5",factor:5}];
+   const pick=choices[Math.floor(Math.random()*choices.length)];
+   sim.bonuses.push({x:1.08,y:.18+Math.random()*.55,...pick,kind:"boost",color:"#b8ff5a",r:19,hit:false});
+   sim.nextBonusAt=elapsed+3.2+Math.random()*2.1;
+  }
+  if(elapsed>=sim.nextRocketAt&&sim.rockets.length<2){
+   sim.rockets.push({x:1.08,y:.20+Math.random()*.55,speed:.23+Math.random()*.07,angle:Math.PI,hit:false});
+   sim.nextRocketAt=elapsed+4.2+Math.random()*2.4;
+  }
   sim.bonuses.forEach(b=>{b.x-=dt*.15;if(!b.hit&&Math.hypot((b.x-sim.x)*1.15,b.y-sim.y)<.065){b.hit=true;planeMultiplier=Math.min(1000,planeMultiplier*b.factor);sim.vy-=b.factor>=5?.12:b.factor>=3?.095:.07;planeEvent("✨ СОБРАН МНОЖИТЕЛЬ "+b.label+" · ×"+planeMultiplier.toFixed(2)+" · САМОЛЁТ НАБИРАЕТ ВЫСОТУ");}});
   // Ракеты летят прямо; попадание направляет самолёт вниз.
   sim.rockets.forEach(r=>{r.x-=dt*r.speed;r.angle=Math.PI;if(!r.hit&&Math.abs(r.x-sim.x)<.045&&Math.abs(r.y-sim.y)<.055){r.hit=true;planeMultiplier=Math.max(.1,planeMultiplier/2);sim.damage++;sim.vy+=.12;sim.hitFlash=1;planeEvent("🚀 ПОПАДАНИЕ РАКЕТЫ · САМОЛЁТ СНИЖАЕТСЯ · МНОЖИТЕЛЬ /2");}});
@@ -6445,7 +6456,7 @@ async function startPlaneGame(){
  const status=document.getElementById("planeStatus"),stage=document.getElementById("planeStage");
  if(status){status.style.color="#ffbd42";status.textContent="✈️ Двигатели запущены. Самолёт разбегается по палубе…";}if(stage)stage.textContent="РАЗБЕГ";
  await planeWait(700);
- planeSim={phase:"cruise",x:.2,y:.46,vy:-.22,altitude:.42,distance:0,angle:-.22,damage:0,hitFlash:0,bonuses:[{x:.36,y:.49,label:"+1",kind:"boost",factor:1.15,color:"#b8ff5a",r:18,hit:false},{x:.51,y:.36,label:"×2",kind:"boost",factor:2,color:"#b8ff5a",r:19,hit:false},{x:.66,y:.57,label:"×3",kind:"boost",factor:3,color:"#b8ff5a",r:20,hit:false},{x:.82,y:.31,label:"×5",kind:"boost",factor:5,color:"#b8ff5a",r:21,hit:false},{x:.98,y:.64,label:"×2",kind:"boost",factor:2,color:"#b8ff5a",r:19,hit:false}],rockets:[{x:1.02,y:.68,speed:.25,angle:Math.PI,hit:false},{x:1.38,y:.40,speed:.27,angle:Math.PI,hit:false},{x:1.76,y:.57,speed:.24,angle:Math.PI,hit:false}],showCarrier:false};
+ planeSim={phase:"cruise",x:.2,y:.46,vy:-.22,altitude:.42,distance:0,angle:-.22,damage:0,hitFlash:0,bonuses:[],rockets:[],nextBonusAt:1.8,nextRocketAt:3.2,showCarrier:false};
  plane2dPhase="cruise";planeInFlight=true;planeStartedAt=performance.now();planeAnimationTimer=setInterval(updatePlaneFlight,50);
  updatePlaneControls();planeEvent("✈️ ОТРЫВ ОТ ПАЛУБЫ!");
 }
