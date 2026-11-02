@@ -1829,9 +1829,10 @@ background-color:var(--panel)!important;
 }
 
 </style>
+<link rel="stylesheet" href="./dashboard.css?v=1">
 </head>
 
-<body>
+<body class="dashboard-home">
 
 <div id="entrySplash" aria-label="Заставка SKEBOB CASINO">
  <div class="splash-inner">
@@ -1859,6 +1860,44 @@ window.alert=message=>{void skebobDialog("alert",message)};
 window.confirm=message=>{void skebobDialog("confirm",message);return false};
 window.prompt=(message,value)=>{void skebobDialog("prompt",message,value);return null};
 </script>
+
+<div id="skebobDashboard">
+<aside class="sk-side">
+<div class="sk-brand">👑 SKEBOB<span>GAME</span></div>
+<button onclick="showPage('dashboard')">⌂　Главная</button>
+<button onclick="openPromoPage()">🎟　Промо</button>
+<button onclick="showPage('tasks')">📋　Задания</button>
+<button onclick="showPage('inventory')">🎒　Инвентарь</button>
+<button onclick="showPage('collection',this)">💎　Коллекция</button>
+<button onclick="showPage('profile')">👤　Профиль</button>
+<button onclick="window.open('https://t.me/skebobcasino/5','_blank','noopener,noreferrer')">📢　Медиа партнёр</button>
+<button onclick="showPage('settings')">⚙️　Настройки</button>
+<a class="header-buy-admin sk-side-admin" href="https://t.me/ggggg06767" target="_blank" rel="noopener noreferrer">🛒 Купить админ панель</a>
+<div class="sk-side-crown">♛</div>
+</aside>
+<div class="sk-work">
+<div class="sk-top">
+<div class="sk-vip"><div class="sk-vip-crown">👑</div><b style="color:#ffd34f">VIP</b><div class="sk-vip-info"><div class="sk-vip-line"><span>Уровень: 12</span><span>720 / 1,000 XP</span></div><div class="sk-progress"><span></span></div></div></div>
+<div class="sk-coins"><span class="sk-coin">🪙</span><span id="dashboardBalance">1,000</span><button type="button" onclick="showPage('profile')">+</button></div>
+<div class="sk-user"><span class="sk-avatar">😎</span><span id="dashboardUsername">Игрок</span><span>⌄</span></div>
+<div class="sk-bell">♧</div>
+</div>
+<div class="sk-games">
+<button class="sk-game" onclick="showPage('plane')"><span class="sk-art">✈️</span><span class="sk-game-name">Самолёт</span><span class="sk-play">Играть →</span></button>
+<button class="sk-game" onclick="showPage('slots')"><span class="sk-art">🎰</span><span class="sk-game-name">Слоты</span><span class="sk-play">Играть →</span></button>
+<button class="sk-game" onclick="showPage('upgrade')"><span class="sk-art">📦</span><span class="sk-game-name">Апгрейд</span><span class="sk-play">Играть →</span></button>
+<button class="sk-game" onclick="showPage('mines')"><span class="sk-art">💣</span><span class="sk-game-name">Mines</span><span class="sk-play">Играть →</span></button>
+<button class="sk-game" onclick="showPage('plinko')"><span class="sk-art">🔴</span><span class="sk-game-name">Plinko</span><span class="sk-play">Играть →</span></button>
+<button class="sk-game" onclick="showPage('race')"><span class="sk-art">🏎️</span><span class="sk-game-name">Race</span><span class="sk-play">Играть →</span></button>
+<button class="sk-game" onclick="showPage('pickaxe')"><span class="sk-art">⛏️</span><span class="sk-game-name">Кирка</span><span class="sk-play">Играть →</span></button>
+<button class="sk-game" onclick="showPage('battles')"><span class="sk-art">🥊</span><span class="sk-game-name">Батлы</span><span class="sk-play">Играть →</span></button>
+<button class="sk-game" onclick="showPage('blackjack')"><span class="sk-art">🂡</span><span class="sk-game-name">Blackjack</span><span class="sk-play">Играть →</span></button>
+<button class="sk-game" onclick="showPage('dice')"><span class="sk-art">🎲</span><span class="sk-game-name">Кости</span><span class="sk-play">Играть →</span></button>
+<button class="sk-game" onclick="showPage('tictactoe')"><span class="sk-art">⭕</span><span class="sk-game-name">Крестики-нолики</span><span class="sk-play">Играть →</span></button>
+<button class="sk-game" onclick="showPage('billiards')"><span class="sk-art">🎱</span><span class="sk-game-name">Бильярд</span><span class="sk-play">Играть →</span></button>
+<button class="sk-game" onclick="showPage('chickenroad')"><span class="sk-art">🐔</span><span class="sk-game-name">Chicken Road</span><span class="sk-play">Играть →</span></button>
+<button class="sk-game" onclick="showPage('skebobTap')"><span class="sk-art">📱</span><span class="sk-game-name">Skebob Tap</span><span class="sk-play">Играть →</span></button>
+</div></div></div>
 
 <header>
 
@@ -4132,6 +4171,7 @@ setInterval(()=>{updateDailyTasks();if(!document.getElementById("tasks").classLi
 function render(){
 
 document.getElementById("balance").textContent=formatMoney(state.balance);
+const dashboardBalance=document.getElementById("dashboardBalance");if(dashboardBalance)dashboardBalance.textContent=formatMoney(state.balance);
 
 document.getElementById("adminBalance").textContent=formatMoney(state.balance);
 
@@ -4148,6 +4188,8 @@ renderAdminSettings();
 ========================= */
 
 function showPage(id,button){
+document.body.classList.toggle("dashboard-home",id==="dashboard");
+if(id==="dashboard"){window.scrollTo({top:0,behavior:"smooth"});return;}
 if(id==="skebobTap")renderSkebobTap();
 if(id==="tasks")renderDailyTasks();
 if(id==="collection")renderCollection();
