@@ -208,3 +208,44 @@ body.dashboard-home #skebobDashboard .sk-game:nth-child(3n) .sk-art img{animatio
 body.dashboard-home #skebobDashboard .sk-game:nth-child(3n + 1) .sk-art img{animation-delay:-3.7s}
 @keyframes skArtImageFloat{0%,100%{transform:perspective(650px) rotateX(4deg) translateY(0) scale(1)}50%{transform:perspective(650px) rotateX(4deg) translateY(-5px) scale(1.025)}}
 @media(prefers-reduced-motion:reduce){body.dashboard-home #skebobDashboard .sk-art img{animation:none}}
+
+
+/* Custom illustrated sidebar menu buttons */
+#skebobDashboard .sk-side .sk-menu-item{
+ display:flex;align-items:center;gap:10px;width:100%;min-width:0;min-height:54px;
+ padding:7px 9px;border:1px solid #8e39d955;border-radius:13px;
+ background:linear-gradient(145deg,#24103b,#10051e);color:#f7eaff;
+ text-align:left;text-decoration:none;font-size:13px;font-weight:800;line-height:1.15;
+ box-shadow:inset 0 1px #ffffff12;transition:transform .16s,border-color .16s,box-shadow .16s;
+}
+#skebobDashboard .sk-side .sk-menu-item img{
+ display:block;flex:0 0 38px;width:38px;height:38px;object-fit:contain;border-radius:9px;
+ filter:drop-shadow(0 2px 7px #0009);
+}
+#skebobDashboard .sk-side .sk-menu-item span{min-width:0;overflow-wrap:anywhere}
+#skebobDashboard .sk-side .sk-menu-item:hover{
+ transform:translateX(2px);border-color:#e3a1ff;box-shadow:0 0 13px #a000ff55;
+}
+#skebobDashboard .sk-side .sk-menu-item:first-of-type{
+ background:linear-gradient(110deg,#6d16a1,#32104f);border-color:#df9bff;
+ box-shadow:0 0 16px #a000ff77;
+}
+#skebobDashboard .sk-side .sk-side-admin.sk-menu-item{
+ display:flex;align-items:center;justify-content:flex-start;margin-top:auto;
+ padding:8px 9px;font-size:12px;color:#ffd36a;
+}
+@media(max-width:760px){
+ #skebobDashboard .sk-side .sk-menu-item{
+  flex:0 0 auto!important;flex-direction:column!important;justify-content:center!important;
+  gap:4px!important;width:100%!important;min-height:76px!important;height:76px!important;
+  padding:5px 2px!important;border-radius:11px!important;text-align:center!important;
+  font-size:9px!important;line-height:1.05!important;
+ }
+ #skebobDashboard .sk-side .sk-menu-item img{
+  flex:0 0 43px!important;width:43px!important;height:43px!important;border-radius:9px!important;
+ }
+ #skebobDashboard .sk-side .sk-menu-item span{
+  display:block!important;width:100%;font-size:9px!important;line-height:1.05!important;
+ }
+ #skebobDashboard .sk-side .sk-side-admin.sk-menu-item{margin-top:0!important}
+}
