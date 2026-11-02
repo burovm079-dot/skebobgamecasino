@@ -675,6 +675,20 @@ border-radius:24px;
 border:2px solid #292e3d;
 background:linear-gradient(180deg,#143a6d,#2866a0 48%,#d79b72 73%,#124d72 74%,#082f4b);
 }
+.plane-world{background:linear-gradient(180deg,#071d67 0%,#123c9a 58%,#1d4ca0 78%,#071d4d 100%)}
+.plane-world:before{content:"";position:absolute;inset:0;background:radial-gradient(ellipse at 22% 25%,#8dbbff30,transparent 32%);pointer-events:none}
+.plane-world .plane-sun{display:none}.plane-world .plane-sea{height:13%;opacity:.35;background:repeating-linear-gradient(180deg,#b7d8ff30 0 2px,transparent 2px 13px)}
+.plane-world .cloud{filter:drop-shadow(0 3px 3px #0005);opacity:.55;animation:planeCloudDrift 12s linear infinite}
+.plane-world .cloud2{animation-duration:17s}.plane-world .cloud3{animation-duration:21s}
+@keyframes planeCloudDrift{from{translate:100px 0}to{translate:-180px 0}}
+.plane-object{left:38%;bottom:40%;font-size:54px;transform:rotate(-12deg);transition:left .45s linear,bottom .45s linear,transform .45s linear}
+.plane-object.flying{animation:planeCruise .55s ease-in-out infinite alternate}
+@keyframes planeCruise{from{transform:translateY(-4px) rotate(-9deg)}to{transform:translateY(4px) rotate(-15deg)}}
+.plane-world .plane-multiplier{top:23%;left:50%;font-size:24px;text-shadow:0 0 15px #fff8}
+.plane-world .plane-flight-hud{top:auto;bottom:8px;left:9px;right:9px}
+.plane-world .plane-event{top:43%;z-index:20}
+.plane-token{position:absolute;z-index:8;color:#fff;font-weight:1000;text-shadow:0 2px 5px #000;font-size:18px;animation:planeTokenFly 1.5s ease-out forwards;pointer-events:none}
+@keyframes planeTokenFly{from{opacity:0;transform:translate(35px,0) scale(.7)}20%{opacity:1}to{opacity:0;transform:translate(-110px,-35px) scale(1.1)}}
 
 .plane-sun{
 position:absolute;
@@ -2371,7 +2385,7 @@ x1,00
  <span>ВЫСОТА <b id="planeAltitude">2,5 м</b></span>
 </div>
 
-<div class="plane-sun"></div>
+<div class="plane-sun"></div><div class="plane-token-layer" id="planeTokenLayer"></div>
 
 <div class="cloud cloud1">
 ☁️
@@ -6404,11 +6418,10 @@ document.getElementById(
 plane.className=
 "plane-object";
 
-plane.style.left=
-"16%";
-
-plane.style.bottom=
-"29%";
+plane.style.left="38%";
+plane.style.bottom="40%";
+plane.style.transform="rotate(-12deg)";
+const tokens=document.getElementById("planeTokenLayer");if(tokens)tokens.innerHTML="";
 
 document.getElementById(
 "landingCarrier"
@@ -6652,8 +6665,10 @@ const altitude=(2.5+Math.random()*8.5).toFixed(1).replace(".",",");
 document.getElementById("planeDistance").textContent=distance+" м";
 document.getElementById("planeAltitude").textContent=altitude+" м";
 
-plane.style.left=(30+progress*43)+"%";
-plane.style.bottom=(43+Math.random()*27)+"%";
+plane.style.left=(36+Math.sin(progress*Math.PI*2)*5)+"%";
+plane.style.bottom=(39+progress*20+Math.sin(progress*Math.PI*3)*5)+"%";
+plane.style.transform="rotate("+(-12-progress*5)+"deg)";
+const token=document.createElement("span");token.className="plane-token";token.textContent=Math.random()<.72?"+"+["1","2","5","10"][Math.floor(Math.random()*4)]:"×"+planeMultiplier.toFixed(1);token.style.left=(58+Math.random()*25)+"%";token.style.top=(25+Math.random()*45)+"%";document.getElementById("planeTokenLayer")?.appendChild(token);setTimeout(()=>token.remove(),1600);
 
 await planeWait(600);
 await randomPlaneEvent();
