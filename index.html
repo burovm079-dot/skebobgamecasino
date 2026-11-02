@@ -8656,5 +8656,61 @@ document.addEventListener("DOMContentLoaded",initNickname,{once:true});
 </div>
 
 <div id="skebobDialog" role="dialog" aria-modal="true" style="display:none;position:fixed;inset:0;z-index:30000;background:rgba(0,0,0,.78);align-items:center;justify-content:center;padding:20px"><div style="width:100%;max-width:430px;background:var(--panel);color:var(--text);border:1px solid var(--gold);border-radius:22px;padding:24px;box-shadow:0 18px 60px #000b"><h2 data-dialog-title style="margin:0 0 16px;color:var(--gold)">Уведомление</h2><div data-dialog-message style="font-size:16px;line-height:1.55;white-space:pre-wrap;overflow-wrap:anywhere"></div><input data-dialog-input type="text" style="display:none;margin-top:16px"><div style="display:flex;gap:10px;justify-content:flex-end;margin-top:22px"><button data-dialog-cancel type="button" class="secondary">Отмена</button><button data-dialog-ok type="button" class="goldbtn" style="width:auto;min-width:110px;margin:0;padding:12px 20px">ОК</button></div></div></div>
+
+<style id="skebob-final-mobile-override">
+@media screen and (max-width: 700px) {
+  html, body { width:100%!important; min-width:0!important; overflow-x:hidden!important; }
+  body { display:block!important; }
+  body > header {
+    width:auto!important; max-width:none!important; margin:0 6px 8px 88px!important;
+    padding:10px 8px!important; min-height:0!important; border-radius:0 0 14px 14px!important;
+    display:flex!important; flex-direction:column!important; gap:7px!important;
+  }
+  body > header .logo { width:100%!important; font-size:clamp(14px,4vw,20px)!important; text-align:center!important; }
+  body > header .header-actions { display:none!important; }
+  body > .balance {
+    width:auto!important; max-width:none!important; margin:6px 6px 8px 88px!important;
+    padding:8px!important; display:flex!important; flex-wrap:wrap!important; gap:4px 8px!important;
+  }
+  body > .balance > div { min-width:0!important; }
+  body > .balance .small { font-size:10px!important; }
+  body > .balance strong { font-size:clamp(17px,5vw,22px)!important; }
+  body > main {
+    display:block!important; width:auto!important; max-width:none!important; min-width:0!important;
+    margin:0 6px 0 88px!important; padding:4px 3px 30px!important;
+  }
+  body > main > .home-nav {
+    position:fixed!important; display:flex!important; flex-direction:column!important; flex-wrap:nowrap!important;
+    left:4px!important; top:4px!important; bottom:4px!important; right:auto!important;
+    width:78px!important; height:auto!important; max-height:none!important;
+    margin:0!important; padding:91px 3px 7px!important; gap:5px!important;
+    overflow-x:hidden!important; overflow-y:auto!important; z-index:9999!important;
+  }
+  body > main > .home-nav:before { top:10px!important; font-size:44px!important; }
+  body > main > .home-nav .sidebar-caption { top:63px!important; font-size:7px!important; letter-spacing:.5px!important; }
+  body > main > .home-nav button, body > main > .home-nav a {
+    display:block!important; flex:0 0 auto!important; width:100%!important; min-width:0!important;
+    min-height:38px!important; height:auto!important; padding:6px 2px!important;
+    font-size:8px!important; line-height:1.15!important; text-align:center!important;
+    white-space:normal!important; overflow-wrap:anywhere!important;
+  }
+  body > main > .home-dashboard { width:100%!important; min-width:0!important; margin:0!important; padding:4px 0 20px!important; }
+  body > main .home-section-head { display:flex!important; flex-wrap:wrap!important; align-items:center!important; justify-content:space-between!important; gap:6px!important; }
+  body > main .home-section-head h2 { font-size:clamp(15px,4vw,19px)!important; }
+  body > main .home-game-grid { display:grid!important; width:100%!important; grid-template-columns:minmax(0,1fr)!important; gap:9px!important; }
+  body > main .home-game-card { display:flex!important; width:100%!important; min-width:0!important; min-height:175px!important; padding:9px!important; }
+  body > main .home-game-art { flex:0 0 82px!important; font-size:55px!important; }
+  body > main .home-game-card b { font-size:15px!important; }
+  body > main .home-game-card small { font-size:11px!important; }
+  body > main .home-play { width:min(100%,170px)!important; font-size:12px!important; padding:8px!important; }
+}
+@media screen and (max-width:360px) {
+  body > header, body > .balance { margin-left:82px!important; }
+  body > main { margin-left:82px!important; }
+  body > main > .home-nav { width:72px!important; }
+  body > main > .home-nav button, body > main > .home-nav a { font-size:7px!important; }
+}
+</style>
+
 </body>
     </html>
