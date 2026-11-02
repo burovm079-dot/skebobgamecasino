@@ -13,7 +13,7 @@ header{padding:18px 22px;border-bottom:1px solid var(--border);display:flex;just
 button,input{font:inherit}button{cursor:pointer;border:1px solid var(--border);border-radius:10px;padding:10px 14px;background:var(--panel2);color:var(--text);font-weight:700}
 main{width:min(720px,calc(100% - 28px));margin:34px auto}.card{background:var(--panel);border:1px solid var(--border);border-radius:18px;padding:22px;margin-bottom:16px}
 .hero{text-align:center;padding:32px 20px}.avatar{font-size:58px}.eyebrow{color:var(--muted);font-size:12px;letter-spacing:1.4px;font-weight:800;margin-top:12px}
-h1{font-size:27px;margin:9px 0 7px}.muted{color:var(--muted);line-height:1.5}.verified{display:inline-grid;place-items:center;vertical-align:middle;width:20px;height:20px;margin-left:7px;border-radius:50%;background:#258cf4;color:white;font-size:13px;font-weight:900}
+h1{font-size:27px;margin:9px 0 7px}.collector-badge{display:none;margin:12px auto 0;padding:10px 14px;width:fit-content;border:1px solid #ffe16b;border-radius:12px;color:#ffe16b;background:#ffe16b12;font-weight:900;box-shadow:0 0 18px #ffc40033}.muted{color:var(--muted);line-height:1.5}.verified{display:inline-grid;place-items:center;vertical-align:middle;width:20px;height:20px;margin-left:7px;border-radius:50%;background:#258cf4;color:white;font-size:13px;font-weight:900}
 .field{display:flex;gap:9px;margin-top:12px}.field input{flex:1;min-width:0;padding:12px;border-radius:10px;border:1px solid var(--border);background:var(--panel2);color:var(--text)}
 .notice{font-size:13px;color:var(--muted);margin-top:12px}.official-tools{display:none}.official-tools button{width:100%;margin-top:12px;background:#493819;color:#ffda7c;border-color:#80652e}.nft-result{margin-top:12px;font-size:13px;color:var(--muted)}.actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:14px}.primary{background:#493819;color:#ffda7c;border-color:#80652e}
 footer{text-align:center;color:var(--muted);font-size:12px;padding:20px}
@@ -25,7 +25,7 @@ footer{text-align:center;color:var(--muted);font-size:12px;padding:20px}
 <main>
 <section class="card hero">
 <div class="avatar">👤</div><div class="eyebrow">ЛИЧНЫЙ ПРОФИЛЬ</div>
-<h1 id="shownNick">Player</h1><div class="muted">Профиль пользователя SKEBOB</div>
+<h1 id="shownNick">Player</h1><div id="collectorBadge" class="collector-badge">🏆 ЛЕГЕНДА КОЛЛЕКЦИИ — ВСЕ NFT СОБРАНЫ!</div><div class="muted">Профиль пользователя SKEBOB</div>
 </section>
 <section class="card">
 <h2>О верификации</h2>
@@ -66,6 +66,8 @@ footer{text-align:center;color:var(--muted);font-size:12px;padding:20px}
  function render(){
   const nick=currentNick();
   shown.textContent=nick;
+  let saved={};try{saved=JSON.parse(localStorage.getItem('skebobSave')||'{}')||{};}catch(e){}
+  document.getElementById('collectorBadge').style.display=saved.collectionAchievement&&saved.collectionAchievement.unlocked?'block':'none';
   tools.style.display=isOfficial()?'block':'none';
   if(nick.trim().toLocaleUpperCase('ru')===official){
    const mark=document.createElement('span');mark.className='verified';mark.textContent='✓';mark.title='SKEBOB OFFICIAL';mark.setAttribute('aria-label','Отметка SKEBOB OFFICIAL');shown.appendChild(mark);
