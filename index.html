@@ -909,7 +909,7 @@ line-height:1.6;
 .plinko-board{height:340px;position:relative;display:flex;flex-direction:column;justify-content:space-between;align-items:center;max-width:460px;margin:auto}
 .plinko-peg-row{height:19px;display:grid;align-items:center;flex:none}
 .plinko-peg{width:7px;height:7px;border-radius:50%;background:#dce8f6;box-shadow:0 0 6px #9ecbff99;margin:auto}
-.plinko-ball{position:absolute;z-index:5;left:50%;top:-4px;transform:translate(-50%,-50%);font-size:24px;filter:drop-shadow(0 2px 4px #000);transition:left .13s linear,top .13s linear;pointer-events:none}
+.plinko-ball{position:absolute;z-index:5;left:50%;top:-4px;width:20px;height:20px;border-radius:50%;transform:translate(-50%,-50%);pointer-events:none;background:radial-gradient(circle at 30% 24%,#fff 0 5%,#ffd5d5 8%,#ff6565 24%,#d7192d 58%,#710b1b 83%,#300610 100%);border:1px solid #ffb1b8;box-shadow:inset -3px -4px 6px #41000b99,inset 2px 2px 4px #fff9,0 3px 7px #000b,0 0 9px #ff334477;transition:left .12s cubic-bezier(.2,.7,.3,1),top .12s cubic-bezier(.2,.7,.3,1);will-change:left,top}.plinko-ball:after{content:"";position:absolute;width:5px;height:3px;border-radius:50%;background:#fff9;left:4px;top:3px;transform:rotate(-35deg);filter:blur(.4px)}
 .plinko-slots{display:grid;grid-template-columns:repeat(13,minmax(0,1fr));gap:3px;margin:8px auto 0;max-width:460px}
 .plinko-slot{min-width:0;text-align:center;border-radius:6px;padding:8px 1px;background:#263246;border:1px solid #45566d;color:#dceaff;font-size:clamp(8px,2.5vw,11px);font-weight:900}
 .plinko-slot.hit{background:#f4c75e;color:#17120a;border-color:#fff0a8;box-shadow:0 0 12px #f4c75e}
@@ -2750,7 +2750,7 @@ class="game-status"
  </div>
  <div class="plinko-board-wrap">
   <div class="plinko-board" id="plinkoBoard">
-   <div class="plinko-ball" id="plinkoBall">🔴</div>
+   <div class="plinko-ball" id="plinkoBall" aria-label="Красный металлический шар"></div>
   </div>
   <div class="plinko-slots" id="plinkoSlots"></div>
  </div>
@@ -6626,9 +6626,35 @@ const PLINKO_MULTIPLIERS={
 };
 let plinkoBusy=false,plinkoBet=100,plinkoRisk="medium";
 function plinkoWait(ms){return new Promise(resolve=>setTimeout(resolve,ms));}
+let plinkoAudioContext=null;
+function plinkoImpactSound(row=0,landing=false){
+ try{
+  const C=window.AudioContext||window.webkitAudioContext;if(!C)return;
+  if(!plinkoAudioContext)plinkoAudioContext=new C();
+  const ctx=plinkoAudioContext;if(ctx.state==="suspended")ctx.resume();
+  const now=ctx.currentTime;
+  const osc=ctx.createOscillator(),gain=ctx.createGain(),filter=ctx.createBiquadFilter();
+  osc.type=landing?"triangle":"sine";
+  const freq=landing?145:680-(row*19);
+  osc.frequency.setValueAtTime(Math.max(180,freq),now);
+  osc.frequency.exponentialRampToValueAtTime(landing?58:Math.max(130,freq*.52),now+(landing?.19:.055));
+  filter.type="lowpass";filter.frequency.setValueAtTime(landing?520:2100,now);
+  gain.gain.setValueAtTime(.0001,now);gain.gain.exponentialRampToValueAtTime(landing?.11:.045,now+.004);
+  gain.gain.exponentialRampToValueAtTime(.0001,now+(landing?.22:.075));
+  osc.connect(filter);filter.connect(gain);gain.connect(ctx.destination);
+  osc.start(now);osc.stop(now+(landing?.24:.09));
+  if(!landing){
+   const click=ctx.createOscillator(),cg=ctx.createGain();click.type="triangle";
+   click.frequency.setValueAtTime(1250+((row*73)%420),now);
+   cg.gain.setValueAtTime(.025,now);cg.gain.exponentialRampToValueAtTime(.0001,now+.025);
+   click.connect(cg);cg.connect(ctx.destination);click.start(now);click.stop(now+.03);
+  }
+ }catch(e){}
+}
+
 function renderPlinkoBoard(){
  const board=document.getElementById("plinkoBoard");
- board.innerHTML='<div class="plinko-ball" id="plinkoBall">🔴</div>';
+ board.innerHTML='<div class="plinko-ball" id="plinkoBall" aria-label="Красный металлический шар"></div>';
  for(let row=0;row<PLINKO_ROWS;row++){
   const line=document.createElement("div");
   line.className="plinko-peg-row";
@@ -6675,7 +6701,7 @@ async function startPlinkoGame(){
  if(plinkoBusy)return;
  const bet=Math.floor(Number(document.getElementById("plinkoBet").value));
  if(!Number.isFinite(bet)||bet<10||bet>state.balance){alert("Недостаточно монет или неверная ставка.");return;}
- plinkoBusy=true;plinkoBet=bet;state.balance-=bet;addTurnover(bet);state.stats.plinkoGames++;save();
+ plinkoBusy=true;plinkoBet=bet;try{if(!plinkoAudioContext){const C=window.AudioContext||window.webkitAudioContext;if(C)plinkoAudioContext=new C();}if(plinkoAudioContext&&plinkoAudioContext.state==="suspended")plinkoAudioContext.resume();}catch(e){}state.balance-=bet;addTurnover(bet);state.stats.plinkoGames++;save();
  updatePlinkoControls();
  const board=document.getElementById("plinkoBoard"),ball=document.getElementById("plinkoBall");
  renderPlinkoBoard();
@@ -6690,6 +6716,7 @@ async function startPlinkoGame(){
   const within=row===0?50:(position/row)*rowWidth;
   activeBall.style.left=(leftOffset+within)+"%";
   activeBall.style.top=((row+1)/(PLINKO_ROWS+1)*100)+"%";
+  plinkoImpactSound(row,false);
   await plinkoWait(145);
  }
  // The final deflection selects one of 13 payout pockets.
@@ -6701,6 +6728,7 @@ async function startPlinkoGame(){
  if(slot)slot.classList.add("hit");
  activeBall.style.left=(((safeLanding+.5)/payoutTable.length)*100)+"%";
  activeBall.style.top="101%";
+ plinkoImpactSound(PLINKO_ROWS,true);
  await plinkoWait(450);
  const reward=Math.floor(bet*multiplier);
  state.balance+=reward;
