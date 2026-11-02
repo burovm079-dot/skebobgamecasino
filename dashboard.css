@@ -418,3 +418,24 @@ body.dashboard-home #skebobDashboard .sk-game .sk-play{
  body.dashboard-home #skebobDashboard .sk-game{padding:8px!important}
  body.dashboard-home #skebobDashboard .sk-game .sk-play{font-size:14px!important;padding:8px 8px!important}
 }
+
+
+/* v15: show the complete original game artwork without cropping */
+body.dashboard-home #skebobDashboard .sk-game .sk-art{
+ position:absolute!important;inset:8px 8px 27%!important;
+ width:auto!important;height:auto!important;overflow:hidden!important;
+ display:flex!important;align-items:center!important;justify-content:center!important;
+ background:radial-gradient(ellipse at center,rgba(105,0,190,.24),transparent 72%)!important;
+}
+body.dashboard-home #skebobDashboard .sk-game .sk-art img{
+ position:relative!important;inset:auto!important;display:block!important;
+ width:100%!important;height:100%!important;max-width:100%!important;max-height:100%!important;
+ object-fit:contain!important;object-position:center center!important;
+ border:0!important;border-radius:12px!important;padding:0!important;margin:0!important;
+ filter:drop-shadow(0 5px 9px rgba(0,0,0,.42))!important;
+ transform:none!important;animation:none!important;
+}
+body.dashboard-home #skebobDashboard .sk-game:after{
+ inset:55% 0 0!important;
+ background:linear-gradient(180deg,transparent 0%,rgba(10,2,22,.84) 42%,rgba(10,2,22,.98) 100%)!important;
+}
