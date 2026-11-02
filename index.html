@@ -6362,29 +6362,6 @@ function updatePlane3D(progress,phase){plane2dProgress=Math.max(0,Math.min(1,Num
 let planeBusy=false,planeInFlight=false,planeBet=1000,planeMultiplier=1,planeCrashAt=0,planeStartedAt=0,planeAnimationTimer=null,planeDecorTimer=null;
 function planeWait(ms){return new Promise(r=>setTimeout(r,ms));}
 
-let planeAudioContext=null,planeEngineNodes=null;
-function planeEngineSound(start=true){
- try{
-  const C=window.AudioContext||window.webkitAudioContext;if(!C)return;
-  if(!planeAudioContext)planeAudioContext=new C();
-  const ctx=planeAudioContext;if(ctx.state==="suspended")ctx.resume();
-  if(start){
-   if(planeEngineNodes)return;
-   const master=ctx.createGain();master.gain.value=.0001;master.connect(ctx.destination);
-   const low=ctx.createOscillator(),harm=ctx.createOscillator(),filter=ctx.createBiquadFilter();
-   low.type="sawtooth";low.frequency.value=78;harm.type="triangle";harm.frequency.value=156;
-   filter.type="lowpass";filter.frequency.value=430;
-   const mix=ctx.createGain();mix.gain.value=.18;low.connect(filter);harm.connect(filter);filter.connect(mix);mix.connect(master);
-   const lfo=ctx.createOscillator(),lfoGain=ctx.createGain();lfo.frequency.value=7;lfoGain.gain.value=3;lfo.connect(lfoGain);lfoGain.connect(low.frequency);
-   low.start();harm.start();lfo.start();master.gain.setTargetAtTime(.12,ctx.currentTime,.25);
-   planeEngineNodes={master,low,harm,lfo};
-  }else if(planeEngineNodes){
-   const nodes=planeEngineNodes;planeEngineNodes=null;
-   nodes.master.gain.setTargetAtTime(.0001,ctx.currentTime,.12);
-   setTimeout(()=>{try{nodes.low.stop();nodes.harm.stop();nodes.lfo.stop();}catch(e){}},650);
-  }
- }catch(e){}
-}
 function planeWaterImpactSound(){
  try{
   const C=window.AudioContext||window.webkitAudioContext;if(!C)return;
@@ -6417,21 +6394,21 @@ function resetPlaneVisual(){planeSim=null;plane2dPhase="ready";plane2dProgress=0
 function planeMainAction(){if(planeBusy)return;startPlaneGame();}
 function planeCashout(){
  if(!planeInFlight||!planeBusy)return;
- planeInFlight=false;planeEngineSound(false);if(planeAnimationTimer)clearInterval(planeAnimationTimer);if(planeDecorTimer)clearInterval(planeDecorTimer);
+ planeInFlight=false;if(planeAnimationTimer)clearInterval(planeAnimationTimer);if(planeDecorTimer)clearInterval(planeDecorTimer);
  const reward=Math.min(Math.floor(planeBet*1.4),Math.floor(planeBet*planeMultiplier));state.balance+=reward;state.stats.planeWins++;addDailyTaskProgress("plane");registerWin(reward);plane2dPhase="landed";updatePlane3D(plane2dProgress,"landed");
  const stage=document.getElementById("planeStage"),status=document.getElementById("planeStatus"),obj=document.getElementById("planeObject");
  if(stage)stage.textContent="ПОСАДКА";if(status){status.style.color="#24cf78";status.innerHTML="🏆 ВЫ УСПЕЛИ ЗАБРАТЬ ВЫИГРЫШ!<br><b>+"+reward.toLocaleString("ru-RU")+" 🪙</b>";}if(obj){obj.classList.remove("flying");obj.style.transform="rotate(0deg)";}
  planeEvent("🏆 +"+reward.toLocaleString("ru-RU")+" 🪙");save();planeBusy=false;updatePlaneControls();
 }
 async function planeCrash(){
- if(!planeInFlight)return;planeInFlight=false;planeEngineSound(false);planeWaterImpactSound();const world=document.querySelector(".plane-world");if(world){world.classList.remove("splashing");void world.offsetWidth;world.classList.add("splashing");setTimeout(()=>world.classList.remove("splashing"),1900);}if(planeAnimationTimer)clearInterval(planeAnimationTimer);if(planeDecorTimer)clearInterval(planeDecorTimer);
+ if(!planeInFlight)return;planeInFlight=false;planeWaterImpactSound();const world=document.querySelector(".plane-world");if(world){world.classList.remove("splashing");void world.offsetWidth;world.classList.add("splashing");setTimeout(()=>world.classList.remove("splashing"),1900);}if(planeAnimationTimer)clearInterval(planeAnimationTimer);if(planeDecorTimer)clearInterval(planeDecorTimer);
  plane2dPhase="crash";updatePlane3D(1,"crash");const obj=document.getElementById("planeObject"),stage=document.getElementById("planeStage"),status=document.getElementById("planeStatus");
  if(obj){obj.classList.remove("flying");obj.classList.add("crash");}if(stage)stage.textContent="ПОЛЁТ ЗАВЕРШЁН";if(status){status.style.color="#ff626b";status.textContent="💥 Самолётик исчез на ×"+planeMultiplier.toFixed(2).replace(".",",")+". В этом раунде забрать очки уже нельзя.";}
  planeEvent("💥 ПОЛЁТ ЗАВЕРШЁН");planeBusy=false;updatePlaneControls();save();
 }
 function planeSetHud(stage,status,color){const st=document.getElementById("planeStage"),ss=document.getElementById("planeStatus");if(st)st.textContent=stage;if(ss){ss.style.color=color||"#ffbd42";ss.textContent=status;}}
 function planeFinishLanding(outcome){
- if(!planeInFlight)return;planeInFlight=false;planeEngineSound(false);if(planeAnimationTimer)clearInterval(planeAnimationTimer);
+ if(!planeInFlight)return;planeInFlight=false;if(planeAnimationTimer)clearInterval(planeAnimationTimer);
  const sim=planeSim;sim.phase=outcome;sim.showCarrier=true;if(outcome==="landed"){sim.x=.82;sim.y=.80;sim.angle=0;}else if(outcome==="short"){sim.x=.68;sim.y=.83;sim.angle=.12;}else if(outcome==="over"){sim.x=.99;sim.y=.77;sim.angle=-.12;}else if(outcome==="rolloff"){sim.x=.99;sim.y=.88;sim.angle=.55;}updatePlane3D(1,outcome);
  const stage=document.getElementById("planeStage"),status=document.getElementById("planeStatus");
  let message="",reward=0;
@@ -6501,7 +6478,7 @@ function updatePlaneFlight(){
 async function startPlaneGame(){
  if(planeBusy)return;const bet=Math.floor(Number(document.getElementById("planeBet").value));
  if(!Number.isSafeInteger(bet)||bet<10||!Number.isFinite(state.balance)||bet>state.balance){alert("Недостаточно монет или неверная ставка.");return;}
- planeBusy=true;planeInFlight=false;planeBet=bet;planeEngineSound(true);state.balance-=bet;addTurnover(bet);state.stats.planeGames++;save();resetPlaneVisual();updatePlaneControls();
+ planeBusy=true;planeInFlight=false;planeBet=bet;state.balance-=bet;addTurnover(bet);state.stats.planeGames++;save();resetPlaneVisual();updatePlaneControls();
  const status=document.getElementById("planeStatus"),stage=document.getElementById("planeStage");
  if(status){status.style.color="#ffbd42";status.textContent="✈️ Двигатели запущены. Самолёт разбегается по палубе…";}if(stage)stage.textContent="РАЗБЕГ";
  await planeWait(700);
