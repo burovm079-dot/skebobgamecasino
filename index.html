@@ -8273,9 +8273,6 @@ async function initNickname(){
  if(nick&&bjIsSpecialAccount(nick)&&!(await bjRequestSpecialAccountPassword(nick))){
   nick=randomNickname();storageSet(NICKNAME_KEY,nick);
  }
- if(nick&&bjIsOfficialNickname(nick)&&!(await bjRequestOfficialCode())){
-  nick=randomNickname();storageSet(NICKNAME_KEY,nick);
- }
  if(state.admin.infiniteBalance&&!bjCanUseInfiniteBalance(nick)){
   const restore=Number(state.admin.balanceBeforeInfinite);
   state.balance=Number.isFinite(restore)?Math.max(0,Math.floor(restore)):20;
