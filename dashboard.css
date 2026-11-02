@@ -330,3 +330,30 @@ body.dashboard-home #skebobDashboard .sk-game:nth-child(3n + 1) .sk-art img{anim
   flex:0 0 76px!important;margin:0!important;padding:0!important;
  }
 }
+
+
+/* v12: square navigation tiles exactly match the sidebar's inner width */
+#skebobDashboard .sk-side button.sk-menu-item,
+#skebobDashboard .sk-side a.sk-menu-item{
+ box-sizing:border-box!important;position:relative!important;display:block!important;
+ width:100%!important;min-width:0!important;max-width:100%!important;
+ aspect-ratio:1 / 1!important;height:auto!important;min-height:0!important;max-height:none!important;
+ flex:0 0 auto!important;margin:0!important;padding:0!important;
+ border:0!important;border-radius:12px!important;background:transparent!important;
+ box-shadow:none!important;overflow:hidden!important;isolation:isolate!important;
+}
+#skebobDashboard .sk-side .sk-menu-item img{
+ position:absolute!important;inset:0!important;display:block!important;
+ width:100%!important;height:100%!important;min-width:100%!important;min-height:100%!important;
+ max-width:none!important;max-height:none!important;margin:0!important;padding:0!important;
+ flex:none!important;object-fit:fill!important;object-position:center!important;
+ border:0!important;border-radius:inherit!important;z-index:1!important;
+}
+#skebobDashboard .sk-side .sk-menu-item span{display:none!important}
+@media(max-width:760px){
+ #skebobDashboard .sk-side button.sk-menu-item,
+ #skebobDashboard .sk-side a.sk-menu-item{
+  width:100%!important;height:auto!important;min-height:0!important;max-height:none!important;
+  aspect-ratio:1 / 1!important;flex:0 0 auto!important;
+ }
+}
