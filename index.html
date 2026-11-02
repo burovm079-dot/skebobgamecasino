@@ -6310,79 +6310,51 @@ updateMineStats();
 /* =========================
    PLANE — multiplier flight / manual cashout
 ========================= */
-let plane2dProgress=0,plane2dFrame=0,plane2d=null,plane2dPhase='ready';
+let plane2dProgress=0,plane2dFrame=0,plane2d=null,plane2dPhase="ready",planeSim=null;
 function initPlane3D(){
- const host=document.querySelector(".plane-world");
- if(!host)return;
- host.classList.add("plane2d-ready");
+ const host=document.querySelector(".plane-world");if(!host)return;
  if(plane2d)return;
- const canvas=document.createElement("canvas");
- canvas.id="plane2dCanvas";
- canvas.setAttribute("aria-label","2D-аркада: самолёт летит слева направо");
- host.insertBefore(canvas,host.firstChild);
- const ctx=canvas.getContext("2d");
- if(!ctx)return;
- plane2d={canvas,ctx,w:1,h:1,clouds:Array.from({length:12},(_,i)=>({x:(i*113+27)%900,y:.69+(i%4)*.055,s:.45+(i%3)*.22}))};
- function resize(){
-  const w=Math.max(1,host.clientWidth),h=Math.max(1,host.clientHeight),d=Math.min(window.devicePixelRatio||1,2);
-  canvas.width=Math.round(w*d);canvas.height=Math.round(h*d);
-  canvas.style.width="100%";canvas.style.height="100%";
-  ctx.setTransform(d,0,0,d,0,0);plane2d.w=w;plane2d.h=h;
+ const canvas=document.createElement("canvas");canvas.id="plane2dCanvas";canvas.setAttribute("aria-label","2D-полёт самолёта над авианосцем");
+ host.insertBefore(canvas,host.firstChild);const ctx=canvas.getContext("2d");if(!ctx)return;
+ plane2d={canvas,ctx,w:1,h:1,clouds:Array.from({length:14},(_,i)=>({x:i/14,y:.25+(i%5)*.09,s:.5+(i%3)*.2}))};
+ function resize(){const d=Math.min(window.devicePixelRatio||1,2),w=Math.max(1,host.clientWidth),h=Math.max(1,host.clientHeight);canvas.width=w*d;canvas.height=h*d;canvas.style.width="100%";canvas.style.height="100%";ctx.setTransform(d,0,0,d,0,0);plane2d.w=w;plane2d.h=h;}
+ resize();if(window.ResizeObserver)new ResizeObserver(resize).observe(host);else window.addEventListener("resize",resize);
+ function drawCloud(x,y,z){ctx.save();ctx.translate(x,y);ctx.scale(z,z);ctx.fillStyle="#9db8ed";ctx.globalAlpha=.36;ctx.beginPath();ctx.ellipse(0,7,32,10,0,0,Math.PI*2);ctx.ellipse(-17,0,18,13,0,0,Math.PI*2);ctx.ellipse(2,-10,23,18,0,0,Math.PI*2);ctx.ellipse(23,0,18,12,0,0,Math.PI*2);ctx.fill();ctx.restore();}
+ function drawCarrier(x,y,scale){ctx.save();ctx.translate(x,y);ctx.scale(scale,scale);
+  ctx.fillStyle="#26374d";ctx.beginPath();ctx.moveTo(-100,0);ctx.lineTo(104,0);ctx.lineTo(88,18);ctx.lineTo(-78,18);ctx.closePath();ctx.fill();
+  ctx.fillStyle="#a8b4c4";ctx.fillRect(-96,-5,190,7);ctx.fillStyle="#586c83";ctx.fillRect(-65,-16,98,10);
+  ctx.fillStyle="#c4ccd5";ctx.fillRect(-14,-31,32,16);ctx.fillRect(-5,-39,9,8);ctx.fillStyle="#e6edf5";ctx.fillRect(-11,-35,4,4);ctx.fillRect(2,-35,4,4);
+  ctx.fillStyle="#f3d46a";ctx.fillRect(-86,-7,3,2);ctx.fillRect(74,-7,3,2);
+  ctx.strokeStyle="#fff";ctx.lineWidth=1;ctx.beginPath();ctx.moveTo(-75,-6);ctx.lineTo(75,-6);ctx.stroke();ctx.restore();
  }
- resize();
- if(window.ResizeObserver)new ResizeObserver(resize).observe(host);else window.addEventListener("resize",resize);
- function cloud(x,y,scale){
-  ctx.save();ctx.translate(x,y);ctx.scale(scale,scale);
-  ctx.fillStyle="#3155a0";ctx.globalAlpha=.68;
-  ctx.beginPath();ctx.ellipse(0,7,34,10,0,0,Math.PI*2);ctx.ellipse(-16,1,17,13,0,0,Math.PI*2);ctx.ellipse(2,-8,21,18,0,0,Math.PI*2);ctx.ellipse(22,1,18,12,0,0,Math.PI*2);ctx.fill();
-  ctx.fillStyle="#7997d4";ctx.globalAlpha=.22;ctx.beginPath();ctx.ellipse(-2,-8,22,7,0,Math.PI,Math.PI*2);ctx.fill();ctx.restore();
- }
- function drawPlane(x,y,t){
-  ctx.save();ctx.translate(x,y);ctx.rotate(-.025+Math.sin(t*4)*.012);
-  // soft exhaust trail
-  const trail=ctx.createLinearGradient(-76,0,-12,0);trail.addColorStop(0,"rgba(42,160,255,0)");trail.addColorStop(1,"rgba(119,205,255,.72)");
-  ctx.strokeStyle=trail;ctx.lineWidth=3;ctx.beginPath();ctx.moveTo(-78,2);ctx.lineTo(-15,2);ctx.stroke();
-  ctx.shadowColor="#ff5a27";ctx.shadowBlur=13;
-  // wings behind fuselage
-  ctx.fillStyle="#b8212c";ctx.beginPath();ctx.moveTo(-10,-2);ctx.lineTo(10,-25);ctx.lineTo(24,-24);ctx.lineTo(15,-2);ctx.lineTo(13,3);ctx.lineTo(2,19);ctx.lineTo(-10,15);ctx.closePath();ctx.fill();
-  ctx.shadowBlur=0;
-  // tail and body
-  ctx.fillStyle="#e53b2e";ctx.beginPath();ctx.moveTo(-38,-5);ctx.lineTo(-27,-11);ctx.lineTo(-18,-6);ctx.lineTo(35,-5);ctx.lineTo(51,0);ctx.lineTo(35,5);ctx.lineTo(-21,5);ctx.lineTo(-34,10);ctx.closePath();ctx.fill();
-  ctx.fillStyle="#ffbd32";ctx.beginPath();ctx.moveTo(24,-5);ctx.lineTo(51,0);ctx.lineTo(24,5);ctx.closePath();ctx.fill();
-  ctx.fillStyle="#f04b31";ctx.beginPath();ctx.moveTo(-31,-5);ctx.lineTo(-38,-20);ctx.lineTo(-29,-19);ctx.lineTo(-18,-5);ctx.closePath();ctx.fill();
-  ctx.fillStyle="#ffcf4a";ctx.beginPath();ctx.moveTo(-31,3);ctx.lineTo(-40,13);ctx.lineTo(-30,12);ctx.lineTo(-17,4);ctx.closePath();ctx.fill();
-  ctx.fillStyle="#9ce8ff";ctx.beginPath();ctx.ellipse(7,-2,8,3,-.08,0,Math.PI*2);ctx.fill();
-  ctx.fillStyle="#fff0a0";ctx.beginPath();ctx.arc(47,0,2.5,0,Math.PI*2);ctx.fill();
-  // spinning propeller
-  ctx.strokeStyle="#ffe6a3";ctx.lineWidth=2.2;ctx.beginPath();ctx.moveTo(54,-12+Math.sin(t*28)*2);ctx.lineTo(54,12+Math.sin(t*28)*2);ctx.stroke();
+ function drawPlane(x,y,angle,t,damaged){ctx.save();ctx.translate(x,y);ctx.rotate(angle);ctx.scale(1.05,1.05);
+  const trail=ctx.createLinearGradient(-75,0,-10,0);trail.addColorStop(0,"rgba(86,174,255,0)");trail.addColorStop(1,"rgba(130,205,255,.8)");ctx.strokeStyle=trail;ctx.lineWidth=4;ctx.beginPath();ctx.moveTo(-80,1);ctx.lineTo(-12,1);ctx.stroke();
+  ctx.fillStyle="#a91d2b";ctx.beginPath();ctx.moveTo(-12,-2);ctx.lineTo(7,-23);ctx.lineTo(23,-22);ctx.lineTo(15,-1);ctx.lineTo(12,4);ctx.lineTo(0,19);ctx.lineTo(-13,14);ctx.closePath();ctx.fill();
+  ctx.fillStyle="#e83b2d";ctx.beginPath();ctx.moveTo(-38,-6);ctx.lineTo(-26,-12);ctx.lineTo(-16,-6);ctx.lineTo(35,-5);ctx.lineTo(51,0);ctx.lineTo(35,5);ctx.lineTo(-20,5);ctx.lineTo(-35,10);ctx.closePath();ctx.fill();
+  ctx.fillStyle="#ffc13c";ctx.beginPath();ctx.moveTo(24,-5);ctx.lineTo(51,0);ctx.lineTo(24,5);ctx.closePath();ctx.fill();
+  ctx.fillStyle="#ffcf4a";ctx.beginPath();ctx.moveTo(-31,-5);ctx.lineTo(-39,-19);ctx.lineTo(-29,-18);ctx.lineTo(-18,-5);ctx.closePath();ctx.fill();
+  ctx.fillStyle="#9ce8ff";ctx.beginPath();ctx.ellipse(7,-2,8,3,0,0,Math.PI*2);ctx.fill();
+  ctx.strokeStyle="#fff1b0";ctx.lineWidth=2;ctx.beginPath();ctx.moveTo(55,-11+Math.sin(t*26)*2);ctx.lineTo(55,11+Math.sin(t*26)*2);ctx.stroke();
+  if(damaged){ctx.fillStyle="#ff5b35";ctx.shadowColor="#ff512e";ctx.shadowBlur=10;ctx.beginPath();ctx.arc(-17,0,3+Math.sin(t*15),0,Math.PI*2);ctx.fill();}
   ctx.restore();
  }
- function burst(x,y,r,t,label,color){
-  ctx.save();ctx.translate(x,y);ctx.rotate(t*.22);
-  ctx.strokeStyle=color;ctx.globalAlpha=.72;ctx.lineWidth=2;
-  for(let i=0;i<12;i++){ctx.rotate(Math.PI/6);ctx.beginPath();ctx.moveTo(r*.62,0);ctx.lineTo(r,0);ctx.stroke();}
-  ctx.rotate(-t*.22);ctx.shadowColor=color;ctx.shadowBlur=13;ctx.fillStyle="#f3fbff";ctx.font="900 "+Math.round(r*.95)+"px Arial";ctx.textAlign="center";ctx.textBaseline="middle";ctx.fillText(label,0,1);ctx.restore();
- }
- function frame(ts){
-  plane2dFrame=requestAnimationFrame(frame);
-  const w=plane2d.w,h=plane2d.h,t=ts/1000,p=plane2dProgress;
-  if(!w||!h)return;
-  ctx.clearRect(0,0,w,h);
-  const bg=ctx.createLinearGradient(0,0,0,h);bg.addColorStop(0,"#07195f");bg.addColorStop(.62,"#09216e");bg.addColorStop(1,"#06164d");ctx.fillStyle=bg;ctx.fillRect(0,0,w,h);
-  // distant cloud band like the generated side-scrolling game
-  plane2d.clouds.forEach((c,i)=>{const span=w+100;const x=((c.x-t*(7+i%3*3)-p*125)%span+span)%span-40;cloud(x,c.y*h,c.s);});
-  // thin horizontal parallax streaks
-  ctx.globalAlpha=.2;ctx.strokeStyle="#79a8ff";ctx.lineWidth=1;
-  for(let i=0;i<8;i++){let y=h*(.57+i*.045),off=(t*(15+i*3)+i*77)% (w+50);ctx.beginPath();ctx.moveTo(w-off,y);ctx.lineTo(w-off+24,y);ctx.stroke();}
-  ctx.globalAlpha=1;
-  // drifting bonus marks: bright numbers and multiplier symbols, not clickable rewards
-  const marks=[{x:.73,y:.55,label:"10",c:"#eaf8ff",r:22},{x:.86,y:.35,label:"×5",c:"#55c8ff",r:16},{x:.57,y:.30,label:"×3",c:"#48ff67",r:14},{x:.94,y:.67,label:"×2",c:"#e8f5ff",r:13}];
-  marks.forEach((m,i)=>{const x=((m.x*w-t*(12+i*3)-p*190)%(w+60)+(w+60))%(w+60)-20;const y=m.y*h+Math.sin(t*1.7+i)*7;burst(x,y,m.r,t+i,m.label,m.c);});
-  let px=w*.31,py=h*.59;
-  if(plane2dPhase==="cruise"){px=w*(.31+Math.min(.12,p*.12));py=h*(.59-Math.min(.1,p*.1));}
-  if(plane2dPhase==="landed"){px=w*.72;py=h*.58;}
-  if(plane2dPhase==="crash"){px=w*(.31+Math.min(.18,p*.18));py=h*(.59+Math.min(.12,p*.12));ctx.save();ctx.globalAlpha=.6;ctx.shadowColor="#ff5b3e";ctx.shadowBlur=28;ctx.fillStyle="#ff734b";ctx.beginPath();ctx.arc(px+8,py,15+Math.sin(t*18)*4,0,Math.PI*2);ctx.fill();ctx.restore();}
-  drawPlane(px,py+Math.sin(t*2.3)*2,t);
+ function drawRocket(r){ctx.save();ctx.translate(r.x,r.y);ctx.rotate(r.angle);ctx.shadowColor="#ff8a3c";ctx.shadowBlur=8;ctx.fillStyle="#ffb54b";ctx.fillRect(-13,-2,20,4);ctx.fillStyle="#f04438";ctx.beginPath();ctx.moveTo(7,-4);ctx.lineTo(15,0);ctx.lineTo(7,4);ctx.closePath();ctx.fill();ctx.fillStyle="#ffe8a3";ctx.fillRect(-18,-1,6,2);ctx.restore();}
+ function drawBonus(b,t){ctx.save();ctx.translate(b.x,b.y);ctx.shadowColor=b.color;ctx.shadowBlur=13;ctx.strokeStyle=b.color;ctx.lineWidth=2;ctx.globalAlpha=.85;ctx.beginPath();for(let i=0;i<16;i++){const an=i*Math.PI/8,r=i%2?b.r*.65:b.r;ctx.moveTo(Math.cos(an)*r*.45,Math.sin(an)*r*.45);ctx.lineTo(Math.cos(an)*r,Math.sin(an)*r);}ctx.stroke();ctx.fillStyle="#f6fbff";ctx.font="900 "+(b.r*.9)+"px Arial";ctx.textAlign="center";ctx.textBaseline="middle";ctx.fillText(b.label,0,1);ctx.restore();}
+ function frame(ts){plane2dFrame=requestAnimationFrame(frame);const w=plane2d.w,h=plane2d.h,t=ts/1000;if(!w||!h)return;
+  ctx.clearRect(0,0,w,h);const sky=ctx.createLinearGradient(0,0,0,h);sky.addColorStop(0,"#071b63");sky.addColorStop(.62,"#173a91");sky.addColorStop(1,"#527db3");ctx.fillStyle=sky;ctx.fillRect(0,0,w,h);
+  const sim=planeSim;const scroll=sim?sim.distance*.18:t*7;
+  plane2d.clouds.forEach((c,i)=>{const x=((c.x*w-scroll*(.35+i%3*.12))%(w+100)+(w+100))%(w+100)-50;drawCloud(x,c.y*h,c.s);});
+  const seaY=h*.84;ctx.fillStyle="#082c64";ctx.fillRect(0,seaY,w,h-seaY);ctx.strokeStyle="#7eb9e8";ctx.globalAlpha=.25;for(let i=0;i<8;i++){const y=seaY+7+i*5,off=(scroll+i*41)%(w+60);ctx.beginPath();ctx.moveTo(w-off,y);ctx.lineTo(w-off+27,y);ctx.stroke();}ctx.globalAlpha=1;
+  if(sim){const sx=sim.x*w,sy=sim.y*h;
+   if(sim.phase==="ready"){drawCarrier(w*.2,seaY*.98,.85);drawPlane(w*.2,seaY-16,-.03,t,false);}
+   else {if(sim.showCarrier)drawCarrier(w*.82,seaY*.98,.85);
+    sim.bonuses.forEach(b=>drawBonus(b,t));sim.rockets.forEach(drawRocket);
+    drawPlane(sx,sy,sim.angle,t,sim.damage>0);
+    if(sim.phase==="approach"||sim.phase==="landed"||sim.phase==="short"||sim.phase==="over"||sim.phase==="rolloff"){const cx=w*.82,cy=seaY-17;drawCarrier(cx,cy,.85);}
+    if(sim.phase==="crash"){ctx.fillStyle="#ff754b";ctx.shadowColor="#ff4d2e";ctx.shadowBlur=24;ctx.beginPath();ctx.arc(sx,sy,15+Math.sin(t*16)*4,0,Math.PI*2);ctx.fill();}
+   }
+  } else {drawCarrier(w*.2,seaY*.98,.85);}
+  if(sim&&sim.hitFlash>0){ctx.fillStyle="rgba(255,70,50,"+(sim.hitFlash*.22)+")";ctx.fillRect(0,0,w,h);}
  }
  frame(0);
 }
@@ -6394,7 +6366,7 @@ function updatePlaneControls(){
  const value=Math.max(10,Math.floor(Number(input.value)||10));if(!planeBusy){input.value=value;planeBet=value;}
  input.disabled=planeBusy;
  button.disabled=planeBusy&&!planeInFlight;
- button.textContent=planeInFlight?"💰 ЗАБРАТЬ "+Math.floor(planeBet*planeMultiplier).toLocaleString("ru-RU")+" 🪙":planeBusy?"✈️ ЗАВЕРШАЕМ ПОЛЁТ...":"✈️ ВЗЛЁТ ЗА "+value.toLocaleString("ru-RU")+" 🪙";
+ button.textContent=planeInFlight?(planeSim&&planeSim.phase==="approach"?"🛬 ЗАХОД НА ПОСАДКУ":"🛬 ПОСАДКА / ЗАБРАТЬ"):planeBusy?"✈️ ЗАВЕРШАЕМ ПОЛЁТ...":"✈️ ВЗЛЁТ ЗА "+value.toLocaleString("ru-RU")+" 🪙";
 }
 function setPlaneBet(v,b){if(planeBusy)return;document.getElementById("planeBet").value=v==="max"?Math.max(10,Math.floor(state.balance)):v;document.querySelectorAll(".plane-presets button").forEach(x=>x.classList.remove("selected"));if(b)b.classList.add("selected");updatePlaneControls();}
 function changePlaneBet(d){if(planeBusy)return;const input=document.getElementById("planeBet"),x=Math.max(10,Math.floor(Number(input.value)||10)),step=x<100?10:100;input.value=d>0?x+step:Math.max(10,x-step);updatePlaneControls();}
@@ -6416,26 +6388,67 @@ async function planeCrash(){
  if(obj){obj.classList.remove("flying");obj.classList.add("crash");}if(stage)stage.textContent="ПОЛЁТ ЗАВЕРШЁН";if(status){status.style.color="#ff626b";status.textContent="💥 Самолётик исчез на ×"+planeMultiplier.toFixed(2).replace(".",",")+". В этом раунде забрать очки уже нельзя.";}
  planeEvent("💥 ПОЛЁТ ЗАВЕРШЁН");planeBusy=false;updatePlaneControls();save();
 }
+function planeSetHud(stage,status,color){const st=document.getElementById("planeStage"),ss=document.getElementById("planeStatus");if(st)st.textContent=stage;if(ss){ss.style.color=color||"#ffbd42";ss.textContent=status;}}
+function planeFinishLanding(outcome){
+ if(!planeInFlight)return;planeInFlight=false;if(planeAnimationTimer)clearInterval(planeAnimationTimer);
+ const sim=planeSim;sim.phase=outcome;sim.showCarrier=true;updatePlane3D(1,outcome);
+ const stage=document.getElementById("planeStage"),status=document.getElementById("planeStatus");
+ let message="",reward=0;
+ if(outcome==="landed"){reward=Math.floor(planeBet*planeMultiplier);state.balance+=reward;state.stats.planeWins++;addDailyTaskProgress("plane");registerWin(reward);message="🛬 ИДЕАЛЬНАЯ ПОСАДКА! +"+reward.toLocaleString("ru-RU")+" 🪙";planeEvent("🛬 ПОСАДКА!");}
+ else if(outcome==="rolloff"){message="⚠️ Самолёт коснулся палубы, но не успел остановиться и скатился за борт.";planeEvent("⚠️ НЕ УДЕРЖАЛСЯ!");}
+ else if(outcome==="short"){message="↘ Самолёт не дотянул до палубы и приводнился перед авианосцем.";planeEvent("↘ НЕДОЛЁТ!");}
+ else {message="↗ Самолёт перелетел палубу и не смог вернуться на посадочную полосу.";planeEvent("↗ ПЕРЕЛЁТ!");}
+ if(stage)stage.textContent=outcome==="landed"?"ПОСАДКА УДАЛАСЬ":"ПОСАДКА НЕ УДАЛАСЬ";if(status){status.style.color=outcome==="landed"?"#24cf78":"#ff626b";status.textContent=message;}
+ save();planeBusy=false;updatePlaneControls();
+}
+function planeBeginApproach(){
+ if(!planeInFlight||planeSim.phase==="approach")return;
+ const sim=planeSim;sim.phase="approach";sim.showCarrier=true;sim.approachAt=performance.now();
+ // Landing quality depends on approach height, speed and damage from rocket hits.
+ const quality=sim.altitude+(Math.random()-.5)*.18-sim.damage*.055;
+ sim.landingOutcome=quality<.23?"short":quality>.72?"over":(sim.damage>2||Math.random()<.16)?"rolloff":"landed";
+ planeSetHud("ЗАХОД НА ПОСАДКУ","Авианосец впереди. Самолёт снижается и выравнивается…","#ffcf58");
+ planeEvent("🛬 ЗАХОД НА ПОСАДКУ");
+}
+function planeCashout(){planeBeginApproach();}
+async function planeCrash(){
+ if(!planeInFlight)return;planeInFlight=false;if(planeAnimationTimer)clearInterval(planeAnimationTimer);
+ planeSim.phase="crash";updatePlane3D(1,"crash");planeSetHud("ПОЛЁТ ЗАВЕРШЁН","💥 Самолёт потерял управление. Раунд завершён без начисления монет.","#ff626b");planeEvent("💥 ПОТЕРЯ УПРАВЛЕНИЯ");planeBusy=false;updatePlaneControls();save();
+}
 function updatePlaneFlight(){
- if(!planeInFlight)return;const elapsed=(performance.now()-planeStartedAt)/1000;
- planeMultiplier=Math.min(100,Math.exp(elapsed*.22));const progress=Math.min(.96,Math.log(planeMultiplier)/Math.max(.01,Math.log(planeCrashAt))*.94);
- updatePlane3D(progress,"cruise");const world=document.querySelector(".plane-world");if(world)world.style.setProperty("--flight-progress",String(progress));
- const d=document.getElementById("planeDistance"),a=document.getElementById("planeAltitude"),stage=document.getElementById("planeStage"),status=document.getElementById("planeStatus");
- if(d)d.textContent=Math.floor(elapsed*185).toLocaleString("ru-RU")+" м";if(a)a.textContent=(2.5+elapsed*42).toFixed(0)+" м";if(stage)stage.textContent="В ПОЛЁТЕ";if(status){status.style.color="#ffbd42";status.innerHTML="✈️ Самолёт набирает высоту. Забрать можно в любой момент.";}
- updatePlaneMultiplier();if(planeMultiplier>=planeCrashAt){planeMultiplier=planeCrashAt;updatePlaneMultiplier();planeCrash();}
+ if(!planeInFlight||!planeSim)return;
+ const sim=planeSim,now=performance.now(),elapsed=(now-planeStartedAt)/1000,dt=.05;
+ if(sim.phase==="cruise"){
+  sim.distance+=dt*22;sim.x=Math.min(.73,.19+sim.distance/820*.54);
+  sim.vy+=(sim.targetY-sim.y)*.85*dt;sim.y+=sim.vy*dt;sim.vy*=.985;
+  sim.altitude=Math.max(0,Math.min(1,(.84-sim.y)/.62));
+  // Bonus orbs drift into the flight path; rewards affect the virtual multiplier and flight height.
+  sim.bonuses.forEach(b=>{b.x-=dt*(.19+sim.distance/4500);if(!b.hit&&Math.hypot(b.x-sim.x,b.y-sim.y)<.075){b.hit=true;if(b.kind==="boost"){planeMultiplier*=b.factor;sim.targetY=Math.max(.17,sim.targetY-.075);sim.vy-=.035;planeEvent("✨ +"+b.label+" · высота растёт");}else{planeMultiplier=Math.max(.1,planeMultiplier/2);sim.damage++;sim.targetY=Math.min(.77,sim.targetY+.12);sim.vy+=.07;sim.hitFlash=1;planeEvent("🚀 ПОПАДАНИЕ /2");}}});
+  sim.rockets.forEach(r=>{r.x-=dt*r.speed;r.y+=Math.sin(elapsed*3+r.phase)*dt*.035;if(!r.hit&&Math.hypot(r.x-sim.x,r.y-sim.y)<.055){r.hit=true;planeMultiplier=Math.max(.1,planeMultiplier/2);sim.damage++;sim.targetY=Math.min(.78,sim.targetY+.14);sim.vy+=.09;sim.hitFlash=1;planeEvent("🚀 РАКЕТА ПОПАЛА · /2");}});
+  sim.bonuses=sim.bonuses.filter(b=>b.x>-.1&&!b.hit);sim.rockets=sim.rockets.filter(r=>r.x>-.1&&!r.hit);
+  if(Math.random()<.045){const vals=[{label:"1",kind:"boost",factor:1.12,color:"#e8f7ff",r:14},{label:"2",kind:"boost",factor:1.2,color:"#75caff",r:16},{label:"×3",kind:"boost",factor:1.3,color:"#b5f5ff",r:18},{label:"×5",kind:"boost",factor:1.5,color:"#55c8ff",r:19},{label:"×10",kind:"boost",factor:2,color:"#4b8fff",r:22},{label:"/2",kind:"hit",factor:.5,color:"#ff5757",r:16}];const v=vals[Math.floor(Math.random()*vals.length)];sim.bonuses.push({x:1.08,y:.2+Math.random()*.54,...v,hit:false});}
+  if(Math.random()<.035)sim.rockets.push({x:1.08,y:.25+Math.random()*.5,speed:.28+Math.random()*.16,phase:Math.random(),angle:Math.PI,hit:false});
+  if(sim.hitFlash>0)sim.hitFlash=Math.max(0,sim.hitFlash-.07);
+  planeMultiplier=Math.min(100,planeMultiplier+dt*.018);planeSetHud("В ПОЛЁТЕ","✈️ Лови бонусы и уклоняйся от ракет. Авианосец появится впереди.","#ffcf58");
+  if(elapsed>=23)planeBeginApproach();
+ }else if(sim.phase==="approach"){
+  const t=Math.min(1,(now-sim.approachAt)/3500);sim.x=.73+t*.17;sim.y+=(.76-sim.y)*.045;sim.altitude=Math.max(0,sim.altitude-.025);sim.angle=.08+t*.18;
+  if(t>=1){const outcome=sim.landingOutcome;sim.phase=outcome;setTimeout(()=>planeFinishLanding(outcome),350);}
+ }
+ const d=document.getElementById("planeDistance"),a=document.getElementById("planeAltitude");
+ if(d)d.textContent=Math.floor(sim.distance).toLocaleString("ru-RU")+" м";if(a)a.textContent=Math.max(0,Math.round(sim.altitude*60)).toLocaleString("ru-RU")+" м";
+ updatePlaneMultiplier();updatePlane3D(Math.min(1,sim.distance/600),sim.phase);
 }
 async function startPlaneGame(){
  if(planeBusy)return;const bet=Math.floor(Number(document.getElementById("planeBet").value));
  if(!Number.isSafeInteger(bet)||bet<10||!Number.isFinite(state.balance)||bet>state.balance){alert("Недостаточно монет или неверная ставка.");return;}
  planeBusy=true;planeInFlight=false;planeBet=bet;state.balance-=bet;addTurnover(bet);state.stats.planeGames++;save();resetPlaneVisual();updatePlaneControls();
- const status=document.getElementById("planeStatus"),stage=document.getElementById("planeStage"),obj=document.getElementById("planeObject");
- if(status){status.style.color="#ffbd42";status.textContent="✈️ Самолёт готовится к взлёту...";}if(stage)stage.textContent="ВЗЛЁТ";
- await planeWait(500);if(obj)obj.classList.add("flying");plane2dPhase="cruise";planeInFlight=true;planeStartedAt=performance.now();
- // A single hidden crash point is selected at take-off; the multiplier then rises continuously.
- planeCrashAt=Math.max(1.01,Math.min(35,0.97/Math.max(.028,Math.random())));
- planeAnimationTimer=setInterval(updatePlaneFlight,50);
-
- updatePlaneControls();planeEvent("✈️ ВЗЛЁТ!");
+ const status=document.getElementById("planeStatus"),stage=document.getElementById("planeStage");
+ if(status){status.style.color="#ffbd42";status.textContent="✈️ Двигатели запущены. Самолёт разбегается по палубе…";}if(stage)stage.textContent="РАЗБЕГ";
+ await planeWait(700);
+ planeSim={phase:"cruise",x:.2,y:.78,targetY:.56,vy:-.12,altitude:.08,distance:0,angle:-.12,damage:0,hitFlash:0,bonuses:[],rockets:[],showCarrier:false};
+ plane2dPhase="cruise";planeInFlight=true;planeStartedAt=performance.now();planeAnimationTimer=setInterval(updatePlaneFlight,50);
+ updatePlaneControls();planeEvent("✈️ ОТРЫВ ОТ ПАЛУБЫ!");
 }
 function initPlane(){resetPlaneVisual();updatePlaneControls();}
 
