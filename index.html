@@ -6423,16 +6423,16 @@ function updatePlaneFlight(){
   if(sim.y>=.80){sim.y=.80;sim.altitude=0;planeCrash();return;}
   sim.altitude=Math.max(0,Math.min(1,(.90-sim.y)/.72));
   // Объекты появляются на протяжении всего полёта с небольшими случайными интервалами.
-  if(elapsed>=sim.nextBonusAt&&sim.bonuses.length<4){
+  if(elapsed>=sim.nextBonusAt&&sim.bonuses.length<6){
    const choices=[{label:"+1",factor:1.15},{label:"×2",factor:2},{label:"×3",factor:3},{label:"×5",factor:5}];
    const pick=choices[Math.floor(Math.random()*choices.length)];
-   const bonusY=Math.max(.12,Math.min(.72,sim.y+(Math.random()-.5)*.30));
+   const bonusY=.10+Math.random()*.66;
    sim.bonuses.push({x:1.08,y:bonusY,...pick,kind:"boost",color:"#b8ff5a",r:21,hit:false});
-   sim.nextBonusAt=elapsed+1.9+Math.random()*1.1;
+   sim.nextBonusAt=elapsed+1.5+Math.random()*.9;
   }
-  if(elapsed>=sim.nextRocketAt&&sim.rockets.length<2){
-   sim.rockets.push({x:1.08,y:.20+Math.random()*.55,speed:.23+Math.random()*.07,angle:Math.PI,hit:false});
-   sim.nextRocketAt=elapsed+4.2+Math.random()*2.4;
+  if(elapsed>=sim.nextRocketAt&&sim.rockets.length<4){
+   sim.rockets.push({x:1.08,y:.10+Math.random()*.66,speed:.23+Math.random()*.07,angle:Math.PI,hit:false});
+   sim.nextRocketAt=elapsed+2.8+Math.random()*1.8;
   }
   sim.bonuses.forEach(b=>{b.x-=dt*.20;if(!b.hit&&Math.hypot((b.x-sim.x)*1.15,b.y-sim.y)<.095){b.hit=true;planeMultiplier=Math.min(1000,planeMultiplier*b.factor);const lift=b.factor>=5?.19:b.factor>=3?.15:.12;sim.y=Math.max(.075,sim.y-lift);sim.vy=Math.min(sim.vy,-.42);sim.altitude=Math.max(0,Math.min(1,(.90-sim.y)/.72));planeEvent("✨ СОБРАН МНОЖИТЕЛЬ "+b.label+" · ×"+planeMultiplier.toFixed(2)+" · САМОЛЁТ РЕЗКО НАБИРАЕТ ВЫСОТУ");}});
   // Ракеты летят прямо; попадание направляет самолёт вниз.
