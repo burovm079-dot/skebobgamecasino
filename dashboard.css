@@ -138,3 +138,45 @@ body.dashboard-home{background:#07020f!important;color:#fff!important}
  #skebobDashboard .sk-work{padding-left:6px!important;padding-right:6px!important}
  #skebobDashboard .sk-game{min-height:132px!important}
 }
+
+/* Art-forward game cards: full-bleed illustrated scenes with cinematic lighting */
+body.dashboard-home #skebobDashboard .sk-games{align-items:stretch}
+body.dashboard-home #skebobDashboard .sk-game{
+ position:relative;isolation:isolate;overflow:hidden;
+ background:
+ radial-gradient(ellipse at 50% 110%,rgba(255,0,220,.38),transparent 58%),
+ radial-gradient(ellipse at 88% 14%,rgba(123,0,255,.48),transparent 42%),
+ linear-gradient(145deg,#29104b 0%,#10051f 52%,#080312 100%)!important;
+ border:1.5px solid #dc43ff!important;
+ box-shadow:0 0 9px #a000ff66,inset 0 0 24px #7b00ff22,0 8px 24px #0009!important;
+}
+body.dashboard-home #skebobDashboard .sk-game:before{
+ content:"";position:absolute;inset:0;z-index:-1;pointer-events:none;
+ background:
+ radial-gradient(circle at 12% 20%,#fff8 0 1px,transparent 2px),
+ radial-gradient(circle at 83% 28%,#ffb5ffbb 0 1px,transparent 2px),
+ radial-gradient(circle at 28% 72%,#ffe2ff99 0 1px,transparent 2px),
+ radial-gradient(circle at 72% 82%,#a5eaff99 0 1px,transparent 2px),
+ linear-gradient(115deg,transparent 20%,#d500ff16 48%,transparent 70%);
+ background-size:67px 61px,83px 73px,91px 87px,73px 89px,100% 100%;
+}
+body.dashboard-home #skebobDashboard .sk-art{
+ inset:0 0 18%!important;display:flex!important;align-items:center!important;justify-content:center!important;
+ padding:5%!important;z-index:0;pointer-events:none;
+}
+body.dashboard-home #skebobDashboard .sk-art svg{
+ width:100%!important;height:100%!important;max-width:100%!important;max-height:100%!important;
+ filter:drop-shadow(0 8px 9px #05000c) drop-shadow(0 0 12px #c000ff88);
+ overflow:visible;
+}
+body.dashboard-home #skebobDashboard .sk-game-name{
+ position:relative;z-index:2;text-shadow:0 2px 5px #08000f,0 0 12px #b000ff99;
+}
+body.dashboard-home #skebobDashboard .sk-play{
+ position:relative;z-index:2;border:1px solid #f6aaff!important;
+ box-shadow:0 0 14px #a000ff99,inset 0 1px #ffffff66!important;
+}
+@media(min-width:761px){
+ body.dashboard-home #skebobDashboard .sk-game{min-height:220px}
+ body.dashboard-home #skebobDashboard .sk-art{inset:0 0 16%!important;padding:3%!important}
+}
