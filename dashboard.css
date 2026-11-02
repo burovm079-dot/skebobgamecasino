@@ -357,3 +357,26 @@ body.dashboard-home #skebobDashboard .sk-game:nth-child(3n + 1) .sk-art img{anim
   aspect-ratio:1 / 1!important;flex:0 0 auto!important;
  }
 }
+
+
+/* v13: restore consistent labels on menu artwork */
+#skebobDashboard .sk-side .sk-menu-item span{
+ display:block!important;position:absolute!important;z-index:3!important;
+ left:4px!important;right:4px!important;bottom:5px!important;
+ width:auto!important;max-width:none!important;margin:0!important;padding:4px 3px!important;
+ border-radius:7px!important;background:rgba(12,3,27,.88)!important;
+ color:#fff!important;font-size:11px!important;font-weight:900!important;
+ line-height:1.1!important;text-align:center!important;text-shadow:0 1px 3px #000!important;
+ white-space:normal!important;overflow-wrap:anywhere!important;
+}
+#skebobDashboard .sk-side button.sk-menu-item:nth-of-type(7) span,
+#skebobDashboard .sk-side button.sk-menu-item:nth-of-type(8) span{
+ display:none!important;
+}
+#skebobDashboard .sk-side .sk-menu-item img{z-index:1!important}
+@media(max-width:760px){
+ #skebobDashboard .sk-side .sk-menu-item span{
+  left:4px!important;right:4px!important;bottom:5px!important;
+  font-size:10px!important;padding:4px 2px!important;line-height:1.05!important;
+ }
+}
