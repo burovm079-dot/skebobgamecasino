@@ -3333,7 +3333,7 @@ class="game-status"
 
 <!-- DAILY TASKS -->
 <section id="tasks" class="hidden">
-<button class="back" onclick="showPage('cases')">← Назад</button>
+<button class="back" onclick="showPage('dashboard')">← Назад</button>
 <h2>📋 ЕЖЕДНЕВНЫЕ ЗАДАНИЯ</h2>
 <p class="small">Задания обновляются каждые 24 часа автоматически, даже если ты не заходил в игру.</p>
 <div class="panel"><div class="game-stats"><div class="game-stat"><span>ОБНОВЛЕНИЕ ЧЕРЕЗ</span><strong id="tasksTimer">24:00:00</strong></div><div class="game-stat"><span>ВЫПОЛНЕНО</span><strong id="tasksDone">0/3</strong></div><div class="game-stat"><span>НАГРАДА</span><strong>🪙</strong></div></div><div id="dailyTasksList"></div></div>
@@ -4221,7 +4221,7 @@ function showPage(id,button){
 const isDashboard=id==="dashboard";
 document.body.classList.toggle("dashboard-home",isDashboard);
 document.body.classList.toggle("legacy-page-active",!isDashboard);
-const back=document.getElementById("skebob-back-home");const gamePages=["plane","slots","upgrade","mines","plinko","race","pickaxe","battles","blackjack","dice","tictactoe","billiards","chickenroad","skebobTap","cases","secretDrop","crash"];if(back)back.classList.toggle("visible",gamePages.includes(id));
+const back=document.getElementById("skebob-back-home");if(back)back.classList.toggle("visible",!isDashboard);
 if(isDashboard){
 document.querySelectorAll("main section[id], body > section[id]").forEach(section=>section.classList.add("hidden"));
 window.scrollTo({top:0,behavior:"smooth"});
@@ -8276,7 +8276,7 @@ document.addEventListener("DOMContentLoaded",initNickname,{once:true});
 </div>
 
 <div id="skebobDialog" role="dialog" aria-modal="true" style="display:none;position:fixed;inset:0;z-index:30000;background:rgba(0,0,0,.78);align-items:center;justify-content:center;padding:20px"><div style="width:100%;max-width:430px;background:var(--panel);color:var(--text);border:1px solid var(--gold);border-radius:22px;padding:24px;box-shadow:0 18px 60px #000b"><h2 data-dialog-title style="margin:0 0 16px;color:var(--gold)">Уведомление</h2><div data-dialog-message style="font-size:16px;line-height:1.55;white-space:pre-wrap;overflow-wrap:anywhere"></div><input data-dialog-input type="text" style="display:none;margin-top:16px"><div style="display:flex;gap:10px;justify-content:flex-end;margin-top:22px"><button data-dialog-cancel type="button" class="secondary">Отмена</button><button data-dialog-ok type="button" class="goldbtn" style="width:auto;min-width:110px;margin:0;padding:12px 20px">ОК</button></div></div></div>
-<button id="skebob-back-home" type="button" onclick="showPage('dashboard')">← НАЗАД К ИГРАМ</button>
+<button id="skebob-back-home" type="button" onclick="showPage('dashboard')" aria-label="Назад на главную" title="Назад на главную">←</button>
 </body>
     </html>
 
