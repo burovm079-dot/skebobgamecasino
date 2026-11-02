@@ -6723,15 +6723,15 @@ updatePlaneControls();
 const PICK_ROWS=18, PICK_COLS=9, PICK_HITS=14, PICK_MAX_HP=140;
 let pickaxeBusy=false,pickaxeBet=100,pickaxeCurrentWin=0,pickaxeHits=0,pickaxeDepth=0,pickaxeHealth=PICK_MAX_HP,pickaxeMine=[];
 const PICK_TYPES=[
- {type:"stone",icon:"",name:"КАМЕНЬ",weight:78,value:0},
- {type:"coal",icon:"⚫",name:"УГОЛЬ",weight:10,value:.02},
- {type:"copper",icon:"🟠",name:"МЕДЬ",weight:5,value:.04},
- {type:"iron",icon:"⚙️",name:"ЖЕЛЕЗО",weight:3.5,value:.07},
- {type:"gold",icon:"🟡",name:"ЗОЛОТО",weight:1.5,value:.12},
- {type:"emerald",icon:"💚",name:"ИЗУМРУД",weight:.5,value:.22},
- {type:"diamond",icon:"💎",name:"АЛМАЗ",weight:.2,value:.4},
+ {type:"stone",icon:"",name:"КАМЕНЬ",weight:92,value:0},
+ {type:"coal",icon:"⚫",name:"УГОЛЬ",weight:4,value:.02},
+ {type:"copper",icon:"🟠",name:"МЕДЬ",weight:2,value:.04},
+ {type:"iron",icon:"⚙️",name:"ЖЕЛЕЗО",weight:1,value:.07},
+ {type:"gold",icon:"🟡",name:"ЗОЛОТО",weight:.5,value:.12},
+ {type:"emerald",icon:"💚",name:"ИЗУМРУД",weight:.2,value:.22},
+ {type:"diamond",icon:"💎",name:"АЛМАЗ",weight:.1,value:.4},
  {type:"chest",icon:"🧰",name:"СТАРЫЙ ЯЩИК",weight:.1,value:.5},
- {type:"tnt",icon:"🧨",name:"TNT",weight:1.2,value:0}
+ {type:"tnt",icon:"🧨",name:"TNT",weight:.1,value:0}
 ];
 function pickaxeWait(ms){return new Promise(r=>setTimeout(r,ms))}
 function pickRandomType(row,col){
