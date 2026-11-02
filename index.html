@@ -3054,7 +3054,7 @@ id="profileBalance"
 <p class="small">До 4 игроков за столом. Выбирай ставку перед входом в раунд и играй против общего дилера.</p>
 <div class="panel">
  <p class="small">Выставь ставку перед входом в комнату. При победе выплата x2, при блэкджеке x2.5, при ничьей ставка возвращается.</p>
- <div class="game-control"><label>ТВОЯ СТАВКА</label><div class="bet-main"><button onclick="bjOnlineChangeBet(-10)">−</button><input id="bjOnlineBet" type="text" inputmode="numeric" pattern="[0-9]*" autocomplete="off" min="10" value="100" oninput="bjOnlineUpdateBet()" style="pointer-events:auto;touch-action:manipulation;user-select:text;-webkit-user-select:text"><button onclick="bjOnlineChangeBet(10)">+</button></div><div class="bet-presets"><button onclick="bjOnlineSetBet(100)">100</button><button onclick="bjOnlineSetBet(500)">500</button><button onclick="bjOnlineSetBet(1000)">1K</button><button onclick="bjOnlineSetBet('max')">MAX</button></div></div>
+ <div class="game-control"><label>ТВОЯ СТАВКА</label><div class="bet-main"><button onclick="bjOnlineChangeBet(-10)">−</button><input id="bjOnlineBet" type="text" inputmode="numeric" pattern="[0-9]*" autocomplete="off" min="10" value="100" oninput="bjOnlineUpdateBet()" onblur="bjOnlineClampBet()" style="pointer-events:auto;touch-action:manipulation;user-select:text;-webkit-user-select:text"><button onclick="bjOnlineChangeBet(10)">+</button></div><div class="bet-presets"><button onclick="bjOnlineSetBet(100)">100</button><button onclick="bjOnlineSetBet(500)">500</button><button onclick="bjOnlineSetBet(1000)">1K</button><button onclick="bjOnlineSetBet('max')">MAX</button></div></div>
  <div class="bj-actions">
   <button class="game-main" id="bjOnlineJoin" onclick="bjOnlineJoin()">🎮 ИГРАТЬ</button>
   <button class="secondary" id="bjOnlineLeave" onclick="bjOnlineLeave()" disabled>ВЫЙТИ ИЗ ИГРЫ</button>
@@ -8317,10 +8317,11 @@ function bjNickTaken(value,excludeId=""){const wanted=bjNormalizeNick(value);if(
 const bjOnlineName=()=>getNickname();
 const bjOnlineCard=()=>({rank:["A","2","3","4","5","6","7","8","9","10","J","Q","K"][Math.floor(Math.random()*13)],suit:["♠","♥","♦","♣"][Math.floor(Math.random()*4)]});
 let bjOnlineCurrentBet=100,bjOnlinePaidRound="";
-function bjOnlineGetBet(){const e=document.getElementById("bjOnlineBet");const raw=String(e?.value??"").replace(/[^0-9]/g,"");const n=Math.floor(Number(raw)||10);return Math.max(10,Math.min(n,Math.floor(Number(state.balance)||0)))}
-function bjOnlineUpdateBet(){const e=document.getElementById("bjOnlineBet");if(!e)return;const raw=String(e.value??"").replace(/[^0-9]/g,"");let n=raw===""?10:Math.floor(Number(raw));n=Math.max(10,Math.min(n,Math.floor(Number(state.balance)||0)));e.value=String(n);bjOnlineCurrentBet=n;}
-function bjOnlineSetBet(v){const e=document.getElementById("bjOnlineBet");if(!e)return;e.value=String(v==="max"?Math.max(10,Math.floor(Number(state.balance)||0)):v);bjOnlineUpdateBet()}
-function bjOnlineChangeBet(d){const e=document.getElementById("bjOnlineBet");if(!e)return;e.value=String(Math.max(10,(Math.floor(Number(e.value)||10)+d)));bjOnlineUpdateBet()}
+function bjOnlineGetBet(){const e=document.getElementById("bjOnlineBet");const raw=String(e?.value??"").replace(/[^0-9]/g,"");return raw===""?0:Math.floor(Number(raw))}
+function bjOnlineUpdateBet(){const e=document.getElementById("bjOnlineBet");if(!e)return;const raw=String(e.value??"").replace(/[^0-9]/g,"");if(e.value!==raw)e.value=raw;bjOnlineCurrentBet=raw===""?0:Math.floor(Number(raw));}
+function bjOnlineClampBet(){const e=document.getElementById("bjOnlineBet");if(!e)return;const balance=Math.floor(Number(state.balance)||0);let n=bjOnlineGetBet();if(!Number.isFinite(n)||n<10)n=10;if(n>balance)n=balance;e.value=String(n);bjOnlineCurrentBet=n;}
+function bjOnlineSetBet(v){const e=document.getElementById("bjOnlineBet");if(!e)return;e.value=String(v==="max"?Math.floor(Number(state.balance)||0):v);bjOnlineClampBet()}
+function bjOnlineChangeBet(d){const e=document.getElementById("bjOnlineBet");if(!e)return;const n=Math.floor(Number(e.value)||0);e.value=String(Math.min(Math.floor(Number(state.balance)||0),Math.max(10,n+d)));bjOnlineClampBet()}
 function bjOnlineValue(hand){let n=0,a=0;for(const c of hand){if(c.rank==="A"){n+=11;a++}else n+=["J","Q","K"].includes(c.rank)?10:Number(c.rank)}while(n>21&&a-- >0)n-=10;return n}
 function bjOnlineDraw(hand){hand.push(bjOnlineCard())}
 function bjOnlinePublishState(){if(!bjOnlineChannel||!bjOnlineRound||bjOnlineRound.finished)return;bjOnlineSend("player-state",{id:bjOnlineId,hand:bjOnlineMyHand,done:!bjOnlineMyTurn,turn:bjOnlineMyTurn?"Твой ход":"Завершил ход"})}
@@ -8392,7 +8393,7 @@ async function bjOnlineLeave(){
 }
 function bjOnlineBeginRound(payload){
  if(bjOnlineRound?.id===payload.id)return false;
- const bet=bjOnlineGetBet();if(bet>state.balance){bjOnlineStatus("Недостаточно монет для ставки "+bet.toLocaleString("ru-RU")+" 🪙. Измени ставку.");bjOnlineSend("player-done",{id:bjOnlineId,score:0,hand:[]});return false;}
+ const bet=bjOnlineGetBet();if(!Number.isFinite(bet)||bet<10||bet>state.balance){bjOnlineStatus("Недостаточно монет для ставки "+bet.toLocaleString("ru-RU")+" 🪙. Измени ставку.");bjOnlineSend("player-done",{id:bjOnlineId,score:0,hand:[]});return false;}
  state.balance-=bet;addTurnover(bet);save();bjOnlineCurrentBet=bet;bjOnlinePaidRound="";
  bjOnlineRoundLocked=true;
  bjOnlineRound={id:payload.id,finished:false,bet};bjOnlineDealer={cards:payload.dealer,revealed:false};bjOnlineBotHand=(payload.botHand||[]).slice();bjOnlineMyHand=[bjOnlineCard(),bjOnlineCard()];bjOnlineMyTurn=true;
