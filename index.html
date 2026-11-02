@@ -6818,14 +6818,20 @@ function pickaxeBreakCell(row,col,depth){
  const item=pickaxeMine[row][col],cell=document.querySelector('.pick-block[data-row="'+row+'"][data-col="'+col+'"]');
  if(!cell||item.opened)return 0;
  item.opened=true;cell.classList.add("broken");
+ // Hard payout ceiling: a mine can never return more than half its entry cost.
+ const payoutLimit=Math.max(1,Math.floor(pickaxeBet*.5));
+ const addPickaxeReward=(amount)=>{
+  const added=Math.max(0,Math.min(Math.floor(amount),payoutLimit-pickaxeCurrentWin));
+  pickaxeCurrentWin+=added;
+  return added;
+ };
  let reward=0;
  if(item.value>0){
-  const depthBonus=1+Math.min(depth,30)*.008;
-  reward=Math.max(1,Math.floor(pickaxeBet*item.value*depthBonus));
-  pickaxeCurrentWin+=reward;
+  const depthBonus=1+Math.min(depth,30)*.003;
+  reward=addPickaxeReward(pickaxeBet*item.value*depthBonus);
   document.getElementById("pickMineLoot").textContent=item.name+" +"+reward.toLocaleString("ru-RU")+" 🪙";
-  pickaxePopup("+"+reward.toLocaleString("ru-RU"),cell.offsetLeft,cell.offsetTop);
-  if(item.type==="chest"){const bonus=Math.max(1,Math.floor(pickaxeBet*.15));pickaxeCurrentWin+=bonus;pickaxePopup("ЯЩИК +"+bonus,cell.offsetLeft,cell.offsetTop+12);}
+  if(reward>0)pickaxePopup("+"+reward.toLocaleString("ru-RU"),cell.offsetLeft,cell.offsetTop);
+  if(item.type==="chest"){const bonus=addPickaxeReward(pickaxeBet*.05);if(bonus>0)pickaxePopup("ЯЩИК +"+bonus,cell.offsetLeft,cell.offsetTop+12);}
  }else if(item.type==="stone"){
   document.getElementById("pickMineLoot").textContent="Камень разрушен";
  }
@@ -6835,7 +6841,7 @@ function pickaxeBreakCell(row,col,depth){
   for(let y=Math.max(0,row-1);y<=Math.min(PICK_ROWS-1,row+1);y++)for(let x=Math.max(0,col-1);x<=Math.min(PICK_COLS-1,col+1);x++){
    if(y===row&&x===col)continue;
    const extra=pickaxeMine[y][x],el=document.querySelector('.pick-block[data-row="'+y+'"][data-col="'+x+'"]');
-   if(!extra.opened&&el){extra.opened=true;el.classList.add("broken");if(extra.value>0){const bonus=Math.max(1,Math.floor(pickaxeBet*extra.value*.5));pickaxeCurrentWin+=bonus;}}
+   if(!extra.opened&&el){extra.opened=true;el.classList.add("broken");if(extra.value>0)addPickaxeReward(pickaxeBet*extra.value*.15);}
   }
  }
  return reward;
