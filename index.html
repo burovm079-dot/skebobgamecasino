@@ -845,7 +845,7 @@ line-height:1.6;
 .plinko-last{background:var(--panel);border:1px solid var(--border2);border-radius:12px;text-align:center;padding:13px;margin:12px 0;color:var(--muted);font-size:13px;min-height:46px}
 .plinko-info{color:var(--muted);font-size:12px;line-height:1.6;margin:8px 2px}
 @media(max-width:390px){.plinko-board{height:300px}.plinko-peg{width:6px;height:6px}.plinko-slot{padding:7px 0;font-size:8px}}
-.skebob-verified{display:inline-grid;place-items:center;vertical-align:middle;width:19px;height:19px;margin-left:6px;padding:0;border:0;border-radius:50%;background:#258cf4;color:#fff;font-size:13px;line-height:1;box-shadow:0 0 0 2px #ffffff20;cursor:pointer}.skebob-verified:hover{background:#0875df;transform:scale(1.08)}
+.skebob-verified{display:inline-grid;place-items:center;vertical-align:middle;width:19px;height:19px;margin-left:6px;padding:0;border:0;border-radius:50%;background:var(--verified-color,#258cf4);color:#fff;font-size:13px;line-height:1;box-shadow:0 0 0 2px #ffffff20;cursor:pointer}.skebob-verified.verified-gold{--verified-color:#e0aa20}.skebob-verified.verified-green{--verified-color:#20a568}.skebob-verified.verified-blue{--verified-color:#258cf4}.verified-choice-row{display:flex;gap:8px;flex-wrap:wrap;margin:8px 0}.verified-choice{flex:1;min-width:90px}.verified-choice.active{outline:2px solid var(--accent);outline-offset:2px}.skebob-verified:hover{background:#0875df;transform:scale(1.08)}
 .special-account-badge{display:inline-grid;place-items:center;vertical-align:middle;width:19px;height:19px;margin-left:6px;padding:0;border:0;border-radius:50%;color:#fff;font-size:13px;line-height:1;cursor:pointer}.special-account-badge.media{background:#20b76b;box-shadow:0 0 0 2px #20b76b30}.special-account-badge.vip{background:#d7a51b;box-shadow:0 0 0 2px #d7a51b30}.special-account-controls{margin-top:12px;padding:12px;border:1px solid var(--border2);border-radius:14px;background:var(--panel2)}.special-account-controls button{margin-top:8px}
 /* BLACKJACK */
 .bj-table{background:radial-gradient(ellipse at center,#176b49,#073d2e 68%,#05271f);border:5px solid #9b7138;border-radius:24px;padding:18px;margin:16px 0;color:white;box-shadow:inset 0 0 30px #0008,0 8px 24px #0005;min-height:300px}
@@ -8080,7 +8080,21 @@ function randomNickname(){
 }
 function getNickname(){return storageGet(NICKNAME_KEY)||"Player";}
 function bjIsOfficialNickname(value){return String(value||"").trim().replace(/\s+/g," ").toLocaleUpperCase("ru")==="SKEBOB OFFICIAL";}
-function bjOfficialBadge(value){return bjIsOfficialNickname(value)?' <button type="button" class="skebob-verified" aria-label="Информация о верификации" title="SKEBOB OFFICIAL" onclick="bjShowOfficialBadge()">✓</button>':'';}
+const BJ_OFFICIAL_BADGE_KEY="skebobOfficialBadgeColor";
+const BJ_OFFICIAL_BADGE_COLORS={gold:"verified-gold",green:"verified-green",blue:"verified-blue"};
+function bjOfficialBadge(value){
+ if(!bjIsOfficialNickname(value))return "";
+ const color=storageGet(BJ_OFFICIAL_BADGE_KEY)||"blue";
+ return ' <button type="button" class="skebob-verified '+(BJ_OFFICIAL_BADGE_COLORS[color]||BJ_OFFICIAL_BADGE_COLORS.blue)+'" aria-label="Официальная галочка" title="SKEBOB OFFICIAL" onclick="bjShowOfficialBadge()">✓</button>';
+}
+function bjSetOfficialBadgeColor(color){
+ if(!bjIsOfficialNickname(getNickname()))return;
+ if(!Object.prototype.hasOwnProperty.call(BJ_OFFICIAL_BADGE_COLORS,color))return;
+ storageSet(BJ_OFFICIAL_BADGE_KEY,color);
+ renderSpecialAccountControls();
+ updateNicknameUI();
+ if(typeof renderBjOnlineTable==="function")renderBjOnlineTable();
+}
 function bjShowOfficialBadge(){alert("Официальный аккаунт SKEBOB OFFICIAL");}
 function bjRequestOfficialCode(){
  const entered=prompt("SKEBOB OFFICIAL — введи код доступа:");
@@ -8136,6 +8150,12 @@ function renderSpecialAccountControls(){
   html+='<div class="small">Бесконечный баланс: '+(state.admin.infiniteBalance?"ВКЛЮЧЁН":"ВЫКЛЮЧЕН")+'</div><button class="secondary" type="button" onclick="toggleProtectedInfiniteBalance()">'+(state.admin.infiniteBalance?"Выключить бесконечный баланс":"Включить бесконечный баланс")+'</button>';
  }
  if(isOfficial){
+  const selectedBadge=storageGet(BJ_OFFICIAL_BADGE_KEY)||"blue";
+  html+='<div class="small" style="margin-top:10px">Цвет официальной галочки</div>';
+  html+='<div class="verified-choice-row">';
+  html+='<button class="secondary verified-choice '+(selectedBadge==="gold"?"active":"")+'" type="button" onclick="bjSetOfficialBadgeColor(\'gold\')">🟡 Золотая ✓</button>';
+  html+='<button class="secondary verified-choice '+(selectedBadge==="green"?"active":"")+'" type="button" onclick="bjSetOfficialBadgeColor(\'green\')">🟢 Зелёная ✓</button>';
+  html+='<button class="secondary verified-choice '+(selectedBadge==="blue"?"active":"")+'" type="button" onclick="bjSetOfficialBadgeColor(\'blue\')">🔵 Синяя ✓</button></div>';
   html+='<div class="small" style="margin-top:10px">Инструменты официального аккаунта</div><button class="secondary" type="button" style="width:100%;margin-top:8px" onclick="bjOfficialGiveAllNfts()">🎁 ВЫДАТЬ ВСЕ NFT</button>';
  }
  host.innerHTML=html+'</div>';
