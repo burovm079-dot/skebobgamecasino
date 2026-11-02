@@ -2100,6 +2100,93 @@ main{width:100%;max-width:1240px;margin:0 auto;padding:12px clamp(12px,2.2vw,26p
   .home-game-art{height:78px;flex-basis:78px;font-size:48px}
   .home-game-card small{font-size:10px}
 }
+
+/* SKEBOB FULL APP SHELL — reference layout */
+header{
+  display:flex!important;flex-direction:column!important;align-items:stretch!important;
+  gap:14px!important;padding:20px clamp(12px,3vw,28px)!important;
+  border:1px solid #7d3ca9!important;border-radius:0 0 28px 28px!important;
+  background:linear-gradient(145deg,#29103f,#160a27 70%,#241039)!important;
+  box-shadow:0 12px 30px #0007,inset 0 1px #ffffff1c!important;
+}
+.logo{width:100%;text-align:center;font-size:clamp(25px,5vw,34px)!important;letter-spacing:.4px}
+.logo span{color:#ffd66f!important;text-shadow:0 0 16px #ffbf4a55}
+.header-actions{
+  width:100%;display:grid!important;grid-template-columns:repeat(2,minmax(0,1fr))!important;
+  gap:9px!important;align-items:stretch
+}
+header button,header .header-actions a{
+  min-width:0!important;width:100%;box-sizing:border-box;min-height:48px;
+  display:flex;align-items:center;justify-content:center;text-align:center;
+  white-space:normal!important;line-height:1.2;padding:11px 8px!important;
+  border:1px solid #9149c1!important;border-radius:14px!important;
+  background:linear-gradient(145deg,#28103c,#190b2b)!important;
+  color:#f5e9ff!important;font-size:clamp(11px,2.3vw,14px)!important;font-weight:900;
+}
+header .header-actions .header-buy-admin{
+  background:linear-gradient(110deg,#6b4a19,#403015)!important;
+  border-color:#a9853b!important;color:#ffe08b!important
+}
+.balance{
+  margin:16px auto!important;width:calc(100% - 28px);max-width:1160px;box-sizing:border-box;
+  padding:19px 22px!important;min-height:100px;border:1px solid #a45be0!important;
+  border-radius:22px!important;background:linear-gradient(110deg,#28103f,#170b2b 72%,#321347)!important;
+  box-shadow:0 10px 25px #0005,inset 0 1px #ffffff18!important
+}
+.balance .small{font-size:clamp(12px,2.4vw,16px)!important}
+.balance strong{font-size:clamp(27px,5vw,40px)!important;color:#ffdc79!important;overflow-wrap:anywhere}
+main{max-width:1160px!important;width:100%;box-sizing:border-box;padding:8px clamp(12px,2.5vw,26px) 48px!important}
+.home-nav{display:none!important}
+.home-welcome,.home-section-head,.home-bottom-strip{display:none!important}
+.home-game-grid{
+  display:grid!important;width:100%;grid-template-columns:repeat(3,minmax(0,1fr))!important;
+  gap:12px!important;margin:18px 0 28px
+}
+.home-game-card{
+  min-width:0!important;width:100%;min-height:150px!important;height:auto;
+  box-sizing:border-box;padding:14px 9px!important;border:1px solid #8544b7!important;
+  border-radius:19px!important;background:linear-gradient(145deg,#28103e,#160a29)!important;
+  box-shadow:0 8px 20px #0006,inset 0 1px #ffffff18!important;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;
+  color:#f7edff!important;text-align:center;cursor:pointer
+}
+.home-game-card:before{background:radial-gradient(circle at 50% 20%,var(--art-glow,#a33cff55),transparent 65%)!important}
+.home-game-card:after{display:none!important}
+.home-game-art{height:58px!important;flex:0 0 58px!important;width:100%;font-size:clamp(30px,5vw,48px)!important;display:grid;place-items:center}
+.home-game-card b{font-size:clamp(11px,1.8vw,16px)!important;line-height:1.18;overflow-wrap:anywhere}
+.home-game-card small{display:none!important}
+.home-play{
+  display:none!important
+}
+.home-game-card:hover{transform:translateY(-2px);border-color:#ffd66f!important}
+.home-game-card.art-cases{border-color:#d29a42!important}
+@media(min-width:900px){
+  header{padding-left:max(28px,calc((100% - 1160px)/2))!important;padding-right:max(28px,calc((100% - 1160px)/2))!important}
+  .header-actions{grid-template-columns:repeat(4,minmax(0,1fr))!important}
+  .home-game-grid{grid-template-columns:repeat(4,minmax(0,1fr))!important;gap:16px!important}
+  .home-game-card{min-height:175px!important}
+  .home-game-art{height:76px!important;flex-basis:76px!important;font-size:52px!important}
+}
+@media(max-width:560px){
+  header{padding:17px 12px!important;gap:12px!important;border-radius:0 0 22px 22px!important}
+  .logo{font-size:25px!important}
+  .header-actions{grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:8px!important}
+  header button,header .header-actions a{min-height:46px;padding:9px 6px!important;font-size:11px!important;border-radius:12px!important}
+  .balance{width:calc(100% - 24px);margin:12px auto!important;padding:15px!important;min-height:82px;gap:8px}
+  .balance>div{min-width:0}
+  .balance strong{font-size:clamp(23px,7vw,31px)!important}
+  main{padding:4px 12px 30px!important}
+  .home-game-grid{grid-template-columns:repeat(3,minmax(0,1fr))!important;gap:9px!important;margin-top:12px}
+  .home-game-card{min-height:112px!important;padding:10px 5px!important;border-radius:15px!important;gap:6px}
+  .home-game-art{height:45px!important;flex-basis:45px!important;font-size:34px!important}
+  .home-game-card b{font-size:clamp(10px,3vw,13px)!important}
+}
+@media(max-width:360px){
+  .home-game-grid{gap:7px!important}
+  .home-game-card{min-height:102px!important;padding:8px 3px!important}
+  .home-game-art{height:39px!important;flex-basis:39px!important;font-size:30px!important}
+  header button,header .header-actions a{font-size:10px!important}
+}
 </style>
 <!-- CASES -->
 
