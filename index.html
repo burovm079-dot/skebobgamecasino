@@ -875,7 +875,7 @@ line-height:1.6;
 .plinko-last{background:var(--panel);border:1px solid var(--border2);border-radius:12px;text-align:center;padding:13px;margin:12px 0;color:var(--muted);font-size:13px;min-height:46px}
 .plinko-info{color:var(--muted);font-size:12px;line-height:1.6;margin:8px 2px}
 @media(max-width:390px){.plinko-board{height:300px}.plinko-peg{width:6px;height:6px}.plinko-slot{padding:7px 0;font-size:8px}}
-.skebob-verified{display:inline-grid;place-items:center;vertical-align:middle;width:19px;height:19px;margin-left:6px;padding:0;border:0;border-radius:50%;background:var(--verified-color,#258cf4);color:#fff;font-size:13px;line-height:1;box-shadow:0 0 0 2px #ffffff20;cursor:pointer}.skebob-verified.verified-gold{--verified-color:#e0aa20}.skebob-verified.verified-green{--verified-color:#20a568}.skebob-verified.verified-blue{--verified-color:#258cf4}.verified-choice-row{display:flex;gap:8px;flex-wrap:wrap;margin:8px 0}.verified-choice{flex:1;min-width:90px}.verified-choice.active{outline:2px solid var(--accent);outline-offset:2px}.skebob-verified:hover{background:#0875df;transform:scale(1.08)}
+.skebob-verified{display:inline-grid;place-items:center;vertical-align:middle;width:19px;height:19px;margin-left:6px;padding:0;border:0;border-radius:50%;background:var(--verified-color,#258cf4);color:#fff;font-size:13px;line-height:1;box-shadow:0 0 0 2px #ffffff20;cursor:pointer}.skebob-verified.verified-gold{--verified-color:#e0aa20}.skebob-verified.verified-green{--verified-color:#20a568}.skebob-verified.verified-blue{--verified-color:#258cf4}.skebob-verified.verified-black{--verified-color:#111;box-shadow:0 0 0 2px #777}.verified-choice-row{display:flex;gap:8px;flex-wrap:wrap;margin:8px 0}.verified-choice{flex:1;min-width:90px}.verified-choice.active{outline:2px solid var(--accent);outline-offset:2px}.skebob-verified:hover{background:#0875df;transform:scale(1.08)}
 .special-account-badge{display:inline-grid;place-items:center;vertical-align:middle;width:19px;height:19px;margin-left:6px;padding:0;border:0;border-radius:50%;color:#fff;font-size:13px;line-height:1;cursor:pointer}.special-account-badge.media{background:#20b76b;box-shadow:0 0 0 2px #20b76b30}.special-account-badge.vip{background:#d7a51b;box-shadow:0 0 0 2px #d7a51b30}.special-account-controls{margin-top:12px;padding:12px;border:1px solid var(--border2);border-radius:14px;background:var(--panel2)}.special-account-controls button{margin-top:8px}
 /* BLACKJACK */
 .bj-table{background:radial-gradient(ellipse at center,#176b49,#073d2e 68%,#05271f);border:5px solid #9b7138;border-radius:24px;padding:18px;margin:16px 0;color:white;box-shadow:inset 0 0 30px #0008,0 8px 24px #0005;min-height:300px}
@@ -8128,7 +8128,7 @@ function randomNickname(){
 function getNickname(){return storageGet(NICKNAME_KEY)||"Player";}
 function bjIsOfficialNickname(value){return String(value||"").trim().replace(/\s+/g," ").toLocaleUpperCase("ru")==="SKEBOB OFFICIAL";}
 const BJ_OFFICIAL_BADGE_KEY="skebobOfficialBadgeColor";
-const BJ_OFFICIAL_BADGE_COLORS={gold:"verified-gold",green:"verified-green",blue:"verified-blue"};
+const BJ_OFFICIAL_BADGE_COLORS={gold:"verified-gold",green:"verified-green",blue:"verified-blue",black:"verified-black"};
 function bjOfficialBadge(value){
  if(!bjIsOfficialNickname(value))return "";
  const color=storageGet(BJ_OFFICIAL_BADGE_KEY)||"blue";
@@ -8202,7 +8202,8 @@ function renderSpecialAccountControls(){
   html+='<div class="verified-choice-row">';
   html+='<button class="secondary verified-choice '+(selectedBadge==="gold"?"active":"")+'" type="button" onclick="bjSetOfficialBadgeColor(\'gold\')">🟡 Золотая ✓</button>';
   html+='<button class="secondary verified-choice '+(selectedBadge==="green"?"active":"")+'" type="button" onclick="bjSetOfficialBadgeColor(\'green\')">🟢 Зелёная ✓</button>';
-  html+='<button class="secondary verified-choice '+(selectedBadge==="blue"?"active":"")+'" type="button" onclick="bjSetOfficialBadgeColor(\'blue\')">🔵 Синяя ✓</button></div>';
+  html+='<button class="secondary verified-choice '+(selectedBadge==="blue"?"active":"")+'" type="button" onclick="bjSetOfficialBadgeColor(\'blue\')">🔵 Синяя ✓</button>';
+  html+='<button class="secondary verified-choice '+(selectedBadge==="black"?"active":"")+'" type="button" onclick="bjSetOfficialBadgeColor(\'black\')">⚫ Чёрная ✓</button></div>';
   html+='<div class="small" style="margin-top:10px">Инструменты официального аккаунта</div><button class="secondary" type="button" style="width:100%;margin-top:8px" onclick="bjOfficialGiveAllNfts()">🎁 ВЫДАТЬ ВСЕ NFT</button>';
  }
  host.innerHTML=html+'</div>';
@@ -8320,6 +8321,8 @@ const bjOnlineCard=()=>({rank:["A","2","3","4","5","6","7","8","9","10","J","Q",
 function bjOnlineValue(hand){let n=0,a=0;for(const c of hand){if(c.rank==="A"){n+=11;a++}else n+=["J","Q","K"].includes(c.rank)?10:Number(c.rank)}while(n>21&&a-- >0)n-=10;return n}
 function bjOnlineDraw(hand){hand.push(bjOnlineCard())}
 function bjOnlinePublishState(){if(!bjOnlineChannel||!bjOnlineRound||bjOnlineRound.finished)return;bjOnlineSend("player-state",{id:bjOnlineId,hand:bjOnlineMyHand,done:!bjOnlineMyTurn,turn:bjOnlineMyTurn?"Твой ход":"Завершил ход"})}
+let bjOnlineBotHand=[];
+function bjShowBotBadge(){alert("официальный бот SKEBOB GAME");}
 function bjOnlineRender(){
  const d=document.getElementById("bjOnlineDealerCards"),y=document.getElementById("bjOnlineYourCards");
  if(d)d.innerHTML=bjOnlineDealer?bjHandHTML(bjOnlineDealer.cards||[],!bjOnlineDealer.revealed):'<span class="bj-card">?</span>';
@@ -8335,7 +8338,7 @@ function bjOnlineRender(){
   const turn=p.done?"Ход завершён":mine?(bjOnlineMyTurn?"ТВОЙ ХОД":"Ожидание"):p.turn?(p.turn+" ходит"):"Ожидает хода";
   const active=mine?bjOnlineMyTurn:(!p.done&&!!p.turn&&p.turn!=="Ожидает хода");
   return '<div class="bj-bot '+(mine?"bj-me ":"")+(active?"bj-turn":"")+'"><div class="bj-seat-name">👤 '+bjEscape(p.name)+bjOfficialBadge(p.name)+bjSpecialAccountBadge(p.name)+(mine?" · ВЫ":"")+'</div><div class="bj-cards">'+cards+'</div><div class="small">'+turn+score+'</div></div>';
- }).join("");
+ }).join("")+'<div class="bj-bot"><div class="bj-seat-name">🤖 SKEBOB BOT <button type="button" class="skebob-verified verified-black" aria-label="Официальный бот" title="SKEBOB BOT" onclick="bjShowBotBadge()">✓</button></div><div class="bj-cards">'+(bjOnlineBotHand.length?bjHandHTML(bjOnlineBotHand):'<span class="bj-card">?</span>')+'</div><div class="small">'+(bjOnlineBotHand.length?"Ход завершён · "+bjOnlineValue(bjOnlineBotHand)+" очков":"Ожидает начала раунда")+"</div></div>";
  const hit=document.getElementById("bjOnlineHit"),stand=document.getElementById("bjOnlineStand");
  if(hit)hit.disabled=!bjOnlineMyTurn;
  if(stand)stand.disabled=!bjOnlineMyTurn;
@@ -8354,7 +8357,7 @@ async function bjOnlineJoin(){
  bjOnlineChannel=bjOnlineClient.channel(channelName,{config:{presence:{key:bjOnlineId},broadcast:{self:true}}});
  bjOnlineChannel.on("presence",{event:"sync"},()=>{const state=bjOnlineChannel.presenceState();const all=Object.values(state).flat().map(x=>({id:x.id,name:x.name,done:!!x.done,joinedAt:x.joinedAt||0,phase:x.phase||"waiting"})).sort((a,b)=>a.joinedAt-b.joinedAt);if(all.some(p=>p.phase==="playing")&&!bjOnlineRound){bjOnlineStatus("Раунд уже идёт. Подожди следующего набора.");bjOnlineLeave();return}if(all.length>4&&!all.slice(0,4).some(p=>p.id===bjOnlineId)){bjOnlineStatus("Комната уже заполнена (4 игрока).");bjOnlineLeave();return}bjOnlineMembers=all.slice(0,4);bjOnlineHost=bjOnlineMembers[0]?.id===bjOnlineId;bjOnlineRender();if(bjOnlineRound&&!bjOnlineRound.finished)setTimeout(bjOnlinePublishState,250)});
  bjOnlineChannel.on("broadcast",{event:"round"},({payload})=>{if(payload.host!==bjOnlineMembers[0]?.id)return;bjOnlineBeginRound(payload)});
- bjOnlineChannel.on("broadcast",{event:"dealer-final"},({payload})=>{if(!bjOnlineRound||payload.round!==bjOnlineRound.id)return;bjOnlineDealer={cards:payload.cards,revealed:true};bjOnlineRound.finished=true;bjOnlineMyTurn=false;bjOnlineRender();bjOnlineShowResult()});
+ bjOnlineChannel.on("broadcast",{event:"dealer-final"},({payload})=>{if(!bjOnlineRound||payload.round!==bjOnlineRound.id)return;bjOnlineBotHand=payload.botHand||bjOnlineBotHand;bjOnlineDealer={cards:payload.cards,revealed:true};bjOnlineRound.finished=true;bjOnlineMyTurn=false;bjOnlineRender();bjOnlineShowResult()});
  bjOnlineChannel.on("broadcast",{event:"player-state"},({payload})=>{const p=bjOnlineMembers.find(x=>x.id===payload.id);if(!p)return;p.hand=payload.hand||[];p.done=!!payload.done;p.turn=payload.done?"Завершил ход":(payload.turn||"Ходит");bjOnlineRender()});
  bjOnlineChannel.on("broadcast",{event:"player-done"},({payload})=>{const p=bjOnlineMembers.find(x=>x.id===payload.id);if(p){p.done=true;p.hand=payload.hand||p.hand;p.turn="Завершил ход"}bjOnlineRender();if(bjOnlineHost)bjOnlineFinishDealer()});
  bjOnlineChannel.on("broadcast",{event:"room-full"},()=>bjOnlineStatus("Комната заполнена. Попробуй ещё раз."));
@@ -8375,7 +8378,7 @@ async function bjOnlineJoin(){
 async function bjOnlineLeave(){
  if(bjOnlineTimer)clearInterval(bjOnlineTimer);
  if(bjOnlineChannel){await bjOnlineChannel.untrack();await bjOnlineClient.removeChannel(bjOnlineChannel)}
- bjOnlineChannel=null;bjOnlineRoom="";bjOnlineJoinedAt=0;bjOnlineMembers=[];bjOnlineRound=null;bjOnlineMyHand=[];bjOnlineDealer=null;bjOnlineMyTurn=false;
+ bjOnlineChannel=null;bjOnlineRoom="";bjOnlineJoinedAt=0;bjOnlineMembers=[];bjOnlineRound=null;bjOnlineMyHand=[];bjOnlineBotHand=[];bjOnlineDealer=null;bjOnlineMyTurn=false;
  document.getElementById("bjOnlineJoin").disabled=false;document.getElementById("bjOnlineLeave").disabled=true;
  document.getElementById("bjOnlineRoomLabel").textContent="Комната: —";document.getElementById("bjOnlineCountdown").textContent="";
  bjOnlineStatus("Ты вышел из игры. Когда будешь готов — нажми «Играть».");bjOnlineRender();
@@ -8383,13 +8386,13 @@ async function bjOnlineLeave(){
 function bjOnlineBeginRound(payload){
  if(bjOnlineRound?.id===payload.id)return false;
  bjOnlineRoundLocked=true;
- bjOnlineRound={id:payload.id,finished:false};bjOnlineDealer={cards:payload.dealer,revealed:false};bjOnlineMyHand=[bjOnlineCard(),bjOnlineCard()];bjOnlineMyTurn=true;
+ bjOnlineRound={id:payload.id,finished:false};bjOnlineDealer={cards:payload.dealer,revealed:false};bjOnlineBotHand=(payload.botHand||[]).slice();bjOnlineMyHand=[bjOnlineCard(),bjOnlineCard()];bjOnlineMyTurn=true;
  bjOnlineChannel.track({id:bjOnlineId,name:bjOnlineName(),done:false,joinedAt:bjOnlineJoinedAt,phase:"playing"});
  bjOnlinePublishState();bjOnlineRender();bjOnlineStatus("Раунд начался! Удачи.");return true;
 }
 function bjOnlineStart(){
  if(!bjOnlineHost||!bjOnlineChannel||bjOnlineMembers.length===0)return;
- const payload={id:Date.now().toString(),host:bjOnlineId,dealer:[bjOnlineCard(),bjOnlineCard()]};
+ const botHand=[bjOnlineCard(),bjOnlineCard()];while(bjOnlineValue(botHand)<17&&bjOnlineValue(botHand)<21)bjOnlineDraw(botHand);const payload={id:Date.now().toString(),host:bjOnlineId,dealer:[bjOnlineCard(),bjOnlineCard()],botHand};
  if(!bjOnlineBeginRound(payload))return;
  bjOnlineSend("round",payload);
 }
@@ -8412,7 +8415,7 @@ function bjOnlineFinishDealer(){
  if(!allDone)return;
  const dealer=bjOnlineDealer.cards.slice();while(bjOnlineValue(dealer)<17)bjOnlineDraw(dealer);
  bjOnlineDealer={cards:dealer,revealed:true};bjOnlineRound.finished=true;
- bjOnlineSend("dealer-final",{round:bjOnlineRound.id,cards:dealer});
+ bjOnlineSend("dealer-final",{round:bjOnlineRound.id,cards:dealer,botHand:bjOnlineBotHand});
  bjOnlineRender();bjOnlineShowResult();
 }
 function bjOnlineShowResult(){
