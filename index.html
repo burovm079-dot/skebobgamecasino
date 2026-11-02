@@ -5280,6 +5280,7 @@ function checkAllNftAchievement(){
  const complete=catalog.every(item=>owned.some(x=>x.name===item.name&&x.collection===item.collection));
  if(!complete)return false;
  state.collectionAchievement={unlocked:true,unlockedAt:Date.now()};
+ state.collectionAchievementNotified=true;
  if(!state.profileStyle||typeof state.profileStyle!=="object")state.profileStyle={frame:"classic",background:"default",accent:"gold"};
  state.profileStyle.frame="legend";
  setTimeout(()=>alert("🎉 ВЫ СОБРАЛИ ВСЕ NFT ИГРЫ!\n\n🏆 Вам открыт статус «ЛЕГЕНДА КОЛЛЕКЦИИ» и эксклюзивная рамка профиля!"),0);
