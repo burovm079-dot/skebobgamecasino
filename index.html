@@ -1915,8 +1915,12 @@ rel="noopener noreferrer"
 
 <div class="nav">
 
-<button class="active" onclick="showPage('cases',this)">
-🎁 CASES
+<button class="active" data-page="home" onclick="showPage('home',this)">
+🏠 ГЛАВНАЯ
+</button>
+
+<button data-page="cases" onclick="showPage('cases',this)">
+🎁 КЕЙСЫ
 </button>
 
 <button onclick="showPage('upgrade',this)">
@@ -1956,6 +1960,44 @@ rel="noopener noreferrer"
 
 
 </div>
+
+<section id="home" class="home-dashboard">
+  <div class="home-welcome">
+    <div>
+      <div class="home-eyebrow">SKEBOB GAME</div>
+      <h1>Выбирай игру и начинай!</h1>
+      <p>Все мини-игры SKEBOB GAME в одном месте</p>
+    </div>
+    <div class="home-coin-art" aria-hidden="true">👑</div>
+  </div>
+  <div class="home-section-head">
+    <div><span class="home-star">✦</span><h2>Популярные игры</h2></div>
+    <button class="home-all-games" onclick="document.querySelector('.home-game-grid').scrollIntoView({behavior:'smooth',block:'start'})">Все игры ↓</button>
+  </div>
+  <div class="home-game-grid">
+    <button class="home-game-card art-plane" onclick="showPage('plane')"><span class="home-game-art">✈️</span><b>Самолёт</b><small>Лети к победе!</small><span class="home-play">Играть →</span></button>
+    <button class="home-game-card art-slots" onclick="showPage('slots')"><span class="home-game-art">🎰</span><b>Слоты</b><small>Испытай удачу!</small><span class="home-play">Играть →</span></button>
+    <button class="home-game-card art-cases" onclick="showPage('cases',document.querySelector('[data-page=cases]'))"><span class="home-game-art">🎁</span><b>Кейсы</b><small>Открывай коллекции!</small><span class="home-play">Открыть →</span></button>
+    <button class="home-game-card art-upgrade" onclick="showPage('upgrade')"><span class="home-game-art">💎</span><b>Апгрейд</b><small>Улучши предметы!</small><span class="home-play">Играть →</span></button>
+    <button class="home-game-card art-mines" onclick="showPage('mines')"><span class="home-game-art">💣</span><b>Mines</b><small>Найди безопасные клетки</small><span class="home-play">Играть →</span></button>
+    <button class="home-game-card art-pickaxe" onclick="showPage('pickaxe')"><span class="home-game-art">⛏️</span><b>Кирка</b><small>Добывай награды!</small><span class="home-play">Играть →</span></button>
+    <button class="home-game-card art-plinko" onclick="showPage('plinko')"><span class="home-game-art">🔴</span><b>Plinko</b><small>Путь шарика к призу</small><span class="home-play">Играть →</span></button>
+    <button class="home-game-card art-race" onclick="showPage('race')"><span class="home-game-art">🏁</span><b>Race</b><small>Гонка за результатом</small><span class="home-play">Играть →</span></button>
+    <button class="home-game-card art-crash" onclick="showPage('crash')"><span class="home-game-art">📈</span><b>Краш</b><small>Следи за ростом графика</small><span class="home-play">Играть →</span></button>
+    <button class="home-game-card art-battles" onclick="showPage('battles')"><span class="home-game-art">⚔️</span><b>Батлы кейсов</b><small>Соревнуйся с ботами</small><span class="home-play">Играть →</span></button>
+    <button class="home-game-card art-blackjack" onclick="showPage('blackjack')"><span class="home-game-art">🃏</span><b>Blackjack</b><small>Карточная игра</small><span class="home-play">Играть →</span></button>
+    <button class="home-game-card art-dice" onclick="showPage('dice')"><span class="home-game-art">🎲</span><b>Кости</b><small>Бросай кубики</small><span class="home-play">Играть →</span></button>
+    <button class="home-game-card art-tictactoe" onclick="showPage('tictactoe')"><span class="home-game-art">⭕</span><b>Крестики-нолики</b><small>Сыграй партию</small><span class="home-play">Играть →</span></button>
+    <button class="home-game-card art-billiards" onclick="showPage('billiards')"><span class="home-game-art">🎱</span><b>Бильярд</b><small>Забивай шары</small><span class="home-play">Играть →</span></button>
+    <button class="home-game-card art-chicken" onclick="showPage('chickenroad')"><span class="home-game-art">🐔</span><b>Chicken Road</b><small>Пройди свой маршрут</small><span class="home-play">Играть →</span></button>
+    <button class="home-game-card art-tap" onclick="showPage('skebobTap')"><span class="home-game-art">👆</span><b>Skebob Tap</b><small>Тапай и собирай монеты</small><span class="home-play">Играть →</span></button>
+  </div>
+  <div class="home-bottom-strip">
+    <div class="home-bottom-icon">🎁</div>
+    <div><b>Твоя коллекция начинается здесь</b><small>Загляни в кейсы и посмотри доступные коллекционные предметы</small></div>
+    <button onclick="showPage('cases',document.querySelector('[data-page=cases]'))">Перейти в кейсы →</button>
+  </div>
+</section>
 
 <section id="skebobTap" class="hidden">
  <h2>👆 SKEBOB TAP</h2>
@@ -2012,10 +2054,49 @@ rel="noopener noreferrer"
 #chickenroad .ch-hud b{font-variant-numeric:tabular-nums;text-shadow:0 2px 8px #e9b94a44}
 @media(max-width:480px){#tttGrid button{min-height:68px}.real-game-canvas{border-radius:11px}}
 
+
+/* SKEBOB GAME HOME REDESIGN */
+main{max-width:1320px;padding:12px 18px 54px}
+.nav{gap:8px;flex-wrap:wrap;overflow:visible;margin:14px 0 18px}
+.nav button{flex:0 0 auto;min-width:100px;padding:12px 15px;font-size:12px;border-radius:13px;background:linear-gradient(145deg,#24103b,#13091f);border:1px solid #62328a;color:#e8d8f7;box-shadow:0 5px 14px #0005}
+.nav button.active{background:linear-gradient(110deg,#a62cff,#6500d7);color:#fff;border-color:#d9a3ff;box-shadow:0 0 18px #9d35ff88}
+.home-dashboard{padding:8px 0 28px}
+.home-welcome{min-height:116px;display:flex;align-items:center;justify-content:space-between;gap:20px;padding:22px 28px;margin:4px 0 24px;border:1px solid #8c42c3;border-radius:22px;background:radial-gradient(circle at 84% 25%,#a044ef66,transparent 30%),linear-gradient(115deg,#321052,#160a2b 65%,#281044);box-shadow:0 12px 28px #0006,inset 0 1px #ffffff22;overflow:hidden}
+.home-eyebrow{font-size:11px;font-weight:900;letter-spacing:3px;color:#ffd76a}
+.home-welcome h1{font-size:clamp(23px,3vw,34px);margin:7px 0;color:#fff;text-shadow:0 3px 14px #9a43ff88}
+.home-welcome p{margin:0;color:#d8c0ed;font-size:14px}
+.home-coin-art{font-size:68px;filter:drop-shadow(0 9px 14px #0009);transform:rotate(12deg)}
+.home-section-head{display:flex;align-items:center;justify-content:space-between;gap:12px;margin:0 0 14px}
+.home-section-head>div{display:flex;align-items:center;gap:10px}
+.home-section-head h2{margin:0;font-size:22px;color:#fff}
+.home-star{font-size:29px;color:#ffd45e;text-shadow:0 0 14px #ffb52c}
+.home-all-games{border:1px solid #9b4ee4;border-radius:12px;padding:10px 15px;color:#fff;background:linear-gradient(110deg,#7020bd,#4400a7);font-weight:900}
+.home-game-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:15px}
+.home-game-card{position:relative;isolation:isolate;overflow:hidden;min-width:0;min-height:210px;padding:12px 12px 14px;border:1px solid #8c43c1;border-radius:19px;color:#fff;text-align:center;background:linear-gradient(155deg,#32134f,#13081f 72%);box-shadow:0 9px 22px #0007,inset 0 1px #ffffff22;display:flex;flex-direction:column;align-items:center;justify-content:flex-end;gap:5px;transition:transform .18s,border-color .18s,box-shadow .18s}
+.home-game-card:before{content:"";position:absolute;inset:0;z-index:-2;background:radial-gradient(circle at 50% 28%,var(--art-glow,#a33cff66),transparent 58%),linear-gradient(145deg,var(--art-a,#45206b),var(--art-b,#170923) 75%)}
+.home-game-card:after{content:"";position:absolute;z-index:-1;inset:0;background:linear-gradient(180deg,transparent 20%,rgba(13,4,24,.15) 42%,rgba(11,4,21,.94) 100%)}
+.home-game-card:hover{transform:translateY(-4px);border-color:#ffd56d;box-shadow:0 14px 26px #0009,0 0 20px #a33cff66}
+.home-game-art{height:116px;width:100%;display:grid;place-items:center;font-size:clamp(54px,6vw,82px);line-height:1;filter:drop-shadow(0 9px 8px #000b);text-shadow:0 0 22px #fff6;transform:translateY(3px)}
+.home-game-card b{font-size:17px;text-shadow:0 2px 8px #000}
+.home-game-card small{font-size:12px;color:#e3c9f7;min-height:17px}
+.home-play{display:block;width:min(100%,170px);margin-top:5px;padding:10px 12px;border-radius:13px;background:linear-gradient(100deg,#a82dff,#6500d7);border:1px solid #dca8ff;box-shadow:0 5px 14px #7000d988;font-weight:900;font-size:13px}
+.art-plane{--art-a:#164f89;--art-b:#170d39;--art-glow:#3cbdff88}.art-slots{--art-a:#74204f;--art-b:#200a36;--art-glow:#ff36b788}.art-cases{--art-a:#682b9a;--art-b:#170b36;--art-glow:#ffc44c99}.art-upgrade{--art-a:#48218a;--art-b:#100d3a;--art-glow:#8d5dff99}.art-mines{--art-a:#7a274a;--art-b:#1d0b32;--art-glow:#ff536a88}.art-pickaxe{--art-a:#6c421d;--art-b:#20102b;--art-glow:#ffb93d88}.art-plinko{--art-a:#173e83;--art-b:#170b38;--art-glow:#35b8ff88}.art-race{--art-a:#71331c;--art-b:#1d0b31;--art-glow:#ff8d3888}.art-crash{--art-a:#174f58;--art-b:#120b36;--art-glow:#37ffc488}.art-battles{--art-a:#69204c;--art-b:#1c0a32;--art-glow:#ff4d9a88}.art-blackjack{--art-a:#164c43;--art-b:#100d2d;--art-glow:#4ce2a088}.art-dice{--art-a:#244e91;--art-b:#170b35;--art-glow:#61aaff88}.art-tictactoe{--art-a:#3e368c;--art-b:#160a32;--art-glow:#9b78ff88}.art-billiards{--art-a:#14554b;--art-b:#100b2d;--art-glow:#43e1a288}.art-chicken{--art-a:#89501f;--art-b:#28102f;--art-glow:#ffc14d88}.art-tap{--art-a:#662f8b;--art-b:#180a31;--art-glow:#d06cff88}
+.home-bottom-strip{display:flex;align-items:center;gap:16px;margin-top:20px;padding:17px 20px;border:1px solid #8141ad;border-radius:18px;background:linear-gradient(100deg,#35104f,#1a0b2c 75%);box-shadow:0 8px 20px #0005}
+.home-bottom-icon{font-size:42px;filter:drop-shadow(0 5px 8px #0008)}
+.home-bottom-strip>div:nth-child(2){flex:1;display:flex;flex-direction:column;gap:5px}
+.home-bottom-strip b{color:#ffe18a;font-size:16px}.home-bottom-strip small{color:#d9c2ed}
+.home-bottom-strip button{border:1px solid #e4b8ff;border-radius:12px;padding:12px 16px;background:linear-gradient(100deg,#8d28df,#5700bb);color:white;font-weight:900}
+#caseList .case .pic{height:112px;display:grid;place-items:center;overflow:hidden;border-radius:14px;background:radial-gradient(circle at 50% 35%,#a84fff55,transparent 68%),linear-gradient(145deg,#31134e,#130820);border:1px solid #8546b7;box-shadow:inset 0 0 22px #b65cff22}
+#caseList .case .pic img{width:100%;height:100%;max-width:100%;object-fit:contain;padding:8px;filter:drop-shadow(0 7px 9px #0009)}
+#caseList .case .pic span{font-size:54px;filter:drop-shadow(0 7px 8px #0009)}
+#cases .daily-case{border-color:#8642b5;background:radial-gradient(circle at 80% 10%,#8e3fbd55,transparent 35%),linear-gradient(145deg,#32134b,#160a27)}
+@media(max-width:900px){.home-game-grid{grid-template-columns:repeat(3,minmax(0,1fr))}.home-game-card{min-height:195px}}
+@media(max-width:620px){main{padding:8px 11px 40px}.nav{flex-wrap:nowrap;overflow-x:auto}.nav button{flex:0 0 auto;min-width:92px}.home-game-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}.home-game-card{min-height:176px;padding:9px}.home-game-art{height:92px;font-size:58px}.home-game-card b{font-size:15px}.home-game-card small{font-size:11px}.home-welcome{padding:17px 18px}.home-coin-art{font-size:48px}.home-bottom-strip{align-items:flex-start;flex-wrap:wrap}.home-bottom-strip button{width:100%}}
+@media(prefers-reduced-motion:reduce){.home-game-card{transition:none}}
 </style>
 <!-- CASES -->
 
-<section id="cases">
+<section id="cases" class="hidden">
 
 <h2>🎁 КЕЙСЫ</h2>
 
