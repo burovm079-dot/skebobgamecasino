@@ -3603,7 +3603,7 @@ onclick="adminGive()"
 
 <!-- Supabase Realtime client for no-stakes blackjack rooms -->
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script src="https://cdn.jsdelivr.net/npm/three@0.159.0/build/three.min.js"></script>
+
 <script>
 
 /* =========================
@@ -6308,106 +6308,112 @@ updateMineStats();
 ========================= */
 
 
-/* THREE.JS airplane scene inspired by the supplied 3D flight reference */
-let plane3d=null,plane3dProgress=0,plane3dFrame=0;
+/* 2D side-scrolling airplane scene: lightweight canvas renderer */
+let plane2dProgress=0,plane2dFrame=0,plane2d=null,plane2dStart=0;
 function initPlane3D(){
  const host=document.querySelector(".plane-world");
- if(!host||!window.THREE||plane3d)return;
+ if(!host||plane2d)return;
  try{
-  const T=window.THREE,scene=new T.Scene();
-  scene.background=new T.Color(0x102d83);
-  scene.fog=new T.Fog(0x244b9c,85,220);
-  const camera=new T.OrthographicCamera(-24,24,12,-12,.1,500);
-  camera.position.set(0,6,55);camera.lookAt(0,6,0);
-  const renderer=new T.WebGLRenderer({antialias:true,alpha:false});
-  renderer.setPixelRatio(Math.min(window.devicePixelRatio||1,1.5));
-  renderer.outputColorSpace=T.SRGBColorSpace;
-  renderer.domElement.id="plane3dCanvas";
-  host.insertBefore(renderer.domElement,host.firstChild);
-  scene.add(new T.HemisphereLight(0xc8e4ff,0x14234a,2.1));
-  const sun=new T.DirectionalLight(0xffedc6,2.3);sun.position.set(-18,25,30);scene.add(sun);
-  const sky=new T.Mesh(new T.PlaneGeometry(500,160),new T.MeshBasicMaterial({color:0x15358b}));
-  sky.position.set(0,22,-95);scene.add(sky);
-  const ocean=new T.Mesh(new T.PlaneGeometry(600,80),new T.MeshStandardMaterial({color:0x073b83,roughness:.38,metalness:.12}));
-  ocean.position.set(0,-8,-15);scene.add(ocean);
-  const horizon=new T.Mesh(new T.PlaneGeometry(600,1.5),new T.MeshBasicMaterial({color:0x769acb,transparent:true,opacity:.55}));
-  horizon.position.set(0,-1.1,-12);scene.add(horizon);
-  // Carrier shown in side profile at takeoff, then falls behind the aircraft.
-  const ship=new T.Group();scene.add(ship);
-  const hull=new T.Mesh(new T.BoxGeometry(17,1.25,2.6),new T.MeshStandardMaterial({color:0x29394d,roughness:.8}));hull.position.y=-5.1;ship.add(hull);
-  const bow=new T.Mesh(new T.ConeGeometry(1.3,2.4,4),new T.MeshStandardMaterial({color:0x35485c}));bow.rotation.z=-Math.PI/2;bow.scale.set(1,.55,1);bow.position.set(8.7,-5.1,0);ship.add(bow);
-  const deck=new T.Mesh(new T.BoxGeometry(18,.28,3),new T.MeshStandardMaterial({color:0x8795a4,roughness:.8}));deck.position.y=-4.35;ship.add(deck);
-  const runway=new T.Mesh(new T.BoxGeometry(15,.035,.08),new T.MeshBasicMaterial({color:0xe8e9df}));runway.position.set(-.3,-4.18,1.53);ship.add(runway);
-  const island=new T.Group();ship.add(island);
-  const base=new T.Mesh(new T.BoxGeometry(1.15,2.5,1.2),new T.MeshStandardMaterial({color:0xd4d9df}));base.position.set(4.8,-2.95,0);island.add(base);
-  const bridge=new T.Mesh(new T.BoxGeometry(1.35,.55,1.25),new T.MeshStandardMaterial({color:0x344d6b}));bridge.position.set(4.8,-1.42,0);island.add(bridge);
-  for(let i=0;i<3;i++){const mast=new T.Mesh(new T.CylinderGeometry(.035,.05,.85,6),new T.MeshStandardMaterial({color:0xe1e5eb}));mast.position.set(4.35+i*.35,-.72,0);island.add(mast)}
-  const aircraft=new T.Group();scene.add(aircraft);
-  const red=new T.MeshStandardMaterial({color:0xd9272e,roughness:.5});
-  const yellow=new T.MeshStandardMaterial({color:0xffd34e,roughness:.42});
-  const dark=new T.MeshStandardMaterial({color:0x252d3b});
-  const glass=new T.MeshStandardMaterial({color:0x9edcf7,metalness:.25,roughness:.15});
-  const body=new T.Mesh(new T.CylinderGeometry(.32,.4,4.3,12),red);body.rotation.z=Math.PI/2;aircraft.add(body);
-  const nose=new T.Mesh(new T.ConeGeometry(.36,.95,12),yellow);nose.rotation.z=-Math.PI/2;nose.position.x=2.55;aircraft.add(nose);
-  const tail=new T.Mesh(new T.BoxGeometry(.72,.13,1.55),yellow);tail.position.set(-1.65,.22,0);aircraft.add(tail);
-  const fin=new T.Mesh(new T.BoxGeometry(.72,1.05,.12),red);fin.position.set(-1.65,.65,0);aircraft.add(fin);
-  const wing=new T.Mesh(new T.BoxGeometry(1.45,.16,6.3),red);wing.position.set(.05,-.12,0);aircraft.add(wing);
-  const stripe=new T.Mesh(new T.BoxGeometry(1.48,.18,.38),yellow);stripe.position.set(.05,-.015,0);aircraft.add(stripe);
-  const cockpit=new T.Mesh(new T.SphereGeometry(.48,14,10),glass);cockpit.scale.set(1.65,.72,.82);cockpit.position.set(.6,.42,0);aircraft.add(cockpit);
-  const prop=new T.Group();prop.position.set(3.02,0,0);aircraft.add(prop);
-  prop.add(new T.Mesh(new T.SphereGeometry(.13,10,8),yellow));
-  for(let i=0;i<3;i++){const blade=new T.Mesh(new T.BoxGeometry(.09,1.55,.2),dark);blade.rotation.x=i*Math.PI/3;prop.add(blade)}
-  aircraft.position.set(-7,1.1,4);
-  // Puffy cloud banks, layered for parallax.
-  const clouds=[];
-  for(let i=0;i<25;i++){
-   const g=new T.Group(),mat=new T.MeshStandardMaterial({color:0xdceaff,roughness:1});
-   const n=4+(i%4);
-   for(let j=0;j<n;j++){const puff=new T.Mesh(new T.SphereGeometry(.75+(j%2)*.38,12,9),mat);puff.position.set((j-(n-1)/2)*.82,Math.sin(j*1.7)*.18,0);puff.scale.y=.62;g.add(puff)}
-   g.position.set((Math.random()-.5)*90,-.3+Math.random()*15,-28-Math.random()*65);
-   g.scale.setScalar(.75+Math.random()*1.6);scene.add(g);clouds.push(g);
-  }
-  // Bonus rings and small rockets travel from right to left across the screen.
-  const gates=[];
-  for(let i=0;i<8;i++){
-   const g=new T.Group(),ring=new T.Mesh(new T.TorusGeometry(.82,.09,10,32),new T.MeshBasicMaterial({color:0x75caff}));
-   g.add(ring);const glow=new T.PointLight(0x55baff,1.2,5);g.add(glow);
-   g.position.set(8+(i%3)*7,1+(i%4)*1.35,2);scene.add(g);gates.push(g);
-  }
-  const rockets=[];
-  for(let i=0;i<7;i++){
-   const g=new T.Group();
-   const tube=new T.Mesh(new T.CylinderGeometry(.12,.12,1.35,8),new T.MeshStandardMaterial({color:0xd9dce2,metalness:.35}));
-   tube.rotation.z=-Math.PI/2;g.add(tube);
-   const tip=new T.Mesh(new T.ConeGeometry(.16,.38,8),new T.MeshStandardMaterial({color:0xe84a32}));tip.rotation.z=-Math.PI/2;tip.position.x=.83;g.add(tip);
-   g.position.set(12+i*8,-.5+(i%3)*2.5,5);scene.add(g);rockets.push(g);
-  }
-  const clock=new T.Clock();
-  function resize(){const w=Math.max(1,host.clientWidth),h=Math.max(1,host.clientHeight),halfH=13,halfW=halfH*w/h;camera.left=-halfW;camera.right=halfW;camera.top=halfH;camera.bottom=-halfH;camera.updateProjectionMatrix();renderer.setSize(w,h,false)}
-  resize();if(window.ResizeObserver)new ResizeObserver(resize).observe(host);
-  plane3d={scene,camera,renderer,aircraft,ship,clouds,gates,rockets,prop,ocean,clock};
-  function draw(){
-   plane3dFrame=requestAnimationFrame(draw);
-   const t=clock.getElapsedTime(),p=plane3dProgress;
-   // Side-on tracking camera: aircraft stays left of centre while the world streams past.
-   const travel=p*68;
-   aircraft.position.set(-7,1.1+Math.sin(t*1.7)*.13+p*1.2,4);
-   aircraft.rotation.z=-.06-p*.08+Math.sin(t*1.3)*.018;
-   prop.rotation.x=t*30;
-   camera.position.set(-3+travel,1.2,55);camera.lookAt(-3+travel,1.2,0);
-   ship.position.set(-7-travel*.92,0,1);
-   clouds.forEach((g,i)=>{g.position.x-=.025+(i%4)*.012;if(g.position.x<-65)g.position.x=65});
-   gates.forEach((g,i)=>{g.position.x-=.06+(i%3)*.01;g.rotation.z=Math.sin(t+i)*.12;if(g.position.x<-28)g.position.x=38});
-   rockets.forEach((g,i)=>{g.position.x-=.12+(i%3)*.025;if(g.position.x<-30)g.position.x=44});
-   renderer.render(scene,camera);
-  }
-  draw();
-  renderer.render(scene,camera);
+  const canvas=document.createElement("canvas");
+  canvas.id="plane3dCanvas";
+  canvas.setAttribute("aria-label","Анимация полёта самолёта");
+  host.insertBefore(canvas,host.firstChild);
+  const ctx=canvas.getContext("2d");
+  if(!ctx)throw new Error("Canvas 2D недоступен");
+  const clouds=Array.from({length:12},(_,i)=>({x:(i*173)%900,y:30+(i*47)%145,s:.55+(i%4)*.2}));
+  const bonuses=Array.from({length:8},(_,i)=>({x:260+i*145,y:75+(i%4)*38,v:["×2","×3","×5","+10","+25"][i%5],c:i%3===0?"#72ff78":"#d9f7ff"}));
+  const rockets=Array.from({length:5},(_,i)=>({x:440+i*210,y:155+(i%3)*-30}));
+  plane2d={canvas,ctx,clouds,bonuses,rockets};
   host.classList.add("plane3d-ready");
- }catch(err){console.warn("3D plane scene unavailable",err);host.classList.remove("plane3d-ready");const fallback=document.getElementById("planeObject");if(fallback)fallback.style.display="block"}
+  function resize(){
+   const w=Math.max(1,host.clientWidth),h=Math.max(1,host.clientHeight),d=Math.min(devicePixelRatio||1,2);
+   canvas.width=Math.round(w*d);canvas.height=Math.round(h*d);
+   canvas.style.width="100%";canvas.style.height="100%";
+   ctx.setTransform(d,0,0,d,0,0);
+   plane2d.w=w;plane2d.h=h;
+  }
+  resize();
+  if(window.ResizeObserver)new ResizeObserver(resize).observe(host);
+  else window.addEventListener("resize",resize);
+  function roundRect(x,y,w,h,r,fill,stroke){
+   ctx.beginPath();ctx.roundRect(x,y,w,h,r);if(fill){ctx.fillStyle=fill;ctx.fill()}if(stroke){ctx.strokeStyle=stroke;ctx.lineWidth=2;ctx.stroke()}
+  }
+  function cloud(x,y,scale){
+   ctx.save();ctx.translate(x,y);ctx.scale(scale,scale);
+   ctx.fillStyle="rgba(224,240,255,.82)";
+   ctx.beginPath();ctx.arc(-18,4,13,0,Math.PI*2);ctx.arc(-4,-5,18,0,Math.PI*2);ctx.arc(13,1,14,0,Math.PI*2);ctx.arc(26,7,10,0,Math.PI*2);ctx.fill();
+   ctx.fillStyle="rgba(255,255,255,.24)";ctx.beginPath();ctx.ellipse(0,1,30,8,0,0,Math.PI*2);ctx.fill();ctx.restore();
+  }
+  function plane(x,y,t){
+   ctx.save();ctx.translate(x,y);ctx.rotate(-.17+Math.sin(t*2)*.025);
+   ctx.shadowColor="#07142c";ctx.shadowBlur=8;ctx.shadowOffsetY=4;
+   // fuselage
+   ctx.fillStyle="#d9272e";ctx.beginPath();ctx.moveTo(-29,-3);ctx.lineTo(18,-6);ctx.lineTo(34,0);ctx.lineTo(18,6);ctx.lineTo(-29,4);ctx.closePath();ctx.fill();
+   // yellow nose
+   ctx.fillStyle="#ffd34e";ctx.beginPath();ctx.moveTo(18,-6);ctx.lineTo(36,0);ctx.lineTo(18,6);ctx.closePath();ctx.fill();
+   // wings and tail
+   ctx.fillStyle="#e63a31";ctx.beginPath();ctx.moveTo(-8,-3);ctx.lineTo(1,-20);ctx.lineTo(10,-19);ctx.lineTo(7,-3);ctx.lineTo(9,3);ctx.lineTo(1,19);ctx.lineTo(-7,17);ctx.lineTo(-3,3);ctx.closePath();ctx.fill();
+   ctx.fillStyle="#ffda58";ctx.beginPath();ctx.moveTo(-25,-3);ctx.lineTo(-19,-13);ctx.lineTo(-12,-12);ctx.lineTo(-14,-2);ctx.lineTo(-13,4);ctx.lineTo(-21,11);ctx.lineTo(-25,8);ctx.closePath();ctx.fill();
+   // cockpit
+   ctx.fillStyle="#9fe2ff";ctx.beginPath();ctx.ellipse(7,-4,7,3,-.18,0,Math.PI*2);ctx.fill();
+   // propeller blur
+   ctx.shadowBlur=0;ctx.strokeStyle="#eaf4ff";ctx.lineWidth=2;ctx.beginPath();ctx.moveTo(37,-10+Math.sin(t*28)*3);ctx.lineTo(37,10+Math.sin(t*28)*3);ctx.stroke();
+   ctx.restore();
+  }
+  function ship(x,y,scale){
+   ctx.save();ctx.translate(x,y);ctx.scale(scale,scale);
+   ctx.fillStyle="#263e59";ctx.beginPath();ctx.moveTo(-92,0);ctx.lineTo(83,0);ctx.lineTo(66,18);ctx.lineTo(-74,18);ctx.closePath();ctx.fill();
+   ctx.fillStyle="#8295a8";ctx.fillRect(-84,-7,163,8);
+   ctx.fillStyle="#d8e1e9";ctx.fillRect(31,-28,18,21);ctx.fillRect(35,-42,12,14);
+   ctx.fillStyle="#f5f0d8";ctx.fillRect(-72,-5,130,2);
+   ctx.strokeStyle="#f5d77b";ctx.lineWidth=2;ctx.beginPath();ctx.moveTo(-40,-6);ctx.lineTo(-31,-6);ctx.moveTo(-10,-6);ctx.lineTo(-1,-6);ctx.moveTo(20,-6);ctx.lineTo(29,-6);ctx.stroke();
+   ctx.restore();
+  }
+  function draw(ts){
+   plane2dFrame=requestAnimationFrame(draw);
+   const w=plane2d.w||host.clientWidth,h=plane2d.h||host.clientHeight,t=ts/1000,p=plane2dProgress;
+   if(!w||!h)return;
+   const sky=ctx.createLinearGradient(0,0,0,h);sky.addColorStop(0,"#102c80");sky.addColorStop(.58,"#174b9a");sky.addColorStop(.76,"#397eb0");sky.addColorStop(1,"#073b70");
+   ctx.clearRect(0,0,w,h);ctx.fillStyle=sky;ctx.fillRect(0,0,w,h);
+   // distant mountain silhouettes and horizon
+   ctx.fillStyle="#456caa";ctx.globalAlpha=.42;ctx.beginPath();ctx.moveTo(0,h*.62);
+   for(let x=0;x<=w+30;x+=30)ctx.lineTo(x,h*.57+Math.sin(x*.018)*9+Math.cos(x*.035)*5);
+   ctx.lineTo(w,h);ctx.lineTo(0,h);ctx.closePath();ctx.fill();ctx.globalAlpha=1;
+   ctx.strokeStyle="#9cc8ef";ctx.globalAlpha=.38;ctx.lineWidth=2;ctx.beginPath();ctx.moveTo(0,h*.66);ctx.lineTo(w,h*.66);ctx.stroke();ctx.globalAlpha=1;
+   // moving clouds at different depths
+   plane2d.clouds.forEach((c,i)=>{let x=((c.x-t*(8+i%3*4)-p*110)%(w+100)+w+100)%(w+100)-35;cloud(x,c.y*(h/300),c.s)});
+   // sea strip with scrolling white wave streaks
+   const seaY=h*.79,sea=ctx.createLinearGradient(0,seaY,0,h);sea.addColorStop(0,"#176c9c");sea.addColorStop(1,"#062e5d");ctx.fillStyle=sea;ctx.fillRect(0,seaY,w,h-seaY);
+   ctx.strokeStyle="rgba(170,225,255,.35)";ctx.lineWidth=2;
+   for(let i=0;i<9;i++){let yy=seaY+8+i*10,off=(t*28+p*260+i*43)%(w+80);ctx.beginPath();ctx.moveTo(w-off,yy);ctx.lineTo(w-off+36,yy-2);ctx.stroke()}
+   // aircraft carrier recedes towards the left as flight advances
+   ship(w*.16-p*w*.19,h*.91,Math.max(.42,Math.min(1,w/420))*(1-p*.25));
+   // floating bonus multipliers travel from right to left
+   plane2d.bonuses.forEach((b,i)=>{
+    const x=((b.x-t*(27+i%3*7)-p*300)%(w+160)+w+160)%(w+160)-45;
+    const y=(b.y+Math.sin(t*1.7+i)*8)*(h/300);
+    roundRect(x-18,y-12,36,24,11,"rgba(8,29,70,.85)","#61c9ff");
+    ctx.fillStyle=b.c;ctx.font="bold 12px Arial";ctx.textAlign="center";ctx.textBaseline="middle";ctx.fillText(b.v,x,y);
+    ctx.beginPath();ctx.fillStyle="rgba(98,211,255,.25)";ctx.arc(x,y,18,0,Math.PI*2);ctx.fill();
+   });
+   // occasional rockets crossing behind the aircraft
+   plane2d.rockets.forEach((r,i)=>{
+    const x=((r.x-t*(52+i%2*13)-p*360)%(w+100)+w+100)%(w+100)-30;
+    const y=r.y*(h/300);
+    ctx.save();ctx.translate(x,y);ctx.rotate(-.12);ctx.fillStyle="#e9edf4";ctx.fillRect(-11,-3,22,6);ctx.fillStyle="#f04a39";ctx.beginPath();ctx.moveTo(11,-4);ctx.lineTo(19,0);ctx.lineTo(11,4);ctx.fill();ctx.fillStyle="#ff9a35";ctx.beginPath();ctx.moveTo(-11,-2);ctx.lineTo(-19,0);ctx.lineTo(-11,2);ctx.fill();ctx.restore();
+   });
+   // plane remains near the left third, climbing gradually
+   plane(w*.29,h*(.56-p*.13)+Math.sin(t*2)*2,t);
+   // distant sparkle accents
+   ctx.fillStyle="rgba(255,255,255,.75)";for(let i=0;i<12;i++){const x=(i*83+t*12)%(w),y=(i*37%Math.max(1,seaY-25));ctx.fillRect(x,y,1.5,1.5)}
+  }
+  draw(0);
+ }catch(err){console.warn("2D plane scene unavailable",err);host.classList.remove("plane3d-ready");}
 }
-function updatePlane3D(progress){plane3dProgress=Math.max(0,Math.min(1,Number(progress)||0));if(!plane3d)initPlane3D()}
-
+function updatePlane3D(progress){
+ plane2dProgress=Math.max(0,Math.min(1,Number(progress)||0));
+ if(!plane2d)initPlane3D();
+}
 let planeBusy=false;
 
 let planeBet=1000;
