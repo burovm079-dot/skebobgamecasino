@@ -6309,7 +6309,7 @@ updateMineStats();
 
 
 /* 2D side-scrolling airplane scene: lightweight canvas renderer */
-let plane2dProgress=0,plane2dFrame=0,plane2d=null,plane2dStart=0;
+let plane2dProgress=0,plane2dFrame=0,plane2d=null,plane2dPhase='ready',plane2dOutcome='';
 function initPlane3D(){
  const host=document.querySelector(".plane-world");
  if(!host||plane2d)return;
@@ -6387,7 +6387,7 @@ function initPlane3D(){
    ctx.strokeStyle="rgba(170,225,255,.35)";ctx.lineWidth=2;
    for(let i=0;i<9;i++){let yy=seaY+8+i*10,off=(t*28+p*260+i*43)%(w+80);ctx.beginPath();ctx.moveTo(w-off,yy);ctx.lineTo(w-off+36,yy-2);ctx.stroke()}
    // aircraft carrier recedes towards the left as flight advances
-   ship(w*.16-p*w*.19,h*.91,Math.max(.42,Math.min(1,w/420))*(1-p*.25));
+   ship(w*.15,h*.91,Math.max(.42,Math.min(1,w/420))*.82); ship(w*.84,h*.91,Math.max(.42,Math.min(1,w/420))*.82);
    // floating bonus multipliers travel from right to left
    plane2d.bonuses.forEach((b,i)=>{
     const x=((b.x-t*(27+i%3*7)-p*300)%(w+160)+w+160)%(w+160)-45;
@@ -6403,16 +6403,28 @@ function initPlane3D(){
     ctx.save();ctx.translate(x,y);ctx.rotate(-.12);ctx.fillStyle="#e9edf4";ctx.fillRect(-11,-3,22,6);ctx.fillStyle="#f04a39";ctx.beginPath();ctx.moveTo(11,-4);ctx.lineTo(19,0);ctx.lineTo(11,4);ctx.fill();ctx.fillStyle="#ff9a35";ctx.beginPath();ctx.moveTo(-11,-2);ctx.lineTo(-19,0);ctx.lineTo(-11,2);ctx.fill();ctx.restore();
    });
    // plane remains near the left third, climbing gradually
-   plane(w*.29,h*(.56-p*.13)+Math.sin(t*2)*2,t);
+   let px,py;
+   if(plane2dPhase==="ready"){px=w*.15;py=h*.72}
+   else if(plane2dPhase==="takeoff"){const q=p;px=w*(.15+q*.64);py=h*(.72-q*.30+Math.sin(q*Math.PI)*-.035)}
+   else if(plane2dPhase==="landing"){const q=p;px=w*(.79+q*.05);py=h*(.42+q*.30)}
+   else if(plane2dPhase==="water"){const q=p;px=w*(.84+q*.035);py=h*(.72+q*.24)}
+   else {px=w*(.30+p*.38);py=h*(.48-p*.16)}
+   plane(px,py+Math.sin(t*2)*1.4,t);
+   if(plane2dPhase==="water"&&p>.8){ctx.save();ctx.strokeStyle="rgba(180,235,255,.8)";ctx.lineWidth=3;ctx.beginPath();ctx.ellipse(px,h*.91,18+(p-.8)*90,4+(p-.8)*20,0,0,Math.PI*2);ctx.stroke();ctx.restore();}
    // distant sparkle accents
    ctx.fillStyle="rgba(255,255,255,.75)";for(let i=0;i<12;i++){const x=(i*83+t*12)%(w),y=(i*37%Math.max(1,seaY-25));ctx.fillRect(x,y,1.5,1.5)}
   }
   draw(0);
  }catch(err){console.warn("2D plane scene unavailable",err);host.classList.remove("plane3d-ready");}
 }
-function updatePlane3D(progress){
+function updatePlane3D(progress,phase){
  plane2dProgress=Math.max(0,Math.min(1,Number(progress)||0));
+ if(phase)plane2dPhase=phase;
  if(!plane2d)initPlane3D();
+}
+async function animatePlaneScene(to,phase,duration=1100){
+ const from=plane2dProgress,start=performance.now();plane2dPhase=phase;
+ await new Promise(resolve=>{function step(now){const raw=Math.min(1,(now-start)/duration),eased=raw<.5?4*raw*raw*raw:1-Math.pow(-2*raw+2,3)/2;plane2dProgress=from+(to-from)*eased;if(raw<1)requestAnimationFrame(step);else resolve()}requestAnimationFrame(step)});
 }
 let planeBusy=false;
 
@@ -6613,7 +6625,7 @@ e.classList.remove(
 
 }
 
-function resetPlaneVisual(){
+function resetPlaneVisual(){\n plane2dPhase="ready";plane2dProgress=0;
 
 const plane=
 document.getElementById(
