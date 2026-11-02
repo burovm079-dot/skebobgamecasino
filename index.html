@@ -1913,52 +1913,9 @@ rel="noopener noreferrer"
 
 <main>
 
-<div class="nav">
-
-<button class="active" data-page="home" onclick="showPage('home',this)">
-🏠 ГЛАВНАЯ
-</button>
-
-<button data-page="cases" onclick="showPage('cases',this)">
-🎁 КЕЙСЫ
-</button>
-
-<button onclick="showPage('upgrade',this)">
-🎯 UPGRADE
-</button>
-
-<button onclick="showPage('mines',this)">
-💣 MINES
-</button>
-
-<button onclick="showPage('plane',this)">
-✈️ САМОЛЁТ
-</button>
-
-<button onclick="showPage('pickaxe',this)">
-⛏ КИРКА
-</button>
-
-<button onclick="showPage('plinko',this)">
-🔴 PLINKO
-</button>
-<button onclick="showPage('race',this)">🏁 RACE</button>
-<button onclick="showPage('crash',this)">📈 КРАШ</button>
-<button onclick="showPage('battles',this)">⚔️ БАТЛЫ</button>
-<button onclick="showPage('slots',this)">🎰 СЛОТЫ</button>
-<button onclick="showPage('blackjack',this)">🃏 BLACKJACK</button>
-<button onclick="showPage('dice',this)">🎲 КОСТИ</button>
-
-<button onclick="showPage('tictactoe',this)">⭕ КРЕСТИКИ</button>
-
-<button onclick="showPage('billiards',this)">🎱 БИЛЬЯРД</button>
-
-<button onclick="showPage('chickenroad',this)">🐔 CHICKEN ROAD</button>
-<button onclick="showPage('skebobTap',this)">👆 SKEBOB TAP</button>
-
-
-
-
+<div class="nav home-nav">
+<button class="active" data-page="home" onclick="showPage('home',this)">🏠 ГЛАВНАЯ</button>
+<button data-page="cases" onclick="showPage('cases',this)">🎁 КЕЙСЫ</button>
 </div>
 
 <section id="home" class="home-dashboard">
@@ -2093,6 +2050,56 @@ main{max-width:1320px;padding:12px 18px 54px}
 @media(max-width:900px){.home-game-grid{grid-template-columns:repeat(3,minmax(0,1fr))}.home-game-card{min-height:195px}}
 @media(max-width:620px){main{padding:8px 11px 40px}.nav{flex-wrap:nowrap;overflow-x:auto}.nav button{flex:0 0 auto;min-width:92px}.home-game-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}.home-game-card{min-height:176px;padding:9px}.home-game-art{height:92px;font-size:58px}.home-game-card b{font-size:15px}.home-game-card small{font-size:11px}.home-welcome{padding:17px 18px}.home-coin-art{font-size:48px}.home-bottom-strip{align-items:flex-start;flex-wrap:wrap}.home-bottom-strip button{width:100%}}
 @media(prefers-reduced-motion:reduce){.home-game-card{transition:none}}
+
+/* HOME PAGE LAYOUT FIX + RESPONSIVE */
+main{width:100%;max-width:1240px;margin:0 auto;padding:12px clamp(12px,2.2vw,26px) 48px;box-sizing:border-box}
+.home-nav{display:flex!important;justify-content:flex-start;gap:10px;flex-wrap:wrap;margin:12px 0 20px;padding:0;background:transparent;border:0;box-shadow:none}
+.home-nav button{flex:0 0 auto;min-width:132px;padding:12px 20px;border:1px solid #8d43bf;border-radius:13px;background:linear-gradient(145deg,#251038,#13091f);color:#f4e8ff;font-weight:900;font-size:13px}
+.home-nav button.active{background:linear-gradient(110deg,#a62cff,#6500d7);border-color:#e0b4ff;box-shadow:0 0 18px #9d35ff77;color:white}
+.home-dashboard{display:block;width:100%;max-width:100%;box-sizing:border-box}
+.home-welcome{width:100%;box-sizing:border-box}
+.home-game-grid{width:100%;grid-template-columns:repeat(4,minmax(0,1fr));align-items:stretch}
+.home-game-card{width:100%;min-width:0;box-sizing:border-box;cursor:pointer}
+.home-game-art{flex:0 0 112px}
+.home-bottom-strip{width:100%;box-sizing:border-box}
+.home-game-card:focus-visible,.home-nav button:focus-visible,.home-bottom-strip button:focus-visible{outline:3px solid #ffe18a;outline-offset:3px}
+@media(min-width:1000px){.home-game-grid{grid-template-columns:repeat(4,minmax(0,1fr));gap:18px}.home-game-card{min-height:226px}.home-game-art{flex-basis:126px}}
+@media(min-width:640px) and (max-width:999px){.home-game-grid{grid-template-columns:repeat(3,minmax(0,1fr));gap:13px}.home-game-card{min-height:205px}}
+@media(max-width:639px){
+  header{padding:12px 14px;gap:10px;box-sizing:border-box}
+  .logo{font-size:clamp(20px,6vw,28px);text-align:center}
+  .header-actions{width:100%;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
+  .header-actions button,.header-actions a{min-width:0;width:100%;box-sizing:border-box;justify-content:center;text-align:center;padding:11px 8px;font-size:12px}
+  .balance{width:calc(100% - 24px);box-sizing:border-box;margin:12px auto;padding:13px 15px;gap:10px;flex-wrap:wrap}
+  .balance strong{font-size:clamp(23px,7vw,32px)}
+  main{padding:8px 12px 34px}
+  .home-nav{display:grid!important;grid-template-columns:repeat(2,minmax(0,1fr));gap:9px;margin:10px 0 16px}
+  .home-nav button{min-width:0;width:100%;padding:13px 8px;font-size:12px}
+  .home-welcome{min-height:0;padding:18px 17px;margin:4px 0 20px;border-radius:19px}
+  .home-welcome h1{font-size:clamp(22px,6.5vw,30px);line-height:1.15}
+  .home-welcome p{font-size:13px;line-height:1.4;max-width:34ch}
+  .home-coin-art{font-size:clamp(42px,13vw,60px);flex:0 0 auto}
+  .home-section-head{align-items:center;margin-bottom:12px}
+  .home-section-head h2{font-size:clamp(18px,5vw,22px)}
+  .home-all-games{font-size:12px;padding:10px 11px;white-space:nowrap}
+  .home-game-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+  .home-game-card{min-height:188px;padding:10px 8px 11px;border-radius:18px}
+  .home-game-art{height:92px;flex-basis:92px;font-size:clamp(48px,14vw,64px)}
+  .home-game-card b{font-size:clamp(14px,4vw,16px);line-height:1.2}
+  .home-game-card small{font-size:11px;line-height:1.25;min-height:28px;display:flex;align-items:center;justify-content:center}
+  .home-play{font-size:12px;padding:9px 8px;margin-top:3px}
+  .home-bottom-strip{gap:12px;margin-top:16px;padding:15px;border-radius:17px}
+  .home-bottom-icon{font-size:36px}
+  .home-bottom-strip>div:nth-child(2){min-width:0}
+  .home-bottom-strip b{font-size:14px;line-height:1.25}
+  .home-bottom-strip small{font-size:12px;line-height:1.35}
+  .home-bottom-strip button{width:100%;font-size:13px;padding:12px}
+}
+@media(max-width:360px){
+  .home-game-card{min-height:174px}
+  .home-game-art{height:78px;flex-basis:78px;font-size:48px}
+  .home-game-card small{font-size:10px}
+}
 </style>
 <!-- CASES -->
 
@@ -8321,5 +8328,3 @@ document.addEventListener("DOMContentLoaded",initNickname,{once:true});
 <div id="skebobDialog" role="dialog" aria-modal="true" style="display:none;position:fixed;inset:0;z-index:30000;background:rgba(0,0,0,.78);align-items:center;justify-content:center;padding:20px"><div style="width:100%;max-width:430px;background:var(--panel);color:var(--text);border:1px solid var(--gold);border-radius:22px;padding:24px;box-shadow:0 18px 60px #000b"><h2 data-dialog-title style="margin:0 0 16px;color:var(--gold)">Уведомление</h2><div data-dialog-message style="font-size:16px;line-height:1.55;white-space:pre-wrap;overflow-wrap:anywhere"></div><input data-dialog-input type="text" style="display:none;margin-top:16px"><div style="display:flex;gap:10px;justify-content:flex-end;margin-top:22px"><button data-dialog-cancel type="button" class="secondary">Отмена</button><button data-dialog-ok type="button" class="goldbtn" style="width:auto;min-width:110px;margin:0;padding:12px 20px">ОК</button></div></div></div>
 </body>
     </html>
-
-/* TWO-FIELD BATTLESHIP: player vs bot, winner takes the 2x pot */
