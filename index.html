@@ -3050,7 +3050,7 @@ id="profileBalance"
 
 <!-- BLACKJACK ONLINE: no-stakes social mode -->
 <section id="blackjack" class="hidden">
-<!-- SKEBOB_BUILD_20261102_BJ_WAIT_ALL_PLAYERS_FIX -->
+<!-- SKEBOB_BUILD_20261102_BJ_FULL_AUDIT_FIX -->
 <h2>🃏 BLACKJACK ONLINE</h2>
 <p class="small">До 4 игроков за столом. Выбирай ставку перед входом в раунд и играй против общего дилера.</p>
 <div class="panel">
@@ -8325,9 +8325,9 @@ function bjOnlineUpdateBet(){const e=document.getElementById("bjOnlineBet");if(!
 function bjOnlineClampBet(){const e=document.getElementById("bjOnlineBet");if(!e)return;const balance=Math.floor(Number(state.balance)||0);let n=bjOnlineGetBet();if(!Number.isFinite(n)||n<10)n=10;if(n>balance)n=balance;e.value=String(n);bjOnlineCurrentBet=n;}
 function bjOnlineSetBet(v){const e=document.getElementById("bjOnlineBet");if(!e)return;e.value=String(v==="max"?Math.floor(Number(state.balance)||0):v);bjOnlineClampBet()}
 function bjOnlineChangeBet(d){const e=document.getElementById("bjOnlineBet");if(!e)return;const n=Math.floor(Number(e.value)||0);e.value=String(Math.min(Math.floor(Number(state.balance)||0),Math.max(10,n+d)));bjOnlineClampBet()}
-function bjOnlineValue(hand){let n=0,a=0;for(const c of hand){if(c.rank==="A"){n+=11;a++}else n+=["J","Q","K"].includes(c.rank)?10:Number(c.rank)}while(n>21&&a-- >0)n-=10;return n}
+function bjOnlineValue(hand){if(!Array.isArray(hand))return 0;let n=0,aces=0;for(const c of hand){if(!c||!BJ_RANKS.includes(c.rank))continue;if(c.rank==="A"){n+=11;aces++;}else if(["J","Q","K"].includes(c.rank))n+=10;else n+=Number(c.rank)||0;}while(n>21&&aces>0){n-=10;aces--;}return n;}
 function bjOnlineDraw(hand){hand.push(bjOnlineCard())}
-function bjOnlinePublishState(){if(!bjOnlineChannel||!bjOnlineRound||bjOnlineRound.finished)return;bjOnlineSend("player-state",{id:bjOnlineId,hand:bjOnlineMyHand,done:!bjOnlineMyTurn,turn:bjOnlineMyTurn?"Твой ход":"Завершил ход"})}
+function bjOnlinePublishState(){if(!bjOnlineChannel||!bjOnlineRound||bjOnlineRound.finished)return;const done=!bjOnlineMyTurn;bjOnlineSend("player-state",{round:bjOnlineRound.id,id:bjOnlineId,hand:bjOnlineMyHand,done,turn:done?"Завершил ход":"Твой ход"});bjOnlineChannel.track({id:bjOnlineId,name:bjOnlineName(),done,hand:bjOnlineMyHand,turn:done?"Завершил ход":"Твой ход",joinedAt:bjOnlineJoinedAt,phase:"playing",bet:bjOnlineCurrentBet,badgeColor:storageGet(BJ_OFFICIAL_BADGE_KEY)||"black"}).catch?.(()=>{});}
 function bjOnlineStopTurnTimer(){if(bjOnlineTurnTimer){clearInterval(bjOnlineTurnTimer);bjOnlineTurnTimer=null;}}
 function bjOnlineStartTurnTimer(){bjOnlineStopTurnTimer();bjOnlineTurnSeconds=15;const el=document.getElementById("bjOnlineTurnCountdown");if(el)el.textContent="Твой ход: 15 сек.";if(!bjOnlineMyTurn||!bjOnlineRound||bjOnlineRound.finished)return;bjOnlineTurnTimer=setInterval(()=>{if(!bjOnlineMyTurn||!bjOnlineRound||bjOnlineRound.finished){bjOnlineStopTurnTimer();return;}bjOnlineTurnSeconds=Math.max(0,bjOnlineTurnSeconds-1);const node=document.getElementById("bjOnlineTurnCountdown");if(node)node.textContent="Твой ход: "+bjOnlineTurnSeconds+" сек.";if(bjOnlineTurnSeconds<=0){bjOnlineStopTurnTimer();bjOnlineStatus("Время вышло — ход автоматически завершён.");bjOnlineStand(true);}},1000);}
 
@@ -8366,11 +8366,11 @@ async function bjOnlineJoin(){
  bjOnlineHost=false;bjOnlineMembers=[];bjOnlineRound=null;bjOnlineMyHand=[];bjOnlineSeconds=60;
  const channelName="bj-room-"+bjOnlineRoom;
  bjOnlineChannel=bjOnlineClient.channel(channelName,{config:{presence:{key:bjOnlineId},broadcast:{self:true}}});
- bjOnlineChannel.on("presence",{event:"sync"},()=>{const state=bjOnlineChannel.presenceState();const all=Object.values(state).flat().map(x=>({id:x.id,name:x.name,done:!!x.done,joinedAt:x.joinedAt||0,phase:x.phase||"waiting",bet:Number(x.bet)||0,badgeColor:x.badgeColor||storageGet(BJ_OFFICIAL_BADGE_KEY)||"black"})).sort((a,b)=>a.joinedAt-b.joinedAt);if(all.some(p=>p.phase==="playing")&&!bjOnlineRound){bjOnlineStatus("Раунд уже идёт. Подожди следующего набора.");bjOnlineLeave();return}if(all.length>4&&!all.slice(0,4).some(p=>p.id===bjOnlineId)){bjOnlineStatus("Комната уже заполнена (4 игрока).");bjOnlineLeave();return}bjOnlineMembers=all.slice(0,4);bjOnlineHost=bjOnlineMembers[0]?.id===bjOnlineId;bjOnlineRender();if(bjOnlineRound&&!bjOnlineRound.finished){setTimeout(bjOnlinePublishState,250);if(bjOnlineHost)setTimeout(bjOnlineFinishDealer,300)}});
+ bjOnlineChannel.on("presence",{event:"sync"},()=>{const state=bjOnlineChannel.presenceState();const all=Object.values(state).flat().map(x=>({id:x.id,name:x.name,done:!!x.done,joinedAt:x.joinedAt||0,phase:x.phase||"waiting",bet:Number(x.bet)||0,badgeColor:x.badgeColor||storageGet(BJ_OFFICIAL_BADGE_KEY)||"black"})).sort((a,b)=>a.joinedAt-b.joinedAt);if(all.some(p=>p.phase==="playing")&&!bjOnlineRound){bjOnlineStatus("Раунд уже идёт. Подожди следующего набора.");bjOnlineLeave();return}if(all.length>4&&!all.slice(0,4).some(p=>p.id===bjOnlineId)){bjOnlineStatus("Комната уже заполнена (4 игрока).");bjOnlineLeave();return}bjOnlineMembers=all.slice(0,4).map(p=>{const old=bjOnlineMembers.find(x=>x.id===p.id);return {...p,hand:Array.isArray(p.hand)?p.hand:(old?.hand||[]),turn:p.turn||old?.turn||"Ожидает хода",done:!!p.done||!!old?.done};});bjOnlineHost=bjOnlineMembers[0]?.id===bjOnlineId;bjOnlineRender();if(bjOnlineRound&&!bjOnlineRound.finished){setTimeout(bjOnlinePublishState,250);if(bjOnlineHost)setTimeout(bjOnlineFinishDealer,300)}});
  bjOnlineChannel.on("broadcast",{event:"round"},({payload})=>{if(!payload||!payload.id||!payload.host||!Array.isArray(payload.dealer)||payload.dealer.length!==2||bjOnlineRound?.id===payload.id)return;const live=Object.values(bjOnlineChannel.presenceState()).flat();const host=live.find(p=>p.id===payload.host);if(!host){bjOnlineStatus("Получен старт раунда, синхронизируем игроков…");return;}const roster=live.map(x=>({id:x.id,name:x.name,done:!!x.done,joinedAt:x.joinedAt||0,phase:x.phase||"waiting",bet:Number(x.bet)||0,badgeColor:x.badgeColor||storageGet(BJ_OFFICIAL_BADGE_KEY)||"black"})).sort((a,b)=>a.joinedAt-b.joinedAt);if(roster[0]?.id!==payload.host)return;bjOnlineMembers=roster.slice(0,4);bjOnlineBeginRound(payload)});
- bjOnlineChannel.on("broadcast",{event:"dealer-final"},({payload})=>{if(!bjOnlineRound||payload.round!==bjOnlineRound.id||payload.host!==bjOnlineRound.host||!Array.isArray(payload.cards)||payload.cards.length<2)return;bjOnlineBotHand=Array.isArray(payload.botHand)?payload.botHand:bjOnlineBotHand;bjOnlineBotTurn="Завершил ход";bjOnlineDealer={cards:payload.cards,revealed:true};bjOnlineRound.finished=true;bjOnlineMyTurn=false;bjOnlineStopTurnTimer();const timerNode=document.getElementById("bjOnlineTurnCountdown");if(timerNode)timerNode.textContent="Раунд завершён";bjOnlineRender();bjOnlineShowResult()});
- bjOnlineChannel.on("broadcast",{event:"player-state"},({payload})=>{const p=bjOnlineMembers.find(x=>x.id===payload.id);if(!p||!Array.isArray(payload.hand)||payload.hand.length>12)return;p.hand=payload.hand.filter(c=>c&&BJ_RANKS.includes(c.rank)&&BJ_SUITS.includes(c.suit));p.done=!!payload.done;p.turn=p.done?"Завершил ход":(payload.turn||"Ходит");bjOnlineRender()});
- bjOnlineChannel.on("broadcast",{event:"player-done"},({payload})=>{const p=bjOnlineMembers.find(x=>x.id===payload.id);if(!p||!bjOnlineRound||bjOnlineRound.finished)return;p.done=true;if(Array.isArray(payload.hand))p.hand=payload.hand.filter(c=>c&&BJ_RANKS.includes(c.rank)&&BJ_SUITS.includes(c.suit));p.turn="Завершил ход";bjOnlineRender();if(bjOnlineHost)bjOnlineFinishDealer()});
+ bjOnlineChannel.on("broadcast",{event:"dealer-final"},({payload})=>{if(!bjOnlineRound||payload.round!==bjOnlineRound.id||payload.host!==bjOnlineRound.host||!Array.isArray(payload.cards)||payload.cards.length<2||!payload.cards.every(c=>c&&BJ_RANKS.includes(c.rank)&&BJ_SUITS.includes(c.suit)))return;bjOnlineBotHand=Array.isArray(payload.botHand)&&payload.botHand.every(c=>c&&BJ_RANKS.includes(c.rank)&&BJ_SUITS.includes(c.suit))?payload.botHand:bjOnlineBotHand;bjOnlineBotTurn="Завершил ход";bjOnlineDealer={cards:payload.cards,revealed:true};bjOnlineRound.finished=true;bjOnlineMyTurn=false;bjOnlineStopTurnTimer();const timerNode=document.getElementById("bjOnlineTurnCountdown");if(timerNode)timerNode.textContent="Раунд завершён";bjOnlineRender();bjOnlineShowResult()});
+ bjOnlineChannel.on("broadcast",{event:"player-state"},({payload})=>{if(!payload||!bjOnlineRound||payload.round!==bjOnlineRound.id)return;const p=bjOnlineMembers.find(x=>x.id===payload.id);if(!p||!Array.isArray(payload.hand)||payload.hand.length>12)return;p.hand=payload.hand.filter(c=>c&&BJ_RANKS.includes(c.rank)&&BJ_SUITS.includes(c.suit));p.done=!!payload.done;p.turn=p.done?"Завершил ход":(payload.turn||"Ходит");bjOnlineRender()});
+ bjOnlineChannel.on("broadcast",{event:"player-done"},({payload})=>{if(!payload||!bjOnlineRound||payload.round!==bjOnlineRound.id||bjOnlineRound.finished)return;const p=bjOnlineMembers.find(x=>x.id===payload.id);if(!p)return;p.done=true;if(Array.isArray(payload.hand))p.hand=payload.hand.filter(c=>c&&BJ_RANKS.includes(c.rank)&&BJ_SUITS.includes(c.suit));p.turn="Завершил ход";bjOnlineRender();if(bjOnlineHost)bjOnlineFinishDealer()});
  bjOnlineChannel.on("broadcast",{event:"room-full"},()=>bjOnlineStatus("Комната заполнена. Попробуй ещё раз."));
  bjOnlineStatus("Подключаемся к комнате…");
  const status=await bjOnlineChannel.subscribe(async st=>{
@@ -8406,12 +8406,12 @@ async function bjOnlineLeave(){
 function bjOnlineBeginRound(payload){
  if(!bjOnlineChannel||!payload||!payload.id||!Array.isArray(payload.dealer)||payload.dealer.length!==2||!payload.dealer.every(c=>c&&BJ_RANKS.includes(c.rank)&&BJ_SUITS.includes(c.suit)))return false;
  if(bjOnlineRound?.id===payload.id||bjOnlineRound&&!bjOnlineRound.finished)return false;
- const bet=bjOnlineGetBet();if(!Number.isFinite(bet)||bet<10||bet>state.balance){bjOnlineStatus("Недостаточно монет для ставки "+bet.toLocaleString("ru-RU")+" 🪙. Измени ставку.");bjOnlineSend("player-done",{id:bjOnlineId,score:0,hand:[]});return false;}
+ const bet=bjOnlineGetBet();if(!Number.isFinite(bet)||bet<10||bet>state.balance){bjOnlineMembers=bjOnlineMembers.map(p=>p.id===bjOnlineId?{...p,done:true,hand:[],turn:"Пропуск: недостаточно монет"}:p);bjOnlineChannel?.track({id:bjOnlineId,name:bjOnlineName(),done:true,joinedAt:bjOnlineJoinedAt,phase:"playing",bet:0,badgeColor:storageGet(BJ_OFFICIAL_BADGE_KEY)||"black"});bjOnlineStatus("Недостаточно монет для ставки. Ты пропускаешь раунд.");bjOnlineSend("player-done",{round:payload.id,id:bjOnlineId,score:0,hand:[]});return false;}
  state.balance-=bet;addTurnover(bet);save();bjOnlineCurrentBet=bet;bjOnlinePaidRound="";
  bjOnlineRoundLocked=true;
  bjOnlineMembers=bjOnlineMembers.map(p=>({...p,done:false,hand:[],turn:"Ходит"}));bjOnlineRound={id:payload.id,host:payload.host,finished:false,bet};bjOnlineDealer={cards:payload.dealer,revealed:false};bjOnlineBotHand=Array.isArray(payload.botHand)?payload.botHand.filter(c=>c&&BJ_RANKS.includes(c.rank)&&BJ_SUITS.includes(c.suit)):[];bjOnlineBotTurn="Ожидает своего хода";bjOnlineMyHand=[bjOnlineCard(),bjOnlineCard()];bjOnlineMyTurn=true;
  bjOnlineChannel.track({id:bjOnlineId,name:bjOnlineName(),done:false,joinedAt:bjOnlineJoinedAt,phase:"playing",bet,badgeColor:storageGet(BJ_OFFICIAL_BADGE_KEY)||"black"});
- bjOnlinePublishState();bjOnlineRender();if(bjOnlineValue(bjOnlineMyHand)===21){bjOnlineMyTurn=false;bjOnlineMembers=bjOnlineMembers.map(p=>p.id===bjOnlineId?{...p,done:true,hand:bjOnlineMyHand,turn:"Ход завершён"}:p);bjOnlineSend("player-done",{id:bjOnlineId,score:21,hand:bjOnlineMyHand});bjOnlineStatus("Сразу выпал блэкджек — твой ход завершён.");if(bjOnlineHost)bjOnlineFinishDealer();}else{bjOnlineStartTurnTimer();bjOnlineStatus("Раунд начался! Твой ход — бери карту или нажми «Хватит».");}return true;
+ bjOnlinePublishState();bjOnlineRender();if(bjOnlineValue(bjOnlineMyHand)===21){bjOnlineMyTurn=false;bjOnlineMembers=bjOnlineMembers.map(p=>p.id===bjOnlineId?{...p,done:true,hand:bjOnlineMyHand,turn:"Ход завершён"}:p);bjOnlineSend("player-done",{round:bjOnlineRound.id,id:bjOnlineId,score:21,hand:bjOnlineMyHand});bjOnlineStatus("Сразу выпал блэкджек — твой ход завершён.");if(bjOnlineHost)bjOnlineFinishDealer();}else{bjOnlineStartTurnTimer();bjOnlineStatus("Раунд начался! Твой ход — бери карту или нажми «Хватит».");}return true;
 }
 function bjOnlineStart(){
  if(!bjOnlineHost||!bjOnlineChannel||bjOnlineMembers.length===0||bjOnlineRound&&!bjOnlineRound.finished)return;
@@ -8430,19 +8430,19 @@ function bjOnlineHit(){
 
 function bjOnlineStand(auto=false){
  if(!bjOnlineMyTurn||!bjOnlineRound||bjOnlineRound.finished){bjOnlineStatus("Сейчас нет активного хода.");return;}
- bjOnlineStopTurnTimer();bjOnlineMyTurn=false;bjOnlineMembers=bjOnlineMembers.map(p=>p.id===bjOnlineId?{...p,done:true,hand:bjOnlineMyHand,turn:"Ход завершён"}:p);bjOnlineChannel?.track({id:bjOnlineId,name:bjOnlineName(),done:true,joinedAt:bjOnlineJoinedAt,phase:"playing",bet:bjOnlineCurrentBet,badgeColor:storageGet(BJ_OFFICIAL_BADGE_KEY)||"black"});bjOnlinePublishState();bjOnlineSend("player-done",{id:bjOnlineId,score:bjOnlineValue(bjOnlineMyHand),hand:bjOnlineMyHand});
+ bjOnlineStopTurnTimer();bjOnlineMyTurn=false;bjOnlineMembers=bjOnlineMembers.map(p=>p.id===bjOnlineId?{...p,done:true,hand:bjOnlineMyHand,turn:"Ход завершён"}:p);bjOnlineChannel?.track({id:bjOnlineId,name:bjOnlineName(),done:true,joinedAt:bjOnlineJoinedAt,phase:"playing",bet:bjOnlineCurrentBet,badgeColor:storageGet(BJ_OFFICIAL_BADGE_KEY)||"black"});bjOnlinePublishState();bjOnlineSend("player-done",{round:bjOnlineRound.id,id:bjOnlineId,score:bjOnlineValue(bjOnlineMyHand),hand:bjOnlineMyHand});
  bjOnlineStatus(auto?"Время вышло — ты автоматически завершил ход.":"Ты завершил ход. Ждём завершения раунда.");
  bjOnlineRender();
  if(bjOnlineHost)bjOnlineFinishDealer();
 }
 function bjOnlineFinishDealer(){
- if(!bjOnlineHost||!bjOnlineRound||bjOnlineRound.finished)return;
+ if(!bjOnlineHost||!bjOnlineRound||bjOnlineRound.finished||bjOnlineRound.finishing)return;
  const allDone=bjOnlineMembers.length>0&&bjOnlineMembers.every(p=>p.done===true);
  if(!allDone){bjOnlineStatus("Ожидаем, пока каждый игрок завершит свой ход…");return;}
- bjOnlineBotTurn="Ходит";bjOnlineRender();bjOnlineStatus("Все игроки завершили ход. Теперь ходит SKEBOB BOT…");
+ bjOnlineRound.finishing=true;bjOnlineBotTurn="Ходит";bjOnlineRender();bjOnlineStatus("Все игроки завершили ход. Теперь ходит SKEBOB BOT…");
  while(bjOnlineValue(bjOnlineBotHand)<17&&bjOnlineBotHand.length<12)bjOnlineDraw(bjOnlineBotHand);
  bjOnlineBotTurn="Завершил ход";bjOnlineRender();
- const dealer=bjOnlineDealer.cards.slice();while(bjOnlineValue(dealer)<17)bjOnlineDraw(dealer);
+ const dealer=bjOnlineDealer.cards.slice();while(bjOnlineValue(dealer)<17&&dealer.length<12)bjOnlineDraw(dealer);
  bjOnlineDealer={cards:dealer,revealed:true};bjOnlineRound.finished=true;bjOnlineMyTurn=false;bjOnlineStopTurnTimer();
  bjOnlineSend("dealer-final",{round:bjOnlineRound.id,host:bjOnlineRound.host,cards:dealer,botHand:bjOnlineBotHand});
  bjOnlineRender();bjOnlineShowResult();
