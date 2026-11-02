@@ -6431,7 +6431,7 @@ async function planeCrash(){
 }
 function planeSetHud(stage,status,color){const st=document.getElementById("planeStage"),ss=document.getElementById("planeStatus");if(st)st.textContent=stage;if(ss){ss.style.color=color||"#ffbd42";ss.textContent=status;}}
 function planeFinishLanding(outcome){
- if(!planeInFlight)return;planeInFlight=false;if(planeAnimationTimer)clearInterval(planeAnimationTimer);
+ if(!planeInFlight)return;planeInFlight=false;planeEngineSound(false);if(planeAnimationTimer)clearInterval(planeAnimationTimer);
  const sim=planeSim;sim.phase=outcome;sim.showCarrier=true;if(outcome==="landed"){sim.x=.82;sim.y=.80;sim.angle=0;}else if(outcome==="short"){sim.x=.68;sim.y=.83;sim.angle=.12;}else if(outcome==="over"){sim.x=.99;sim.y=.77;sim.angle=-.12;}else if(outcome==="rolloff"){sim.x=.99;sim.y=.88;sim.angle=.55;}updatePlane3D(1,outcome);
  const stage=document.getElementById("planeStage"),status=document.getElementById("planeStatus");
  let message="",reward=0;
