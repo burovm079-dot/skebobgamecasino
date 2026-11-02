@@ -8285,7 +8285,6 @@ async function saveFirstNickname(){
  if(nick.length<2){alert("Ник должен содержать минимум 2 символа.");return;}
  if(bjNickTaken(nick)){alert("Этот nickname уже занят игроком за столом. Придумай другой.");return;}
  if(bjIsSpecialAccount(nick)&&!(await bjRequestSpecialAccountPassword(nick)))return;
- if(bjIsOfficialNickname(nick)&&!(await bjRequestOfficialCode()))return;
  if(!storageSet(NICKNAME_KEY,nick)){alert("Не удалось сохранить nickname. Попробуй ещё раз.");return;}
  const m=document.getElementById("nicknameModal");if(m)m.style.display="none";
  updateNicknameUI();
