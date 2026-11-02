@@ -180,3 +180,24 @@ body.dashboard-home #skebobDashboard .sk-play{
  body.dashboard-home #skebobDashboard .sk-game{min-height:220px}
  body.dashboard-home #skebobDashboard .sk-art{inset:0 0 16%!important;padding:3%!important}
 }
+
+
+/* Glossy dimensional game-art finish */
+body.dashboard-home #skebobDashboard .sk-art{
+ filter:drop-shadow(0 12px 12px rgba(0,0,0,.52));
+ transform:translateZ(0);
+}
+body.dashboard-home #skebobDashboard .sk-art:before{
+ content:"";position:absolute;inset:7% 13% 13%;border-radius:48%;
+ background:radial-gradient(ellipse at 38% 18%,rgba(255,255,255,.22),transparent 48%);
+ mix-blend-mode:screen;pointer-events:none;z-index:2;
+}
+body.dashboard-home #skebobDashboard .sk-art svg{
+ filter:drop-shadow(0 5px 4px rgba(0,0,0,.48)) drop-shadow(0 0 17px rgba(203,89,255,.46));
+ transform:perspective(650px) rotateX(4deg);
+ animation:skArtFloat 5.8s ease-in-out infinite;
+}
+body.dashboard-home #skebobDashboard .sk-game:nth-child(3n) .sk-art svg{animation-delay:-1.9s}
+body.dashboard-home #skebobDashboard .sk-game:nth-child(3n + 1) .sk-art svg{animation-delay:-3.7s}
+@keyframes skArtFloat{0%,100%{transform:perspective(650px) rotateX(4deg) translateY(0) scale(1)}50%{transform:perspective(650px) rotateX(4deg) translateY(-5px) scale(1.025)}}
+@media(prefers-reduced-motion:reduce){body.dashboard-home #skebobDashboard .sk-art svg{animation:none}}
