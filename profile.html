@@ -73,7 +73,9 @@ footer{text-align:center;color:var(--muted);font-size:12px;padding:20px}
   localStorage.setItem('skebobSave',JSON.stringify(save));
   document.getElementById('nftResult').textContent=added?'Готово! Добавлено NFT: '+added+'.':'Все NFT каталога уже есть в инвентаре.';
   if(complete)document.getElementById('collectorBadge').style.display='block';
-  if(newlyUnlocked&&!save.collectionAchievementNotified){alert('🎉 ВЫ СОБРАЛИ ВСЕ NFT ИГРЫ!\\n\\n🏆 Вам открыт статус «ЛЕГЕНДА КОЛЛЕКЦИИ» и эксклюзивная рамка профиля!');save.collectionAchievementNotified=true;localStorage.setItem('skebobSave',JSON.stringify(save));}
+  if(newlyUnlocked&&!save.collectionAchievementNotified){alert('🎉 ВЫ СОБРАЛИ ВСЕ NFT ИГРЫ!\
+\
+🏆 Вам открыт статус «ЛЕГЕНДА КОЛЛЕКЦИИ» и эксклюзивная рамка профиля!');save.collectionAchievementNotified=true;localStorage.setItem('skebobSave',JSON.stringify(save));}
  }
  function render(){
   const nick=currentNick();
@@ -89,7 +91,8 @@ footer{text-align:center;color:var(--muted);font-size:12px;padding:20px}
   }
  }
  document.getElementById('giveAllNfts').addEventListener('click',giveAllNfts);
- document.querySelectorAll('[data-badge-color]').forEach(button=>button.addEventListener('click',()=>setBadgeColor(button.dataset.badgeColor)));\n document.getElementById('themeButton').addEventListener('click',function(){
+ document.querySelectorAll('[data-badge-color]').forEach(button=>button.addEventListener('click',()=>setBadgeColor(button.dataset.badgeColor)));
+ document.getElementById('themeButton').addEventListener('click',function(){
   document.body.classList.toggle('light');
   localStorage.setItem('skebobProfileLight',document.body.classList.contains('light')?'1':'0');
  });
