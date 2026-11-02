@@ -1833,6 +1833,17 @@ background-color:var(--panel)!important;
 body.legacy-page-active .nav,body.legacy-page-active .balance,body.legacy-page-active>header{display:none!important}
 
 #skebob-back-home{display:none;position:fixed;z-index:99999;top:12px;left:12px;padding:11px 16px;border:1px solid #d65cff;border-radius:14px;background:linear-gradient(135deg,#8d00d8,#4e00a8);color:#fff;font-weight:900;font-size:14px;box-shadow:0 5px 22px #a000ff66;cursor:pointer;align-items:center;gap:7px}#skebob-back-home.visible{display:flex}body.legacy-page-active{padding-top:56px}@media(max-width:600px){#skebob-back-home{top:8px;left:8px;padding:10px 13px;font-size:13px}}
+
+/* SKEBOB CASINO full-screen entrance artwork */
+#entrySplash{padding:0!important;background:#080719!important;display:block!important;}
+#entrySplash:before,#entrySplash:after{display:none!important}
+#entrySplash .splash-background{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:center center;display:block;}
+#entrySplash .splash-shade{position:absolute;inset:0;background:linear-gradient(180deg,rgba(4,5,20,.06) 45%,rgba(4,5,20,.12) 70%,rgba(4,5,20,.42) 100%);}
+#entrySplash .splash-progress{position:absolute;left:25%;top:57.2%;width:50%;height:2.8%;min-height:10px;max-height:30px;box-sizing:border-box;border:2px solid #ffbf43;border-radius:999px;background:rgba(24,12,20,.96);box-shadow:0 0 16px rgba(255,166,34,.8);overflow:hidden;}
+#entrySplash .splash-progress span{display:block;width:0;height:100%;border-radius:inherit;background:linear-gradient(90deg,#ff9b16,#ffe27a,#ffae24);box-shadow:0 0 12px #ffc34d;}
+#entrySplash.loading .splash-progress span{width:100%;transition:width var(--splash-duration) linear;}
+@media(max-aspect-ratio:4/5){#entrySplash .splash-background{object-fit:cover;}#entrySplash .splash-progress{left:23%;width:54%;top:57.2%;}}
+
 </style>
 <link rel="stylesheet" href="./dashboard.css?v=18">
 </head>
@@ -1840,24 +1851,10 @@ body.legacy-page-active .nav,body.legacy-page-active .balance,body.legacy-page-a
 <body class="dashboard-home">
 
 <div id="entrySplash" aria-label="Заставка SKEBOB CASINO">
- <div class="splash-inner">
-  <div class="splash-coins">🪙　🎁　🪙</div>
-  <div class="splash-crown">👑</div>
-  <div class="splash-logo">SKEBOB<span>CASINO</span></div>
-  <div class="splash-promo">
-   <div class="lead">Используй промокод</div>
-   <div class="splash-code">SKEBOB</div>
-   <div class="splash-bonus">и получи <b>+50 ₽</b></div>
-  </div>
-  <div class="splash-time">⚡ Только в первые 24 часа<br>после первого входа!</div>
-  <div class="splash-loader"><span></span></div>
-  <div class="splash-footer">УДАЧИ В ИГРЕ!</div>
- </div>
+ <img class="splash-background" src="assets/games/assets/games/Золотой%20казино-замок%20в%20лунном%20лесу.png" alt="">
+ <div class="splash-shade"></div>
+ <div class="splash-progress" aria-hidden="true"><span></span></div>
 </div>
-
-<script>
-// Независимый аварийный таймер заставки.
-(()=>{const splash=document.getElementById("entrySplash");if(!splash)return;requestAnimationFrame(()=>splash.classList.add("loading"));setTimeout(()=>splash.classList.add("splash-hidden"),4500);})();
 
 /* Branded in-game dialogs replace browser popups that expose the site domain */
 function skebobDialog(type,message,defaultValue=""){return new Promise(resolve=>{const root=document.getElementById("skebobDialog");if(!root){resolve(type==="confirm"?false:type==="prompt"?null:undefined);return;}const title=root.querySelector("[data-dialog-title]"),body=root.querySelector("[data-dialog-message]"),field=root.querySelector("[data-dialog-input]"),cancel=root.querySelector("[data-dialog-cancel]"),ok=root.querySelector("[data-dialog-ok]");title.textContent=type==="confirm"?"Подтверждение":type==="prompt"?"Введите данные":"Уведомление";body.textContent=String(message??"");field.style.display=type==="prompt"?"block":"none";field.value=defaultValue??"";cancel.style.display=type==="alert"?"none":"";root.style.display="flex";const finish=value=>{root.style.display="none";ok.onclick=null;cancel.onclick=null;root.onkeydown=null;resolve(value);};ok.onclick=()=>finish(type==="prompt"?field.value:type==="confirm");cancel.onclick=()=>finish(type==="prompt"?null:false);root.onkeydown=e=>{if(e.key==="Escape"&&type!=="alert"){e.preventDefault();finish(type==="prompt"?null:false)}else if(e.key==="Enter"){e.preventDefault();finish(type==="prompt"?field.value:type==="confirm")}};setTimeout(()=>{(type==="prompt"?field:ok).focus()},30)})}
