@@ -886,9 +886,9 @@ line-height:1.6;
 .pick-sky:before{content:"";position:absolute;left:-8%;bottom:-45%;width:75%;height:100%;background:#66a86a;clip-path:polygon(0 100%,25% 20%,43% 62%,63% 0,100% 100%)}
 .pick-sky:after{content:"";position:absolute;right:-10%;bottom:-50%;width:80%;height:100%;background:#729b83;clip-path:polygon(0 100%,30% 0,55% 65%,78% 15%,100% 100%)}
 .pick-mine-grid{position:absolute;top:16%;bottom:0;left:0;right:0;display:grid;grid-template-columns:repeat(9,minmax(0,1fr));grid-auto-rows:34px;gap:1px;padding:2px;background:#222b35;overflow:hidden}
-.pick-block{position:relative;display:grid;place-items:center;min-width:0;border:1px solid #737b85;background:linear-gradient(135deg,#7b8389,#505b65 55%,#3d4650);box-shadow:inset 2px 2px #ffffff22,inset -3px -3px #0005;color:#fff;font-size:clamp(12px,3.5vw,20px);font-weight:900;transition:opacity .16s,transform .16s,filter .16s}
-.pick-block:before{content:"";position:absolute;inset:0;background:repeating-linear-gradient(135deg,transparent 0 8px,#ffffff09 9px 11px);pointer-events:none}
-.pick-block.crack{filter:brightness(1.5);transform:scale(.9)}
+.pick-block{position:relative;display:grid;place-items:center;min-width:0;border:1px solid #737b85;background:linear-gradient(145deg,#899096 0%,#59636c 42%,#343d46 100%);box-shadow:inset 2px 2px #ffffff30,inset -4px -4px #0007,0 2px 2px #0008;color:#fff;font-size:clamp(12px,3.5vw,20px);font-weight:900;transition:opacity .2s,transform .2s,filter .2s;overflow:hidden}
+.pick-block:before{content:"";position:absolute;inset:0;background:repeating-linear-gradient(35deg,transparent 0 7px,#ffffff0b 8px 9px),radial-gradient(ellipse at 25% 25%,#ffffff14,transparent 55%);pointer-events:none}
+.pick-block.crack{filter:brightness(1.65) contrast(1.15);transform:scale(.94);box-shadow:inset 0 0 0 2px #fff8,inset 2px 2px #ffffff30,inset -4px -4px #0007}
 .pick-block.broken{opacity:0;transform:scale(.25);pointer-events:none}
 .pick-block.ore-coal{background:linear-gradient(135deg,#6a7179,#252b31);border-color:#9da5ac}
 .pick-block.ore-copper{background:linear-gradient(135deg,#d87542,#743d2a);border-color:#ffae7b}
@@ -6530,18 +6530,18 @@ function initPlane(){resetPlaneVisual();updatePlaneControls();}
 /* =========================
    PICKAXE — шахта из блоков
 ========================= */
-const PICK_ROWS=18, PICK_COLS=9, PICK_HITS=28, PICK_MAX_HP=400;
+const PICK_ROWS=18, PICK_COLS=9, PICK_HITS=14, PICK_MAX_HP=140;
 let pickaxeBusy=false,pickaxeBet=100,pickaxeCurrentWin=0,pickaxeHits=0,pickaxeDepth=0,pickaxeHealth=PICK_MAX_HP,pickaxeMine=[];
 const PICK_TYPES=[
- {type:"stone",icon:"",name:"КАМЕНЬ",weight:58,value:0},
- {type:"coal",icon:"⚫",name:"УГОЛЬ",weight:17,value:.12},
- {type:"copper",icon:"🟠",name:"МЕДЬ",weight:8,value:.22},
- {type:"iron",icon:"⚙️",name:"ЖЕЛЕЗО",weight:7,value:.35},
- {type:"gold",icon:"🟡",name:"ЗОЛОТО",weight:4,value:.65},
- {type:"emerald",icon:"💚",name:"ИЗУМРУД",weight:2.5,value:1.1},
- {type:"diamond",icon:"💎",name:"АЛМАЗ",weight:1.5,value:1.8},
- {type:"chest",icon:"🧰",name:"СУНДУК",weight:1,"value":2.2},
- {type:"tnt",icon:"🧨",name:"TNT",weight:3,value:0}
+ {type:"stone",icon:"",name:"КАМЕНЬ",weight:92,value:0},
+ {type:"coal",icon:"⚫",name:"УГОЛЬ",weight:4,value:.02},
+ {type:"copper",icon:"🟠",name:"МЕДЬ",weight:2,value:.04},
+ {type:"iron",icon:"⚙️",name:"ЖЕЛЕЗО",weight:1,value:.07},
+ {type:"gold",icon:"🟡",name:"ЗОЛОТО",weight:.5,value:.12},
+ {type:"emerald",icon:"💚",name:"ИЗУМРУД",weight:.2,value:.22},
+ {type:"diamond",icon:"💎",name:"АЛМАЗ",weight:.1,value:.4},
+ {type:"chest",icon:"🧰",name:"СТАРЫЙ ЯЩИК",weight:.1,value:.5},
+ {type:"tnt",icon:"🧨",name:"TNT",weight:.1,value:0}
 ];
 function pickaxeWait(ms){return new Promise(r=>setTimeout(r,ms))}
 function pickRandomType(row,col){
@@ -6556,18 +6556,24 @@ function createPickaxeMine(){
   const line=[];
   for(let c=0;c<PICK_COLS;c++){
    let item=pickRandomType(r,c);
-   if(r<2&&item.type!=="stone"&&item.type!=="coal")item={...PICK_TYPES[0]};
-   if(r>3&&Math.random()<.22){const vein=["copper","iron","gold","emerald","diamond"];const kind=vein[Math.floor(Math.random()*vein.length)];item={...PICK_TYPES.find(x=>x.type===kind)};}
+   if(r<3&&item.type!=="stone"&&item.type!=="coal")item={...PICK_TYPES[0]};
+   // Deeper layers have a slightly better chance of containing ore.
+   if(r>7&&item.type==="stone"&&Math.random()<.07){
+    const vein=["coal","copper","iron","gold","emerald"],weights=[48,27,16,7,2];
+    let roll=Math.random()*100,idx=0;
+    while(idx<weights.length-1&&roll>=weights[idx]){roll-=weights[idx];idx++;}
+    item={...PICK_TYPES.find(x=>x.type===vein[idx])};
+   }
    line.push({...item,hp:item.type==="stone"?2:1,opened:false});
   }
   pickaxeMine.push(line);
  }
- // Veins form visible clusters, as in the reference.
- for(let r=3;r<PICK_ROWS-2;r+=3){
-  const c=1+Math.floor(Math.random()*(PICK_COLS-3));
-  const kind=["copper","iron","gold","emerald"][Math.floor(Math.random()*4)];
+ // Occasionally generate a small, believable ore vein deeper underground.
+ if(Math.random()<.45){
+  const r=8+Math.floor(Math.random()*(PICK_ROWS-10)),c=1+Math.floor(Math.random()*(PICK_COLS-2));
+  const kind=["coal","copper","iron","gold"][Math.floor(Math.random()*4)];
   for(let y=r;y<Math.min(PICK_ROWS,r+2);y++)for(let x=c;x<Math.min(PICK_COLS,c+2);x++){
-   if(Math.random()<.78)pickaxeMine[y][x]={...PICK_TYPES.find(z=>z.type===kind),hp:1,opened:false};
+   if(Math.random()<.45)pickaxeMine[y][x]={...PICK_TYPES.find(z=>z.type===kind),hp:1,opened:false};
   }
  }
 }
@@ -6622,14 +6628,20 @@ function pickaxeBreakCell(row,col,depth){
  const item=pickaxeMine[row][col],cell=document.querySelector('.pick-block[data-row="'+row+'"][data-col="'+col+'"]');
  if(!cell||item.opened)return 0;
  item.opened=true;cell.classList.add("broken");
+ // Hard payout ceiling: a mine can never return more than half its entry cost.
+ const payoutLimit=Math.max(1,Math.floor(pickaxeBet*.5));
+ const addPickaxeReward=(amount)=>{
+  const added=Math.max(0,Math.min(Math.floor(amount),payoutLimit-pickaxeCurrentWin));
+  pickaxeCurrentWin+=added;
+  return added;
+ };
  let reward=0;
  if(item.value>0){
-  const mult=item.value*(1+Math.min(depth,20)*.035);
-  reward=Math.max(1,Math.floor(pickaxeBet*mult));
-  pickaxeCurrentWin+=reward;
+  const depthBonus=1+Math.min(depth,30)*.003;
+  reward=addPickaxeReward(pickaxeBet*item.value*depthBonus);
   document.getElementById("pickMineLoot").textContent=item.name+" +"+reward.toLocaleString("ru-RU")+" 🪙";
-  pickaxePopup("+"+reward.toLocaleString("ru-RU"),cell.offsetLeft,cell.offsetTop);
-  if(item.type==="chest"){const bonus=Math.floor(pickaxeBet*1.5);pickaxeCurrentWin+=bonus;pickaxePopup("СУНДУК +"+bonus,cell.offsetLeft,cell.offsetTop+12);}
+  if(reward>0)pickaxePopup("+"+reward.toLocaleString("ru-RU"),cell.offsetLeft,cell.offsetTop);
+  if(item.type==="chest"){const bonus=addPickaxeReward(pickaxeBet*.05);if(bonus>0)pickaxePopup("ЯЩИК +"+bonus,cell.offsetLeft,cell.offsetTop+12);}
  }else if(item.type==="stone"){
   document.getElementById("pickMineLoot").textContent="Камень разрушен";
  }
@@ -6639,7 +6651,7 @@ function pickaxeBreakCell(row,col,depth){
   for(let y=Math.max(0,row-1);y<=Math.min(PICK_ROWS-1,row+1);y++)for(let x=Math.max(0,col-1);x<=Math.min(PICK_COLS-1,col+1);x++){
    if(y===row&&x===col)continue;
    const extra=pickaxeMine[y][x],el=document.querySelector('.pick-block[data-row="'+y+'"][data-col="'+x+'"]');
-   if(!extra.opened&&el){extra.opened=true;el.classList.add("broken");if(extra.value>0){const bonus=Math.floor(pickaxeBet*extra.value);pickaxeCurrentWin+=bonus;}}
+   if(!extra.opened&&el){extra.opened=true;el.classList.add("broken");if(extra.value>0)addPickaxeReward(pickaxeBet*extra.value*.15);}
   }
  }
  return reward;
@@ -6665,7 +6677,7 @@ async function startPickaxeGame(){
   miner.classList.remove("swing");void miner.offsetWidth;miner.classList.add("swing");
   cell.classList.add("crack");await pickaxeWait(190);
   pickaxeHealth=Math.max(0,pickaxeHealth-10);
-  pickaxeHits++;pickaxeDepth=Math.max(pickaxeDepth,row*2+hit%2);
+  pickaxeHits++;pickaxeDepth=Math.max(pickaxeDepth,row*3+hit%2);
   pickaxeBreakCell(row,col,pickaxeDepth);
   updatePickaxeStats();
   status.textContent="⛏️ Добыча продолжается · найдено "+Math.floor(pickaxeCurrentWin).toLocaleString("ru-RU")+" 🪙";
