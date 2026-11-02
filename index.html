@@ -6376,7 +6376,7 @@ function planeEngineSound(start=true){
    filter.type="lowpass";filter.frequency.value=430;
    const mix=ctx.createGain();mix.gain.value=.18;low.connect(filter);harm.connect(filter);filter.connect(mix);mix.connect(master);
    const lfo=ctx.createOscillator(),lfoGain=ctx.createGain();lfo.frequency.value=7;lfoGain.gain.value=3;lfo.connect(lfoGain);lfoGain.connect(low.frequency);
-   low.start();harm.start();lfo.start();master.gain.setTargetAtTime(.045,ctx.currentTime,.35);
+   low.start();harm.start();lfo.start();master.gain.setTargetAtTime(.12,ctx.currentTime,.25);
    planeEngineNodes={master,low,harm,lfo};
   }else if(planeEngineNodes){
    const nodes=planeEngineNodes;planeEngineNodes=null;
@@ -6394,7 +6394,7 @@ function planeWaterImpactSound(){
   for(let i=0;i<size;i++){const t=i/size;data[i]=(Math.random()*2-1)*Math.pow(1-t,2.4);}
   const noise=ctx.createBufferSource(),filter=ctx.createBiquadFilter(),gain=ctx.createGain();
   noise.buffer=buffer;filter.type="lowpass";filter.frequency.setValueAtTime(1500,now);filter.frequency.exponentialRampToValueAtTime(180,now+.7);
-  gain.gain.setValueAtTime(.0001,now);gain.gain.exponentialRampToValueAtTime(.34,now+.025);gain.gain.exponentialRampToValueAtTime(.0001,now+.78);
+  gain.gain.setValueAtTime(.0001,now);gain.gain.exponentialRampToValueAtTime(.62,now+.025);gain.gain.exponentialRampToValueAtTime(.0001,now+.78);
   noise.connect(filter);filter.connect(gain);gain.connect(ctx.destination);noise.start(now);noise.stop(now+.8);
   const thump=ctx.createOscillator(),tg=ctx.createGain();thump.type="sine";thump.frequency.setValueAtTime(95,now);thump.frequency.exponentialRampToValueAtTime(34,now+.32);
   tg.gain.setValueAtTime(.22,now);tg.gain.exponentialRampToValueAtTime(.0001,now+.38);thump.connect(tg);tg.connect(ctx.destination);thump.start(now);thump.stop(now+.4);
@@ -7774,19 +7774,49 @@ function drawPoolScene(){
  (poolBodies||[]).forEach(b=>{if(!b.active)return;const bx=x+b.x*tw,by=y+b.y*th,g=c.createRadialGradient(bx-r*.4,by-r*.45,1,bx,by,r);g.addColorStop(0,"#fff");g.addColorStop(.3,b.color);g.addColorStop(1,"#101318");c.fillStyle="#0008";c.beginPath();c.ellipse(bx+2,by+4,r,r*.5,0,0,Math.PI*2);c.fill();c.fillStyle=g;c.beginPath();c.arc(bx,by,r,0,Math.PI*2);c.fill();if(b.kind==="bot"){c.fillStyle="#eee";c.beginPath();c.arc(bx,by,r*.48,0,Math.PI*2);c.fill()}if(b.kind==="eight"){c.fillStyle="#fff";c.font="bold 10px Arial";c.textAlign="center";c.fillText("8",bx,by+3)}});
  const q=poolBodies&&poolBodies[0];if(q&&q.active&&poolMatch&&!poolMatch.over&&!poolMatch.moving&&poolMatch.turn==="player"){const a=(+document.getElementById("poolAngle").value)*Math.PI/180,dx=Math.cos(a),dy=-Math.sin(a),bx=x+q.x*tw,by=y+q.y*th;c.setLineDash([5,5]);c.strokeStyle="#fff";c.beginPath();c.moveTo(bx,by);c.lineTo(bx+dx*tw*.2,by+dy*tw*.2);c.stroke();c.setLineDash([]);c.strokeStyle="#c89a62";c.lineWidth=tw*.012;c.beginPath();c.moveTo(bx-dx*tw*.18,by+dy*tw*.18);c.lineTo(bx-dx*r*1.5,by+dy*r*1.5);c.stroke()}
 }
-function poolShot(){if(!poolMatch||poolMatch.over||poolMatch.moving||poolMatch.turn!=="player")return;const q=poolBodies[0],a=(+document.getElementById("poolAngle").value)*Math.PI/180,p=+document.getElementById("poolPower").value;q.vx=Math.cos(a)*(.0025+p*.000105);q.vy=-Math.sin(a)*(.0025+p*.000105);document.getElementById("poolHitBtn").disabled=true;poolRunMatch("player")}
+
+let poolAudioContext=null,poolRollNodes=null,poolLastImpact=0;
+function poolAudioReady(){
+ try{const AC=window.AudioContext||window.webkitAudioContext;if(!AC)return null;if(!poolAudioContext)poolAudioContext=new AC();if(poolAudioContext.state==="suspended")poolAudioContext.resume();return poolAudioContext}catch(e){return null}
+}
+function poolCueStrike(){
+ const c=poolAudioReady();if(!c)return;const t=c.currentTime;
+ const o=c.createOscillator(),g=c.createGain(),n=c.createBufferSource(),ng=c.createGain(),f=c.createBiquadFilter();
+ o.type="triangle";o.frequency.setValueAtTime(185,t);o.frequency.exponentialRampToValueAtTime(72,t+.075);
+ g.gain.setValueAtTime(.0001,t);g.gain.exponentialRampToValueAtTime(.52,t+.004);g.gain.exponentialRampToValueAtTime(.0001,t+.13);o.connect(g);g.connect(c.destination);o.start(t);o.stop(t+.14);
+ const b=c.createBuffer(1,Math.floor(c.sampleRate*.11),c.sampleRate),d=b.getChannelData(0);for(let i=0;i<d.length;i++)d[i]=(Math.random()*2-1)*Math.pow(1-i/d.length,4);
+ n.buffer=b;f.type="highpass";f.frequency.value=650;ng.gain.setValueAtTime(.32,t);ng.gain.exponentialRampToValueAtTime(.0001,t+.09);n.connect(f);f.connect(ng);ng.connect(c.destination);n.start(t);n.stop(t+.11);
+}
+function poolBallImpact(strength=.5){
+ const c=poolAudioReady();if(!c)return;const now=performance.now();if(now-poolLastImpact<42)return;poolLastImpact=now;
+ const t=c.currentTime,level=Math.max(.08,Math.min(.42,strength*7));
+ const o=c.createOscillator(),g=c.createGain(),n=c.createBufferSource(),ng=c.createGain(),f=c.createBiquadFilter();
+ o.type="sine";o.frequency.setValueAtTime(420+strength*500,t);o.frequency.exponentialRampToValueAtTime(125,t+.055);
+ g.gain.setValueAtTime(.0001,t);g.gain.exponentialRampToValueAtTime(level,t+.003);g.gain.exponentialRampToValueAtTime(.0001,t+.085);o.connect(g);g.connect(c.destination);o.start(t);o.stop(t+.09);
+ const b=c.createBuffer(1,Math.floor(c.sampleRate*.065),c.sampleRate),d=b.getChannelData(0);for(let i=0;i<d.length;i++)d[i]=(Math.random()*2-1)*(1-i/d.length);
+ n.buffer=b;f.type="bandpass";f.frequency.value=1200;ng.gain.setValueAtTime(level*.42,t);ng.gain.exponentialRampToValueAtTime(.0001,t+.06);n.connect(f);f.connect(ng);ng.connect(c.destination);n.start(t);n.stop(t+.07);
+}
+function poolRollSound(on){
+ const c=poolAudioReady();if(!c)return;
+ if(on&&!poolRollNodes){
+  const size=c.sampleRate,buffer=c.createBuffer(1,size,c.sampleRate),d=buffer.getChannelData(0);for(let i=0;i<size;i++)d[i]=(Math.random()*2-1)*.22;
+  const src=c.createBufferSource(),filter=c.createBiquadFilter(),gain=c.createGain();src.buffer=buffer;src.loop=true;filter.type="lowpass";filter.frequency.value=480;gain.gain.value=.0001;src.connect(filter);filter.connect(gain);gain.connect(c.destination);src.start();gain.gain.setTargetAtTime(.095,c.currentTime,.12);poolRollNodes={src,gain};
+ }else if(!on&&poolRollNodes){const n=poolRollNodes;poolRollNodes=null;n.gain.gain.setTargetAtTime(.0001,c.currentTime,.07);try{n.src.stop(c.currentTime+.4)}catch(e){}}
+}
+
+function poolShot(){if(!poolMatch||poolMatch.over||poolMatch.moving||poolMatch.turn!=="player")return;const q=poolBodies[0],a=(+document.getElementById("poolAngle").value)*Math.PI/180,p=+document.getElementById("poolPower").value;poolCueStrike();poolRollSound(true);q.vx=Math.cos(a)*(.0025+p*.000105);q.vy=-Math.sin(a)*(.0025+p*.000105);document.getElementById("poolHitBtn").disabled=true;poolRunMatch("player")}
 function poolRunMatch(shooter){
  poolMatch.moving=true;let frame=0,potted=[];
  const step=()=>{const r=.021;
  poolBodies.forEach((a,i)=>{if(!a.active)return;a.x+=a.vx;a.y+=a.vy;
  if(a.x<r||a.x>1-r){a.x=Math.max(r,Math.min(1-r,a.x));a.vx*=-.88}
  if(a.y<r||a.y>1-r){a.y=Math.max(r,Math.min(1-r,a.y));a.vy*=-.88}
- for(let j=i+1;j<poolBodies.length;j++){const b=poolBodies[j];if(!b.active)continue;const dx=(b.x-a.x)*.86,dy=b.y-a.y,d=Math.hypot(dx,dy);if(d>0&&d<r*2){const nx=dx/d,ny=dy/d,v=(a.vx-b.vx)*nx*.86+(a.vy-b.vy)*ny;if(v>0){a.vx-=v*nx*.96/.86;a.vy-=v*ny*.96;b.vx+=v*nx*.96/.86;b.vy+=v*ny*.96}const o=(r*2-d)/2;a.x-=nx*o/.86;a.y-=ny*o;b.x+=nx*o/.86;b.y+=ny*o}}
+ for(let j=i+1;j<poolBodies.length;j++){const b=poolBodies[j];if(!b.active)continue;const dx=(b.x-a.x)*.86,dy=b.y-a.y,d=Math.hypot(dx,dy);if(d>0&&d<r*2){const nx=dx/d,ny=dy/d,v=(a.vx-b.vx)*nx*.86+(a.vy-b.vy)*ny;if(v>0){if(v>.0012)poolBallImpact(v);a.vx-=v*nx*.96/.86;a.vy-=v*ny*.96;b.vx+=v*nx*.96/.86;b.vy+=v*ny*.96}const o=(r*2-d)/2;a.x-=nx*o/.86;a.y-=ny*o;b.x+=nx*o/.86;b.y+=ny*o}}
  if([[.035,.05],[.5,.05],[.965,.05],[.035,.95],[.5,.95],[.965,.95]].some(([x,y])=>Math.hypot((a.x-x)*.86,a.y-y)<.035)){a.active=false;potted.push(a)}
  a.vx*=.991;a.vy*=.991;if(Math.hypot(a.vx,a.vy)<.00022)a.vx=a.vy=0
  });
  drawPoolScene();frame++;if(frame<1100&&poolBodies.some(b=>b.active&&Math.hypot(b.vx,b.vy)>.00022)){requestAnimationFrame(step);return}
- poolMatch.moving=false;poolResolveMatch(potted,shooter);
+ poolMatch.moving=false;poolRollSound(false);poolResolveMatch(potted,shooter);
  };requestAnimationFrame(step)
 }
 function poolResolveMatch(p,who){
@@ -7797,8 +7827,8 @@ function poolResolveMatch(p,who){
  document.getElementById("poolResult").textContent=(p.length?"Забито шаров: "+p.length+". ":"Без забитых шаров. ")+(poolMatch.turn==="player"?"Твой ход.":"Ход бота…");
  if(poolMatch.turn==="bot")setTimeout(poolBotMove,650);else document.getElementById("poolHitBtn").disabled=false;
 }
-function poolEndMatch(who){poolMatch.over=true;document.getElementById("poolHitBtn").disabled=true;if(who==="player"){const prize=gamePay(poolMatch.bet,2);document.getElementById("poolResult").textContent="Победа! Выплата "+prize+" 🪙"}else{save();document.getElementById("poolResult").textContent="Бот выиграл партию. Начни новую игру."}}
-function poolBotMove(){if(!poolMatch||poolMatch.over)return;const q=poolBodies[0],t=poolBodies.filter(b=>b.active&&b.kind==="bot").sort((a,b)=>Math.hypot(a.x-q.x,a.y-q.y)-Math.hypot(b.x-q.x,b.y-q.y))[0];if(!t){poolEndMatch("player");return}const a=Math.atan2(-(t.y-q.y),t.x-q.x)+(Math.random()-.5)*.16;q.vx=Math.cos(a)*.007;q.vy=-Math.sin(a)*.007;poolRunMatch("bot")}
+function poolEndMatch(who){poolRollSound(false);poolMatch.over=true;document.getElementById("poolHitBtn").disabled=true;if(who==="player"){const prize=gamePay(poolMatch.bet,2);document.getElementById("poolResult").textContent="Победа! Выплата "+prize+" 🪙"}else{save();document.getElementById("poolResult").textContent="Бот выиграл партию. Начни новую игру."}}
+function poolBotMove(){if(!poolMatch||poolMatch.over)return;poolCueStrike();poolRollSound(true);const q=poolBodies[0],t=poolBodies.filter(b=>b.active&&b.kind==="bot").sort((a,b)=>Math.hypot(a.x-q.x,a.y-q.y)-Math.hypot(b.x-q.x,b.y-q.y))[0];if(!t){poolEndMatch("player");return}const a=Math.atan2(-(t.y-q.y),t.x-q.x)+(Math.random()-.5)*.16;q.vx=Math.cos(a)*.007;q.vy=-Math.sin(a)*.007;poolRunMatch("bot")}
 
 
 
