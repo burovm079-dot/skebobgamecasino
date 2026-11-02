@@ -6362,6 +6362,7 @@ function updatePlane3D(progress,phase){plane2dProgress=Math.max(0,Math.min(1,Num
 let planeBusy=false,planeInFlight=false,planeBet=1000,planeMultiplier=1,planeCrashAt=0,planeStartedAt=0,planeAnimationTimer=null,planeDecorTimer=null;
 function planeWait(ms){return new Promise(r=>setTimeout(r,ms));}
 
+let planeAudioContext=null;
 function planeWaterImpactSound(){
  try{
   const C=window.AudioContext||window.webkitAudioContext;if(!C)return;
