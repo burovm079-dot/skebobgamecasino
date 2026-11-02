@@ -1997,7 +1997,6 @@ rel="noopener noreferrer"
 @media(max-width:480px){#tttGrid button{min-height:68px}.real-game-canvas{border-radius:11px}}
 
 </style>
-
 <!-- CASES -->
 
 <section id="cases">
@@ -2440,7 +2439,7 @@ class="hidden"
 <div class="game-stats">
 
 <div class="game-stat">
-<span>ЭТАП</span>
+<span>СТАТУС</span>
 <strong id="planeStage">ГОТОВ</strong>
 </div>
 
@@ -2533,7 +2532,7 @@ aria-label="Самолёт"
 <button
 class="game-main"
 id="planePlayButton"
-onclick="startPlaneGame()"
+onclick="planeMainAction()"
 >
 ✈️ ВЗЛЁТ ЗА 1 000 🪙
 </button>
@@ -2605,8 +2604,7 @@ class="game-status"
 
 <div class="plane-description">
 
-Самолёт летит автоматически. По пути собирает случайные множители и преодолевает опасности.
-В конце полёта случайно определяется, попадёт ли он на платформу. Управлять самолётом не нужно.
+Множитель растёт всё время, пока самолёт летит. Нажми «ЗАБРАТЬ», чтобы зафиксировать очки до завершения полёта. Если самолётик исчезнет раньше — раунд закончится без начисления очков. Все монеты виртуальные.
 
 </div>
 
@@ -3997,7 +3995,6 @@ Number(amount)||0
 );
 
 if(!amount)return;
-
 state.stats.totalWon+=amount;
 
 state.stats.bestWin=
@@ -5998,7 +5995,6 @@ mineCount
 "%";
 
 updateMineControls();
-
 }
 
 function startMines(){
@@ -6304,752 +6300,79 @@ updateMineStats();
 }
 
 /* =========================
-   PLANE
+   PLANE — multiplier flight / manual cashout
 ========================= */
-
-
-/* 2D side-scrolling airplane scene: lightweight canvas renderer */
-let plane2dProgress=0,plane2dFrame=0,plane2d=null,plane2dPhase='ready',plane2dOutcome='';
+let plane2dProgress=0,plane2dFrame=0,plane2d=null,plane2dPhase='ready';
 function initPlane3D(){
  const host=document.querySelector(".plane-world");
  if(!host||plane2d)return;
  try{
-  const canvas=document.createElement("canvas");
-  canvas.id="plane3dCanvas";
-  canvas.setAttribute("aria-label","Анимация полёта самолёта");
-  host.insertBefore(canvas,host.firstChild);
-  const ctx=canvas.getContext("2d");
-  if(!ctx)throw new Error("Canvas 2D недоступен");
+  const canvas=document.createElement("canvas");canvas.id="plane3dCanvas";
+  canvas.setAttribute("aria-label","Анимация полёта самолёта");host.insertBefore(canvas,host.firstChild);
+  const ctx=canvas.getContext("2d");if(!ctx)throw new Error("Canvas 2D недоступен");
   const clouds=Array.from({length:12},(_,i)=>({x:(i*173)%900,y:30+(i*47)%145,s:.55+(i%4)*.2}));
-  const bonuses=Array.from({length:8},(_,i)=>({x:260+i*145,y:75+(i%4)*38,v:["×2","×3","×5","+10","+25"][i%5],c:i%3===0?"#72ff78":"#d9f7ff"}));
-  const rockets=Array.from({length:5},(_,i)=>({x:440+i*210,y:155+(i%3)*-30}));
-  plane2d={canvas,ctx,clouds,bonuses,rockets};
-  host.classList.add("plane3d-ready");
-  function resize(){
-   const w=Math.max(1,host.clientWidth),h=Math.max(1,host.clientHeight),d=Math.min(devicePixelRatio||1,2);
-   canvas.width=Math.round(w*d);canvas.height=Math.round(h*d);
-   canvas.style.width="100%";canvas.style.height="100%";
-   ctx.setTransform(d,0,0,d,0,0);
-   plane2d.w=w;plane2d.h=h;
-  }
-  resize();
-  if(window.ResizeObserver)new ResizeObserver(resize).observe(host);
-  else window.addEventListener("resize",resize);
-  function roundRect(x,y,w,h,r,fill,stroke){
-   ctx.beginPath();ctx.roundRect(x,y,w,h,r);if(fill){ctx.fillStyle=fill;ctx.fill()}if(stroke){ctx.strokeStyle=stroke;ctx.lineWidth=2;ctx.stroke()}
-  }
-  function cloud(x,y,scale){
-   ctx.save();ctx.translate(x,y);ctx.scale(scale,scale);
-   ctx.fillStyle="rgba(224,240,255,.82)";
-   ctx.beginPath();ctx.arc(-18,4,13,0,Math.PI*2);ctx.arc(-4,-5,18,0,Math.PI*2);ctx.arc(13,1,14,0,Math.PI*2);ctx.arc(26,7,10,0,Math.PI*2);ctx.fill();
-   ctx.fillStyle="rgba(255,255,255,.24)";ctx.beginPath();ctx.ellipse(0,1,30,8,0,0,Math.PI*2);ctx.fill();ctx.restore();
-  }
-  function plane(x,y,t){
-   ctx.save();ctx.translate(x,y);ctx.rotate(-.17+Math.sin(t*2)*.025);
-   ctx.shadowColor="#07142c";ctx.shadowBlur=8;ctx.shadowOffsetY=4;
-   // fuselage
-   ctx.fillStyle="#d9272e";ctx.beginPath();ctx.moveTo(-29,-3);ctx.lineTo(18,-6);ctx.lineTo(34,0);ctx.lineTo(18,6);ctx.lineTo(-29,4);ctx.closePath();ctx.fill();
-   // yellow nose
-   ctx.fillStyle="#ffd34e";ctx.beginPath();ctx.moveTo(18,-6);ctx.lineTo(36,0);ctx.lineTo(18,6);ctx.closePath();ctx.fill();
-   // wings and tail
-   ctx.fillStyle="#e63a31";ctx.beginPath();ctx.moveTo(-8,-3);ctx.lineTo(1,-20);ctx.lineTo(10,-19);ctx.lineTo(7,-3);ctx.lineTo(9,3);ctx.lineTo(1,19);ctx.lineTo(-7,17);ctx.lineTo(-3,3);ctx.closePath();ctx.fill();
-   ctx.fillStyle="#ffda58";ctx.beginPath();ctx.moveTo(-25,-3);ctx.lineTo(-19,-13);ctx.lineTo(-12,-12);ctx.lineTo(-14,-2);ctx.lineTo(-13,4);ctx.lineTo(-21,11);ctx.lineTo(-25,8);ctx.closePath();ctx.fill();
-   // cockpit
-   ctx.fillStyle="#9fe2ff";ctx.beginPath();ctx.ellipse(7,-4,7,3,-.18,0,Math.PI*2);ctx.fill();
-   // propeller blur
-   ctx.shadowBlur=0;ctx.strokeStyle="#eaf4ff";ctx.lineWidth=2;ctx.beginPath();ctx.moveTo(37,-10+Math.sin(t*28)*3);ctx.lineTo(37,10+Math.sin(t*28)*3);ctx.stroke();
-   ctx.restore();
-  }
-  function ship(x,y,scale){
-   ctx.save();ctx.translate(x,y);ctx.scale(scale,scale);
-   ctx.fillStyle="#263e59";ctx.beginPath();ctx.moveTo(-92,0);ctx.lineTo(83,0);ctx.lineTo(66,18);ctx.lineTo(-74,18);ctx.closePath();ctx.fill();
-   ctx.fillStyle="#8295a8";ctx.fillRect(-84,-7,163,8);
-   ctx.fillStyle="#d8e1e9";ctx.fillRect(31,-28,18,21);ctx.fillRect(35,-42,12,14);
-   ctx.fillStyle="#f5f0d8";ctx.fillRect(-72,-5,130,2);
-   ctx.strokeStyle="#f5d77b";ctx.lineWidth=2;ctx.beginPath();ctx.moveTo(-40,-6);ctx.lineTo(-31,-6);ctx.moveTo(-10,-6);ctx.lineTo(-1,-6);ctx.moveTo(20,-6);ctx.lineTo(29,-6);ctx.stroke();
-   ctx.restore();
-  }
-  function draw(ts){
-   plane2dFrame=requestAnimationFrame(draw);
-   const w=plane2d.w||host.clientWidth,h=plane2d.h||host.clientHeight,t=ts/1000,p=plane2dProgress;
-   if(!w||!h)return;
-   const sky=ctx.createLinearGradient(0,0,0,h);sky.addColorStop(0,"#102c80");sky.addColorStop(.58,"#174b9a");sky.addColorStop(.76,"#397eb0");sky.addColorStop(1,"#073b70");
-   ctx.clearRect(0,0,w,h);ctx.fillStyle=sky;ctx.fillRect(0,0,w,h);
-   // distant mountain silhouettes and horizon
-   ctx.fillStyle="#456caa";ctx.globalAlpha=.42;ctx.beginPath();ctx.moveTo(0,h*.62);
-   for(let x=0;x<=w+30;x+=30)ctx.lineTo(x,h*.57+Math.sin(x*.018)*9+Math.cos(x*.035)*5);
-   ctx.lineTo(w,h);ctx.lineTo(0,h);ctx.closePath();ctx.fill();ctx.globalAlpha=1;
-   ctx.strokeStyle="#9cc8ef";ctx.globalAlpha=.38;ctx.lineWidth=2;ctx.beginPath();ctx.moveTo(0,h*.66);ctx.lineTo(w,h*.66);ctx.stroke();ctx.globalAlpha=1;
-   // moving clouds at different depths
-   plane2d.clouds.forEach((c,i)=>{let x=((c.x-t*(8+i%3*4)-p*110)%(w+100)+w+100)%(w+100)-35;cloud(x,c.y*(h/300),c.s)});
-   // sea strip with scrolling white wave streaks
-   const seaY=h*.79,sea=ctx.createLinearGradient(0,seaY,0,h);sea.addColorStop(0,"#176c9c");sea.addColorStop(1,"#062e5d");ctx.fillStyle=sea;ctx.fillRect(0,seaY,w,h-seaY);
-   ctx.strokeStyle="rgba(170,225,255,.35)";ctx.lineWidth=2;
-   for(let i=0;i<9;i++){let yy=seaY+8+i*10,off=(t*28+p*260+i*43)%(w+80);ctx.beginPath();ctx.moveTo(w-off,yy);ctx.lineTo(w-off+36,yy-2);ctx.stroke()}
-   // aircraft carrier recedes towards the left as flight advances
-   ship(w*.15,h*.91,Math.max(.42,Math.min(1,w/420))*.82); ship(w*.84,h*.91,Math.max(.42,Math.min(1,w/420))*.82);
-   // floating bonus multipliers travel from right to left
-   plane2d.bonuses.forEach((b,i)=>{
-    const x=((b.x-t*(27+i%3*7)-p*300)%(w+160)+w+160)%(w+160)-45;
-    const y=(b.y+Math.sin(t*1.7+i)*8)*(h/300);
-    roundRect(x-18,y-12,36,24,11,"rgba(8,29,70,.85)","#61c9ff");
-    ctx.fillStyle=b.c;ctx.font="bold 12px Arial";ctx.textAlign="center";ctx.textBaseline="middle";ctx.fillText(b.v,x,y);
-    ctx.beginPath();ctx.fillStyle="rgba(98,211,255,.25)";ctx.arc(x,y,18,0,Math.PI*2);ctx.fill();
-   });
-   // occasional rockets crossing behind the aircraft
-   plane2d.rockets.forEach((r,i)=>{
-    const x=((r.x-t*(52+i%2*13)-p*360)%(w+100)+w+100)%(w+100)-30;
-    const y=r.y*(h/300);
-    ctx.save();ctx.translate(x,y);ctx.rotate(-.12);ctx.fillStyle="#e9edf4";ctx.fillRect(-11,-3,22,6);ctx.fillStyle="#f04a39";ctx.beginPath();ctx.moveTo(11,-4);ctx.lineTo(19,0);ctx.lineTo(11,4);ctx.fill();ctx.fillStyle="#ff9a35";ctx.beginPath();ctx.moveTo(-11,-2);ctx.lineTo(-19,0);ctx.lineTo(-11,2);ctx.fill();ctx.restore();
-   });
-   // plane remains near the left third, climbing gradually
-   let px,py;
-   if(plane2dPhase==="ready"){px=w*.15;py=h*.72}
-   else if(plane2dPhase==="takeoff"){const q=p;px=w*(.15+q*.64);py=h*(.72-q*.30+Math.sin(q*Math.PI)*-.035)}
-   else if(plane2dPhase==="landing"){const q=p;px=w*(.79+q*.05);py=h*(.42+q*.30)}
-   else if(plane2dPhase==="water"){const q=p;px=w*(.84+q*.035);py=h*(.72+q*.24)}
-   else {px=w*(.30+p*.38);py=h*(.48-p*.16)}
-   plane(px,py+Math.sin(t*2)*1.4,t);
-   if(plane2dPhase==="water"&&p>.8){ctx.save();ctx.strokeStyle="rgba(180,235,255,.8)";ctx.lineWidth=3;ctx.beginPath();ctx.ellipse(px,h*.91,18+(p-.8)*90,4+(p-.8)*20,0,0,Math.PI*2);ctx.stroke();ctx.restore();}
-   // distant sparkle accents
-   ctx.fillStyle="rgba(255,255,255,.75)";for(let i=0;i<12;i++){const x=(i*83+t*12)%(w),y=(i*37%Math.max(1,seaY-25));ctx.fillRect(x,y,1.5,1.5)}
-  }
+  const bonuses=Array.from({length:10},(_,i)=>({x:260+i*145,y:75+(i%4)*38,v:["×2","×3","×5","+10","+25"][i%5],c:i%3===0?"#72ff78":"#d9f7ff"}));
+  plane2d={canvas,ctx,clouds,bonuses};
+  function resize(){const w=Math.max(1,host.clientWidth),h=Math.max(1,host.clientHeight),d=Math.min(devicePixelRatio||1,2);canvas.width=Math.round(w*d);canvas.height=Math.round(h*d);canvas.style.width="100%";canvas.style.height="100%";ctx.setTransform(d,0,0,d,0,0);plane2d.w=w;plane2d.h=h;}
+  resize();if(window.ResizeObserver)new ResizeObserver(resize).observe(host);else window.addEventListener("resize",resize);
+  function cloud(x,y,s){ctx.save();ctx.translate(x,y);ctx.scale(s,s);ctx.fillStyle="rgba(224,240,255,.86)";ctx.beginPath();ctx.arc(-18,4,13,0,Math.PI*2);ctx.arc(-4,-5,18,0,Math.PI*2);ctx.arc(13,1,14,0,Math.PI*2);ctx.arc(26,7,10,0,Math.PI*2);ctx.fill();ctx.restore();}
+  function plane(x,y,t){ctx.save();ctx.translate(x,y);ctx.rotate(-.17+Math.sin(t*2)*.025);ctx.shadowColor="#07142c";ctx.shadowBlur=8;ctx.shadowOffsetY=4;ctx.fillStyle="#d9272e";ctx.beginPath();ctx.moveTo(-29,-3);ctx.lineTo(18,-6);ctx.lineTo(34,0);ctx.lineTo(18,6);ctx.lineTo(-29,4);ctx.closePath();ctx.fill();ctx.fillStyle="#ffd34e";ctx.beginPath();ctx.moveTo(18,-6);ctx.lineTo(36,0);ctx.lineTo(18,6);ctx.closePath();ctx.fill();ctx.fillStyle="#e63a31";ctx.beginPath();ctx.moveTo(-8,-3);ctx.lineTo(1,-20);ctx.lineTo(10,-19);ctx.lineTo(7,-3);ctx.lineTo(9,3);ctx.lineTo(1,19);ctx.lineTo(-7,17);ctx.lineTo(-3,3);ctx.closePath();ctx.fill();ctx.fillStyle="#ffda58";ctx.beginPath();ctx.moveTo(-25,-3);ctx.lineTo(-19,-13);ctx.lineTo(-12,-12);ctx.lineTo(-14,-2);ctx.lineTo(-13,4);ctx.lineTo(-21,11);ctx.lineTo(-25,8);ctx.closePath();ctx.fill();ctx.fillStyle="#9fe2ff";ctx.beginPath();ctx.ellipse(7,-4,7,3,-.18,0,Math.PI*2);ctx.fill();ctx.shadowBlur=0;ctx.strokeStyle="#eaf4ff";ctx.lineWidth=2;ctx.beginPath();ctx.moveTo(37,-10+Math.sin(t*28)*3);ctx.lineTo(37,10+Math.sin(t*28)*3);ctx.stroke();ctx.restore();}
+  function draw(ts){plane2dFrame=requestAnimationFrame(draw);const w=plane2d.w||host.clientWidth,h=plane2d.h||host.clientHeight,t=ts/1000,p=plane2dProgress;if(!w||!h)return;const sky=ctx.createLinearGradient(0,0,0,h);sky.addColorStop(0,"#102c80");sky.addColorStop(.58,"#174b9a");sky.addColorStop(.76,"#397eb0");sky.addColorStop(1,"#073b70");ctx.clearRect(0,0,w,h);ctx.fillStyle=sky;ctx.fillRect(0,0,w,h);ctx.fillStyle="#456caa";ctx.globalAlpha=.42;ctx.beginPath();ctx.moveTo(0,h*.62);for(let x=0;x<=w+30;x+=30)ctx.lineTo(x,h*.57+Math.sin(x*.018)*9+Math.cos(x*.035)*5);ctx.lineTo(w,h);ctx.lineTo(0,h);ctx.closePath();ctx.fill();ctx.globalAlpha=1;plane2d.clouds.forEach((c,i)=>{const x=((c.x-t*(8+i%3*4)-p*110)%(w+100)+w+100)%(w+100)-35;cloud(x,c.y*(h/300),c.s)});const sy=h*.79,sea=ctx.createLinearGradient(0,sy,0,h);sea.addColorStop(0,"#176c9c");sea.addColorStop(1,"#062e5d");ctx.fillStyle=sea;ctx.fillRect(0,sy,w,h-sy);ctx.strokeStyle="rgba(170,225,255,.35)";ctx.lineWidth=2;for(let i=0;i<9;i++){const yy=sy+8+i*10,off=(t*28+p*260+i*43)%(w+80);ctx.beginPath();ctx.moveTo(w-off,yy);ctx.lineTo(w-off+36,yy-2);ctx.stroke();}plane2d.bonuses.forEach((b,i)=>{const x=((b.x-t*(27+i%3*7)-p*300)%(w+160)+w+160)%(w+160)-45,y=(b.y+Math.sin(t*1.7+i)*8)*(h/300);ctx.fillStyle="rgba(8,29,70,.85)";ctx.strokeStyle="#61c9ff";ctx.lineWidth=1.5;ctx.beginPath();ctx.roundRect(x-18,y-12,36,24,10);ctx.fill();ctx.stroke();ctx.fillStyle=b.c;ctx.font="bold 12px Arial";ctx.textAlign="center";ctx.textBaseline="middle";ctx.fillText(b.v,x,y);});let px,py;if(plane2dPhase==="ready"){px=w*.15;py=h*.72;}else if(plane2dPhase==="crash"){px=w*(.3+p*.5);py=h*(.48-p*.12);}else if(plane2dPhase==="landed"){px=w*.72;py=h*.66;}else{px=w*(.2+p*.48);py=h*(.7-p*.35);}plane(px,py+Math.sin(t*2)*1.4,t);if(plane2dPhase==="crash"){ctx.fillStyle="rgba(255,75,72,.16)";ctx.fillRect(0,0,w,h);}}
   draw(0);
- }catch(err){console.warn("2D plane scene unavailable",err);host.classList.remove("plane3d-ready");}
+ }catch(err){console.warn("Plane scene unavailable",err);}
 }
-function updatePlane3D(progress,phase){
- plane2dProgress=Math.max(0,Math.min(1,Number(progress)||0));
- if(phase)plane2dPhase=phase;
- if(!plane2d)initPlane3D();
-}
-async function animatePlaneScene(to,phase,duration=1100){
- const from=plane2dProgress,start=performance.now();plane2dPhase=phase;
- await new Promise(resolve=>{function step(now){const raw=Math.min(1,(now-start)/duration),eased=raw<.5?4*raw*raw*raw:1-Math.pow(-2*raw+2,3)/2;plane2dProgress=from+(to-from)*eased;if(raw<1)requestAnimationFrame(step);else resolve()}requestAnimationFrame(step)});
-}
-let planeBusy=false;
-
-let planeBet=1000;
-
-let planeMultiplier=1;
-
-function planeWait(ms){
-
-return new Promise(
-r=>setTimeout(
-r,
-ms
-)
-);
-
-}
-
+function updatePlane3D(progress,phase){plane2dProgress=Math.max(0,Math.min(1,Number(progress)||0));if(phase)plane2dPhase=phase;if(!plane2d)initPlane3D();}
+let planeBusy=false,planeInFlight=false,planeBet=1000,planeMultiplier=1,planeCrashAt=0,planeStartedAt=0,planeAnimationTimer=null,planeDecorTimer=null;
+function planeWait(ms){return new Promise(r=>setTimeout(r,ms));}
 function updatePlaneControls(){
-
-const input=
-document.getElementById(
-"planeBet"
-);
-
-const button=
-document.getElementById(
-"planePlayButton"
-);
-
-const value=
-Math.max(
-10,
-Math.floor(
-Number(
-input.value
-)||10
-)
-);
-
-input.value=value;
-
-planeBet=value;
-
-input.disabled=
-planeBusy;
-
-button.disabled=
-planeBusy;
-
-button.textContent=
-planeBusy
-?
-"✈️ САМОЛЁТ В ПОЛЁТЕ..."
-:
-"✈️ ВЗЛЁТ ЗА "+
-value.toLocaleString(
-"ru-RU"
-)+
-" 🪙";
-
+ const input=document.getElementById("planeBet"),button=document.getElementById("planePlayButton");if(!input||!button)return;
+ const value=Math.max(10,Math.floor(Number(input.value)||10));if(!planeBusy){input.value=value;planeBet=value;}
+ input.disabled=planeBusy;
+ button.disabled=planeBusy&&!planeInFlight;
+ button.textContent=planeInFlight?"💰 ЗАБРАТЬ "+Math.floor(planeBet*planeMultiplier).toLocaleString("ru-RU")+" 🪙":planeBusy?"✈️ ЗАВЕРШАЕМ ПОЛЁТ...":"✈️ ВЗЛЁТ ЗА "+value.toLocaleString("ru-RU")+" 🪙";
 }
-
-function setPlaneBet(v,b){
-
-if(planeBusy)return;
-
-document.getElementById(
-"planeBet"
-).value=
-v==="max"
-?
-Math.max(
-10,
-Math.floor(
-state.balance
-)
-)
-:
-v;
-
-document
-.querySelectorAll(
-".plane-presets button"
-)
-.forEach(
-x=>x.classList.remove(
-"selected"
-)
-);
-
-if(b){
-
-b.classList.add(
-"selected"
-);
-
+function setPlaneBet(v,b){if(planeBusy)return;document.getElementById("planeBet").value=v==="max"?Math.max(10,Math.floor(state.balance)):v;document.querySelectorAll(".plane-presets button").forEach(x=>x.classList.remove("selected"));if(b)b.classList.add("selected");updatePlaneControls();}
+function changePlaneBet(d){if(planeBusy)return;const input=document.getElementById("planeBet"),x=Math.max(10,Math.floor(Number(input.value)||10)),step=x<100?10:100;input.value=d>0?x+step:Math.max(10,x-step);updatePlaneControls();}
+function updatePlaneMultiplier(){const txt="×"+planeMultiplier.toFixed(2).replace(".",",");const m=document.getElementById("planeMultiplier"),s=document.getElementById("planeStatMultiplier"),p=document.getElementById("planePotential");if(m)m.textContent=txt;if(s)s.textContent=txt;if(p)p.textContent=Math.floor(planeBet*planeMultiplier).toLocaleString("ru-RU")+" 🪙";updatePlaneControls();}
+function planeEvent(message){const e=document.getElementById("planeEvent");if(!e)return;e.textContent=message;e.classList.add("show");setTimeout(()=>e.classList.remove("show"),750);}
+function resetPlaneVisual(){plane2dPhase="ready";plane2dProgress=0;const p=document.getElementById("planeObject");if(p){p.className="plane-object";p.style.left="23%";p.style.bottom="43%";p.style.transform="rotate(-13deg) scale(1)";}const world=document.querySelector(".plane-world");if(world)world.style.setProperty("--flight-progress","0");const tokens=document.getElementById("planeTokenLayer");if(tokens)tokens.innerHTML="";const carrier=document.getElementById("landingCarrier");if(carrier)carrier.classList.remove("show");planeMultiplier=1;updatePlane3D(0,"ready");const d=document.getElementById("planeDistance"),a=document.getElementById("planeAltitude"),stage=document.getElementById("planeStage");if(d)d.textContent="0 м";if(a)a.textContent="2,5 м";if(stage)stage.textContent="ГОТОВ";updatePlaneMultiplier();}
+function planeMainAction(){if(planeInFlight){planeCashout();return;}startPlaneGame();}
+function planeCashout(){
+ if(!planeInFlight||!planeBusy)return;
+ planeInFlight=false;if(planeAnimationTimer)clearInterval(planeAnimationTimer);if(planeDecorTimer)clearInterval(planeDecorTimer);
+ const reward=Math.floor(planeBet*planeMultiplier);state.balance+=reward;state.stats.planeWins++;addDailyTaskProgress("plane");registerWin(reward);plane2dPhase="landed";updatePlane3D(plane2dProgress,"landed");
+ const stage=document.getElementById("planeStage"),status=document.getElementById("planeStatus"),obj=document.getElementById("planeObject");
+ if(stage)stage.textContent="ПОСАДКА";if(status){status.style.color="#24cf78";status.innerHTML="🏆 ВЫ УСПЕЛИ ЗАБРАТЬ ВЫИГРЫШ!<br><b>+"+reward.toLocaleString("ru-RU")+" 🪙</b>";}if(obj){obj.classList.remove("flying");obj.style.transform="rotate(0deg)";}
+ planeEvent("🏆 +"+reward.toLocaleString("ru-RU")+" 🪙");save();planeBusy=false;updatePlaneControls();
 }
-
-updatePlaneControls();
-
+async function planeCrash(){
+ if(!planeInFlight)return;planeInFlight=false;if(planeAnimationTimer)clearInterval(planeAnimationTimer);if(planeDecorTimer)clearInterval(planeDecorTimer);
+ plane2dPhase="crash";updatePlane3D(1,"crash");const obj=document.getElementById("planeObject"),stage=document.getElementById("planeStage"),status=document.getElementById("planeStatus");
+ if(obj){obj.classList.remove("flying");obj.classList.add("crash");}if(stage)stage.textContent="ПОЛЁТ ЗАВЕРШЁН";if(status){status.style.color="#ff626b";status.textContent="💥 Самолётик исчез на ×"+planeMultiplier.toFixed(2).replace(".",",")+". В этом раунде забрать очки уже нельзя.";}
+ planeEvent("💥 ПОЛЁТ ЗАВЕРШЁН");planeBusy=false;updatePlaneControls();save();
 }
-
-function changePlaneBet(d){
-
-if(planeBusy)return;
-
-const input=
-document.getElementById(
-"planeBet"
-);
-
-let x=
-Math.max(
-10,
-Math.floor(
-Number(
-input.value
-)||10
-)
-);
-
-const step=
-x<100
-?
-10
-:
-100;
-
-input.value=
-d>0
-?
-x+step
-:
-Math.max(
-10,
-x-step
-);
-
-updatePlaneControls();
-
+function updatePlaneFlight(){
+ if(!planeInFlight)return;const elapsed=(performance.now()-planeStartedAt)/1000;
+ planeMultiplier=Math.min(100,Math.exp(elapsed*.22));const progress=Math.min(.96,Math.log(planeMultiplier)/Math.max(.01,Math.log(planeCrashAt))*.94);
+ updatePlane3D(progress,"cruise");const world=document.querySelector(".plane-world");if(world)world.style.setProperty("--flight-progress",String(progress));
+ const d=document.getElementById("planeDistance"),a=document.getElementById("planeAltitude"),stage=document.getElementById("planeStage"),status=document.getElementById("planeStatus");
+ if(d)d.textContent=Math.floor(elapsed*185).toLocaleString("ru-RU")+" м";if(a)a.textContent=(2.5+elapsed*42).toFixed(0)+" м";if(stage)stage.textContent="В ПОЛЁТЕ";if(status){status.style.color="#ffbd42";status.innerHTML="✈️ Самолёт набирает высоту. Забрать можно в любой момент.";}
+ updatePlaneMultiplier();if(planeMultiplier>=planeCrashAt){planeMultiplier=planeCrashAt;updatePlaneMultiplier();planeCrash();}
 }
-
-function updatePlaneMultiplier(){
-
-const txt=
-"×"+
-planeMultiplier
-.toFixed(2)
-.replace(
-".",
-","
-);
-
-document.getElementById(
-"planeMultiplier"
-).textContent=
-txt;
-
-document.getElementById(
-"planeStatMultiplier"
-).textContent=
-txt;
-
-document.getElementById(
-"planePotential"
-).textContent=
-Math.floor(
-planeBet*
-planeMultiplier
-).toLocaleString(
-"ru-RU"
-)+
-" 🪙";
-
-}
-
-async function planeEvent(text){
-
-const e=
-document.getElementById(
-"planeEvent"
-);
-
-e.innerHTML=text;
-
-e.classList.add(
-"show"
-);
-
-await planeWait(
-650
-);
-
-e.classList.remove(
-"show"
-);
-
-}
-
-function resetPlaneVisual(){\n plane2dPhase="ready";plane2dProgress=0;
-
-const plane=
-document.getElementById(
-"planeObject"
-);
-
-plane.className=
-"plane-object";
-
-plane.style.left="23%";
-plane.style.bottom="43%";
-plane.style.transform="rotate(-13deg) scale(1)";
-
-const world=document.querySelector(".plane-world");
-if(world)world.style.setProperty("--flight-progress","0");
-const tokens=document.getElementById("planeTokenLayer");if(tokens)tokens.innerHTML="";
-
-document.getElementById(
-"landingCarrier"
-).classList.remove(
-"show"
-);
-
-planeMultiplier=1;
-updatePlane3D(0);
-const distance=document.getElementById("planeDistance");
-const altitude=document.getElementById("planeAltitude");
-if(distance)distance.textContent="0 м";
-if(altitude)altitude.textContent="2,5 м";
-
-document.getElementById(
-"planeStage"
-).textContent=
-"ГОТОВ";
-
-updatePlaneMultiplier();
-
-}
-
-async function randomPlaneEvent(){
-
-const r=
-Math.random();
-
-if(r<.62){
-
-const adds=[
-.1,
-.15,
-.2,
-.25,
-.3,
-.4,
-.5
-];
-
-const add=
-adds[
-Math.floor(
-Math.random()*
-adds.length
-)
-];
-
-planeMultiplier+=add;
-
-await planeEvent(
-"🟢 +"+
-add
-.toFixed(2)
-.replace(
-".",
-","
-)
-);
-
-}
-
-else if(r<.79){
-
-planeMultiplier*=2;
-
-await planeEvent(
-"⚡ ×2"
-);
-
-}
-
-else if(r<.88){
-
-planeMultiplier*=3;
-
-await planeEvent(
-"🔥 ×3"
-);
-
-}
-
-else if(r<.92){
-
-planeMultiplier*=5;
-
-await planeEvent(
-"💎 ×5"
-);
-
-}
-
-else{
-
-/*
-В admin alwaysWin
-ракета не уменьшает выигрыш.
-*/
-
-if(
-!state.admin.alwaysWin
-){
-
-planeMultiplier=
-Math.max(
-1,
-planeMultiplier/2
-);
-
-await planeEvent(
-"🚀 РАКЕТА!<br>×0,5"
-);
-
-}else{
-
-planeMultiplier+=.5;
-
-await planeEvent(
-"🎯 ADMIN +0,50"
-);
-
-}
-
-}
-
-planeMultiplier=
-Math.min(
-planeMultiplier,
-25
-);
-
-updatePlaneMultiplier();
-
-}
-
 async function startPlaneGame(){
-
-if(planeBusy)return;
-
-const bet=
-Math.floor(
-Number(
-document.getElementById(
-"planeBet"
-).value
-)
-);
-
-if(
-!Number.isSafeInteger(bet)||
-bet<10||
-!Number.isFinite(state.balance)||
-bet>state.balance
-){
-
-alert(
-"Недостаточно монет или неверная ставка."
-);
-
-return;
-
+ if(planeBusy)return;const bet=Math.floor(Number(document.getElementById("planeBet").value));
+ if(!Number.isSafeInteger(bet)||bet<10||!Number.isFinite(state.balance)||bet>state.balance){alert("Недостаточно монет или неверная ставка.");return;}
+ planeBusy=true;planeInFlight=false;planeBet=bet;state.balance-=bet;addTurnover(bet);state.stats.planeGames++;save();resetPlaneVisual();updatePlaneControls();
+ const status=document.getElementById("planeStatus"),stage=document.getElementById("planeStage"),obj=document.getElementById("planeObject");
+ if(status){status.style.color="#ffbd42";status.textContent="✈️ Самолёт готовится к взлёту...";}if(stage)stage.textContent="ВЗЛЁТ";
+ await planeWait(500);if(obj)obj.classList.add("flying");plane2dPhase="cruise";planeInFlight=true;planeStartedAt=performance.now();
+ // A single hidden crash point is selected at take-off; the multiplier then rises continuously.
+ planeCrashAt=Math.max(1.01,Math.min(35,0.97/Math.max(.028,Math.random())));
+ planeAnimationTimer=setInterval(updatePlaneFlight,50);
+ planeDecorTimer=setInterval(()=>{if(!planeInFlight)return;const layer=document.getElementById("planeTokenLayer");if(!layer)return;const token=document.createElement("span");token.className="plane-token";token.textContent=["+10","×2","+25","×3","×5"][Math.floor(Math.random()*5)];token.style.left=(58+Math.random()*25)+"%";token.style.top=(25+Math.random()*45)+"%";layer.appendChild(token);setTimeout(()=>token.remove(),1500);},1800);
+ updatePlaneControls();planeEvent("✈️ ВЗЛЁТ!");
 }
-
-state.balance-=bet;
-
-addTurnover(bet);
-
-state.stats.planeGames++;
-
-save();
-
-planeBusy=true;
-
-planeBet=bet;
-
-planeMultiplier=1;
-plane2dProgress=0;
-initPlane3D();
-updatePlane3D(0,"ready");
-
-resetPlaneVisual();
-
-updatePlaneControls();
-
-const plane=
-document.getElementById(
-"planeObject"
-);
-
-const status=
-document.getElementById(
-"planeStatus"
-);
-
-const stage=
-document.getElementById(
-"planeStage"
-);
-
-status.style.color=
-"#ffbd42";
-
-stage.textContent=
-"ВЗЛЁТ";
-
-status.textContent=
-"✈️ Взлетаем...";
-
-await planeWait(
-500
-);
-
-plane.classList.add(
-"flying"
-);
-
-plane.style.left=
-"30%";
-
-plane.style.bottom=
-"48%";
-await animatePlaneScene(.12,"takeoff",1300);
-
-await planeEvent(
-"✈️ ВЗЛЁТ!"
-);
-
-stage.textContent=
-"ПОЛЁТ";
-
-const events=
-5+
-Math.floor(
-Math.random()*3
-);
-
-for(
-let i=0;
-i<events;
-i++
-){
-
-const progress=(i+1)/events;
-await animatePlaneScene(.12+progress*.78,"cruise",900);
-const distance=Math.round(progress*5000);
-const altitude=(progress*600).toFixed(0);
-document.getElementById("planeDistance").textContent=distance.toLocaleString("ru-RU")+" м";
-document.getElementById("planeAltitude").textContent=altitude.toLocaleString("ru-RU")+" м";
-
-/* The aircraft travels across the scene on a climbing diagonal; the camera/world scrolls in the opposite direction. */
-const world=document.querySelector(".plane-world");
-if(world)world.style.setProperty("--flight-progress",String(progress));
-/* Follow-camera effect: plane stays small in the left half while the sky, clouds, sea and ship move past it. */
-const x=23+progress*15;
-const y=43+progress*16+Math.sin(progress*Math.PI*2)*2;
-plane.style.left=x+"%";
-plane.style.bottom=y+"%";
-plane.style.transform="rotate("+(-13-progress*5)+"deg) scale("+(1+progress*.12)+")";
-if(world){
- world.style.setProperty("--flight-progress",String(progress));
- const ship=world.querySelector(".carrier");
- if(ship)ship.style.transform="translateX("+(-progress*30)+"px) perspective(100px) rotateX(8deg)";
-}
-const token=document.createElement("span");token.className="plane-token";token.textContent=Math.random()<.72?"+"+["1","2","5","10"][Math.floor(Math.random()*4)]:"×"+planeMultiplier.toFixed(1);token.style.left=(58+Math.random()*25)+"%";token.style.top=(25+Math.random()*45)+"%";document.getElementById("planeTokenLayer")?.appendChild(token);setTimeout(()=>token.remove(),1600);
-
-await randomPlaneEvent();
-
-status.innerHTML=
-"☁️ Коэффициент <b>×"+
-planeMultiplier
-.toFixed(2)
-.replace(
-".",
-","
-)+
-"</b>";
-
-await planeWait(
-250
-);
-
-}
-
-stage.textContent=
-"ПОСАДКА";
-await animatePlaneScene(1,"landing",1700);
-
-document.getElementById(
-"landingCarrier"
-).classList.add(
-"show"
-);
-
-plane.style.left="43%";
-plane.style.bottom="57%";
-plane.style.transform="rotate(1deg) scale(1.08)";
-
-status.textContent=
-"🛬 Заходим на посадку...";
-
-await planeWait(
-1500
-);
-
-await planeEvent(
-"🛬 ПОСАДКА..."
-);
-
-// Исход посадки — отдельный случайный бросок.
- // Множитель влияет только на выплату, но не на шанс попадания.
-const landingChance=0.55;
-const landed=
-state.admin.alwaysWin
-||
-Math.random()<landingChance;
-
-if(landed){
-
-plane.classList.remove(
-"flying"
-);
-
-plane.style.left=
-"72%";
-
-plane.style.bottom=
-"28%";
-plane2dPhase="landed";
-
-await planeWait(
-700
-);
-
-const reward=
-Math.floor(
-bet*
-planeMultiplier
-);
-
-state.balance+=reward;
-
-state.stats.planeWins++;
-addDailyTaskProgress("plane");
-
-registerWin(reward);
-
-save();
-
-stage.textContent=
-"ПОБЕДА";
-
-status.style.color=
-"#24cf78";
-
-status.innerHTML=
-"🏆 УСПЕШНАЯ ПОСАДКА!<br><b>+"+
-reward.toLocaleString(
-"ru-RU"
-)+
-" 🪙</b>";
-
-await planeEvent(
-"🏆 +"+
-reward.toLocaleString(
-"ru-RU"
-)+
-" 🪙"
-);
-
-}else{
-
-plane.classList.remove(
-"flying"
-);
-
-plane.classList.add(
-"crash"
-);
-await animatePlaneScene(1,"water",1000);
-
-await planeWait(
-700
-);
-
-stage.textContent=
-"ПРОМАХ";
-
-status.style.color=
-"#e34b55";
-
-status.textContent=
-"💥 Самолёт не смог приземлиться. Ставка проиграна.";
-
-}
-
-planeBusy=false;
-
-updatePlaneControls();
-
-}
-
-function initPlane(){
-
-resetPlaneVisual();
-
-updatePlaneControls();
-
-}
+function initPlane(){resetPlaneVisual();updatePlaneControls();}
 
 /* =========================
    PICKAXE — шахта из блоков
@@ -7997,8 +7320,7 @@ const diceNames=["TurboMax","Zefir","DarkWolf","PixelKing","Bober","NoMercy","Vo
 const diceFaces=["⚀","⚁","⚂","⚃","⚄","⚅"];
 let diceBusy=false;
 function diceBetValue(){const e=document.getElementById("diceBet");return Math.max(10,Math.floor(Number(e.value)||10))}
-function updateDiceBet(){const e=document.getElementById("diceBet");e.value=diceBetValue()}
-function setDiceBet(v){const e=document.getElementById("diceBet");e.value=v==="max"?Math.max(10,Math.floor(state.balance)):v;updateDiceBet()}
+function updateDiceBet(){const e=document.getElementById("diceBet");e.value=diceBetValue()}function setDiceBet(v){const e=document.getElementById("diceBet");e.value=v==="max"?Math.max(10,Math.floor(state.balance)):v;updateDiceBet()}
 function changeDiceBet(d){const e=document.getElementById("diceBet");e.value=Math.max(10,diceBetValue()+d*10);updateDiceBet()}
 async function playDice(){
  if(diceBusy)return;const bet=diceBetValue(),count=2+Math.floor(Math.random()*4);
