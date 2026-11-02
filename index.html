@@ -2,7 +2,7 @@
 <html lang="ru">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no"><meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate"><meta http-equiv="Pragma" content="no-cache"><meta http-equiv="Expires" content="0">
 <title>SKEBOB CASINO</title>
 
 <style>
@@ -3051,10 +3051,10 @@ id="profileBalance"
 <!-- BLACKJACK ONLINE: no-stakes social mode -->
 <section id="blackjack" class="hidden">
 <h2>🃏 BLACKJACK ONLINE</h2>
-<p class="small">До 4 игроков в комнате. Каждый играет отдельно против общего дилера. Только бесплатная игра — без ставок и выплат.</p>
+<p class="small">До 4 игроков за столом. Выбирай ставку перед входом в раунд и играй против общего дилера.</p>
 <div class="panel">
  <p class="small">Выставь ставку перед входом в комнату. При победе выплата x2, при блэкджеке x2.5, при ничьей ставка возвращается.</p>
- <div class="game-control"><label>ТВОЯ СТАВКА</label><div class="bet-main"><button onclick="bjOnlineChangeBet(-10)">−</button><input id="bjOnlineBet" type="number" min="10" step="10" value="100" oninput="bjOnlineUpdateBet()"><button onclick="bjOnlineChangeBet(10)">+</button></div><div class="bet-presets"><button onclick="bjOnlineSetBet(100)">100</button><button onclick="bjOnlineSetBet(500)">500</button><button onclick="bjOnlineSetBet(1000)">1K</button><button onclick="bjOnlineSetBet('max')">MAX</button></div></div>
+ <div class="game-control"><label>ТВОЯ СТАВКА</label><div class="bet-main"><button onclick="bjOnlineChangeBet(-10)">−</button><input id="bjOnlineBet" type="text" inputmode="numeric" pattern="[0-9]*" autocomplete="off" min="10" value="100" oninput="bjOnlineUpdateBet()" style="pointer-events:auto;touch-action:manipulation;user-select:text;-webkit-user-select:text"><button onclick="bjOnlineChangeBet(10)">+</button></div><div class="bet-presets"><button onclick="bjOnlineSetBet(100)">100</button><button onclick="bjOnlineSetBet(500)">500</button><button onclick="bjOnlineSetBet(1000)">1K</button><button onclick="bjOnlineSetBet('max')">MAX</button></div></div>
  <div class="bj-actions">
   <button class="game-main" id="bjOnlineJoin" onclick="bjOnlineJoin()">🎮 ИГРАТЬ</button>
   <button class="secondary" id="bjOnlineLeave" onclick="bjOnlineLeave()" disabled>ВЫЙТИ ИЗ ИГРЫ</button>
@@ -8317,10 +8317,10 @@ function bjNickTaken(value,excludeId=""){const wanted=bjNormalizeNick(value);if(
 const bjOnlineName=()=>getNickname();
 const bjOnlineCard=()=>({rank:["A","2","3","4","5","6","7","8","9","10","J","Q","K"][Math.floor(Math.random()*13)],suit:["♠","♥","♦","♣"][Math.floor(Math.random()*4)]});
 let bjOnlineCurrentBet=100,bjOnlinePaidRound="";
-function bjOnlineGetBet(){const e=document.getElementById("bjOnlineBet");const n=Math.floor(Number(e?.value)||10);return Math.max(10,n)}
-function bjOnlineUpdateBet(){const e=document.getElementById("bjOnlineBet");if(!e)return;let n=Math.floor(Number(e.value)||10);n=Math.max(10,Math.min(n,state.balance));e.value=n;bjOnlineCurrentBet=n;}
-function bjOnlineSetBet(v){const e=document.getElementById("bjOnlineBet");if(!e)return;e.value=v==="max"?Math.max(10,state.balance):v;bjOnlineUpdateBet()}
-function bjOnlineChangeBet(d){const e=document.getElementById("bjOnlineBet");if(!e)return;e.value=Math.max(10,(Math.floor(Number(e.value)||10)+d));bjOnlineUpdateBet()}
+function bjOnlineGetBet(){const e=document.getElementById("bjOnlineBet");const raw=String(e?.value??"").replace(/[^0-9]/g,"");const n=Math.floor(Number(raw)||10);return Math.max(10,Math.min(n,Math.floor(Number(state.balance)||0)))}
+function bjOnlineUpdateBet(){const e=document.getElementById("bjOnlineBet");if(!e)return;const raw=String(e.value??"").replace(/[^0-9]/g,"");let n=raw===""?10:Math.floor(Number(raw));n=Math.max(10,Math.min(n,Math.floor(Number(state.balance)||0)));e.value=String(n);bjOnlineCurrentBet=n;}
+function bjOnlineSetBet(v){const e=document.getElementById("bjOnlineBet");if(!e)return;e.value=String(v==="max"?Math.max(10,Math.floor(Number(state.balance)||0)):v);bjOnlineUpdateBet()}
+function bjOnlineChangeBet(d){const e=document.getElementById("bjOnlineBet");if(!e)return;e.value=String(Math.max(10,(Math.floor(Number(e.value)||10)+d)));bjOnlineUpdateBet()}
 function bjOnlineValue(hand){let n=0,a=0;for(const c of hand){if(c.rank==="A"){n+=11;a++}else n+=["J","Q","K"].includes(c.rank)?10:Number(c.rank)}while(n>21&&a-- >0)n-=10;return n}
 function bjOnlineDraw(hand){hand.push(bjOnlineCard())}
 function bjOnlinePublishState(){if(!bjOnlineChannel||!bjOnlineRound||bjOnlineRound.finished)return;bjOnlineSend("player-state",{id:bjOnlineId,hand:bjOnlineMyHand,done:!bjOnlineMyTurn,turn:bjOnlineMyTurn?"Твой ход":"Завершил ход"})}
@@ -8449,6 +8449,9 @@ function renderSkebobTap(){skebobTapResetIfReady();const t=state.tapGame,earned=
 function skebobTap(){skebobTapResetIfReady();const t=state.tapGame;if(t.cooldownUntil&&Date.now()<t.cooldownUntil){renderSkebobTap();return;}if(t.earnedCents>=SKEBOB_TAP_LIMIT){t.cooldownUntil=Date.now()+SKEBOB_TAP_WINDOW;save();renderSkebobTap();return;}if(!t.hourStartedAt)t.hourStartedAt=Date.now();t.earnedCents++;t.pendingCents++;if(t.pendingCents>=100){const whole=Math.floor(t.pendingCents/100);state.balance+=whole;t.pendingCents-=whole*100;}if(t.earnedCents>=SKEBOB_TAP_LIMIT)t.cooldownUntil=Date.now()+SKEBOB_TAP_WINDOW;save();renderSkebobTap();if(t.cooldownUntil){const status=document.getElementById("tapStatus");if(status)status.textContent="⏳ Часовой лимит тапалки достигнут! Возвращайся через час.";}}
 setInterval(()=>{const page=document.getElementById("skebobTap");if(page&&!page.classList.contains("hidden"))renderSkebobTap();},1000);
 
+
+/* Telegram Mini App viewport and fresh UI initialization */
+(function(){try{const tg=window.Telegram&&window.Telegram.WebApp;if(tg){tg.ready();tg.expand();}}catch(e){console.warn("Telegram WebApp init:",e)}})();
 document.addEventListener("DOMContentLoaded",initNickname,{once:true});
 </script>
 
