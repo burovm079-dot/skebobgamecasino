@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Новый год — SKEBOB</title>
+<style>
+:root{color-scheme:dark;--bg:#09131b;--panel:#122431;--panel2:#1a3442;--line:#315565;--gold:#f5cf72;--text:#f5f8fb;--muted:#a9c0cb;--green:#62d6a3}
+*{box-sizing:border-box}body{margin:0;background:radial-gradient(circle at 50% -10%,#24546a 0,#0b1924 42%,#071018 100%);color:var(--text);font:16px system-ui,Arial,sans-serif;min-height:100vh}
+header{padding:22px 16px 12px;text-align:center}h1{font-size:clamp(30px,7vw,48px);margin:8px 0;color:var(--gold);text-shadow:0 3px 22px #f5cf7244}header p{color:var(--muted);margin:4px}
+main{max-width:900px;margin:auto;padding:12px 14px 40px}.top{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:14px}
+button,a.btn{border:1px solid var(--line);background:linear-gradient(180deg,#244555,#142c39);color:var(--text);padding:11px 15px;border-radius:12px;font-weight:800;cursor:pointer;text-decoration:none}
+button.primary{background:linear-gradient(180deg,#f6d77f,#c58b2e);color:#261b08;border:0}
+button:disabled{opacity:.45;cursor:not-allowed}.tabs{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin:12px 0 18px}.tabs button.active{outline:2px solid var(--gold);color:var(--gold)}
+.panel{background:linear-gradient(145deg,#173241,#10212d);border:1px solid var(--line);border-radius:18px;padding:17px;margin:12px 0;box-shadow:0 10px 28px #0004}
+.hidden{display:none!important}.candies{font-size:20px;color:var(--gold);font-weight:900}.muted{color:var(--muted);font-size:13px}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(145px,1fr));gap:10px}.item{background:var(--panel2);border:1px solid #3b6473;border-radius:14px;padding:14px;text-align:center}.art{font-size:48px;min-height:62px;display:grid;place-items:center}.item h3{font-size:15px;margin:6px 0}.item button{width:100%;margin-top:8px}
+.taskrow{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}.progress{height:9px;background:#07141d;border-radius:9px;overflow:hidden;margin:10px 0}.progress span{display:block;height:100%;background:linear-gradient(90deg,#56c9ad,#e9d17b);width:0}
+.casebox{text-align:center;padding:22px}.caseicon{font-size:76px;margin:8px}.result{font-weight:900;color:var(--gold);min-height:28px;margin:10px}
+footer{text-align:center;color:var(--muted);font-size:12px;padding:10px}
+@media(max-width:480px){.tabs{grid-template-columns:1fr}.top{justify-content:center}}
+</style>
+</head>
+<body>
+<header><div>❄️ 🎄 ❄️</div><h1>НОВЫЙ ГОД</h1><p>Зимняя коллекция SKEBOB</p></header>
+<main>
+<div class="top"><a class="btn" href="index.html">← Вернуться в игру</a><div class="candies">🍬 <span id="candies">0</span> конфет</div></div>
+<div class="tabs">
+<button class="active" data-tab="shop" onclick="showTab('shop',this)">🛍 Магазин</button>
+<button data-tab="tasks" onclick="showTab('tasks',this)">📋 Задания</button>
+<button data-tab="cases" onclick="showTab('cases',this)">🎁 Кейсы</button>
+</div>
+<section id="shop" class="panel">
+<h2>❄️ Зимний магазин</h2><p class="muted">Каждый предмет стоит 400 конфет. Это игровые коллекционные предметы, не реальные Telegram-подарки.</p>
+<div class="grid" id="shopGrid"></div>
+</section>
+<section id="tasks" class="panel hidden">
+<h2>📋 Задание часа</h2><p class="muted">Каждый час появляется одно случайное задание. За выполнение — 100 конфет. Прогресс считается по статистике основной игры.</p>
+<div id="taskContent"></div>
+</section>
+<section id="cases" class="panel hidden">
+<h2>🎁 НОВОГОДНИЙ КЕЙС</h2><p>Стоимость открытия: <b>200 🍬</b></p>
+<p class="muted">Награды выдаются по фиксированной последовательности: конфеты и коллекционные предметы. Это не случайная лотерея — порядок наград заранее определён.</p>
+<div class="casebox"><div class="caseicon">🎁</div><div id="caseNext" class="muted"></div><button class="primary" onclick="openWinterCase()">ОТКРЫТЬ ЗА 200 🍬</button><div id="caseResult" class="result"></div></div>
+</section>
+<footer>Новогодние предметы остаются в инвентаре и не продаются.</footer>
+</main>
+<script>
+const KEY="skebobNewYear2026", SAVE_KEY="skebobSave";
+const items=[
+ {id:"ny_snowglobe",name:"Снежный шар",icon:"🔮"},
+ {id:"ny_tree",name:"Ёлочка",icon:"🎄"},
+ {id:"ny_snowflake",name:"Ледяная звезда",icon:"❄️"},
+ {id:"ny_gift",name:"Подарок Санты",icon:"🎁"},
+ {id:"ny_deer",name:"Северный олень",icon:"🦌"},
+ {id:"ny_bell",name:"Золотой колокольчик",icon:"🔔"}
+];
+const tasks=[
+ ["cases",100,"Прокрути 100 кейсов"],["cases",80,"Прокрути 80 кейсов"],["cases",60,"Прокрути 60 кейсов"],["cases",50,"Прокрути 50 кейсов"],["cases",40,"Прокрути 40 кейсов"],["cases",30,"Прокрути 30 кейсов"],["cases",20,"Прокрути 20 кейсов"],["cases",10,"Прокрути 10 кейсов"],["cases",5,"Прокрути 5 кейсов"],["cases",3,"Прокрути 3 кейса"],
+ ["upgrades",10,"Сделай 10 апгрейдов"],["upgrades",8,"Сделай 8 апгрейдов"],["upgrades",7,"Сделай 7 апгрейдов"],["upgrades",6,"Сделай 6 апгрейдов"],["upgrades",5,"Сделай 5 апгрейдов"],["upgrades",4,"Сделай 4 апгрейда"],["upgrades",3,"Сделай 3 апгрейда"],["upgrades",2,"Сделай 2 апгрейда"],["upgrades",1,"Сделай 1 апгрейд"],["cases",15,"Прокрути 15 кейсов"]
+];
+let event=loadEvent(),game=loadGame();
+function loadEvent(){try{return {...{candies:0,owned:[],caseOpens:0,taskHour:0,taskIndex:-1,taskStart:0,taskClaimed:false},...JSON.parse(localStorage.getItem(KEY)||"{}")}}catch(e){return {candies:0,owned:[],caseOpens:0,taskHour:0,taskIndex:-1,taskStart:0,taskClaimed:false}}}
+function loadGame(){try{return JSON.parse(localStorage.getItem(SAVE_KEY)||"{}")}catch(e){return {}}}
+function saveEvent(){localStorage.setItem(KEY,JSON.stringify(event));document.getElementById("candies").textContent=event.candies}
+function saveGame(){localStorage.setItem(SAVE_KEY,JSON.stringify(game))}
+function showTab(id,btn){document.querySelectorAll("main section").forEach(x=>x.classList.add("hidden"));document.getElementById(id).classList.remove("hidden");document.querySelectorAll(".tabs button").forEach(x=>x.classList.remove("active"));btn.classList.add("active");if(id==="tasks")renderTask()}
+function renderShop(){document.getElementById("shopGrid").innerHTML=items.map(x=>{let owned=event.owned.includes(x.id);return '<div class="item"><div class="art">'+x.icon+'</div><h3>'+x.name+'</h3><div class="muted">Коллекционный предмет</div><button '+(owned?'disabled':'class="primary"')+' onclick="buyItem(\''+x.id+'\')">'+(owned?'УЖЕ В КОЛЛЕКЦИИ':'400 🍬')+'</button></div>'}).join("")}
+function addInventoryItem(x){game=loadGame();game.inventory=Array.isArray(game.inventory)?game.inventory:[];if(!game.inventory.some(p=>p.id===x.id)){game.inventory.push({id:x.id,name:x.name,collection:"Новый год",icon:x.icon,value:0,newYear:true,tradable:false});saveGame()}}
+function buyItem(id){let x=items.find(p=>p.id===id);if(!x||event.owned.includes(id))return;if(event.candies<400){alert("Не хватает конфет!");return}event.candies-=400;event.owned.push(id);addInventoryItem(x);saveEvent();renderShop()}
+function getStat(key){game=loadGame();return Number(game.stats?.[key]||0)}
+function hourId(){return Math.floor(Date.now()/3600000)}
+function ensureTask(){let h=hourId();if(event.taskHour!==h){event.taskHour=h;event.taskIndex=Math.floor(Math.random()*tasks.length);event.taskStart=getStat(tasks[event.taskIndex][0]);event.taskClaimed=false;saveEvent()}}
+function renderTask(){ensureTask();let t=tasks[event.taskIndex],progress=Math.max(0,getStat(t[0])-event.taskStart),done=progress>=t[1];document.getElementById("taskContent").innerHTML='<div class="taskrow"><b>'+t[2]+'</b><span class="candies">+100 🍬</span></div><div class="progress"><span style="width:'+Math.min(100,progress/t[1]*100)+'%"></span></div><div class="taskrow"><span class="muted">'+Math.min(progress,t[1])+' / '+t[1]+'</span><span class="muted">Новое задание через '+Math.max(0,59-new Date().getMinutes())+' мин.</span></div><button class="primary" '+(!done||event.taskClaimed?'disabled':'')+' onclick="claimTask()">ЗАБРАТЬ 100 КОНФЕТ</button><p class="muted">'+(event.taskClaimed?'Награда уже получена за этот час.':done?'Задание выполнено!':'Выполни задание в основной игре, затем вернись сюда.')+'</p>'}
+function claimTask(){ensureTask();let t=tasks[event.taskIndex];if(event.taskClaimed||getStat(t[0])-event.taskStart<t[1])return;event.candies+=100;event.taskClaimed=true;saveEvent();renderTask()}
+function openWinterCase(){if(event.candies<200){alert("Нужно 200 конфет!");return}event.candies-=200;event.caseOpens++;let result;if(event.caseOpens%5===0){let x=items[(Math.floor(event.caseOpens/5)-1)%items.length];event.owned.push(x.id);addInventoryItem(x);result="🎉 "+x.name+" добавлен в инвентарь!"}else{let rewards=[50,100,150,200],amount=rewards[(event.caseOpens-1)%rewards.length];event.candies+=amount;result="🍬 Ты получил "+amount+" конфет!"}saveEvent();document.getElementById("caseResult").textContent=result;document.getElementById("caseNext").textContent="Открытий: "+event.caseOpens+" · Коллекционный предмет гарантирован при каждом 5-м открытии";renderShop()}
+function init(){saveEvent();renderShop();document.getElementById("caseNext").textContent="Открытий: "+event.caseOpens+" · Следующий предмет — при каждом 5-м открытии";if(event.taskHour!==hourId())ensureTask()}
+init();
+</script>
+</body></html>
