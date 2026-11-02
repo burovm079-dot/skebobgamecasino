@@ -1787,7 +1787,6 @@ rel="noopener noreferrer"
 <button onclick="showPage('battles',this)">⚔️ БАТЛЫ</button>
 <button onclick="showPage('slots',this)">🎰 СЛОТЫ</button>
 <button onclick="showPage('blackjack',this)">🃏 BLACKJACK</button>
-<button onclick="showPage('plushPepeShop',this)">🐸 PLUSH PEPE</button>
 <button onclick="showPage('dice',this)">🎲 КОСТИ</button>
 
 <button onclick="showPage('tictactoe',this)">⭕ КРЕСТИКИ</button>
@@ -2675,16 +2674,6 @@ onclick="sellAllItems()"
 
 </section>
 
-<!-- PLUSH PEPE SHOP -->
-<section id="plushPepeShop" class="hidden">
-<h2>🐸 МАГАЗИН PLUSH PEPE</h2>
-<div class="panel">
- <p class="small">Покупка за виртуальные монеты игры. Это не покупка настоящего подарка и не передача NFT. Fragment открывается отдельно только для просмотра.</p>
- <div id="plushPepeShopItems" class="collection-grid"></div>
- <a href="https://fragment.com" target="_blank" rel="noopener noreferrer">Открыть Fragment для просмотра подарков ↗</a>
-</div>
-</section>
-
 <!-- COLLECTION -->
 <section id="collection" class="hidden">
 <h2>🏆 КОЛЛЕКЦИЯ ПОДАРКОВ</h2>
@@ -3556,13 +3545,6 @@ function nftImageFallback(img,icon){
 }
 const prizes=nftCollections.map((n,i)=>({...n,id:"nft-"+i,rarity:i<4?"Легендарный":i<7?"Эпический":i<12?"Редкий":i<16?"Необычный":"Обычный"}));
 
-// Три Plush Pepe из скриншотов Fragment. Цены перенесены в виртуальные монеты игры.
-const plushPepeShop=[
- {id:"plush-pepe-1921",name:"Plush Pepe #1921",collection:"Plush Pepe",price:13000,icon:"🐸",market:"https://fragment.com"},
- {id:"plush-pepe-177",name:"Plush Pepe #177",collection:"Plush Pepe",price:13500,icon:"🐸",market:"https://fragment.com"},
- {id:"plush-pepe-1554",name:"Plush Pepe #1554",collection:"Plush Pepe",price:15000,icon:"🐸",market:"https://fragment.com"}
-];
-
 const cases=[
  {name:"TINY PIXEL",icon:"🧩",price:150,desc:"Самый доступный набор NFT",items:[18,19,20]},
  {name:"STARTER DROP",icon:"🌱",price:250,desc:"Первые коллекционные аватары",items:[16,17,18,19,20]},
@@ -3992,7 +3974,6 @@ renderAdminSettings();
 function showPage(id,button){
 if(id==="tasks")renderDailyTasks();
 if(id==="collection")renderCollection();
-if(id==="plushPepeShop")renderPlushPepeShop();
 
 document
 .querySelectorAll(
@@ -5294,7 +5275,7 @@ if(replayButton){replayButton.disabled=pendingPrizes.some(Boolean);replayButton.
 
 function checkAllNftAchievement(){
  if(state.collectionAchievement?.unlocked)return false;
- const catalog=[...nftCollections,...plushPepeShop.map(({name,collection})=>({name,collection})),{name:"Мишка",collection:"Telegram Gifts"},{name:"Сердечко",collection:"Telegram Gifts"}];
+ const catalog=[...nftCollections,{name:"Мишка",collection:"Telegram Gifts"},{name:"Сердечко",collection:"Telegram Gifts"}];
  const owned=state.inventory||[];
  const complete=catalog.every(item=>owned.some(x=>x.name===item.name&&x.collection===item.collection));
  if(!complete)return false;
@@ -5306,35 +5287,11 @@ function checkAllNftAchievement(){
  return true;
 }
 
-function renderPlushPepeShop(){
- const root=document.getElementById("plushPepeShopItems");
- if(!root)return;
- const owned=state.inventory||[];
- root.innerHTML=plushPepeShop.map(item=>{
-  const has=owned.some(x=>x.name===item.name&&x.collection===item.collection);
-  return '<div class="collection-card '+(has?'owned':'missing')+'"><div class="collection-icon">'+item.icon+'</div><b>'+item.name+'</b><div class="collection-status">'+(has?'✓ УЖЕ В КОЛЛЕКЦИИ':item.price.toLocaleString("ru-RU")+' 🪙')+'</div><button class="goldbtn" '+(has?'disabled':'')+' onclick="buyPlushPepe(\''+item.id+'\')">'+(has?'КУПЛЕНО':'КУПИТЬ ЗА МОНЕТЫ')+'</button><a href="'+item.market+'" target="_blank" rel="noopener noreferrer">Посмотреть на Fragment ↗</a></div>';
- }).join("");
-}
-function buyPlushPepe(id){
- const item=plushPepeShop.find(x=>x.id===id);
- if(!item)return;
- if((state.inventory||[]).some(x=>x.name===item.name&&x.collection===item.collection)){alert("Этот предмет уже есть в коллекции.");return;}
- if(state.balance<item.price){alert("Недостаточно виртуальных монет. Нужно: "+item.price.toLocaleString("ru-RU")+" 🪙.");return;}
- if(!confirm("Купить "+item.name+" за "+item.price.toLocaleString("ru-RU")+" виртуальных монет?"))return;
- state.balance-=item.price;
- state.inventory.push({id:item.id,name:item.name,collection:item.collection,icon:item.icon,value:0,market:item.market,source:"in-game-plush-pepe-shop"});
- save();
- renderPlushPepeShop();
- renderCollection();
- alert(item.name+" добавлен в твою игровую коллекцию!");
-}
-
 function renderCollection(){
  const root=document.getElementById("collectionGroups");
  if(!root)return;
  const catalog=[
   ...prizes.map(p=>({name:p.name,collection:p.collection,image:p.image,icon:p.icon})),
-  ...plushPepeShop.map(p=>({name:p.name,collection:p.collection,icon:p.icon})),
   {name:"Мишка",collection:"Telegram Gifts",icon:"🧸"},
   {name:"Сердечко",collection:"Telegram Gifts",icon:"❤️"}
  ];
