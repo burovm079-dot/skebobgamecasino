@@ -111,6 +111,12 @@ gap:6px;
 #skebobTap #tapTimer{display:inline-block;margin-top:8px;padding:7px 12px;border-radius:12px;background:rgba(20,5,35,.34)}
 @media(max-width:420px){#skebobTap{padding:8px}#skebobTap .tap-panel{padding:14px 10px}}
 
+/* SKEBOB TAP: remove the unwanted square backdrop */
+#skebobTap{background:transparent!important;background-image:none!important}
+#skebobTap .tap-panel{background:transparent!important;background-image:none!important;backdrop-filter:none!important;-webkit-backdrop-filter:none!important;box-shadow:none!important}
+#skebobTap .tap-main{background:radial-gradient(circle at 35% 28%,#a96de0,#542080 72%)!important;background-image:radial-gradient(circle at 35% 28%,#a96de0,#542080 72%)!important;backdrop-filter:none!important;-webkit-backdrop-filter:none!important}
+
+
 .tap-stats{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin:16px 0}
 .tap-stats>div{background:var(--panel2);border:1px solid var(--border2);border-radius:12px;padding:12px 5px}
 .tap-stats span{display:block;color:var(--muted);font-size:11px;margin-bottom:7px}
