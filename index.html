@@ -1758,6 +1758,8 @@ rel="noopener noreferrer"
 <main>
 
 <div class="nav">
+<button onclick="window.location.href='new-year.html'">🎄 НОВЫЙ ГОД</button>
+
 
 <button class="active" onclick="showPage('cases',this)">
 🎁 CASES
@@ -5381,6 +5383,8 @@ i,
 )[0];
 
 if(!p)return;
+
+if(p.newYear){state.inventory.splice(i,0,p);alert("Новогодние коллекционные предметы нельзя продавать.");return;}
 
 const value=
 Number(
