@@ -6370,7 +6370,7 @@ function planeMainAction(){if(planeBusy)return;startPlaneGame();}
 function planeCashout(){
  if(!planeInFlight||!planeBusy)return;
  planeInFlight=false;if(planeAnimationTimer)clearInterval(planeAnimationTimer);if(planeDecorTimer)clearInterval(planeDecorTimer);
- const reward=Math.floor(planeBet*planeMultiplier);state.balance+=reward;state.stats.planeWins++;addDailyTaskProgress("plane");registerWin(reward);plane2dPhase="landed";updatePlane3D(plane2dProgress,"landed");
+ const reward=Math.min(Math.floor(planeBet*1.4),Math.floor(planeBet*planeMultiplier));state.balance+=reward;state.stats.planeWins++;addDailyTaskProgress("plane");registerWin(reward);plane2dPhase="landed";updatePlane3D(plane2dProgress,"landed");
  const stage=document.getElementById("planeStage"),status=document.getElementById("planeStatus"),obj=document.getElementById("planeObject");
  if(stage)stage.textContent="ПОСАДКА";if(status){status.style.color="#24cf78";status.innerHTML="🏆 ВЫ УСПЕЛИ ЗАБРАТЬ ВЫИГРЫШ!<br><b>+"+reward.toLocaleString("ru-RU")+" 🪙</b>";}if(obj){obj.classList.remove("flying");obj.style.transform="rotate(0deg)";}
  planeEvent("🏆 +"+reward.toLocaleString("ru-RU")+" 🪙");save();planeBusy=false;updatePlaneControls();
@@ -6424,7 +6424,7 @@ function updatePlaneFlight(){
   sim.altitude=Math.max(0,Math.min(1,(.90-sim.y)/.72));
   // Объекты появляются на протяжении всего полёта с небольшими случайными интервалами.
   if(elapsed>=sim.nextBonusAt&&sim.bonuses.length<6){
-   const choices=[{label:"+1",factor:1.15},{label:"×2",factor:2},{label:"×3",factor:3},{label:"×5",factor:5}];
+   const choices=[{label:"+5%",factor:1.05},{label:"+10%",factor:1.10},{label:"+15%",factor:1.15}];
    const pick=choices[Math.floor(Math.random()*choices.length)];
    const bonusY=.10+Math.random()*.66;
    sim.bonuses.push({x:1.08,y:bonusY,...pick,kind:"boost",color:"#b8ff5a",r:21,hit:false});
@@ -6434,7 +6434,7 @@ function updatePlaneFlight(){
    sim.rockets.push({x:1.08,y:.08+Math.random()*.70,speed:.23+Math.random()*.07,angle:Math.PI,hit:false});
    sim.nextRocketAt=elapsed+1.0+Math.random()*.7;
   }
-  sim.bonuses.forEach(b=>{b.x-=dt*.20;if(!b.hit&&Math.hypot((b.x-sim.x)*1.15,b.y-sim.y)<.095){b.hit=true;planeMultiplier=Math.min(1000,planeMultiplier*b.factor);const lift=b.factor>=5?.055:b.factor>=3?.045:.035;sim.y=Math.max(.075,sim.y-lift);sim.vy=Math.min(sim.vy,-.16);sim.altitude=Math.max(0,Math.min(1,(.90-sim.y)/.72));planeEvent("✨ СОБРАН МНОЖИТЕЛЬ "+b.label+" · ×"+planeMultiplier.toFixed(2)+" · САМОЛЁТ РЕЗКО НАБИРАЕТ ВЫСОТУ");}});
+  sim.bonuses.forEach(b=>{b.x-=dt*.20;if(!b.hit&&Math.hypot((b.x-sim.x)*1.15,b.y-sim.y)<.095){b.hit=true;planeMultiplier=Math.min(1.4,planeMultiplier*b.factor);const lift=b.factor>=5?.055:b.factor>=3?.045:.035;sim.y=Math.max(.075,sim.y-lift);sim.vy=Math.min(sim.vy,-.16);sim.altitude=Math.max(0,Math.min(1,(.90-sim.y)/.72));planeEvent("✨ СОБРАН МНОЖИТЕЛЬ "+b.label+" · ×"+planeMultiplier.toFixed(2)+" · САМОЛЁТ РЕЗКО НАБИРАЕТ ВЫСОТУ");}});
   // Ракеты летят прямо; попадание направляет самолёт вниз.
   sim.rockets.forEach(r=>{r.x-=dt*r.speed;r.angle=Math.PI;if(!r.hit&&Math.abs(r.x-sim.x)<.045&&Math.abs(r.y-sim.y)<.055){r.hit=true;planeMultiplier=Math.max(.1,planeMultiplier/2);sim.damage++;sim.vy+=.12;sim.hitFlash=1;planeEvent("🚀 ПОПАДАНИЕ РАКЕТЫ · САМОЛЁТ СНИЖАЕТСЯ · МНОЖИТЕЛЬ /2");}});
   sim.bonuses=sim.bonuses.filter(b=>b.x>-.08&&!b.hit);sim.rockets=sim.rockets.filter(r=>r.x>-.08&&!r.hit);
