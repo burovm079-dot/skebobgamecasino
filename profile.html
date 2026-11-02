@@ -61,11 +61,12 @@ footer{text-align:center;color:var(--muted);font-size:12px;padding:20px}
    owned.add(key);added++;
   });
   const complete=nftCatalog.every(item=>save.inventory.some(x=>x.name===item.name&&x.collection===item.collection));
-  if(complete&&!save.collectionAchievement){save.collectionAchievement={unlocked:true,unlockedAt:Date.now()};save.profileStyle=save.profileStyle||{};save.profileStyle.frame='legend';}
+  const newlyUnlocked=complete&&!save.collectionAchievement;
+  if(newlyUnlocked){save.collectionAchievement={unlocked:true,unlockedAt:Date.now()};save.profileStyle=save.profileStyle||{};save.profileStyle.frame='legend';}
   localStorage.setItem('skebobSave',JSON.stringify(save));
   document.getElementById('nftResult').textContent=added?'Готово! Добавлено NFT: '+added+'.':'Все NFT каталога уже есть в инвентаре.';
   if(complete)document.getElementById('collectorBadge').style.display='block';
-  if(complete&&!save.collectionAchievementNotified){alert('🎉 ВЫ СОБРАЛИ ВСЕ NFT ИГРЫ!\\n\\n🏆 Вам открыт статус «ЛЕГЕНДА КОЛЛЕКЦИИ» и эксклюзивная рамка профиля!');save.collectionAchievementNotified=true;localStorage.setItem('skebobSave',JSON.stringify(save));}
+  if(newlyUnlocked&&!save.collectionAchievementNotified){alert('🎉 ВЫ СОБРАЛИ ВСЕ NFT ИГРЫ!\\n\\n🏆 Вам открыт статус «ЛЕГЕНДА КОЛЛЕКЦИИ» и эксклюзивная рамка профиля!');save.collectionAchievementNotified=true;localStorage.setItem('skebobSave',JSON.stringify(save));}
  }
  function render(){
   const nick=currentNick();
