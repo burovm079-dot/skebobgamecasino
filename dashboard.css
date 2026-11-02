@@ -249,3 +249,31 @@ body.dashboard-home #skebobDashboard .sk-game:nth-child(3n + 1) .sk-art img{anim
  }
  #skebobDashboard .sk-side .sk-side-admin.sk-menu-item{margin-top:0!important}
 }
+
+
+/* v9: fixed-size menu artwork on mobile and desktop */
+#skebobDashboard .sk-side button.sk-menu-item,
+#skebobDashboard .sk-side a.sk-menu-item{
+ box-sizing:border-box!important;overflow:hidden!important;
+}
+#skebobDashboard .sk-side .sk-menu-item img{
+ display:block!important;position:static!important;visibility:visible!important;
+ opacity:1!important;width:38px!important;height:38px!important;
+ min-width:38px!important;max-width:38px!important;min-height:38px!important;max-height:38px!important;
+ flex:0 0 38px!important;object-fit:contain!important;object-position:center!important;
+}
+@media(max-width:760px){
+ #skebobDashboard .sk-side .sk-menu-item{
+  width:100%!important;min-width:0!important;max-width:100%!important;
+  min-height:76px!important;height:76px!important;max-height:76px!important;
+  flex:0 0 76px!important;overflow:hidden!important;
+ }
+ #skebobDashboard .sk-side .sk-menu-item img{
+  width:43px!important;height:43px!important;min-width:43px!important;max-width:43px!important;
+  min-height:43px!important;max-height:43px!important;flex:0 0 43px!important;
+ }
+ #skebobDashboard .sk-side .sk-menu-item span{
+  display:block!important;max-width:100%!important;overflow:hidden!important;
+  text-overflow:clip!important;overflow-wrap:anywhere!important;
+ }
+}
