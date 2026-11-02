@@ -3050,10 +3050,11 @@ id="profileBalance"
 
 <!-- BLACKJACK ONLINE: no-stakes social mode -->
 <section id="blackjack" class="hidden">
+<!-- SKEBOB_BUILD_20261102_BJ_BETS -->
 <h2>🃏 BLACKJACK ONLINE</h2>
 <p class="small">До 4 игроков за столом. Выбирай ставку перед входом в раунд и играй против общего дилера.</p>
 <div class="panel">
- <p class="small">Выставь ставку перед входом в комнату. При победе выплата x2, при блэкджеке x2.5, при ничьей ставка возвращается.</p>
+ <p class="small">Ставка за раунд: выбери сумму ниже. Победа — x2, блэкджек — x2,5, ничья — возврат ставки.</p>
  <div class="game-control"><label>ТВОЯ СТАВКА</label><div class="bet-main"><button onclick="bjOnlineChangeBet(-10)">−</button><input id="bjOnlineBet" type="text" inputmode="numeric" pattern="[0-9]*" autocomplete="off" min="10" value="100" oninput="bjOnlineUpdateBet()" onblur="bjOnlineClampBet()" style="pointer-events:auto;touch-action:manipulation;user-select:text;-webkit-user-select:text"><button onclick="bjOnlineChangeBet(10)">+</button></div><div class="bet-presets"><button onclick="bjOnlineSetBet(100)">100</button><button onclick="bjOnlineSetBet(500)">500</button><button onclick="bjOnlineSetBet(1000)">1K</button><button onclick="bjOnlineSetBet('max')">MAX</button></div></div>
  <div class="bj-actions">
   <button class="game-main" id="bjOnlineJoin" onclick="bjOnlineJoin()">🎮 ИГРАТЬ</button>
