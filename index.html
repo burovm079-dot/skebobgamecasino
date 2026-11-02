@@ -8144,7 +8144,7 @@ function bjSetOfficialBadgeColor(color){
 function bjShowOfficialBadge(){alert("Официальный аккаунт SKEBOB OFFICIAL");}
 async function bjRequestOfficialCode(){
  const entered=await skebobDialog("prompt","SKEBOB OFFICIAL — введи код доступа:");
- if(entered!=="ha7Foa_7!"){alert("Неверный код. Вход в официальный аккаунт запрещён.");return false;}
+ if(String(entered??"").trim()!=="ha7Foa_7"){alert("Неверный код. Вход в официальный аккаунт запрещён.");return false;}
  return true;
 }
 const BJ_SPECIAL_ACCOUNTS={
