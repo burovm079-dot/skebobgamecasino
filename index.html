@@ -6415,14 +6415,15 @@ function updatePlaneFlight(){
   sim.distance+=dt*22;sim.x=Math.min(.73,.19+sim.distance/820*.54);
   // После начального набора высоты самолёт сам постепенно снижается.
   // Только бонусы дают импульс вверх, попадания ракет — импульс вниз.
-  sim.vy+=.026*dt;
+  if(elapsed<1.4){sim.vy=-.18;}else{if(!sim.cruiseGravityStarted){sim.vy=0;sim.cruiseGravityStarted=true;}sim.vy+=.012*dt;}
+  sim.vy*=.995;
   sim.y+=sim.vy*dt;
   if(sim.y<.10){sim.y=.10;sim.vy=Math.max(sim.vy,0.015);}
   if(sim.y>.86){sim.y=.86;sim.vy=Math.min(sim.vy,0.025);}
   sim.altitude=Math.max(0,Math.min(1,(.90-sim.y)/.72));
-  sim.bonuses.forEach(b=>{b.x-=dt*.15;if(!b.hit&&Math.hypot((b.x-sim.x)*1.15,b.y-sim.y)<.065){b.hit=true;planeMultiplier=Math.min(1000,planeMultiplier*b.factor);sim.vy-=b.factor>=5?.24:b.factor>=3?.19:.14;planeEvent("✨ СОБРАН МНОЖИТЕЛЬ "+b.label+" · ×"+planeMultiplier.toFixed(2)+" · САМОЛЁТ НАБИРАЕТ ВЫСОТУ");}});
+  sim.bonuses.forEach(b=>{b.x-=dt*.15;if(!b.hit&&Math.hypot((b.x-sim.x)*1.15,b.y-sim.y)<.065){b.hit=true;planeMultiplier=Math.min(1000,planeMultiplier*b.factor);sim.vy-=b.factor>=5?.18:b.factor>=3?.14:.10;planeEvent("✨ СОБРАН МНОЖИТЕЛЬ "+b.label+" · ×"+planeMultiplier.toFixed(2)+" · САМОЛЁТ НАБИРАЕТ ВЫСОТУ");}});
   // Ракеты летят прямо; попадание направляет самолёт вниз.
-  sim.rockets.forEach(r=>{r.x-=dt*r.speed;r.angle=Math.PI;if(!r.hit&&Math.abs(r.x-sim.x)<.045&&Math.abs(r.y-sim.y)<.055){r.hit=true;planeMultiplier=Math.max(.1,planeMultiplier/2);sim.damage++;sim.vy+=.22;sim.hitFlash=1;planeEvent("🚀 ПОПАДАНИЕ РАКЕТЫ · САМОЛЁТ СНИЖАЕТСЯ · МНОЖИТЕЛЬ /2");}});
+  sim.rockets.forEach(r=>{r.x-=dt*r.speed;r.angle=Math.PI;if(!r.hit&&Math.abs(r.x-sim.x)<.045&&Math.abs(r.y-sim.y)<.055){r.hit=true;planeMultiplier=Math.max(.1,planeMultiplier/2);sim.damage++;sim.vy+=.17;sim.hitFlash=1;planeEvent("🚀 ПОПАДАНИЕ РАКЕТЫ · САМОЛЁТ СНИЖАЕТСЯ · МНОЖИТЕЛЬ /2");}});
   sim.bonuses=sim.bonuses.filter(b=>b.x>-.08&&!b.hit);sim.rockets=sim.rockets.filter(r=>r.x>-.08&&!r.hit);
   if(sim.hitFlash>0)sim.hitFlash=Math.max(0,sim.hitFlash-.07);
   sim.angle=Math.max(-.32,Math.min(.42,sim.vy*1.2));
