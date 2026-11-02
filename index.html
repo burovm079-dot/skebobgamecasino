@@ -8095,8 +8095,36 @@ function bjIsSpecialAccount(value){return !!bjSpecialAccountInfo(value);}
 function renderSpecialAccountControls(){
  const host=document.getElementById("specialAccountControls");
  if(!host)return;
- if(!bjIsSpecialAccount(getNickname())){host.innerHTML="";return;}
- host.innerHTML='<div class="special-account-controls"><b>⭐ Управление аккаунтом</b><div class="small">Бесконечный баланс: '+(state.admin.infiniteBalance?"ВКЛЮЧЁН":"ВЫКЛЮЧЕН")+'</div><button class="secondary" type="button" onclick="toggleProtectedInfiniteBalance()">'+(state.admin.infiniteBalance?"Выключить бесконечный баланс":"Включить бесконечный баланс")+'</button></div>';
+ const nick=getNickname();
+ const isOfficial=bjIsOfficialNickname(nick);
+ const isSpecial=bjIsSpecialAccount(nick);
+ if(!isSpecial&&!isOfficial){host.innerHTML="";return;}
+ let html='<div class="special-account-controls"><b>⭐ Управление аккаунтом</b>';
+ if(isSpecial){
+  html+='<div class="small">Бесконечный баланс: '+(state.admin.infiniteBalance?"ВКЛЮЧЁН":"ВЫКЛЮЧЕН")+'</div><button class="secondary" type="button" onclick="toggleProtectedInfiniteBalance()">'+(state.admin.infiniteBalance?"Выключить бесконечный баланс":"Включить бесконечный баланс")+'</button>';
+ }
+ if(isOfficial){
+  html+='<div class="small" style="margin-top:10px">Инструменты официального аккаунта</div><button class="secondary" type="button" style="width:100%;margin-top:8px" onclick="bjOfficialGiveAllNfts()">🎁 ВЫДАТЬ ВСЕ NFT</button>';
+ }
+ host.innerHTML=html+'</div>';
+}
+function bjOfficialGiveAllNfts(){
+ if(!bjIsOfficialNickname(getNickname())){alert("Эта функция доступна только аккаунту SKEBOB OFFICIAL.");return;}
+ if(!Array.isArray(state.inventory))state.inventory=[];
+ const catalog=[...(Array.isArray(prizes)?prizes:[]),...(Array.isArray(dailyPrizes)?dailyPrizes.filter(item=>item&&item.type==="item"):[])];
+ const owned=new Set(state.inventory.map(item=>String(item.name||"")+"::"+String(item.collection||"")));
+ let added=0;
+ catalog.forEach((item,index)=>{
+  if(!item||!item.name)return;
+  const key=String(item.name)+"::"+String(item.collection||"");
+  if(owned.has(key))return;
+  state.inventory.push({...item,id:item.id||("official-nft-"+index+"-"+Date.now())});
+  owned.add(key);
+  added++;
+ });
+ save();
+ renderSpecialAccountControls();
+ alert(added?"Готово! Добавлено NFT: "+added+".":"Все NFT из каталога уже есть в инвентаре.");
 }
 function toggleProtectedInfiniteBalance(){
  if(!bjIsSpecialAccount(getNickname()))return;
