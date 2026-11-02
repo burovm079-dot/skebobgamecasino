@@ -453,3 +453,23 @@ body.dashboard-home #skebobDashboard .sk-game .sk-play{
   z-index:2!important;
   flex:0 0 auto!important;
 }
+
+/* Sidebar navigation pages render in the same right-hand workspace as the games */
+body.legacy-page-active #skebobDashboard{display:grid;grid-template-columns:188px minmax(0,1fr);min-height:100vh}
+body.legacy-page-active>header,body.legacy-page-active>.balance,body.legacy-page-active>main{display:none!important}
+body.legacy-page-active{background:#07020f!important;color:#fff!important}
+#skebobDashboard .sk-page-view{min-width:0;width:100%;max-width:1100px;margin:0 auto;padding:2px 0 30px;color:#fff}
+#skebobDashboard .sk-page-view>section:not(.hidden){display:block!important;width:100%;max-width:100%;margin:0 auto;padding:18px;border:1px solid #8e39d9;border-radius:18px;background:linear-gradient(145deg,rgba(37,12,62,.96),rgba(12,5,25,.97));box-shadow:0 0 22px #8000ff25}
+#skebobDashboard .sk-page-view h2{color:#f3d5ff;text-shadow:0 0 12px #a000ff55}
+#skebobDashboard .sk-page-view .panel,#skebobDashboard .sk-page-view .case{background:rgba(25,12,40,.88);border-color:#7441a0;color:#fff}
+#skebobDashboard .sk-page-view .small{color:#c9b5da}
+#skebobDashboard .sk-page-view input,#skebobDashboard .sk-page-view select{background:#170b27;color:#fff;border-color:#8050a7}
+#skebobDashboard .sk-page-view .goldbtn{background:linear-gradient(110deg,#a900f2,#e45bff);color:#fff;box-shadow:0 0 14px #a000ff55}
+@media(max-width:760px){
+ body.legacy-page-active #skebobDashboard{display:grid!important;grid-template-columns:82px minmax(0,1fr)!important;min-height:100svh!important;align-items:stretch}
+ body.legacy-page-active #skebobDashboard .sk-side{position:fixed!important;left:0!important;right:auto!important;top:0!important;bottom:0!important;width:82px!important;height:100dvh!important;min-height:0!important;max-height:none!important;flex-direction:column!important;overflow-x:hidden!important;overflow-y:auto!important;z-index:20}
+ body.legacy-page-active #skebobDashboard .sk-work{grid-column:2!important;min-width:0!important;padding:10px 7px 24px!important}
+ body.legacy-page-active #skebobDashboard .sk-top{display:grid!important;grid-template-columns:minmax(0,1fr)!important;margin-bottom:12px!important}
+ #skebobDashboard .sk-page-view>section:not(.hidden){padding:12px 9px;border-radius:14px}
+}
+@media(max-width:380px){body.legacy-page-active #skebobDashboard{grid-template-columns:76px minmax(0,1fr)!important}body.legacy-page-active #skebobDashboard .sk-side{width:76px!important}}
