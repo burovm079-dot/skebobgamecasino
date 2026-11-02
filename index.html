@@ -1831,6 +1831,8 @@ background-color:var(--panel)!important;
 
 /* Keep legacy navigation chrome out of inner pages */
 body.legacy-page-active .nav,body.legacy-page-active .balance,body.legacy-page-active>header{display:none!important}
+
+#skebob-back-home{display:none;position:fixed;z-index:99999;top:12px;left:12px;padding:11px 16px;border:1px solid #d65cff;border-radius:14px;background:linear-gradient(135deg,#8d00d8,#4e00a8);color:#fff;font-weight:900;font-size:14px;box-shadow:0 5px 22px #a000ff66;cursor:pointer;align-items:center;gap:7px}#skebob-back-home.visible{display:flex}body.legacy-page-active{padding-top:56px}@media(max-width:600px){#skebob-back-home{top:8px;left:8px;padding:10px 13px;font-size:13px}}
 </style>
 <link rel="stylesheet" href="./dashboard.css?v=8">
 </head>
@@ -4219,6 +4221,7 @@ function showPage(id,button){
 const isDashboard=id==="dashboard";
 document.body.classList.toggle("dashboard-home",isDashboard);
 document.body.classList.toggle("legacy-page-active",!isDashboard);
+const back=document.getElementById("skebob-back-home");if(back)back.classList.toggle("visible",!isDashboard);
 if(isDashboard){
 document.querySelectorAll("main section[id], body > section[id]").forEach(section=>section.classList.add("hidden"));
 window.scrollTo({top:0,behavior:"smooth"});
@@ -8273,6 +8276,7 @@ document.addEventListener("DOMContentLoaded",initNickname,{once:true});
 </div>
 
 <div id="skebobDialog" role="dialog" aria-modal="true" style="display:none;position:fixed;inset:0;z-index:30000;background:rgba(0,0,0,.78);align-items:center;justify-content:center;padding:20px"><div style="width:100%;max-width:430px;background:var(--panel);color:var(--text);border:1px solid var(--gold);border-radius:22px;padding:24px;box-shadow:0 18px 60px #000b"><h2 data-dialog-title style="margin:0 0 16px;color:var(--gold)">Уведомление</h2><div data-dialog-message style="font-size:16px;line-height:1.55;white-space:pre-wrap;overflow-wrap:anywhere"></div><input data-dialog-input type="text" style="display:none;margin-top:16px"><div style="display:flex;gap:10px;justify-content:flex-end;margin-top:22px"><button data-dialog-cancel type="button" class="secondary">Отмена</button><button data-dialog-ok type="button" class="goldbtn" style="width:auto;min-width:110px;margin:0;padding:12px 20px">ОК</button></div></div></div>
+<button id="skebob-back-home" type="button" onclick="showPage('dashboard')">← НАЗАД К ИГРАМ</button>
 </body>
     </html>
 
