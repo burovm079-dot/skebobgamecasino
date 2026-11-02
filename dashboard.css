@@ -66,3 +66,9 @@ body.dashboard-home{background:#07020f!important;color:#fff!important}
  .sk-play{font-size:clamp(13px,3.7vw,17px);width:88%;padding:10px 5px}
 }
 @media(max-width:390px){.sk-work{padding-left:9px;padding-right:9px}.sk-games{gap:9px}.sk-game{border-radius:17px;padding:7px}.sk-play{padding:8px 4px}.sk-vip{gap:8px}}
+
+/* Rich vector game artwork */
+#skebobDashboard .sk-art{font-size:0;inset:0 0 9%;padding:8% 10% 0;}
+#skebobDashboard .sk-art svg{display:block;width:100%;height:100%;max-width:230px;max-height:190px;overflow:visible;filter:drop-shadow(0 12px 14px #05000caa);}
+#skebobDashboard .sk-art svg use{pointer-events:none}
+@media(max-width:760px){#skebobDashboard .sk-art{inset:0 0 13%;padding:7% 9% 0}#skebobDashboard .sk-art svg{max-width:180px;max-height:150px}}
