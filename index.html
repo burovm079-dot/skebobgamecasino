@@ -6338,7 +6338,7 @@ function initPlane3D(){
   if(damaged){ctx.fillStyle="#ff5b35";ctx.shadowColor="#ff512e";ctx.shadowBlur=10;ctx.beginPath();ctx.arc(-17,0,3+Math.sin(t*15),0,Math.PI*2);ctx.fill();}
   ctx.restore();
  }
- function drawRocket(r){ctx.save();ctx.translate(r.x,r.y);ctx.rotate(r.angle);ctx.shadowColor="#ff8a3c";ctx.shadowBlur=8;ctx.fillStyle="#ffb54b";ctx.fillRect(-13,-2,20,4);ctx.fillStyle="#f04438";ctx.beginPath();ctx.moveTo(7,-4);ctx.lineTo(15,0);ctx.lineTo(7,4);ctx.closePath();ctx.fill();ctx.fillStyle="#ffe8a3";ctx.fillRect(-18,-1,6,2);ctx.restore();}
+ function drawRocket(r){ctx.save();ctx.translate(r.x*plane2d.w,r.y*plane2d.h);ctx.rotate(r.angle);ctx.shadowColor="#ff6a25";ctx.shadowBlur=13;const flame=ctx.createLinearGradient(-31,0,-9,0);flame.addColorStop(0,"rgba(255,55,20,0)");flame.addColorStop(1,"#fff2a0");ctx.fillStyle=flame;ctx.beginPath();ctx.moveTo(-34,0);ctx.lineTo(-10,-4);ctx.lineTo(-10,4);ctx.closePath();ctx.fill();ctx.fillStyle="#ffb54b";ctx.fillRect(-13,-3,22,6);ctx.fillStyle="#d92732";ctx.beginPath();ctx.moveTo(8,-6);ctx.lineTo(19,0);ctx.lineTo(8,6);ctx.closePath();ctx.fill();ctx.fillStyle="#ff6842";ctx.beginPath();ctx.moveTo(-8,-3);ctx.lineTo(-15,-9);ctx.lineTo(-3,-4);ctx.moveTo(-8,3);ctx.lineTo(-15,9);ctx.lineTo(-3,4);ctx.fill();ctx.restore();}
  function drawBonus(b,t){ctx.save();ctx.translate(b.x,b.y);ctx.shadowColor=b.color;ctx.shadowBlur=13;ctx.strokeStyle=b.color;ctx.lineWidth=2;ctx.globalAlpha=.85;ctx.beginPath();for(let i=0;i<16;i++){const an=i*Math.PI/8,r=i%2?b.r*.65:b.r;ctx.moveTo(Math.cos(an)*r*.45,Math.sin(an)*r*.45);ctx.lineTo(Math.cos(an)*r,Math.sin(an)*r);}ctx.stroke();ctx.fillStyle="#f6fbff";ctx.font="900 "+(b.r*.9)+"px Arial";ctx.textAlign="center";ctx.textBaseline="middle";ctx.fillText(b.label,0,1);ctx.restore();}
  function frame(ts){plane2dFrame=requestAnimationFrame(frame);const w=plane2d.w,h=plane2d.h,t=ts/1000;if(!w||!h)return;
   ctx.clearRect(0,0,w,h);const sky=ctx.createLinearGradient(0,0,0,h);sky.addColorStop(0,"#071b63");sky.addColorStop(.62,"#173a91");sky.addColorStop(1,"#527db3");ctx.fillStyle=sky;ctx.fillRect(0,0,w,h);
@@ -6423,13 +6423,19 @@ function updatePlaneFlight(){
   sim.vy+=(sim.targetY-sim.y)*.85*dt;sim.y+=sim.vy*dt;sim.vy*=.985;
   sim.altitude=Math.max(0,Math.min(1,(.84-sim.y)/.62));
   // Bonus orbs drift into the flight path; rewards affect the virtual multiplier and flight height.
-  sim.bonuses.forEach(b=>{b.x-=dt*(.19+sim.distance/4500);if(!b.hit&&Math.hypot(b.x-sim.x,b.y-sim.y)<.075){b.hit=true;if(b.kind==="boost"){planeMultiplier*=b.factor;sim.targetY=Math.max(.17,sim.targetY-.075);sim.vy-=.035;planeEvent("✨ +"+b.label+" · высота растёт");}else{planeMultiplier=Math.max(.1,planeMultiplier/2);sim.damage++;sim.targetY=Math.min(.77,sim.targetY+.12);sim.vy+=.07;sim.hitFlash=1;planeEvent("🚀 ПОПАДАНИЕ /2");}}});
-  sim.rockets.forEach(r=>{r.x-=dt*r.speed;r.y+=Math.sin(elapsed*3+r.phase)*dt*.035;if(!r.hit&&Math.hypot(r.x-sim.x,r.y-sim.y)<.055){r.hit=true;planeMultiplier=Math.max(.1,planeMultiplier/2);sim.damage++;sim.targetY=Math.min(.78,sim.targetY+.14);sim.vy+=.09;sim.hitFlash=1;planeEvent("🚀 РАКЕТА ПОПАЛА · /2");}});
+  sim.bonuses.forEach(b=>{b.x-=dt*(.19+sim.distance/4500);if(!b.hit&&Math.hypot(b.x-sim.x,b.y-sim.y)<.075){b.hit=true;if(b.kind==="boost"){planeMultiplier=Math.min(1000,planeMultiplier*b.factor);sim.targetY=Math.max(.10,sim.targetY-(b.factor>=5?.13:b.factor>=3?.10:.065));sim.vy-=b.factor>=5?.065:.035;planeEvent("✨ СОБРАН МНОЖИТЕЛЬ "+b.label+" · ×"+planeMultiplier.toFixed(2));}else{planeMultiplier=Math.max(.1,planeMultiplier/2);sim.damage++;sim.targetY=Math.min(.77,sim.targetY+.12);sim.vy+=.07;sim.hitFlash=1;planeEvent("🚀 ПОПАДАНИЕ /2");}}});
+  // Самонаводящиеся ракеты: каждый кадр корректируют курс к текущей позиции самолёта.
+  sim.rockets.forEach(r=>{
+   const dx=sim.x-r.x,dy=sim.y-r.y,dist=Math.hypot(dx,dy)||.0001,step=r.speed*dt;
+   r.x+=(dx/dist)*Math.min(step,dist);r.y+=(dy/dist)*Math.min(step,dist);
+   r.angle=Math.atan2(dy,dx);
+   if(!r.hit&&dist<.058){r.hit=true;planeMultiplier=Math.max(.1,planeMultiplier/2);sim.damage++;sim.targetY=Math.min(.80,sim.targetY+.15);sim.vy+=.10;sim.hitFlash=1;planeEvent("🚀 РАКЕТА ДОГНАЛА САМОЛЁТ · МНОЖИТЕЛЬ /2");}
+  });
   sim.bonuses=sim.bonuses.filter(b=>b.x>-.1&&!b.hit);sim.rockets=sim.rockets.filter(r=>r.x>-.1&&!r.hit);
-  if(Math.random()<.045){const vals=[{label:"1",kind:"boost",factor:1.12,color:"#e8f7ff",r:14},{label:"2",kind:"boost",factor:1.2,color:"#75caff",r:16},{label:"×3",kind:"boost",factor:1.3,color:"#b5f5ff",r:18},{label:"×5",kind:"boost",factor:1.5,color:"#55c8ff",r:19},{label:"×10",kind:"boost",factor:2,color:"#4b8fff",r:22},{label:"/2",kind:"hit",factor:.5,color:"#ff5757",r:16}];const v=vals[Math.floor(Math.random()*vals.length)];sim.bonuses.push({x:1.08,y:.2+Math.random()*.54,...v,hit:false});}
-  if(Math.random()<.035)sim.rockets.push({x:1.08,y:.25+Math.random()*.5,speed:.28+Math.random()*.16,phase:Math.random(),angle:Math.PI,hit:false});
+  if(sim.bonuses.length<9&&Math.random()<.075){const vals=[{label:"1",kind:"boost",factor:1.1,color:"#e8f7ff",r:15},{label:"2",kind:"boost",factor:2,color:"#75caff",r:17},{label:"×3",kind:"boost",factor:3,color:"#b5f5ff",r:19},{label:"×5",kind:"boost",factor:5,color:"#55c8ff",r:21},{label:"×10",kind:"boost",factor:10,color:"#4b8fff",r:24},{label:"/2",kind:"hit",factor:.5,color:"#ff5757",r:17}];const v=vals[Math.floor(Math.random()*vals.length)];sim.bonuses.push({x:1.08,y:.12+Math.random()*.72,...v,hit:false});}
+  if(sim.rockets.length<8&&Math.random()<.105){const fromTop=Math.random()<.35;sim.rockets.push({x:1.08,y:fromTop?-.04:.08+Math.random()*.84,speed:.48+Math.random()*.28,angle:Math.PI,hit:false});}
   if(sim.hitFlash>0)sim.hitFlash=Math.max(0,sim.hitFlash-.07);
-  planeMultiplier=Math.min(100,planeMultiplier+dt*.018);planeSetHud("В ПОЛЁТЕ","✈️ Лови бонусы и уклоняйся от ракет. Авианосец появится впереди.","#ffcf58");
+  planeMultiplier=Math.min(1000,planeMultiplier+dt*.018);planeSetHud("В ПОЛЁТЕ","✈️ Лови бонусы и уклоняйся от ракет. Авианосец появится впереди.","#ffcf58");
   if(elapsed>=23)planeBeginApproach();
  }else if(sim.phase==="approach"){
   const t=Math.min(1,(now-sim.approachAt)/3500);sim.x=.73+t*.17;sim.y+=(.76-sim.y)*.045;sim.altitude=Math.max(0,sim.altitude-.025);sim.angle=.08+t*.18;
