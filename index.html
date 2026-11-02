@@ -1828,6 +1828,9 @@ background-color:var(--panel2)!important;
 background-color:var(--panel)!important;
 }
 
+
+/* Keep legacy navigation chrome out of inner pages */
+body.legacy-page-active .nav,body.legacy-page-active .balance,body.legacy-page-active>header{display:none!important}
 </style>
 <link rel="stylesheet" href="./dashboard.css?v=8">
 </head>
@@ -4213,64 +4216,29 @@ renderAdminSettings();
 ========================= */
 
 function showPage(id,button){
-document.body.classList.toggle("dashboard-home",id==="dashboard");
-if(id==="dashboard"){window.scrollTo({top:0,behavior:"smooth"});return;}
+const isDashboard=id==="dashboard";
+document.body.classList.toggle("dashboard-home",isDashboard);
+document.body.classList.toggle("legacy-page-active",!isDashboard);
+if(isDashboard){
+document.querySelectorAll("main section[id], body > section[id]").forEach(section=>section.classList.add("hidden"));
+window.scrollTo({top:0,behavior:"smooth"});
+return;
+}
 if(id==="skebobTap")renderSkebobTap();
 if(id==="tasks")renderDailyTasks();
 if(id==="collection")renderCollection();
-
-document
-.querySelectorAll(
-"main section"
-)
-.forEach(
-s=>s.classList.add("hidden")
-);
-
-const target=
-document.getElementById(id);
-
+document.querySelectorAll("section[id]").forEach(section=>section.classList.add("hidden"));
+const target=document.getElementById(id);
 if(target){
-
-target.classList.remove(
-"hidden"
-);
-
+target.classList.remove("hidden");
+}else{
+console.warn("Страница не найдена:",id);
 }
-
-document
-.querySelectorAll(
-".nav button"
-)
-.forEach(
-b=>b.classList.remove("active")
-);
-
-if(button){
-
-button.classList.add(
-"active"
-);
-
-}
-
-if(id==="profile"){
-
-renderProfile();
-
-}
-
-if(id==="adminPanel"){
-
-renderAdminSettings();
-
-}
-
-window.scrollTo({
-top:0,
-behavior:"smooth"
-});
-
+document.querySelectorAll(".nav button").forEach(b=>b.classList.remove("active"));
+if(button)button.classList.add("active");
+if(id==="profile")renderProfile();
+if(id==="adminPanel")renderAdminSettings();
+window.scrollTo({top:0,behavior:"smooth"});
 }
 
 /* =========================
