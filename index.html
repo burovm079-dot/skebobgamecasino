@@ -6818,9 +6818,9 @@ planeBusy=true;
 planeBet=bet;
 
 planeMultiplier=1;
-plane3dProgress=0;
+plane2dProgress=0;
 initPlane3D();
-updatePlane3D(0);
+updatePlane3D(0,"ready");
 
 resetPlaneVisual();
 
@@ -6863,6 +6863,7 @@ plane.style.left=
 
 plane.style.bottom=
 "48%";
+await animatePlaneScene(.12,"takeoff",1300);
 
 await planeEvent(
 "✈️ ВЗЛЁТ!"
@@ -6884,7 +6885,7 @@ i++
 ){
 
 const progress=(i+1)/events;
-updatePlane3D(progress);
+await animatePlaneScene(.12+progress*.78,"cruise",900);
 const distance=Math.round(progress*5000);
 const altitude=(progress*600).toFixed(0);
 document.getElementById("planeDistance").textContent=distance.toLocaleString("ru-RU")+" м";
@@ -6906,7 +6907,6 @@ if(world){
 }
 const token=document.createElement("span");token.className="plane-token";token.textContent=Math.random()<.72?"+"+["1","2","5","10"][Math.floor(Math.random()*4)]:"×"+planeMultiplier.toFixed(1);token.style.left=(58+Math.random()*25)+"%";token.style.top=(25+Math.random()*45)+"%";document.getElementById("planeTokenLayer")?.appendChild(token);setTimeout(()=>token.remove(),1600);
 
-await planeWait(600);
 await randomPlaneEvent();
 
 status.innerHTML=
@@ -6927,6 +6927,7 @@ await planeWait(
 
 stage.textContent=
 "ПОСАДКА";
+await animatePlaneScene(1,"landing",1700);
 
 document.getElementById(
 "landingCarrier"
@@ -6968,6 +6969,7 @@ plane.style.left=
 
 plane.style.bottom=
 "28%";
+plane2dPhase="landed";
 
 await planeWait(
 700
@@ -7018,6 +7020,7 @@ plane.classList.remove(
 plane.classList.add(
 "crash"
 );
+await animatePlaneScene(1,"water",1000);
 
 await planeWait(
 700
