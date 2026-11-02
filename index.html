@@ -1828,139 +1828,6 @@ background-color:var(--panel2)!important;
 background-color:var(--panel)!important;
 }
 
-
-/* Original illustrated game covers */
-.home-game-card{position:relative!important;overflow:hidden!important;background:linear-gradient(155deg,#2b0d55,#100824 75%)!important}
-.home-game-art{display:flex!important;align-items:center!important;justify-content:center!important;width:100%!important;flex:0 0 150px!important;margin:0!important;font-size:0!important;filter:none!important;position:relative!important}
-.home-game-art:before{content:"";position:absolute;inset:8px 12px 0;border-radius:18px;background:radial-gradient(ellipse at 50% 55%,var(--art-glow,#a855f7),transparent 70%);filter:blur(13px)}
-.home-game-art svg{position:relative;width:min(100%,210px)!important;height:140px!important;overflow:visible;filter:drop-shadow(0 9px 8px #000b) drop-shadow(0 0 12px var(--art-glow,#a855f7));}
-.home-game-card b,.home-game-card small,.home-play{position:relative;z-index:2}
-</style>
-
-<style id="skebob-reference-layout-v2">
-/* SKEBOB reference-inspired shell */
-:root{--sb-purple:#8c19ff;--sb-glow:#b72cff;--sb-panel:#16052f}
-body{background:#090019!important;color:#fff!important;background-image:radial-gradient(ellipse at 72% 12%,#4a087c66,transparent 38%),radial-gradient(ellipse at 80% 80%,#39005b55,transparent 42%)!important}
-body:before{opacity:.28!important}
-header{position:relative;margin-left:248px;padding:14px 20px;min-height:76px;box-sizing:border-box;background:linear-gradient(90deg,#14002b,#090019)!important;border:1px solid #7514d7;border-radius:0 0 0 18px;box-shadow:0 0 22px #8500ff44;justify-content:space-between}
-.logo{font-size:clamp(18px,2vw,27px);color:#fff;text-shadow:0 0 16px #a000ff}
-.logo span{color:#ffd34e}
-.header-actions{display:flex;flex-wrap:wrap;justify-content:flex-end;gap:7px}
-.header-actions button,.header-actions a{background:linear-gradient(145deg,#28004e,#100022)!important;border:1px solid #8e20ef!important;color:#fff!important;border-radius:14px!important;box-shadow:0 0 12px #8c19ff44;padding:10px 12px}
-.balance{margin:12px 20px 12px 268px!important;padding:13px 20px!important;border:1px solid #9c32ff!important;border-radius:18px!important;background:linear-gradient(100deg,#210044,#100020)!important;box-shadow:0 0 18px #7b00e744}
-.balance .small{color:#d7b8f4}
-.balance strong{color:#ffd34e!important;font-size:clamp(25px,3vw,36px)!important}
-main{max-width:none!important;margin:0 18px 0 258px!important;padding:8px 12px 48px!important}
-.home-nav{position:fixed!important;z-index:1000;left:12px;top:12px;bottom:12px;width:220px;box-sizing:border-box;display:flex!important;flex-direction:column;flex-wrap:nowrap!important;overflow-y:auto!important;overflow-x:hidden!important;gap:8px!important;margin:0!important;padding:155px 10px 14px!important;border:1px solid #8c19ff!important;border-radius:20px!important;background:linear-gradient(180deg,#23004aee,#0d001fee)!important;box-shadow:0 0 28px #8500ff55,inset 0 0 24px #7b00ff22!important}
-.home-nav:before{content:"👑";position:absolute;top:24px;left:0;width:100%;text-align:center;font-size:76px;filter:drop-shadow(0 0 18px #ffb800)}
-.home-nav button{flex:0 0 auto!important;width:100%!important;min-width:0!important;min-height:48px;padding:12px 10px!important;text-align:left!important;font-size:14px!important;border:1px solid transparent!important;border-radius:12px!important;background:transparent!important;color:#f5eaff!important}
-.home-nav button.active{background:linear-gradient(100deg,#a900ff,#5700c8)!important;border-color:#e0aaff!important;box-shadow:0 0 18px #a000ff99!important}
-.home-dashboard{padding-top:8px!important}
-.home-welcome{display:none!important}
-.home-section-head{margin:8px 0 16px!important}
-.home-section-head h2{font-size:clamp(22px,2.3vw,30px)!important;text-shadow:0 0 15px #a000ff88}
-.home-game-grid{grid-template-columns:repeat(4,minmax(0,1fr))!important;gap:16px!important}
-.home-game-card{min-height:260px!important;border:1px solid #a52bff!important;border-radius:18px!important;box-shadow:0 0 17px #a000ff55,inset 0 0 22px #a000ff22!important}
-.home-game-card:before{filter:saturate(1.35)}
-.home-game-art{flex:0 0 150px!important;font-size:clamp(64px,7vw,100px)!important;filter:drop-shadow(0 0 16px #fff9) drop-shadow(0 10px 9px #000)!important}
-.home-game-card b{font-size:19px!important}
-.home-game-card small{font-size:14px!important}
-.home-play{width:min(100%,175px)!important;border-radius:14px!important;background:linear-gradient(100deg,#c42dff,#6a00ed)!important;border:1px solid #e9baff!important;box-shadow:0 0 16px #b000ff99!important;font-size:15px!important}
-.home-bottom-strip{display:none!important}
-@media(max-width:900px){
- header{margin-left:156px;padding:10px;gap:6px;flex-direction:column;align-items:stretch}
- .header-actions{justify-content:center}
- .header-actions button,.header-actions a{font-size:10px;padding:8px 6px}
- .balance{margin-left:168px!important;margin-right:10px!important}
- main{margin-left:158px!important;margin-right:8px!important;padding:6px 5px 36px!important}
- .home-nav{width:142px;padding:120px 7px 10px!important;left:7px;top:7px;bottom:7px}
- .home-nav:before{font-size:60px;top:20px}
- .home-nav button{font-size:12px!important;padding:10px 6px!important;min-height:42px}
- .home-game-grid{grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:10px!important}
- .home-game-card{min-height:215px!important;padding:9px 7px 11px!important}
- .home-game-art{flex-basis:112px!important;font-size:clamp(52px,10vw,76px)!important}
- .home-game-card b{font-size:15px!important}
- .home-game-card small{font-size:11px!important}
- .home-play{font-size:12px!important;padding:9px 5px!important}
-}
-@media(max-width:480px){
- header{margin-left:112px;padding:8px}
- .logo{font-size:16px}
- .header-actions{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:5px}
- .header-actions button,.header-actions a{font-size:9px;padding:7px 3px}
- .balance{margin:8px 7px 8px 118px!important;padding:10px!important;display:block!important}
- .balance .small{font-size:10px}
- .balance strong{font-size:22px!important}
- main{margin-left:112px!important;margin-right:5px!important;padding:4px 2px 28px!important}
- .home-nav{width:104px;left:5px;top:5px;bottom:5px;padding:102px 5px 8px!important;gap:5px!important}
- .home-nav:before{font-size:52px;top:16px}
- .home-nav button{font-size:10px!important;line-height:1.15;padding:9px 4px!important;min-height:39px;overflow-wrap:anywhere}
- .home-section-head{align-items:flex-start;flex-wrap:wrap;gap:7px}
- .home-section-head h2{font-size:18px!important}
- .home-star{font-size:22px}
- .home-all-games{font-size:10px;padding:8px}
- .home-game-grid{grid-template-columns:1fr!important;gap:9px!important}
- .home-game-card{min-height:195px!important}
- .home-game-art{flex-basis:100px!important;font-size:65px!important}
-}
-</style>
-
-<style id="skebob-sidebar-utilities-v3">
-header .header-actions{display:none!important}
-.home-nav{padding-top:155px!important}
-.home-nav:after{content:"SKEBOB GAME";display:block;margin-top:auto;padding:13px 5px 8px;text-align:center;color:#d9b5ff;font-size:11px;font-weight:800;letter-spacing:2px;border-top:1px solid #8b2bd766}
-.home-nav .sidebar-caption{position:absolute;top:112px;left:10px;right:10px;text-align:center;color:#ffd75a;font-weight:900;letter-spacing:2px;font-size:13px}
-.home-nav button,.home-nav a{display:block;box-sizing:border-box;flex:0 0 auto!important;width:100%!important;min-width:0!important;min-height:49px;padding:12px 10px!important;text-align:left!important;font-size:14px!important;text-decoration:none!important;border:1px solid #7130a0!important;border-radius:12px!important;background:linear-gradient(110deg,#220044,#130025)!important;color:#f5eaff!important}
-.home-nav button:active,.home-nav a:active{background:linear-gradient(100deg,#a900ff,#5700c8)!important}
-.home-nav .sidebar-buy-admin{margin-top:8px;color:#ffdf7a!important;border-color:#9c7627!important;background:linear-gradient(110deg,#49340a,#251900)!important}
-@media(max-width:900px){.home-nav{padding-top:120px!important}.home-nav .sidebar-caption{top:86px;font-size:10px}.home-nav button,.home-nav a{font-size:11px!important;min-height:44px;padding:10px 6px!important;overflow-wrap:anywhere}}
-@media(max-width:480px){.home-nav{padding-top:102px!important}.home-nav .sidebar-caption{top:73px;font-size:9px}.home-nav button,.home-nav a{font-size:9px!important;min-height:40px;padding:8px 4px!important}}
-</style>
-
-<style id="skebob-mobile-fit-v4">
-html,body{max-width:100%;overflow-x:hidden}
-@media(max-width:900px){
-  header{box-sizing:border-box;width:auto;min-width:0;margin-left:154px!important}
-  .balance{box-sizing:border-box;min-width:0}
-  main{min-width:0;box-sizing:border-box}
-  .home-game-grid{grid-template-columns:repeat(2,minmax(0,1fr))!important}
-  .home-game-card{min-width:0;overflow:hidden}
-  .home-nav{width:136px!important}
-  main{margin-left:150px!important}
-  .balance{margin-left:158px!important}
-}
-@media(max-width:600px){
-  header{margin-left:102px!important;margin-right:5px!important;padding:7px!important;min-width:0}
-  header .logo{font-size:14px!important;overflow-wrap:anywhere}
-  .balance{margin:7px 5px 8px 102px!important;padding:9px 8px!important;display:flex!important;flex-wrap:wrap;gap:5px;align-items:center}
-  .balance>div{min-width:0}
-  .balance .small{font-size:10px!important;line-height:1.25}
-  .balance strong{font-size:clamp(17px,5vw,23px)!important;overflow-wrap:anywhere}
-  main{margin:0 5px 0 102px!important;padding:4px 2px 28px!important;width:auto!important}
-  .home-nav{left:4px!important;top:4px!important;bottom:4px!important;width:92px!important;padding:98px 4px 8px!important;gap:5px!important;border-radius:14px!important}
-  .home-nav:before{top:13px!important;font-size:48px!important}
-  .home-nav .sidebar-caption{top:68px!important;font-size:8px!important;letter-spacing:1px!important}
-  .home-nav button,.home-nav a{width:100%!important;min-height:39px!important;padding:7px 3px!important;font-size:9px!important;line-height:1.15!important;white-space:normal!important;overflow-wrap:anywhere!important;border-radius:8px!important}
-  .home-nav .sidebar-buy-admin{font-size:8px!important}
-  .home-nav:after{font-size:8px!important;letter-spacing:1px!important;padding:8px 2px 5px!important}
-  .home-dashboard{min-width:0}
-  .home-section-head{display:flex;align-items:center;justify-content:space-between;gap:5px;flex-wrap:wrap}
-  .home-section-head h2{font-size:17px!important}
-  .home-all-games{font-size:10px!important;padding:7px 8px!important}
-  .home-game-grid{grid-template-columns:minmax(0,1fr)!important;gap:9px!important}
-  .home-game-card{width:100%;min-width:0;min-height:190px!important;padding:9px 7px 11px!important}
-  .home-game-art{flex-basis:94px!important;font-size:62px!important}
-  .home-game-card b{font-size:16px!important}
-  .home-game-card small{font-size:12px!important}
-  .home-play{font-size:12px!important;max-width:100%;padding:9px 8px!important}
-}
-@media(max-width:360px){
-  header{margin-left:96px!important}
-  .balance{margin-left:96px!important}
-  main{margin-left:96px!important}
-  .home-nav{width:86px!important}
-  .home-nav button,.home-nav a{font-size:8px!important;padding:6px 2px!important}
-}
 </style>
 </head>
 
@@ -2046,80 +1913,49 @@ rel="noopener noreferrer"
 
 <main>
 
-<div class="nav home-nav reference-menu">
-  <div class="sidebar-caption">SKEBOB MENU</div>
-  <button type="button" onclick="openPromoPage()">🎟 ПРОМО</button>
-  <button type="button" onclick="showPage('tasks')">📋 ЗАДАНИЯ</button>
-  <button type="button" onclick="showPage('inventory')">🎒 ИНВЕНТАРЬ</button>
-  <button type="button" onclick="showPage('collection',this)">🏆 КОЛЛЕКЦИЯ</button>
-  <button type="button" onclick="showPage('profile')">👤 ПРОФИЛЬ</button>
-  <button type="button" onclick="showPage('settings')">⚙️ НАСТРОЙКИ</button>
-  <button class="header-media-partner" type="button" onclick="window.open('https://t.me/skebobcasino/5','_blank','noopener,noreferrer')">📢 МЕДИА ПАРТНЁР</button>
-  <a class="sidebar-buy-admin" href="https://t.me/ggggg06767" target="_blank" rel="noopener noreferrer">🛒 КУПИТЬ АДМИН ПАНЕЛЬ</a>
+<div class="nav">
+
+<button class="active" onclick="showPage('cases',this)">
+🎁 CASES
+</button>
+
+<button onclick="showPage('upgrade',this)">
+🎯 UPGRADE
+</button>
+
+<button onclick="showPage('mines',this)">
+💣 MINES
+</button>
+
+<button onclick="showPage('plane',this)">
+✈️ САМОЛЁТ
+</button>
+
+<button onclick="showPage('pickaxe',this)">
+⛏ КИРКА
+</button>
+
+<button onclick="showPage('plinko',this)">
+🔴 PLINKO
+</button>
+<button onclick="showPage('race',this)">🏁 RACE</button>
+<button onclick="showPage('crash',this)">📈 КРАШ</button>
+<button onclick="showPage('battles',this)">⚔️ БАТЛЫ</button>
+<button onclick="showPage('slots',this)">🎰 СЛОТЫ</button>
+<button onclick="showPage('blackjack',this)">🃏 BLACKJACK</button>
+<button onclick="showPage('dice',this)">🎲 КОСТИ</button>
+
+<button onclick="showPage('tictactoe',this)">⭕ КРЕСТИКИ</button>
+
+<button onclick="showPage('billiards',this)">🎱 БИЛЬЯРД</button>
+
+<button onclick="showPage('chickenroad',this)">🐔 CHICKEN ROAD</button>
+<button onclick="showPage('skebobTap',this)">👆 SKEBOB TAP</button>
+
+
+
+
 </div>
-
-
-<svg aria-hidden="true" width="0" height="0" style="position:absolute;overflow:hidden" xmlns="http://www.w3.org/2000/svg">
-<defs>
-<linearGradient id="artGold" x2="0" y2="1"><stop stop-color="#fff4a8"/><stop offset=".45" stop-color="#ffb51e"/><stop offset="1" stop-color="#e85a00"/></linearGradient>
-<linearGradient id="artBlue" x2="1" y2="1"><stop stop-color="#8df7ff"/><stop offset=".5" stop-color="#398cff"/><stop offset="1" stop-color="#5523d9"/></linearGradient>
-<linearGradient id="artPink" x2="1" y2="1"><stop stop-color="#ffb4f5"/><stop offset=".5" stop-color="#e52dff"/><stop offset="1" stop-color="#6d16cf"/></linearGradient>
-<filter id="artGlow"><feGaussianBlur stdDeviation="4" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
-</defs>
-<symbol id="skebob-art-plane" viewBox="0 0 180 140"><path d="M8 104L165 20M12 126L155 50" stroke="#59d9ff" stroke-width="3" opacity=".6"/><path d="M18 78L82 62 132 15Q140 9 144 18L124 66 167 89Q174 95 164 99L111 91 77 124Q68 130 67 118L75 87 18 84Z" fill="url(#artBlue)" stroke="#d9ffff" stroke-width="4"/><path d="M80 65L117 37 103 72 79 82Z" fill="#fff"/><circle cx="145" cy="23" r="8" fill="#ffe77c"/></symbol>
-<symbol id="skebob-art-slots" viewBox="0 0 180 140"><rect x="28" y="14" width="124" height="112" rx="18" fill="#4a087b" stroke="#ff8aff" stroke-width="5"/><rect x="40" y="39" width="100" height="55" rx="8" fill="#16072d" stroke="#ffc94b" stroke-width="4"/><g fill="url(#artGold)" font-size="39" font-weight="900"><text x="47" y="81">7</text><text x="79" y="81">7</text><text x="111" y="81">7</text></g><path d="M60 15L90 2 120 15" fill="none" stroke="#ffe98c" stroke-width="6"/><circle cx="90" cy="111" r="7" fill="#ffdc4b"/></symbol>
-<symbol id="skebob-art-cases" viewBox="0 0 180 140"><path d="M26 48L90 20 155 48 90 78Z" fill="#d78aff" stroke="#ffe4ff" stroke-width="3"/><path d="M26 48V108L90 137V78Z" fill="#6321b9" stroke="#dca1ff" stroke-width="3"/><path d="M155 48V108L90 137V78Z" fill="#a02ee5" stroke="#ffd1ff" stroke-width="3"/><path d="M78 54H102V94H78Z" fill="url(#artGold)" stroke="#fff1a4" stroke-width="3"/><path d="M12 30L23 9 34 30M147 20L158 0 169 20" stroke="#ffe56a" stroke-width="5" fill="none"/></symbol>
-<symbol id="skebob-art-upgrade" viewBox="0 0 180 140"><path d="M90 8L145 39V100L90 132 35 100V39Z" fill="#40108b" stroke="#cda2ff" stroke-width="4"/><path d="M90 25L124 45V84L90 105 56 84V45Z" fill="url(#artBlue)" stroke="#e9ffff" stroke-width="3"/><path d="M90 34L99 61 127 62 105 79 113 106 90 89 67 106 75 79 53 62 81 61Z" fill="#fff39a" filter="url(#artGlow)"/><path d="M22 24V8M14 16H30M151 116V100M143 108H159" stroke="#ffcf50" stroke-width="5"/></symbol>
-<symbol id="skebob-art-mines" viewBox="0 0 180 140"><circle cx="90" cy="73" r="43" fill="#20233c" stroke="#ff76d8" stroke-width="5"/><path d="M90 22V9M90 137V124M39 73H26M154 73H141M54 37L44 27M136 119L126 109M126 37L136 27" stroke="#ffb6f3" stroke-width="7" stroke-linecap="round"/><circle cx="75" cy="63" r="8" fill="#ff4d79"/><circle cx="104" cy="86" r="7" fill="#ff4d79"/><path d="M70 91L110 51" stroke="#ff4d79" stroke-width="6"/><path d="M25 112L42 95 54 112M130 27L143 12 156 27" fill="#7a39e8" stroke="#d7a5ff" stroke-width="3"/></symbol>
-<symbol id="skebob-art-pickaxe" viewBox="0 0 180 140"><path d="M39 110L114 35" stroke="#9c5b2a" stroke-width="18" stroke-linecap="round"/><path d="M48 20Q86 4 123 31L158 57Q164 64 155 67L116 48 91 69 79 53 47 65Q33 68 28 57Z" fill="url(#artBlue)" stroke="#e5faff" stroke-width="5"/><path d="M114 35L143 54" stroke="#ffe68a" stroke-width="7"/><path d="M18 117L34 101M142 113L159 96" stroke="#ffc94b" stroke-width="4"/></symbol>
-<symbol id="skebob-art-plinko" viewBox="0 0 180 140"><path d="M24 18H156L90 130Z" fill="#261064" stroke="#b68aff" stroke-width="5"/><g fill="#fff2a0"><circle cx="52" cy="39" r="5"/><circle cx="90" cy="39" r="5"/><circle cx="128" cy="39" r="5"/><circle cx="71" cy="62" r="5"/><circle cx="109" cy="62" r="5"/><circle cx="52" cy="85" r="5"/><circle cx="90" cy="85" r="5"/><circle cx="128" cy="85" r="5"/></g><circle cx="91" cy="22" r="13" fill="url(#artGold)" stroke="#fff4a5" stroke-width="3"/><path d="M49 111H72M79 111H101M108 111H131" stroke="#ff4cf0" stroke-width="8" stroke-linecap="round"/></symbol>
-<symbol id="skebob-art-race" viewBox="0 0 180 140"><path d="M8 111L46 38H137L174 111Z" fill="#27234c" stroke="#7daaff" stroke-width="3"/><path d="M91 45V109" stroke="#fff" stroke-width="5" stroke-dasharray="12 9"/><path d="M30 84L47 58H123L148 84L138 111H39Z" fill="#fa315f" stroke="#ffd4e2" stroke-width="4"/><path d="M57 60L73 44H110L126 60Z" fill="#8deaff" stroke="#fff" stroke-width="3"/><circle cx="55" cy="108" r="12" fill="#17152b" stroke="#aaa" stroke-width="4"/><circle cx="126" cy="108" r="12" fill="#17152b" stroke="#aaa" stroke-width="4"/></symbol>
-<symbol id="skebob-art-crash" viewBox="0 0 180 140"><path d="M18 118L55 92 83 101 125 49 160 20" fill="none" stroke="#7effd2" stroke-width="9" stroke-linecap="round" stroke-linejoin="round" filter="url(#artGlow)"/><path d="M18 118H164M18 118V16" stroke="#a8b5ff" stroke-width="3"/><path d="M127 49L125 22 153 23" fill="none" stroke="#ffe47b" stroke-width="7"/><circle cx="83" cy="101" r="8" fill="#fff"/><circle cx="160" cy="20" r="9" fill="#fff3a0"/></symbol>
-<symbol id="skebob-art-battles" viewBox="0 0 180 140"><path d="M29 24L67 40 58 91 34 119 17 80Z" fill="url(#artBlue)" stroke="#d9faff" stroke-width="4"/><path d="M151 24L113 40 122 91 146 119 163 80Z" fill="url(#artPink)" stroke="#ffe0ff" stroke-width="4"/><path d="M50 102L130 28M130 102L50 28" stroke="#ffe58a" stroke-width="10" stroke-linecap="round"/><path d="M90 8L99 27 120 30 104 45 108 66 90 55 72 66 76 45 60 30 81 27Z" fill="url(#artGold)"/></symbol>
-<symbol id="skebob-art-blackjack" viewBox="0 0 180 140"><g transform="rotate(-13 66 70)"><rect x="25" y="17" width="76" height="105" rx="9" fill="#fff" stroke="#ffc85a" stroke-width="4"/><text x="39" y="57" font-size="27" fill="#d92354" font-weight="900">A</text><path d="M62 66C36 43 32 82 62 101 92 82 88 43 62 66Z" fill="#d92354"/></g><g transform="rotate(12 119 70)"><rect x="83" y="15" width="76" height="105" rx="9" fill="#fff" stroke="#8eeaff" stroke-width="4"/><text x="97" y="55" font-size="27" fill="#17152b" font-weight="900">K</text><path d="M121 62L143 88H99Z" fill="#17152b"/></g></symbol>
-<symbol id="skebob-art-dice" viewBox="0 0 180 140"><g transform="rotate(-14 90 72)"><rect x="40" y="22" width="100" height="100" rx="19" fill="url(#artBlue)" stroke="#e1faff" stroke-width="5"/><g fill="#fff"><circle cx="66" cy="48" r="8"/><circle cx="114" cy="48" r="8"/><circle cx="90" cy="72" r="8"/><circle cx="66" cy="96" r="8"/><circle cx="114" cy="96" r="8"/></g></g><circle cx="24" cy="35" r="9" fill="url(#artGold)"/><circle cx="153" cy="110" r="10" fill="url(#artGold)"/></symbol>
-<symbol id="skebob-art-tictactoe" viewBox="0 0 180 140"><rect x="29" y="8" width="122" height="124" rx="14" fill="#24105a" stroke="#b28aff" stroke-width="5"/><path d="M70 20V120M110 20V120M40 49H140M40 90H140" stroke="#a78aff" stroke-width="5"/><g fill="none" stroke="#ff4bf1" stroke-width="7"><circle cx="51" cy="34" r="10"/><circle cx="90" cy="70" r="10"/><circle cx="130" cy="108" r="10"/></g><g stroke="#ffe36d" stroke-width="7"><path d="M80 24L100 44M100 24L80 44M40 80L60 100M60 80L40 100"/></g></symbol>
-<symbol id="skebob-art-billiards" viewBox="0 0 180 140"><rect x="13" y="15" width="154" height="110" rx="22" fill="#075b43" stroke="#d4a45b" stroke-width="8"/><path d="M31 31H149V109H31Z" fill="#087d59"/><circle cx="91" cy="69" r="22" fill="#17182a" stroke="#fff" stroke-width="4"/><text x="82" y="78" font-size="25" fill="#fff" font-weight="900">8</text><circle cx="48" cy="45" r="10" fill="#f33b55"/><circle cx="137" cy="96" r="10" fill="#ffcc35"/><path d="M110 25L160 5" stroke="#e6b67a" stroke-width="6"/></symbol>
-<symbol id="skebob-art-chicken" viewBox="0 0 180 140"><path d="M12 115L168 115M12 91L168 91M12 67L168 67" stroke="#70d9ff" stroke-width="4" stroke-dasharray="13 9"/><ellipse cx="87" cy="82" rx="39" ry="34" fill="#fff0d2" stroke="#ffb73b" stroke-width="4"/><circle cx="112" cy="50" r="24" fill="#fff0d2" stroke="#ffb73b" stroke-width="4"/><path d="M98 27L105 11 113 26 123 13 128 34" fill="#f4435e" stroke="#ff9b8d" stroke-width="3"/><path d="M134 48L157 56 134 64Z" fill="#ffb52b"/><circle cx="119" cy="45" r="4" fill="#17152b"/><path d="M58 110L52 128M98 112L104 129" stroke="#ff9e2b" stroke-width="6"/></symbol>
-<symbol id="skebob-art-tap" viewBox="0 0 180 140"><rect x="57" y="8" width="68" height="124" rx="15" fill="#17152d" stroke="#d4a5ff" stroke-width="5"/><rect x="65" y="20" width="52" height="98" rx="7" fill="url(#artBlue)"/><circle cx="91" cy="67" r="22" fill="none" stroke="#fff" stroke-width="5" opacity=".8"/><path d="M91 46V88M70 67H112" stroke="#ffe67c" stroke-width="5"/><path d="M126 103Q148 94 150 75L154 57Q156 47 164 52L162 82Q161 113 134 124Z" fill="#ffc6a5" stroke="#fff" stroke-width="3"/></symbol>
-</svg>
-<section id="home" class="home-dashboard">
-  <div class="home-welcome">
-    <div>
-      <div class="home-eyebrow">SKEBOB GAME</div>
-      <h1>Выбирай игру и начинай!</h1>
-      <p>Все мини-игры SKEBOB GAME в одном месте</p>
-    </div>
-    <div class="home-coin-art" aria-hidden="true">👑</div>
-  </div>
-  <div class="home-section-head">
-    <div><span class="home-star">✦</span><h2>Популярные игры</h2></div>
-    <button class="home-all-games" onclick="document.querySelector('.home-game-grid').scrollIntoView({behavior:'smooth',block:'start'})">Все игры ↓</button>
-  </div>
-  <div class="home-game-grid">
-    <button class="home-game-card art-plane" onclick="showPage('plane')"><span class="home-game-art"><svg viewBox="0 0 180 140" role="img" aria-label="plane"><use href="#skebob-art-plane"></use></svg></span><b>Самолёт</b><small>Лети к победе!</small><span class="home-play">Играть →</span></button>
-    <button class="home-game-card art-slots" onclick="showPage('slots')"><span class="home-game-art"><svg viewBox="0 0 180 140" role="img" aria-label="slots"><use href="#skebob-art-slots"></use></svg></span><b>Слоты</b><small>Испытай удачу!</small><span class="home-play">Играть →</span></button>
-    <button class="home-game-card art-cases" onclick="showPage('cases',document.querySelector('[data-page=cases]'))"><span class="home-game-art"><svg viewBox="0 0 180 140" role="img" aria-label="cases"><use href="#skebob-art-cases"></use></svg></span><b>Кейсы</b><small>Открывай коллекции!</small><span class="home-play">Открыть →</span></button>
-    <button class="home-game-card art-upgrade" onclick="showPage('upgrade')"><span class="home-game-art"><svg viewBox="0 0 180 140" role="img" aria-label="upgrade"><use href="#skebob-art-upgrade"></use></svg></span><b>Апгрейд</b><small>Улучши предметы!</small><span class="home-play">Играть →</span></button>
-    <button class="home-game-card art-mines" onclick="showPage('mines')"><span class="home-game-art"><svg viewBox="0 0 180 140" role="img" aria-label="mines"><use href="#skebob-art-mines"></use></svg></span><b>Mines</b><small>Найди безопасные клетки</small><span class="home-play">Играть →</span></button>
-    <button class="home-game-card art-pickaxe" onclick="showPage('pickaxe')"><span class="home-game-art"><svg viewBox="0 0 180 140" role="img" aria-label="pickaxe"><use href="#skebob-art-pickaxe"></use></svg></span><b>Кирка</b><small>Добывай награды!</small><span class="home-play">Играть →</span></button>
-    <button class="home-game-card art-plinko" onclick="showPage('plinko')"><span class="home-game-art"><svg viewBox="0 0 180 140" role="img" aria-label="plinko"><use href="#skebob-art-plinko"></use></svg></span><b>Plinko</b><small>Путь шарика к призу</small><span class="home-play">Играть →</span></button>
-    <button class="home-game-card art-race" onclick="showPage('race')"><span class="home-game-art"><svg viewBox="0 0 180 140" role="img" aria-label="race"><use href="#skebob-art-race"></use></svg></span><b>Race</b><small>Гонка за результатом</small><span class="home-play">Играть →</span></button>
-    <button class="home-game-card art-crash" onclick="showPage('crash')"><span class="home-game-art"><svg viewBox="0 0 180 140" role="img" aria-label="crash"><use href="#skebob-art-crash"></use></svg></span><b>Краш</b><small>Следи за ростом графика</small><span class="home-play">Играть →</span></button>
-    <button class="home-game-card art-battles" onclick="showPage('battles')"><span class="home-game-art"><svg viewBox="0 0 180 140" role="img" aria-label="battles"><use href="#skebob-art-battles"></use></svg></span><b>Батлы кейсов</b><small>Соревнуйся с ботами</small><span class="home-play">Играть →</span></button>
-    <button class="home-game-card art-blackjack" onclick="showPage('blackjack')"><span class="home-game-art"><svg viewBox="0 0 180 140" role="img" aria-label="blackjack"><use href="#skebob-art-blackjack"></use></svg></span><b>Blackjack</b><small>Карточная игра</small><span class="home-play">Играть →</span></button>
-    <button class="home-game-card art-dice" onclick="showPage('dice')"><span class="home-game-art"><svg viewBox="0 0 180 140" role="img" aria-label="dice"><use href="#skebob-art-dice"></use></svg></span><b>Кости</b><small>Бросай кубики</small><span class="home-play">Играть →</span></button>
-    <button class="home-game-card art-tictactoe" onclick="showPage('tictactoe')"><span class="home-game-art"><svg viewBox="0 0 180 140" role="img" aria-label="tictactoe"><use href="#skebob-art-tictactoe"></use></svg></span><b>Крестики-нолики</b><small>Сыграй партию</small><span class="home-play">Играть →</span></button>
-    <button class="home-game-card art-billiards" onclick="showPage('billiards')"><span class="home-game-art"><svg viewBox="0 0 180 140" role="img" aria-label="billiards"><use href="#skebob-art-billiards"></use></svg></span><b>Бильярд</b><small>Забивай шары</small><span class="home-play">Играть →</span></button>
-    <button class="home-game-card art-chicken" onclick="showPage('chickenroad')"><span class="home-game-art"><svg viewBox="0 0 180 140" role="img" aria-label="chicken"><use href="#skebob-art-chicken"></use></svg></span><b>Chicken Road</b><small>Пройди свой маршрут</small><span class="home-play">Играть →</span></button>
-    <button class="home-game-card art-tap" onclick="showPage('skebobTap')"><span class="home-game-art"><svg viewBox="0 0 180 140" role="img" aria-label="tap"><use href="#skebob-art-tap"></use></svg></span><b>Skebob Tap</b><small>Тапай и собирай монеты</small><span class="home-play">Играть →</span></button>
-  </div>
-  <div class="home-bottom-strip">
-    <div class="home-bottom-icon">🎁</div>
-    <div><b>Твоя коллекция начинается здесь</b><small>Загляни в кейсы и посмотри доступные коллекционные предметы</small></div>
-    <button onclick="showPage('cases',document.querySelector('[data-page=cases]'))">Перейти в кейсы →</button>
-  </div>
-</section>
 
 <section id="skebobTap" class="hidden">
  <h2>👆 SKEBOB TAP</h2>
@@ -2176,296 +2012,10 @@ rel="noopener noreferrer"
 #chickenroad .ch-hud b{font-variant-numeric:tabular-nums;text-shadow:0 2px 8px #e9b94a44}
 @media(max-width:480px){#tttGrid button{min-height:68px}.real-game-canvas{border-radius:11px}}
 
-
-/* SKEBOB GAME HOME REDESIGN */
-main{max-width:1320px;padding:12px 18px 54px}
-.nav{gap:8px;flex-wrap:wrap;overflow:visible;margin:14px 0 18px}
-.nav button{flex:0 0 auto;min-width:100px;padding:12px 15px;font-size:12px;border-radius:13px;background:linear-gradient(145deg,#24103b,#13091f);border:1px solid #62328a;color:#e8d8f7;box-shadow:0 5px 14px #0005}
-.nav button.active{background:linear-gradient(110deg,#a62cff,#6500d7);color:#fff;border-color:#d9a3ff;box-shadow:0 0 18px #9d35ff88}
-.home-dashboard{padding:8px 0 28px}
-.home-welcome{min-height:116px;display:flex;align-items:center;justify-content:space-between;gap:20px;padding:22px 28px;margin:4px 0 24px;border:1px solid #8c42c3;border-radius:22px;background:radial-gradient(circle at 84% 25%,#a044ef66,transparent 30%),linear-gradient(115deg,#321052,#160a2b 65%,#281044);box-shadow:0 12px 28px #0006,inset 0 1px #ffffff22;overflow:hidden}
-.home-eyebrow{font-size:11px;font-weight:900;letter-spacing:3px;color:#ffd76a}
-.home-welcome h1{font-size:clamp(23px,3vw,34px);margin:7px 0;color:#fff;text-shadow:0 3px 14px #9a43ff88}
-.home-welcome p{margin:0;color:#d8c0ed;font-size:14px}
-.home-coin-art{font-size:68px;filter:drop-shadow(0 9px 14px #0009);transform:rotate(12deg)}
-.home-section-head{display:flex;align-items:center;justify-content:space-between;gap:12px;margin:0 0 14px}
-.home-section-head>div{display:flex;align-items:center;gap:10px}
-.home-section-head h2{margin:0;font-size:22px;color:#fff}
-.home-star{font-size:29px;color:#ffd45e;text-shadow:0 0 14px #ffb52c}
-.home-all-games{border:1px solid #9b4ee4;border-radius:12px;padding:10px 15px;color:#fff;background:linear-gradient(110deg,#7020bd,#4400a7);font-weight:900}
-.home-game-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:15px}
-.home-game-card{position:relative;isolation:isolate;overflow:hidden;min-width:0;min-height:210px;padding:12px 12px 14px;border:1px solid #8c43c1;border-radius:19px;color:#fff;text-align:center;background:linear-gradient(155deg,#32134f,#13081f 72%);box-shadow:0 9px 22px #0007,inset 0 1px #ffffff22;display:flex;flex-direction:column;align-items:center;justify-content:flex-end;gap:5px;transition:transform .18s,border-color .18s,box-shadow .18s}
-.home-game-card:before{content:"";position:absolute;inset:0;z-index:-2;background:radial-gradient(circle at 50% 28%,var(--art-glow,#a33cff66),transparent 58%),linear-gradient(145deg,var(--art-a,#45206b),var(--art-b,#170923) 75%)}
-.home-game-card:after{content:"";position:absolute;z-index:-1;inset:0;background:linear-gradient(180deg,transparent 20%,rgba(13,4,24,.15) 42%,rgba(11,4,21,.94) 100%)}
-.home-game-card:hover{transform:translateY(-4px);border-color:#ffd56d;box-shadow:0 14px 26px #0009,0 0 20px #a33cff66}
-.home-game-art{height:116px;width:100%;display:grid;place-items:center;font-size:clamp(54px,6vw,82px);line-height:1;filter:drop-shadow(0 9px 8px #000b);text-shadow:0 0 22px #fff6;transform:translateY(3px)}
-.home-game-card b{font-size:17px;text-shadow:0 2px 8px #000}
-.home-game-card small{font-size:12px;color:#e3c9f7;min-height:17px}
-.home-play{display:block;width:min(100%,170px);margin-top:5px;padding:10px 12px;border-radius:13px;background:linear-gradient(100deg,#a82dff,#6500d7);border:1px solid #dca8ff;box-shadow:0 5px 14px #7000d988;font-weight:900;font-size:13px}
-.art-plane{--art-a:#164f89;--art-b:#170d39;--art-glow:#3cbdff88}.art-slots{--art-a:#74204f;--art-b:#200a36;--art-glow:#ff36b788}.art-cases{--art-a:#682b9a;--art-b:#170b36;--art-glow:#ffc44c99}.art-upgrade{--art-a:#48218a;--art-b:#100d3a;--art-glow:#8d5dff99}.art-mines{--art-a:#7a274a;--art-b:#1d0b32;--art-glow:#ff536a88}.art-pickaxe{--art-a:#6c421d;--art-b:#20102b;--art-glow:#ffb93d88}.art-plinko{--art-a:#173e83;--art-b:#170b38;--art-glow:#35b8ff88}.art-race{--art-a:#71331c;--art-b:#1d0b31;--art-glow:#ff8d3888}.art-crash{--art-a:#174f58;--art-b:#120b36;--art-glow:#37ffc488}.art-battles{--art-a:#69204c;--art-b:#1c0a32;--art-glow:#ff4d9a88}.art-blackjack{--art-a:#164c43;--art-b:#100d2d;--art-glow:#4ce2a088}.art-dice{--art-a:#244e91;--art-b:#170b35;--art-glow:#61aaff88}.art-tictactoe{--art-a:#3e368c;--art-b:#160a32;--art-glow:#9b78ff88}.art-billiards{--art-a:#14554b;--art-b:#100b2d;--art-glow:#43e1a288}.art-chicken{--art-a:#89501f;--art-b:#28102f;--art-glow:#ffc14d88}.art-tap{--art-a:#662f8b;--art-b:#180a31;--art-glow:#d06cff88}
-.home-bottom-strip{display:flex;align-items:center;gap:16px;margin-top:20px;padding:17px 20px;border:1px solid #8141ad;border-radius:18px;background:linear-gradient(100deg,#35104f,#1a0b2c 75%);box-shadow:0 8px 20px #0005}
-.home-bottom-icon{font-size:42px;filter:drop-shadow(0 5px 8px #0008)}
-.home-bottom-strip>div:nth-child(2){flex:1;display:flex;flex-direction:column;gap:5px}
-.home-bottom-strip b{color:#ffe18a;font-size:16px}.home-bottom-strip small{color:#d9c2ed}
-.home-bottom-strip button{border:1px solid #e4b8ff;border-radius:12px;padding:12px 16px;background:linear-gradient(100deg,#8d28df,#5700bb);color:white;font-weight:900}
-#caseList .case .pic{height:112px;display:grid;place-items:center;overflow:hidden;border-radius:14px;background:radial-gradient(circle at 50% 35%,#a84fff55,transparent 68%),linear-gradient(145deg,#31134e,#130820);border:1px solid #8546b7;box-shadow:inset 0 0 22px #b65cff22}
-#caseList .case .pic img{width:100%;height:100%;max-width:100%;object-fit:contain;padding:8px;filter:drop-shadow(0 7px 9px #0009)}
-#caseList .case .pic span{font-size:54px;filter:drop-shadow(0 7px 8px #0009)}
-#cases .daily-case{border-color:#8642b5;background:radial-gradient(circle at 80% 10%,#8e3fbd55,transparent 35%),linear-gradient(145deg,#32134b,#160a27)}
-@media(max-width:900px){.home-game-grid{grid-template-columns:repeat(3,minmax(0,1fr))}.home-game-card{min-height:195px}}
-@media(max-width:620px){main{padding:8px 11px 40px}.nav{flex-wrap:nowrap;overflow-x:auto}.nav button{flex:0 0 auto;min-width:92px}.home-game-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}.home-game-card{min-height:176px;padding:9px}.home-game-art{height:92px;font-size:58px}.home-game-card b{font-size:15px}.home-game-card small{font-size:11px}.home-welcome{padding:17px 18px}.home-coin-art{font-size:48px}.home-bottom-strip{align-items:flex-start;flex-wrap:wrap}.home-bottom-strip button{width:100%}}
-@media(prefers-reduced-motion:reduce){.home-game-card{transition:none}}
-
-/* HOME PAGE LAYOUT FIX + RESPONSIVE */
-main{width:100%;max-width:1240px;margin:0 auto;padding:12px clamp(12px,2.2vw,26px) 48px;box-sizing:border-box}
-.home-nav{display:flex!important;justify-content:flex-start;gap:10px;flex-wrap:wrap;margin:12px 0 20px;padding:0;background:transparent;border:0;box-shadow:none}
-.home-nav button{flex:0 0 auto;min-width:132px;padding:12px 20px;border:1px solid #8d43bf;border-radius:13px;background:linear-gradient(145deg,#251038,#13091f);color:#f4e8ff;font-weight:900;font-size:13px}
-.home-nav button.active{background:linear-gradient(110deg,#a62cff,#6500d7);border-color:#e0b4ff;box-shadow:0 0 18px #9d35ff77;color:white}
-.home-dashboard{display:block;width:100%;max-width:100%;box-sizing:border-box}
-.home-welcome{width:100%;box-sizing:border-box}
-.home-game-grid{width:100%;grid-template-columns:repeat(4,minmax(0,1fr));align-items:stretch}
-.home-game-card{width:100%;min-width:0;box-sizing:border-box;cursor:pointer}
-.home-game-art{flex:0 0 112px}
-.home-bottom-strip{width:100%;box-sizing:border-box}
-.home-game-card:focus-visible,.home-nav button:focus-visible,.home-bottom-strip button:focus-visible{outline:3px solid #ffe18a;outline-offset:3px}
-@media(min-width:1000px){.home-game-grid{grid-template-columns:repeat(4,minmax(0,1fr));gap:18px}.home-game-card{min-height:226px}.home-game-art{flex-basis:126px}}
-@media(min-width:640px) and (max-width:999px){.home-game-grid{grid-template-columns:repeat(3,minmax(0,1fr));gap:13px}.home-game-card{min-height:205px}}
-@media(max-width:639px){
-  header{padding:12px 14px;gap:10px;box-sizing:border-box}
-  .logo{font-size:clamp(20px,6vw,28px);text-align:center}
-  .header-actions{width:100%;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
-  .header-actions button,.header-actions a{min-width:0;width:100%;box-sizing:border-box;justify-content:center;text-align:center;padding:11px 8px;font-size:12px}
-  .balance{width:calc(100% - 24px);box-sizing:border-box;margin:12px auto;padding:13px 15px;gap:10px;flex-wrap:wrap}
-  .balance strong{font-size:clamp(23px,7vw,32px)}
-  main{padding:8px 12px 34px}
-  .home-nav{display:grid!important;grid-template-columns:repeat(2,minmax(0,1fr));gap:9px;margin:10px 0 16px}
-  .home-nav button{min-width:0;width:100%;padding:13px 8px;font-size:12px}
-  .home-welcome{min-height:0;padding:18px 17px;margin:4px 0 20px;border-radius:19px}
-  .home-welcome h1{font-size:clamp(22px,6.5vw,30px);line-height:1.15}
-  .home-welcome p{font-size:13px;line-height:1.4;max-width:34ch}
-  .home-coin-art{font-size:clamp(42px,13vw,60px);flex:0 0 auto}
-  .home-section-head{align-items:center;margin-bottom:12px}
-  .home-section-head h2{font-size:clamp(18px,5vw,22px)}
-  .home-all-games{font-size:12px;padding:10px 11px;white-space:nowrap}
-  .home-game-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
-  .home-game-card{min-height:188px;padding:10px 8px 11px;border-radius:18px}
-  .home-game-art{height:92px;flex-basis:92px;font-size:clamp(48px,14vw,64px)}
-  .home-game-card b{font-size:clamp(14px,4vw,16px);line-height:1.2}
-  .home-game-card small{font-size:11px;line-height:1.25;min-height:28px;display:flex;align-items:center;justify-content:center}
-  .home-play{font-size:12px;padding:9px 8px;margin-top:3px}
-  .home-bottom-strip{gap:12px;margin-top:16px;padding:15px;border-radius:17px}
-  .home-bottom-icon{font-size:36px}
-  .home-bottom-strip>div:nth-child(2){min-width:0}
-  .home-bottom-strip b{font-size:14px;line-height:1.25}
-  .home-bottom-strip small{font-size:12px;line-height:1.35}
-  .home-bottom-strip button{width:100%;font-size:13px;padding:12px}
-}
-@media(max-width:360px){
-  .home-game-card{min-height:174px}
-  .home-game-art{height:78px;flex-basis:78px;font-size:48px}
-  .home-game-card small{font-size:10px}
-}
-
-/* SKEBOB FULL APP SHELL — reference layout */
-header{
-  display:flex!important;flex-direction:column!important;align-items:stretch!important;
-  gap:14px!important;padding:20px clamp(12px,3vw,28px)!important;
-  border:1px solid #7d3ca9!important;border-radius:0 0 28px 28px!important;
-  background:linear-gradient(145deg,#29103f,#160a27 70%,#241039)!important;
-  box-shadow:0 12px 30px #0007,inset 0 1px #ffffff1c!important;
-}
-.logo{width:100%;text-align:center;font-size:clamp(25px,5vw,34px)!important;letter-spacing:.4px}
-.logo span{color:#ffd66f!important;text-shadow:0 0 16px #ffbf4a55}
-.header-actions{
-  width:100%;display:grid!important;grid-template-columns:repeat(2,minmax(0,1fr))!important;
-  gap:9px!important;align-items:stretch
-}
-header button,header .header-actions a{
-  min-width:0!important;width:100%;box-sizing:border-box;min-height:48px;
-  display:flex;align-items:center;justify-content:center;text-align:center;
-  white-space:normal!important;line-height:1.2;padding:11px 8px!important;
-  border:1px solid #9149c1!important;border-radius:14px!important;
-  background:linear-gradient(145deg,#28103c,#190b2b)!important;
-  color:#f5e9ff!important;font-size:clamp(11px,2.3vw,14px)!important;font-weight:900;
-}
-header .header-actions .header-buy-admin{
-  background:linear-gradient(110deg,#6b4a19,#403015)!important;
-  border-color:#a9853b!important;color:#ffe08b!important
-}
-.balance{
-  margin:16px auto!important;width:calc(100% - 28px);max-width:1160px;box-sizing:border-box;
-  padding:19px 22px!important;min-height:100px;border:1px solid #a45be0!important;
-  border-radius:22px!important;background:linear-gradient(110deg,#28103f,#170b2b 72%,#321347)!important;
-  box-shadow:0 10px 25px #0005,inset 0 1px #ffffff18!important
-}
-.balance .small{font-size:clamp(12px,2.4vw,16px)!important}
-.balance strong{font-size:clamp(27px,5vw,40px)!important;color:#ffdc79!important;overflow-wrap:anywhere}
-main{max-width:1160px!important;width:100%;box-sizing:border-box;padding:8px clamp(12px,2.5vw,26px) 48px!important}
-.home-nav{display:none!important}
-.home-welcome,.home-section-head,.home-bottom-strip{display:none!important}
-.home-game-grid{
-  display:grid!important;width:100%;grid-template-columns:repeat(3,minmax(0,1fr))!important;
-  gap:12px!important;margin:18px 0 28px
-}
-.home-game-card{
-  min-width:0!important;width:100%;min-height:150px!important;height:auto;
-  box-sizing:border-box;padding:14px 9px!important;border:1px solid #8544b7!important;
-  border-radius:19px!important;background:linear-gradient(145deg,#28103e,#160a29)!important;
-  box-shadow:0 8px 20px #0006,inset 0 1px #ffffff18!important;
-  display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;
-  color:#f7edff!important;text-align:center;cursor:pointer
-}
-.home-game-card:before{background:radial-gradient(circle at 50% 20%,var(--art-glow,#a33cff55),transparent 65%)!important}
-.home-game-card:after{display:none!important}
-.home-game-art{height:58px!important;flex:0 0 58px!important;width:100%;font-size:clamp(30px,5vw,48px)!important;display:grid;place-items:center}
-.home-game-card b{font-size:clamp(11px,1.8vw,16px)!important;line-height:1.18;overflow-wrap:anywhere}
-.home-game-card small{display:none!important}
-.home-play{
-  display:none!important
-}
-.home-game-card:hover{transform:translateY(-2px);border-color:#ffd66f!important}
-.home-game-card.art-cases{border-color:#d29a42!important}
-@media(min-width:900px){
-  header{padding-left:max(28px,calc((100% - 1160px)/2))!important;padding-right:max(28px,calc((100% - 1160px)/2))!important}
-  .header-actions{grid-template-columns:repeat(4,minmax(0,1fr))!important}
-  .home-game-grid{grid-template-columns:repeat(4,minmax(0,1fr))!important;gap:16px!important}
-  .home-game-card{min-height:175px!important}
-  .home-game-art{height:76px!important;flex-basis:76px!important;font-size:52px!important}
-}
-@media(max-width:560px){
-  header{padding:17px 12px!important;gap:12px!important;border-radius:0 0 22px 22px!important}
-  .logo{font-size:25px!important}
-  .header-actions{grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:8px!important}
-  header button,header .header-actions a{min-height:46px;padding:9px 6px!important;font-size:11px!important;border-radius:12px!important}
-  .balance{width:calc(100% - 24px);margin:12px auto!important;padding:15px!important;min-height:82px;gap:8px}
-  .balance>div{min-width:0}
-  .balance strong{font-size:clamp(23px,7vw,31px)!important}
-  main{padding:4px 12px 30px!important}
-  .home-game-grid{grid-template-columns:repeat(3,minmax(0,1fr))!important;gap:9px!important;margin-top:12px}
-  .home-game-card{min-height:112px!important;padding:10px 5px!important;border-radius:15px!important;gap:6px}
-  .home-game-art{height:45px!important;flex-basis:45px!important;font-size:34px!important}
-  .home-game-card b{font-size:clamp(10px,3vw,13px)!important}
-}
-@media(max-width:360px){
-  .home-game-grid{gap:7px!important}
-  .home-game-card{min-height:102px!important;padding:8px 3px!important}
-  .home-game-art{height:39px!important;flex-basis:39px!important;font-size:30px!important}
-  header button,header .header-actions a{font-size:10px!important}
-}
-
-/* Reference-matched SKEBOB home screen */
-header{
- display:flex!important;flex-direction:column!important;align-items:stretch!important;
- gap:13px!important;padding:20px 22px!important;border:1px solid #71399a!important;
- border-radius:0 0 26px 26px!important;background:linear-gradient(145deg,#28113c,#170a28)!important;
- box-shadow:0 10px 28px #0007!important
-}
-.logo{width:100%;text-align:center;font-size:clamp(25px,5vw,34px)!important;font-weight:1000}
-.logo span{color:#ffd66d!important}
-.header-actions{width:100%;display:grid!important;grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:9px!important}
-header .header-actions button,header .header-actions a{
- width:100%;min-width:0;min-height:48px;box-sizing:border-box;display:flex;align-items:center;justify-content:center;
- padding:10px 7px!important;border:1px solid #8d49b8!important;border-radius:14px!important;
- background:linear-gradient(145deg,#29123f,#1b0b2c)!important;color:#f7eaff!important;
- font-size:clamp(11px,2.4vw,15px)!important;font-weight:900;text-align:center;line-height:1.2
-}
-header .header-actions .header-buy-admin{background:linear-gradient(110deg,#59401b,#382b17)!important;border-color:#8b7139!important;color:#ffe08b!important}
-.balance{
- width:calc(100% - 36px);max-width:1160px;min-height:108px;box-sizing:border-box;margin:16px auto 22px!important;
- padding:20px 25px!important;border:1px solid #a65de1!important;border-radius:24px!important;
- background:linear-gradient(110deg,#29103e,#190b2c 70%,#321347)!important;box-shadow:0 9px 25px #0005!important
-}
-.balance .small{font-size:clamp(12px,2.5vw,16px)!important;color:#cdb6dc}
-.balance strong{font-size:clamp(28px,5vw,42px)!important;color:#ffda76!important}
-main{width:100%;max-width:1160px!important;margin:0 auto!important;padding:8px 24px 42px!important;box-sizing:border-box}
-.reference-menu{
- display:grid!important;grid-template-columns:repeat(3,minmax(0,1fr))!important;gap:10px!important;
- overflow:visible!important;margin:18px 0 34px!important;padding:18px!important;
- border:1px solid #8543b3!important;border-radius:24px!important;
- background:linear-gradient(145deg,#28113c,#170a28 75%)!important;box-shadow:0 10px 28px #0006!important
-}
-.reference-menu button{
- min-width:0!important;min-height:72px!important;width:100%;flex:auto!important;
- display:flex;align-items:center;justify-content:center;text-align:center;white-space:normal!important;
- padding:10px 7px!important;border:1px solid #8543b3!important;border-radius:17px!important;
- background:linear-gradient(145deg,#28113f,#190b2b)!important;color:#eee0fa!important;
- font-size:clamp(11px,1.6vw,17px)!important;font-weight:950!important;line-height:1.25
-}
-.reference-menu button.active{background:linear-gradient(110deg,#a52cff,#6500d7)!important;color:white!important;border-color:#e1b6ff!important;box-shadow:0 0 18px #9b37ff88!important}
-.home-dashboard{display:block!important;width:100%;padding:0 0 28px!important}
-.home-welcome{
- display:flex!important;align-items:center;justify-content:space-between;gap:20px;
- min-height:150px!important;margin:0 0 28px!important;padding:24px 30px!important;box-sizing:border-box;
- border:1px solid #8d49b9!important;border-radius:24px!important;
- background:radial-gradient(circle at 86% 30%,#873ab755,transparent 25%),linear-gradient(110deg,#32104c,#190b2c 75%,#29103e)!important;
- box-shadow:0 10px 28px #0006!important
-}
-.home-eyebrow{font-size:12px!important;letter-spacing:4px!important;color:#ffd66d!important;font-weight:950}
-.home-welcome h1{font-size:clamp(26px,4vw,40px)!important;line-height:1.2;margin:10px 0!important}
-.home-welcome p{font-size:clamp(14px,2.2vw,20px)!important;color:#d8c2e8!important}
-.home-coin-art{font-size:clamp(58px,8vw,92px)!important}
-.home-section-head{display:flex!important;align-items:center;justify-content:space-between;gap:12px;margin:0 0 18px!important}
-.home-section-head h2{font-size:clamp(23px,3.5vw,34px)!important}
-.home-star{font-size:34px!important}
-.home-all-games{padding:13px 19px!important;border-radius:16px!important;font-size:15px!important}
-.home-game-grid{display:grid!important;grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:18px!important}
-.home-game-card{
- min-width:0!important;width:100%;min-height:280px!important;box-sizing:border-box;padding:18px 16px 17px!important;
- display:flex!important;flex-direction:column!important;align-items:center!important;justify-content:flex-end!important;gap:7px!important;
- border:1.5px solid #8e49bd!important;border-radius:28px!important;color:white!important;text-align:center;
- background:linear-gradient(155deg,#32134f,#13081f 72%)!important;box-shadow:0 10px 24px #0007,inset 0 1px #ffffff22!important
-}
-.home-game-card:before{background:radial-gradient(circle at 50% 28%,var(--art-glow,#a33cff66),transparent 58%),linear-gradient(145deg,var(--art-a,#45206b),var(--art-b,#170923) 75%)!important}
-.home-game-card:after{background:linear-gradient(180deg,transparent 20%,rgba(13,4,24,.12) 42%,rgba(11,4,21,.94) 100%)!important}
-.home-game-art{height:145px!important;flex:0 0 145px!important;font-size:clamp(66px,8vw,100px)!important}
-.home-game-card b{font-size:clamp(18px,2.2vw,24px)!important}
-.home-game-card small{font-size:clamp(13px,1.6vw,17px)!important;min-height:20px!important}
-.home-play{display:block!important;width:min(100%,250px)!important;padding:13px 12px!important;margin-top:10px!important;border-radius:18px!important;font-size:clamp(15px,1.8vw,19px)!important}
-.home-bottom-strip{display:flex!important;align-items:center;gap:18px;margin-top:28px!important;padding:25px!important;border:1px solid #8543b3!important;border-radius:24px!important;background:linear-gradient(110deg,#32104b,#1a0b2c 75%)!important}
-.home-bottom-icon{font-size:62px!important}
-.home-bottom-strip b{font-size:clamp(19px,2.4vw,27px)!important;color:#ffdc83!important}
-.home-bottom-strip small{font-size:clamp(14px,1.8vw,19px)!important;line-height:1.4}
-.home-bottom-strip button{padding:16px 20px!important;border-radius:18px!important;font-size:17px!important}
-@media(max-width:650px){
- header{padding:17px 12px!important;gap:11px!important}
- .logo{font-size:25px!important}
- .header-actions{grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:8px!important}
- header .header-actions button,header .header-actions a{min-height:49px;padding:8px 5px!important;font-size:11px!important}
- .balance{width:calc(100% - 24px);margin:12px auto 16px!important;padding:16px!important;min-height:92px}
- .balance strong{font-size:clamp(24px,7vw,33px)!important}
- main{padding:4px 12px 30px!important}
- .reference-menu{grid-template-columns:repeat(3,minmax(0,1fr))!important;gap:8px!important;margin:12px 0 24px!important;padding:12px!important;border-radius:19px!important}
- .reference-menu button{min-height:65px!important;padding:8px 3px!important;border-radius:14px!important;font-size:clamp(9px,2.7vw,12px)!important}
- .home-welcome{min-height:0!important;padding:19px 17px!important;margin-bottom:22px!important;border-radius:20px!important}
- .home-welcome h1{font-size:clamp(23px,6vw,30px)!important}
- .home-welcome p{font-size:14px!important;line-height:1.4}
- .home-coin-art{font-size:53px!important}
- .home-section-head{gap:8px!important;margin-bottom:13px!important}
- .home-section-head h2{font-size:clamp(18px,4.8vw,23px)!important}
- .home-star{font-size:25px!important}
- .home-all-games{font-size:12px!important;padding:10px 11px!important;white-space:nowrap}
- .home-game-grid{grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:11px!important}
- .home-game-card{min-height:218px!important;padding:12px 8px!important;border-radius:21px!important;gap:6px!important}
- .home-game-art{height:105px!important;flex-basis:105px!important;font-size:clamp(52px,15vw,72px)!important}
- .home-game-card b{font-size:clamp(14px,3.9vw,17px)!important;line-height:1.2}
- .home-game-card small{font-size:11px!important;line-height:1.25!important;min-height:28px!important}
- .home-play{width:100%!important;box-sizing:border-box;padding:10px 5px!important;margin-top:5px!important;border-radius:14px!important;font-size:13px!important}
- .home-bottom-strip{display:grid!important;grid-template-columns:52px minmax(0,1fr)!important;gap:10px!important;padding:16px!important;margin-top:18px!important;border-radius:19px!important}
- .home-bottom-icon{font-size:43px!important;grid-row:span 2}
- .home-bottom-strip b{font-size:16px!important;line-height:1.25}
- .home-bottom-strip small{font-size:12px!important;line-height:1.35}
- .home-bottom-strip button{grid-column:1/-1;width:100%;font-size:14px!important;padding:13px!important}
-}
-@media(max-width:360px){
- .reference-menu{gap:6px!important;padding:9px!important}
- .reference-menu button{min-height:58px!important;font-size:9px!important}
- .home-game-card{min-height:198px!important}
- .home-game-art{height:88px!important;flex-basis:88px!important}
-}
 </style>
 <!-- CASES -->
 
-<section id="cases" class="hidden">
+<section id="cases">
 
 <h2>🎁 КЕЙСЫ</h2>
 
@@ -8688,125 +8238,7 @@ document.addEventListener("DOMContentLoaded",initNickname,{once:true});
 </div>
 
 <div id="skebobDialog" role="dialog" aria-modal="true" style="display:none;position:fixed;inset:0;z-index:30000;background:rgba(0,0,0,.78);align-items:center;justify-content:center;padding:20px"><div style="width:100%;max-width:430px;background:var(--panel);color:var(--text);border:1px solid var(--gold);border-radius:22px;padding:24px;box-shadow:0 18px 60px #000b"><h2 data-dialog-title style="margin:0 0 16px;color:var(--gold)">Уведомление</h2><div data-dialog-message style="font-size:16px;line-height:1.55;white-space:pre-wrap;overflow-wrap:anywhere"></div><input data-dialog-input type="text" style="display:none;margin-top:16px"><div style="display:flex;gap:10px;justify-content:flex-end;margin-top:22px"><button data-dialog-cancel type="button" class="secondary">Отмена</button><button data-dialog-ok type="button" class="goldbtn" style="width:auto;min-width:110px;margin:0;padding:12px 20px">ОК</button></div></div></div>
-
-<style id="skebob-final-mobile-override">
-@media screen and (max-width: 700px) {
-  html, body { width:100%!important; min-width:0!important; overflow-x:hidden!important; }
-  body { display:block!important; }
-  body > header {
-    width:auto!important; max-width:none!important; margin:0 6px 8px 88px!important;
-    padding:10px 8px!important; min-height:0!important; border-radius:0 0 14px 14px!important;
-    display:flex!important; flex-direction:column!important; gap:7px!important;
-  }
-  body > header .logo { width:100%!important; font-size:clamp(14px,4vw,20px)!important; text-align:center!important; }
-  body > header .header-actions { display:none!important; }
-  body > .balance {
-    width:auto!important; max-width:none!important; margin:6px 6px 8px 88px!important;
-    padding:8px!important; display:flex!important; flex-wrap:wrap!important; gap:4px 8px!important;
-  }
-  body > .balance > div { min-width:0!important; }
-  body > .balance .small { font-size:10px!important; }
-  body > .balance strong { font-size:clamp(17px,5vw,22px)!important; }
-  body > main {
-    display:block!important; width:auto!important; max-width:none!important; min-width:0!important;
-    margin:0 6px 0 88px!important; padding:4px 3px 30px!important;
-  }
-  body > main > .home-nav {
-    position:fixed!important; display:flex!important; flex-direction:column!important; flex-wrap:nowrap!important;
-    left:4px!important; top:4px!important; bottom:4px!important; right:auto!important;
-    width:78px!important; height:auto!important; max-height:none!important;
-    margin:0!important; padding:91px 3px 7px!important; gap:5px!important;
-    overflow-x:hidden!important; overflow-y:auto!important; z-index:9999!important;
-  }
-  body > main > .home-nav:before { top:10px!important; font-size:44px!important; }
-  body > main > .home-nav .sidebar-caption { top:63px!important; font-size:7px!important; letter-spacing:.5px!important; }
-  body > main > .home-nav button, body > main > .home-nav a {
-    display:block!important; flex:0 0 auto!important; width:100%!important; min-width:0!important;
-    min-height:38px!important; height:auto!important; padding:6px 2px!important;
-    font-size:8px!important; line-height:1.15!important; text-align:center!important;
-    white-space:normal!important; overflow-wrap:anywhere!important;
-  }
-  body > main > .home-dashboard { width:100%!important; min-width:0!important; margin:0!important; padding:4px 0 20px!important; }
-  body > main .home-section-head { display:flex!important; flex-wrap:wrap!important; align-items:center!important; justify-content:space-between!important; gap:6px!important; }
-  body > main .home-section-head h2 { font-size:clamp(15px,4vw,19px)!important; }
-  body > main .home-game-grid { display:grid!important; width:100%!important; grid-template-columns:minmax(0,1fr)!important; gap:9px!important; }
-  body > main .home-game-card { display:flex!important; width:100%!important; min-width:0!important; min-height:175px!important; padding:9px!important; }
-  body > main .home-game-art { flex:0 0 82px!important; font-size:55px!important; }
-  body > main .home-game-card b { font-size:15px!important; }
-  body > main .home-game-card small { font-size:11px!important; }
-  body > main .home-play { width:min(100%,170px)!important; font-size:12px!important; padding:8px!important; }
-}
-@media screen and (max-width:360px) {
-  body > header, body > .balance { margin-left:82px!important; }
-  body > main { margin-left:82px!important; }
-  body > main > .home-nav { width:72px!important; }
-  body > main > .home-nav button, body > main > .home-nav a { font-size:7px!important; }
-}
-</style>
-
-
-<style id="skebob-3d-card-art-v5">
-.home-game-card{
- position:relative!important;isolation:isolate;overflow:hidden!important;
- background:linear-gradient(150deg,#32105b 0%,#17072e 48%,#0d031b 100%)!important;
- border:1px solid #a94cff!important;
- box-shadow:0 12px 26px #0009,inset 0 1px #ffffff30,0 0 17px #8f20ff55!important;
-}
-.home-game-card:before{
- content:"";position:absolute!important;inset:0!important;z-index:-1!important;
- background:
- radial-gradient(ellipse at 50% 34%,var(--art-glow,#bd65ff66),transparent 42%),
- linear-gradient(145deg,var(--art-a,#4c1974),transparent 65%)!important;
- opacity:1!important;transform:none!important;
-}
-.home-game-card:after{
- content:"";position:absolute!important;z-index:-1!important;left:14%;right:14%;top:19%;
- height:48%;border-radius:50%;background:radial-gradient(ellipse,#ffffff18,transparent 68%)!important;
- filter:blur(7px);pointer-events:none
-}
-.home-game-art{
- position:relative!important;isolation:isolate;display:grid!important;place-items:center!important;
- width:100%!important;height:150px!important;flex:0 0 150px!important;
- font-size:clamp(68px,7vw,100px)!important;line-height:1!important;
- filter:drop-shadow(0 5px 0 #2a0746) drop-shadow(0 10px 9px #000b) drop-shadow(0 0 16px #e2aaff99)!important;
- transform:perspective(500px) rotateX(7deg)!important;
-}
-.home-game-art:before{
- content:"";position:absolute;z-index:-1;width:116px;height:116px;border-radius:32px;
- background:linear-gradient(145deg,#ffffff25,#8d38d322 45%,#16052d99);
- border:1px solid #e7c5ff55;box-shadow:inset 0 2px 8px #ffffff33,0 13px 20px #0008;
- transform:rotate(-8deg) skewY(-3deg)
-}
-.home-game-card b{position:relative;z-index:1;text-shadow:0 2px 7px #000,0 0 12px #bd65ff55}
-.home-game-card small{position:relative;z-index:1;color:#d8c4ec!important}
-.home-play{
- position:relative!important;z-index:1!important;
- background:linear-gradient(180deg,#c04cff,#7400d9 58%,#4a008d)!important;
- border:1px solid #e3b6ff!important;
- box-shadow:inset 0 1px #ffffff77,0 5px 0 #31005f,0 9px 16px #0008,0 0 15px #a52bff88!important;
- text-shadow:0 1px #4b0080
-}
-.home-game-card:hover .home-game-art{transform:perspective(500px) rotateX(0) translateY(-5px) scale(1.05)!important}
-.home-game-card.art-plane{--art-glow:#41b9ff88;--art-a:#124b7a}
-.home-game-card.art-slots{--art-glow:#ffb63888;--art-a:#6b3210}
-.home-game-card.art-cases{--art-glow:#ffd65d99;--art-a:#775016}
-.home-game-card.art-upgrade{--art-glow:#6deeff88;--art-a:#125c77}
-.home-game-card.art-mines{--art-glow:#ff5b6488;--art-a:#70202e}
-.home-game-card.art-pickaxe{--art-glow:#ffb54d88;--art-a:#704019}
-.home-game-card.art-plinko{--art-glow:#ff3e6488;--art-a:#77152f}
-.home-game-card.art-race{--art-glow:#ff923e88;--art-a:#71300f}
-.home-game-card.art-crash{--art-glow:#68ffad88;--art-a:#145b3b}
-.home-game-card.art-battles{--art-glow:#c58bff88;--art-a:#512078}
-.home-game-card.art-blackjack{--art-glow:#ffd56a88;--art-a:#6d4b16}
-.home-game-card.art-dice{--art-glow:#ffffff88;--art-a:#414b71}
-.home-game-card.art-tictactoe{--art-glow:#6deeff88;--art-a:#155b70}
-.home-game-card.art-billiards{--art-glow:#72ff9b88;--art-a:#145c38}
-.home-game-card.art-chicken{--art-glow:#ffca6688;--art-a:#70451a}
-.home-game-card.art-tap{--art-glow:#ffe16d88;--art-a:#705414}
-@media(max-width:700px){
- .home-game-art{height:112px!important;flex-basis:112px!important;font-size:66px!important}
- .home-game-art:before{width:88px;height:88px;border-radius:24px}
-}
-</style>
 </body>
     </html>
+
+/* TWO-FIELD BATTLESHIP: player vs bot, winner takes the 2x pot */
