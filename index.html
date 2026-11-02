@@ -5404,42 +5404,20 @@ save();
 
 function sellAllItems(){
 
-if(
-!state.inventory.length
-)return;
+const protectedItems=state.inventory.filter(x=>x&&x.newYear);
+const sellableItems=state.inventory.filter(x=>!x||!x.newYear);
+if(!sellableItems.length)return;
 
-const total=
-state.inventory.reduce(
-(s,x)=>
-s+
-Number(
-x.value||0
-),
-0
-);
+const total=sellableItems.reduce((sum,x)=>sum+Number(x.value||0),0);
+const count=sellableItems.length;
 
-const count=
-state.inventory.length;
-
-if(
-!confirm(
-"Продать всё за "+
-total.toLocaleString(
-"ru-RU"
-)+
-" 🪙?"
-)
-)return;
+if(!confirm("Продать обычные предметы за "+total.toLocaleString("ru-RU")+" 🪙?"))return;
 
 state.balance+=total;
-
 state.stats.itemsSold+=count;
 addDailyTaskProgress("sales",count);
-
 state.stats.soldValue+=total;
-
-state.inventory=[];
-
+state.inventory=protectedItems;
 save();
 
 }
