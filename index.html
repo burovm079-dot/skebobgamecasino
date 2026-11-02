@@ -4236,6 +4236,7 @@ function setProfileStyle(type,value){
 
 function renderProfile(){
 
+checkAllNftAchievement();
 const info=
 getLevelInfo();
 const collectionBanner=document.getElementById("collectionAchievementBanner");
@@ -5279,9 +5280,18 @@ if(replayButton){replayButton.disabled=pendingPrizes.some(Boolean);replayButton.
 
 function checkAllNftAchievement(){
  if(state.collectionAchievement?.unlocked)return false;
- const catalog=[...nftCollections,{name:"Мишка",collection:"Telegram Gifts"},{name:"Сердечко",collection:"Telegram Gifts"}];
- const owned=state.inventory||[];
- const complete=catalog.every(item=>owned.some(x=>x.name===item.name&&x.collection===item.collection));
+ // Use the exact same catalog as the collection screen.
+ const catalog=[
+  ...(Array.isArray(prizes)?prizes:[]),
+  {name:"Мишка",collection:"Telegram Gifts"},
+  {name:"Сердечко",collection:"Telegram Gifts"}
+ ];
+ const owned=Array.isArray(state.inventory)?state.inventory:[];
+ const hasItem=item=>owned.some(x=>{
+  if(!x||x.name!==item.name)return false;
+  return !x.collection||x.collection===item.collection;
+ });
+ const complete=catalog.length>0&&catalog.every(hasItem);
  if(!complete)return false;
  state.collectionAchievement={unlocked:true,unlockedAt:Date.now()};
  state.collectionAchievementNotified=true;
@@ -8144,8 +8154,10 @@ function bjOfficialGiveAllNfts(){
   owned.add(key);
   added++;
  });
+ checkAllNftAchievement();
  save();
  renderSpecialAccountControls();
+ renderProfile();
  alert(added?"Готово! Добавлено NFT: "+added+".":"Все NFT из каталога уже есть в инвентаре.");
 }
 function toggleProtectedInfiniteBalance(){
