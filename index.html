@@ -8150,6 +8150,7 @@ function renderSpecialAccountControls(){
   html+='<div class="small">Бесконечный баланс: '+(state.admin.infiniteBalance?"ВКЛЮЧЁН":"ВЫКЛЮЧЕН")+'</div><button class="secondary" type="button" onclick="toggleProtectedInfiniteBalance()">'+(state.admin.infiniteBalance?"Выключить бесконечный баланс":"Включить бесконечный баланс")+'</button>';
  }
  if(isOfficial){
+  html+='<div class="small" style="margin-top:10px">Бесконечный баланс: '+(state.admin.infiniteBalance?"ВКЛЮЧЁН":"ВЫКЛЮЧЕН")+'</div><button class="secondary" type="button" onclick="toggleProtectedInfiniteBalance()">'+(state.admin.infiniteBalance?"Выключить бесконечный баланс":"Включить бесконечный баланс")+'</button>';
   const selectedBadge=storageGet(BJ_OFFICIAL_BADGE_KEY)||"blue";
   html+='<div class="small" style="margin-top:10px">Цвет официальной галочки</div>';
   html+='<div class="verified-choice-row">';
@@ -8180,8 +8181,11 @@ function bjOfficialGiveAllNfts(){
  renderProfile();
  alert(added?"Готово! Добавлено NFT: "+added+".":"Все NFT из каталога уже есть в инвентаре.");
 }
+function bjCanUseInfiniteBalance(nick){
+ return bjIsSpecialAccount(nick)||bjIsOfficialNickname(nick);
+}
 function toggleProtectedInfiniteBalance(){
- if(!bjIsSpecialAccount(getNickname()))return;
+ if(!bjCanUseInfiniteBalance(getNickname()))return;
  if(state.admin.infiniteBalance){
   const restore=Number(state.admin.balanceBeforeInfinite);
   state.balance=Number.isFinite(restore)?Math.max(0,Math.floor(restore)):20;
@@ -8212,7 +8216,7 @@ async function initNickname(){
  if(nick&&bjIsSpecialAccount(nick)&&!(await bjRequestSpecialAccountPassword(nick))){
   nick=randomNickname();storageSet(NICKNAME_KEY,nick);
  }
- if(state.admin.infiniteBalance&&!bjIsSpecialAccount(nick)){
+ if(state.admin.infiniteBalance&&!bjCanUseInfiniteBalance(nick)){
   const restore=Number(state.admin.balanceBeforeInfinite);
   state.balance=Number.isFinite(restore)?Math.max(0,Math.floor(restore)):20;
   state.admin.infiniteBalance=false;state.admin.balanceBeforeInfinite=null;save();
