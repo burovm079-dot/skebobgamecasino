@@ -381,91 +381,75 @@ body.dashboard-home #skebobDashboard .sk-game:nth-child(3n + 1) .sk-art img{anim
  }
 }
 
-
-/* v14: game artwork fills each game card edge-to-edge */
+/* Game cards: show the complete artwork, sized to the available card area */
 body.dashboard-home #skebobDashboard .sk-game{
- position:relative!important;overflow:hidden!important;isolation:isolate!important;
- padding:10px!important;border:1.5px solid #d35cff!important;
+  position:relative!important;
+  display:flex!important;
+  flex-direction:column!important;
+  justify-content:flex-end!important;
+  align-items:center!important;
+  overflow:hidden!important;
+  isolation:isolate!important;
+  box-sizing:border-box!important;
 }
 body.dashboard-home #skebobDashboard .sk-game .sk-art{
- position:absolute!important;inset:0!important;width:100%!important;height:100%!important;
- display:block!important;margin:0!important;padding:0!important;z-index:0!important;
- filter:none!important;overflow:hidden!important;
+  position:absolute!important;
+  inset:0!important;
+  width:100%!important;
+  height:100%!important;
+  display:flex!important;
+  align-items:center!important;
+  justify-content:center!important;
+  margin:0!important;
+  padding:0!important;
+  overflow:hidden!important;
+  z-index:0!important;
+  pointer-events:none!important;
+  background:radial-gradient(ellipse at 50% 38%,#512078 0%,#241039 58%,#10051f 100%)!important;
 }
 body.dashboard-home #skebobDashboard .sk-game .sk-art img{
- position:absolute!important;inset:0!important;display:block!important;
- width:100%!important;height:100%!important;max-width:none!important;max-height:none!important;
- object-fit:cover!important;object-position:center!important;
- margin:0!important;padding:0!important;border:0!important;border-radius:inherit!important;
- filter:none!important;transform:none!important;animation:none!important;
+  display:block!important;
+  position:relative!important;
+  inset:auto!important;
+  flex:0 1 auto!important;
+  width:100%!important;
+  height:100%!important;
+  min-width:0!important;
+  min-height:0!important;
+  max-width:100%!important;
+  max-height:100%!important;
+  object-fit:contain!important;
+  object-position:center center!important;
+  margin:0!important;
+  padding:0!important;
+  border:0!important;
+  border-radius:0!important;
+  filter:drop-shadow(0 5px 10px rgba(0,0,0,.45))!important;
+  transform:none!important;
+  animation:none!important;
 }
 body.dashboard-home #skebobDashboard .sk-game:before{
- z-index:1!important;pointer-events:none!important;opacity:.08!important;
+  z-index:1!important;
+  pointer-events:none!important;
 }
 body.dashboard-home #skebobDashboard .sk-game:after{
- content:""!important;position:absolute!important;inset:45% 0 0!important;
- background:linear-gradient(180deg,transparent 0%,rgba(10,2,22,.45) 38%,rgba(10,2,22,.96) 100%)!important;
- z-index:1!important;pointer-events:none!important;
+  content:""!important;
+  position:absolute!important;
+  inset:62% 0 0!important;
+  background:linear-gradient(180deg,transparent 0%,rgba(10,2,22,.68) 38%,rgba(10,2,22,.97) 100%)!important;
+  z-index:1!important;
+  pointer-events:none!important;
 }
 body.dashboard-home #skebobDashboard .sk-game .sk-game-name{
- position:relative!important;z-index:2!important;width:100%!important;
- margin:0 0 7px!important;padding:0 3px!important;text-align:center!important;
+  position:relative!important;
+  z-index:2!important;
+  width:100%!important;
+  margin:0 0 7px!important;
+  padding:0 3px!important;
+  text-align:center!important;
 }
 body.dashboard-home #skebobDashboard .sk-game .sk-play{
- position:relative!important;z-index:2!important;flex:0 0 auto!important;
-}
-@media(max-width:760px){
- body.dashboard-home #skebobDashboard .sk-game{padding:8px!important}
- body.dashboard-home #skebobDashboard .sk-game .sk-play{font-size:14px!important;padding:8px 8px!important}
-}
-
-
-/* v15: show the complete original game artwork without cropping */
-body.dashboard-home #skebobDashboard .sk-game .sk-art{
- position:absolute!important;inset:8px 8px 27%!important;
- width:auto!important;height:auto!important;overflow:hidden!important;
- display:flex!important;align-items:center!important;justify-content:center!important;
- background:radial-gradient(ellipse at center,rgba(105,0,190,.24),transparent 72%)!important;
-}
-body.dashboard-home #skebobDashboard .sk-game .sk-art img{
- position:relative!important;inset:auto!important;display:block!important;
- width:100%!important;height:100%!important;max-width:100%!important;max-height:100%!important;
- object-fit:contain!important;object-position:center center!important;
- border:0!important;border-radius:12px!important;padding:0!important;margin:0!important;
- filter:drop-shadow(0 5px 9px rgba(0,0,0,.42))!important;
- transform:none!important;animation:none!important;
-}
-body.dashboard-home #skebobDashboard .sk-game:after{
- inset:55% 0 0!important;
- background:linear-gradient(180deg,transparent 0%,rgba(10,2,22,.84) 42%,rgba(10,2,22,.98) 100%)!important;
-}
-
-
-/* v16: fit the entire game image inside the whole button */
-body.dashboard-home #skebobDashboard .sk-game{
- position:relative!important;overflow:hidden!important;
-}
-body.dashboard-home #skebobDashboard .sk-game .sk-art{
- position:absolute!important;inset:0!important;width:100%!important;height:100%!important;
- display:flex!important;align-items:center!important;justify-content:center!important;
- margin:0!important;padding:0!important;overflow:hidden!important;z-index:0!important;
- background:linear-gradient(145deg,#321052,#10051f)!important;
-}
-body.dashboard-home #skebobDashboard .sk-game .sk-art img{
- position:relative!important;inset:auto!important;display:block!important;
- width:100%!important;height:100%!important;max-width:100%!important;max-height:100%!important;
- object-fit:contain!important;object-position:center!important;
- margin:0!important;padding:0!important;border:0!important;border-radius:0!important;
- filter:drop-shadow(0 4px 8px rgba(0,0,0,.38))!important;
- transform:none!important;animation:none!important;
-}
-body.dashboard-home #skebobDashboard .sk-game:before{z-index:1!important;pointer-events:none!important}
-body.dashboard-home #skebobDashboard .sk-game:after{
- content:""!important;position:absolute!important;inset:58% 0 0!important;
- background:linear-gradient(180deg,transparent 0%,rgba(10,2,22,.72) 38%,rgba(10,2,22,.97) 100%)!important;
- z-index:1!important;pointer-events:none!important;
-}
-body.dashboard-home #skebobDashboard .sk-game .sk-game-name,
-body.dashboard-home #skebobDashboard .sk-game .sk-play{
- position:relative!important;z-index:2!important;
+  position:relative!important;
+  z-index:2!important;
+  flex:0 0 auto!important;
 }
