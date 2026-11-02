@@ -6331,7 +6331,7 @@ function initPlane3D(){
   ctx.restore();
  }
  function drawRocket(r){ctx.save();ctx.translate(r.x*plane2d.w,r.y*plane2d.h);ctx.rotate(r.angle);ctx.shadowColor="#ff6a25";ctx.shadowBlur=13;const flame=ctx.createLinearGradient(-31,0,-9,0);flame.addColorStop(0,"rgba(255,55,20,0)");flame.addColorStop(1,"#fff2a0");ctx.fillStyle=flame;ctx.beginPath();ctx.moveTo(-34,0);ctx.lineTo(-10,-4);ctx.lineTo(-10,4);ctx.closePath();ctx.fill();ctx.fillStyle="#ffb54b";ctx.fillRect(-13,-3,22,6);ctx.fillStyle="#d92732";ctx.beginPath();ctx.moveTo(8,-6);ctx.lineTo(19,0);ctx.lineTo(8,6);ctx.closePath();ctx.fill();ctx.fillStyle="#ff6842";ctx.beginPath();ctx.moveTo(-8,-3);ctx.lineTo(-15,-9);ctx.lineTo(-3,-4);ctx.moveTo(-8,3);ctx.lineTo(-15,9);ctx.lineTo(-3,4);ctx.fill();ctx.restore();}
- function drawBonus(b,t){const x=b.x*plane2d.w,y=b.y*plane2d.h,rad=Math.max(18,b.r*1.15);ctx.save();ctx.translate(x,y);ctx.shadowColor=b.color;ctx.shadowBlur=20;ctx.fillStyle="rgba(5,18,54,.88)";ctx.strokeStyle=b.color;ctx.lineWidth=3;ctx.beginPath();ctx.arc(0,0,rad+5,0,Math.PI*2);ctx.fill();ctx.stroke();ctx.fillStyle=b.color;ctx.globalAlpha=.22;ctx.beginPath();ctx.arc(0,0,rad,0,Math.PI*2);ctx.fill();ctx.globalAlpha=1;ctx.fillStyle="#fff";ctx.font="900 "+Math.max(17,rad*.95)+"px Arial";ctx.textAlign="center";ctx.textBaseline="middle";ctx.fillText(b.label,0,1);ctx.restore();}
+ function drawBonus(b,t){const x=b.x*plane2d.w,y=b.y*plane2d.h;ctx.save();ctx.translate(x,y);ctx.shadowColor=b.color;ctx.shadowBlur=16;ctx.fillStyle=b.color;ctx.font="900 "+Math.max(18,b.r*1.25)+"px Arial";ctx.textAlign="center";ctx.textBaseline="middle";ctx.fillText(b.label,0,0);ctx.restore();}
  function frame(ts){plane2dFrame=requestAnimationFrame(frame);const w=plane2d.w,h=plane2d.h,t=ts/1000;if(!w||!h)return;
   ctx.clearRect(0,0,w,h);const sky=ctx.createLinearGradient(0,0,0,h);sky.addColorStop(0,"#071b63");sky.addColorStop(.62,"#173a91");sky.addColorStop(1,"#527db3");ctx.fillStyle=sky;ctx.fillRect(0,0,w,h);
   const sim=planeSim;const scroll=sim?sim.distance*.18:t*7;
@@ -6414,18 +6414,11 @@ function updatePlaneFlight(){
   sim.distance+=dt*22;sim.x=Math.min(.73,.19+sim.distance/820*.54);
   sim.vy+=(sim.targetY-sim.y)*.85*dt;sim.y+=sim.vy*dt;sim.vy*=.985;
   sim.altitude=Math.max(0,Math.min(1,(.84-sim.y)/.62));
-  // Bonus orbs drift into the flight path; rewards affect the virtual multiplier and flight height.
-  sim.bonuses.forEach(b=>{b.x-=dt*(.19+sim.distance/4500);if(!b.hit&&Math.hypot(b.x-sim.x,b.y-sim.y)<.075){b.hit=true;if(b.kind==="boost"){planeMultiplier=Math.min(1000,planeMultiplier*b.factor);sim.targetY=Math.max(.10,sim.targetY-(b.factor>=5?.13:b.factor>=3?.10:.065));sim.vy-=b.factor>=5?.065:.035;planeEvent("✨ СОБРАН МНОЖИТЕЛЬ "+b.label+" · ×"+planeMultiplier.toFixed(2));}else{planeMultiplier=Math.max(.1,planeMultiplier/2);sim.damage++;sim.targetY=Math.min(.77,sim.targetY+.12);sim.vy+=.07;sim.hitFlash=1;planeEvent("🚀 ПОПАДАНИЕ /2");}}});
-  // Самонаводящиеся ракеты: каждый кадр корректируют курс к текущей позиции самолёта.
-  sim.rockets.forEach(r=>{
-   const dx=sim.x-r.x,dy=sim.y-r.y,dist=Math.hypot(dx,dy)||.0001,step=r.speed*dt;
-   r.x+=(dx/dist)*Math.min(step,dist);r.y+=(dy/dist)*Math.min(step,dist);
-   r.angle=Math.atan2(dy,dx);
-   if(!r.hit&&dist<.058){r.hit=true;planeMultiplier=Math.max(.1,planeMultiplier/2);sim.damage++;sim.targetY=Math.min(.80,sim.targetY+.15);sim.vy+=.10;sim.hitFlash=1;planeEvent("🚀 РАКЕТА ДОГНАЛА САМОЛЁТ · МНОЖИТЕЛЬ /2");}
-  });
-  sim.bonuses=sim.bonuses.filter(b=>b.x>-.1&&!b.hit);sim.rockets=sim.rockets.filter(r=>r.x>-.1&&!r.hit);
-  if(sim.bonuses.length<10&&Math.random()<.14){const vals=[{label:"1",kind:"boost",factor:1.1,color:"#e8f7ff",r:15},{label:"2",kind:"boost",factor:2,color:"#75caff",r:17},{label:"×3",kind:"boost",factor:3,color:"#b5f5ff",r:19},{label:"×5",kind:"boost",factor:5,color:"#55c8ff",r:21},{label:"×10",kind:"boost",factor:10,color:"#4b8fff",r:24},{label:"/2",kind:"hit",factor:.5,color:"#ff5757",r:17}];const v=vals[Math.floor(Math.random()*vals.length)];sim.bonuses.push({x:1.04,y:.18+Math.random()*.58,...v,hit:false});}
-  if(sim.rockets.length<10&&Math.random()<.16){const fromTop=Math.random()<.35;sim.rockets.push({x:1.04,y:fromTop?-.02:.08+Math.random()*.82,speed:.62+Math.random()*.32,angle:Math.PI,hit:false});}
+  // Редкие бонусы заранее расставлены в небе, как в референсе: они не преследуют самолёт.
+  sim.bonuses.forEach(b=>{b.x-=dt*.115;if(!b.hit&&Math.hypot((b.x-sim.x)*1.15,b.y-sim.y)<.065){b.hit=true;planeMultiplier=Math.min(1000,planeMultiplier*b.factor);sim.targetY=Math.max(.10,sim.targetY-(b.factor>=5?.13:b.factor>=3?.10:.065));sim.vy-=b.factor>=5?.065:.035;planeEvent("✨ СОБРАН МНОЖИТЕЛЬ "+b.label+" · ×"+planeMultiplier.toFixed(2));}});
+  // Ракеты летят прямо по горизонтали, без самонаведения и резких поворотов.
+  sim.rockets.forEach(r=>{r.x-=dt*r.speed;r.angle=Math.PI;if(!r.hit&&Math.abs(r.x-sim.x)<.045&&Math.abs(r.y-sim.y)<.055){r.hit=true;planeMultiplier=Math.max(.1,planeMultiplier/2);sim.damage++;sim.targetY=Math.min(.80,sim.targetY+.15);sim.vy+=.10;sim.hitFlash=1;planeEvent("🚀 ПОПАДАНИЕ РАКЕТЫ · МНОЖИТЕЛЬ /2");}});
+  sim.bonuses=sim.bonuses.filter(b=>b.x>-.08&&!b.hit);sim.rockets=sim.rockets.filter(r=>r.x>-.08&&!r.hit);
   if(sim.hitFlash>0)sim.hitFlash=Math.max(0,sim.hitFlash-.07);
   planeMultiplier=Math.min(1000,planeMultiplier+dt*.018);planeSetHud("В ПОЛЁТЕ","✈️ Лови бонусы и уклоняйся от ракет. Авианосец появится впереди.","#ffcf58");
   if(elapsed>=23)planeBeginApproach();
@@ -6444,7 +6437,7 @@ async function startPlaneGame(){
  const status=document.getElementById("planeStatus"),stage=document.getElementById("planeStage");
  if(status){status.style.color="#ffbd42";status.textContent="✈️ Двигатели запущены. Самолёт разбегается по палубе…";}if(stage)stage.textContent="РАЗБЕГ";
  await planeWait(700);
- planeSim={phase:"cruise",x:.2,y:.78,targetY:.56,vy:-.12,altitude:.08,distance:0,angle:-.12,damage:0,hitFlash:0,bonuses:[],rockets:[],showCarrier:false};
+ planeSim={phase:"cruise",x:.2,y:.78,targetY:.56,vy:-.12,altitude:.08,distance:0,angle:-.12,damage:0,hitFlash:0,bonuses:[{x:.43,y:.49,label:"+1",kind:"boost",factor:1.15,color:"#b8ff5a",r:18,hit:false},{x:.68,y:.36,label:"×3",kind:"boost",factor:3,color:"#b8ff5a",r:20,hit:false},{x:.91,y:.57,label:"×5",kind:"boost",factor:5,color:"#b8ff5a",r:21,hit:false}],rockets:[{x:.62,y:.66,speed:.52,angle:Math.PI,hit:false},{x:.98,y:.42,speed:.58,angle:Math.PI,hit:false}],showCarrier:false};
  plane2dPhase="cruise";planeInFlight=true;planeStartedAt=performance.now();planeAnimationTimer=setInterval(updatePlaneFlight,50);
  updatePlaneControls();planeEvent("✈️ ОТРЫВ ОТ ПАЛУБЫ!");
 }
