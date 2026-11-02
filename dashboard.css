@@ -300,3 +300,33 @@ body.dashboard-home #skebobDashboard .sk-game:nth-child(3n + 1) .sk-art img{anim
   flex:0 0 76px!important;margin:0!important;
  }
 }
+
+
+/* v11: remove the extra button frame and make each supplied artwork the exact tile */
+#skebobDashboard .sk-side button.sk-menu-item,
+#skebobDashboard .sk-side a.sk-menu-item{
+ box-sizing:border-box!important;position:relative!important;display:block!important;
+ width:100%!important;min-width:0!important;max-width:100%!important;
+ height:76px!important;min-height:76px!important;max-height:76px!important;
+ flex:0 0 76px!important;margin:0!important;padding:0!important;
+ border:0!important;outline:0!important;border-radius:12px!important;
+ background:transparent!important;box-shadow:none!important;
+ overflow:hidden!important;isolation:isolate!important;
+}
+#skebobDashboard .sk-side .sk-menu-item img{
+ position:absolute!important;inset:-3px!important;display:block!important;
+ width:calc(100% + 6px)!important;height:calc(100% + 6px)!important;
+ min-width:0!important;min-height:0!important;max-width:none!important;max-height:none!important;
+ margin:0!important;padding:0!important;flex:none!important;
+ object-fit:cover!important;object-position:center!important;border:0!important;
+ border-radius:inherit!important;z-index:1!important;
+}
+#skebobDashboard .sk-side .sk-menu-item span{display:none!important}
+#skebobDashboard .sk-side .sk-menu-item:hover{transform:none!important;filter:brightness(1.06)}
+@media(max-width:760px){
+ #skebobDashboard .sk-side button.sk-menu-item,
+ #skebobDashboard .sk-side a.sk-menu-item{
+  width:100%!important;height:76px!important;min-height:76px!important;max-height:76px!important;
+  flex:0 0 76px!important;margin:0!important;padding:0!important;
+ }
+}
