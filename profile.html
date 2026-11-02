@@ -13,7 +13,7 @@ header{padding:18px 22px;border-bottom:1px solid var(--border);display:flex;just
 button,input{font:inherit}button{cursor:pointer;border:1px solid var(--border);border-radius:10px;padding:10px 14px;background:var(--panel2);color:var(--text);font-weight:700}
 main{width:min(720px,calc(100% - 28px));margin:34px auto}.card{background:var(--panel);border:1px solid var(--border);border-radius:18px;padding:22px;margin-bottom:16px}
 .hero{text-align:center;padding:32px 20px}.avatar{font-size:58px}.eyebrow{color:var(--muted);font-size:12px;letter-spacing:1.4px;font-weight:800;margin-top:12px}
-h1{font-size:27px;margin:9px 0 7px}.collector-badge{display:none;margin:12px auto 0;padding:10px 14px;width:fit-content;border:1px solid #ffe16b;border-radius:12px;color:#ffe16b;background:#ffe16b12;font-weight:900;box-shadow:0 0 18px #ffc40033}.muted{color:var(--muted);line-height:1.5}.verified{display:inline-grid;place-items:center;vertical-align:middle;width:20px;height:20px;margin-left:7px;border-radius:50%;background:#258cf4;color:white;font-size:13px;font-weight:900}
+h1{font-size:27px;margin:9px 0 7px}.collector-badge{display:none;margin:12px auto 0;padding:10px 14px;width:fit-content;border:1px solid #ffe16b;border-radius:12px;color:#ffe16b;background:#ffe16b12;font-weight:900;box-shadow:0 0 18px #ffc40033}.muted{color:var(--muted);line-height:1.5}.verified{display:inline-grid;place-items:center;vertical-align:middle;width:20px;height:20px;margin-left:7px;border-radius:50%;background:#258cf4;color:white;font-size:13px;font-weight:900}.verified.verified-gold{background:#e0aa20}.verified.verified-green{background:#20a568}.verified.verified-blue{background:#258cf4}.badge-choices{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}.badge-choices button{flex:1;min-width:120px}.badge-choices button.active{outline:2px solid var(--gold);background:#493819;color:#ffda7c}
 .field{display:flex;gap:9px;margin-top:12px}.field input{flex:1;min-width:0;padding:12px;border-radius:10px;border:1px solid var(--border);background:var(--panel2);color:var(--text)}
 .notice{font-size:13px;color:var(--muted);margin-top:12px}.official-tools{display:none}.official-tools button{width:100%;margin-top:12px;background:#493819;color:#ffda7c;border-color:#80652e}.nft-result{margin-top:12px;font-size:13px;color:var(--muted)}.actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:14px}.primary{background:#493819;color:#ffda7c;border-color:#80652e}
 footer{text-align:center;color:var(--muted);font-size:12px;padding:20px}
@@ -33,7 +33,7 @@ footer{text-align:center;color:var(--muted);font-size:12px;padding:20px}
 </section>
 <section class="card official-tools" id="officialTools">
 <h2>⭐ Инструменты SKEBOB OFFICIAL</h2>
-<div class="muted">Выдать все NFT из основного каталога игры в инвентарь этого браузера.</div>
+<div class="muted">Выбери цвет галочки — он сохранится в этом браузере и будет использоваться в онлайн-блэкджеке.</div><div class="badge-choices" id="badgeChoices"><button type="button" data-badge-color="gold">🟡 Золотая ✓</button><button type="button" data-badge-color="green">🟢 Зелёная ✓</button><button type="button" data-badge-color="blue">🔵 Синяя ✓</button></div><div class="muted" style="margin-top:16px">Выдать все NFT из основного каталога игры в инвентарь этого браузера.</div>
 <button class="primary" id="giveAllNfts" type="button">🎁 ВЫДАТЬ ВСЕ NFT</button>
 <div class="nft-result" id="nftResult" aria-live="polite"></div>
 </section>
@@ -47,6 +47,13 @@ footer{text-align:center;color:var(--muted);font-size:12px;padding:20px}
  const tools=document.getElementById('officialTools');
  function currentNick(){return localStorage.getItem('skebobNickname')||localStorage.getItem('skebobProfileNickname')||'Player';}
  function isOfficial(){return currentNick().trim().replace(/\\s+/g,' ').toLocaleUpperCase('ru')===official;}
+ const badgeKey='skebobOfficialBadgeColor';
+ const badgeClasses={gold:'verified-gold',green:'verified-green',blue:'verified-blue'};
+ function setBadgeColor(color){
+  if(!isOfficial()||!Object.prototype.hasOwnProperty.call(badgeClasses,color))return;
+  localStorage.setItem(badgeKey,color);
+  render();
+ }
  function giveAllNfts(){
   if(!isOfficial()){alert('Функция доступна только профилю SKEBOB OFFICIAL.');return;}
   let save={};
@@ -74,11 +81,15 @@ footer{text-align:center;color:var(--muted);font-size:12px;padding:20px}
   let saved={};try{saved=JSON.parse(localStorage.getItem('skebobSave')||'{}')||{};}catch(e){}
   document.getElementById('collectorBadge').style.display=saved.collectionAchievement&&saved.collectionAchievement.unlocked?'block':'none';
   tools.style.display=isOfficial()?'block':'none';
+  const selected=localStorage.getItem(badgeKey)||'blue';
+  document.querySelectorAll('[data-badge-color]').forEach(button=>button.classList.toggle('active',button.dataset.badgeColor===selected));
   if(nick.trim().toLocaleUpperCase('ru')===official){
-   const mark=document.createElement('span');mark.className='verified';mark.textContent='✓';mark.title='SKEBOB OFFICIAL';mark.setAttribute('aria-label','Отметка SKEBOB OFFICIAL');shown.appendChild(mark);
+   const color=localStorage.getItem(badgeKey)||'blue';
+   const mark=document.createElement('span');mark.className='verified '+(badgeClasses[color]||badgeClasses.blue);mark.textContent='✓';mark.title='SKEBOB OFFICIAL';mark.setAttribute('aria-label','Отметка SKEBOB OFFICIAL');shown.appendChild(mark);
   }
  }
- document.getElementById('giveAllNfts').addEventListener('click',giveAllNfts);\n document.getElementById('themeButton').addEventListener('click',function(){
+ document.getElementById('giveAllNfts').addEventListener('click',giveAllNfts);
+ document.querySelectorAll('[data-badge-color]').forEach(button=>button.addEventListener('click',()=>setBadgeColor(button.dataset.badgeColor)));\n document.getElementById('themeButton').addEventListener('click',function(){
   document.body.classList.toggle('light');
   localStorage.setItem('skebobProfileLight',document.body.classList.contains('light')?'1':'0');
  });
