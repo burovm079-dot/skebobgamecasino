@@ -4214,8 +4214,15 @@ const isDashboard=id==="dashboard";
 document.body.classList.toggle("dashboard-home",isDashboard);
 document.body.classList.toggle("legacy-page-active",!isDashboard);
 const back=document.getElementById("skebob-back-home");if(back)back.classList.toggle("visible",!isDashboard);
+const shell=document.getElementById("skebobDashboard");
+const work=shell&&shell.querySelector(".sk-work");
+const games=work&&work.querySelector(".sk-games");
+let pageView=work&&work.querySelector("#sk-page-view");
+if(work&&!pageView){pageView=document.createElement("div");pageView.id="sk-page-view";pageView.className="sk-page-view";if(games)games.insertAdjacentElement("afterend",pageView);else work.appendChild(pageView);}
+if(games)games.classList.toggle("hidden",!isDashboard);
 if(isDashboard){
-document.querySelectorAll("main section[id], body > section[id]").forEach(section=>section.classList.add("hidden"));
+document.querySelectorAll("section[id]").forEach(section=>section.classList.add("hidden"));
+if(pageView)pageView.replaceChildren();
 window.scrollTo({top:0,behavior:"smooth"});
 return;
 }
@@ -4225,6 +4232,7 @@ if(id==="collection")renderCollection();
 document.querySelectorAll("section[id]").forEach(section=>section.classList.add("hidden"));
 const target=document.getElementById(id);
 if(target){
+if(pageView&&target.parentElement!==pageView)pageView.appendChild(target);
 target.classList.remove("hidden");
 }else{
 console.warn("Страница не найдена:",id);
