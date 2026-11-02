@@ -1692,6 +1692,61 @@ body.light #caseList .case,body.light .panel{background:linear-gradient(145deg,#
 .bj-table{background-image:radial-gradient(ellipse at 50% 42%,#258456 0%,#12613f 48%,#08442f 78%,#052d22 100%),repeating-linear-gradient(35deg,#ffffff05 0 1px,transparent 1px 4px)}
 
 
+/* Reference-flight scene: panoramic sky, distant ocean, ship and small aircraft */
+.plane-world{
+ height:300px!important;
+ border:1px solid #315c88!important;
+ border-radius:15px!important;
+ overflow:hidden!important;
+ background:linear-gradient(180deg,#071d66 0%,#123b91 35%,#347db6 62%,#b6d9e8 68%,#1b628b 69%,#06375d 100%)!important;
+}
+.plane-world:before{
+ content:"";position:absolute;inset:0;z-index:0;pointer-events:none;
+ background:radial-gradient(ellipse at 75% 15%,#b9dfff55,transparent 36%),linear-gradient(180deg,transparent 55%,#d8f3ff22 67%,transparent 71%);
+}
+.plane-world:after{
+ content:"";position:absolute;left:-15%;right:-15%;bottom:0;height:33%;z-index:1;pointer-events:none;
+ background:repeating-linear-gradient(174deg,transparent 0 10px,#bdeeff42 11px 12px,transparent 13px 25px),linear-gradient(180deg,#155b83,#062b50);
+ animation:planeOceanFlow 5s linear infinite;
+}
+@keyframes planeOceanFlow{from{background-position:0 0,0 0}to{background-position:-180px 0,0 0}}
+.plane-world .cloud{z-index:2;opacity:.95;color:#f1f7ff;text-shadow:0 5px 7px #071d4655;filter:drop-shadow(0 4px 4px #00152d55);font-size:54px}
+.plane-world .cloud1{left:4%;top:20%;animation:planeCloudA 13s linear infinite}
+.plane-world .cloud2{left:66%;right:auto;top:12%;font-size:68px;animation:planeCloudB 18s linear infinite}
+.plane-world .cloud3{left:36%;top:43%;font-size:42px;animation:planeCloudA 22s linear infinite reverse}
+@keyframes planeCloudA{from{translate:65px 0}to{translate:-110px 0}}
+@keyframes planeCloudB{from{translate:90px 0}to{translate:-150px 0}}
+.plane-world .plane-sun{display:block;z-index:0;width:43px;height:43px;right:12%;top:12%;background:#fff2b8;box-shadow:0 0 35px #fff2b899}
+.plane-world .plane-sea{display:block!important;z-index:1;bottom:0;height:33%;opacity:.9;background:repeating-linear-gradient(178deg,#c5efff55 0 1px,transparent 2px 13px)}
+.plane-world .carrier{
+ display:block!important;z-index:4;left:53%;bottom:14%;width:37%;height:9px;
+ background:linear-gradient(#8795a6,#303c4b 55%,#172433);border-top:2px solid #d4e5ed;
+ transform:perspective(100px) rotateX(8deg);box-shadow:0 5px 8px #00182b88;
+}
+.plane-world .carrier:after{height:12px;top:8px;background:linear-gradient(90deg,#172330,#405365,#172330)}
+.plane-world .carrier-tower{left:58%;bottom:8px;width:17px;height:24px;background:linear-gradient(90deg,#293849,#a4b7c6,#334456);clip-path:polygon(18% 0,85% 0,100% 100%,0 100%)}
+.plane-world .landing-carrier{z-index:4}
+.plane-world .plane-object{
+ left:23%;bottom:43%;width:58px;height:37px;font-size:0;z-index:8;
+ filter:drop-shadow(0 3px 3px #00152caa);transform:rotate(-13deg);
+ transition:left .45s ease,bottom .45s ease,transform .45s ease;
+}
+.plane-world .plane-model{width:100%;height:100%;overflow:visible}
+.plane-world .plane-object.flying{animation:planeReferenceFlight .8s ease-in-out infinite alternate}
+@keyframes planeReferenceFlight{from{margin-top:-2px}to{margin-top:3px}}
+.plane-world .plane-object.flying .plane-model{animation:planePropeller .12s steps(2) infinite}
+@keyframes planePropeller{from{filter:brightness(1)}to{filter:brightness(1.22)}}
+.plane-world .plane-multiplier{
+ z-index:7;top:17%;left:53%;font-size:17px;padding:5px 12px;
+ background:#101b2cdd;border:2px solid #e8b53c;border-radius:22px;
+}
+.plane-world .plane-flight-hud{z-index:15;top:auto;bottom:7px;left:7px;right:7px;justify-content:flex-start}
+.plane-world .plane-flight-hud span{background:#07172bcc;border:1px solid #ffffff55;padding:5px 7px;font-size:8px}
+.plane-world .plane-flight-hud b{font-size:11px}
+.plane-world .plane-event{z-index:20;top:49%;font-size:12px;padding:8px 12px}
+.plane-token{z-index:9;font-size:14px;color:#fff;text-shadow:0 1px 5px #001}
+@media(max-width:420px){.plane-world{height:280px!important}.plane-world .plane-object{width:52px;height:34px}}
+
 /* GLOBAL GLASS LAYER — фон виден сквозь интерфейс */
 body{
 --panel:rgba(25,26,32,.58);
@@ -6444,9 +6499,10 @@ document.getElementById(
 plane.className=
 "plane-object";
 
-plane.style.left="17%";
-plane.style.bottom="27%";
-plane.style.transform="rotate(-9deg)";
+plane.style.left="23%";
+plane.style.bottom="43%";
+plane.style.transform="rotate(-13deg) scale(1)";
+
 const world=document.querySelector(".plane-world");
 if(world)world.style.setProperty("--flight-progress","0");
 const tokens=document.getElementById("planeTokenLayer");if(tokens)tokens.innerHTML="";
@@ -6688,19 +6744,25 @@ i++
 ){
 
 const progress=(i+1)/events;
-const distance=Math.round(450+progress*12450);
-const altitude=(120+Math.pow(progress,1.35)*4380).toFixed(0);
+const distance=Math.round(progress*5000);
+const altitude=(progress*600).toFixed(0);
 document.getElementById("planeDistance").textContent=distance.toLocaleString("ru-RU")+" м";
 document.getElementById("planeAltitude").textContent=altitude.toLocaleString("ru-RU")+" м";
 
 /* The aircraft travels across the scene on a climbing diagonal; the camera/world scrolls in the opposite direction. */
 const world=document.querySelector(".plane-world");
 if(world)world.style.setProperty("--flight-progress",String(progress));
-const x=17+progress*55;
-const y=27+progress*31+Math.sin(progress*Math.PI*2)*3.5;
+/* Follow-camera effect: plane stays small in the left half while the sky, clouds, sea and ship move past it. */
+const x=23+progress*15;
+const y=43+progress*16+Math.sin(progress*Math.PI*2)*2;
 plane.style.left=x+"%";
 plane.style.bottom=y+"%";
-plane.style.transform="rotate("+(-9-progress*8)+"deg) scale("+(1+progress*.16)+")";
+plane.style.transform="rotate("+(-13-progress*5)+"deg) scale("+(1+progress*.12)+")";
+if(world){
+ world.style.setProperty("--flight-progress",String(progress));
+ const ship=world.querySelector(".carrier");
+ if(ship)ship.style.transform="translateX("+(-progress*30)+"px) perspective(100px) rotateX(8deg)";
+}
 const token=document.createElement("span");token.className="plane-token";token.textContent=Math.random()<.72?"+"+["1","2","5","10"][Math.floor(Math.random()*4)]:"×"+planeMultiplier.toFixed(1);token.style.left=(58+Math.random()*25)+"%";token.style.top=(25+Math.random()*45)+"%";document.getElementById("planeTokenLayer")?.appendChild(token);setTimeout(()=>token.remove(),1600);
 
 await planeWait(600);
@@ -6731,9 +6793,9 @@ document.getElementById(
 "show"
 );
 
-plane.style.left="77%";
-plane.style.bottom="58%";
-plane.style.transform="rotate(2deg) scale(1.12)";
+plane.style.left="43%";
+plane.style.bottom="57%";
+plane.style.transform="rotate(1deg) scale(1.08)";
 
 status.textContent=
 "🛬 Заходим на посадку...";
