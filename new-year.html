@@ -43,7 +43,7 @@ footer{text-align:center;color:var(--muted);font-size:12px;padding:10px}
 <p class="muted">Награды выдаются по фиксированной последовательности: конфеты и коллекционные предметы. Это не случайная лотерея — порядок наград заранее определён.</p>
 <div class="casebox"><div class="caseicon">🎁</div><div id="caseNext" class="muted"></div><button class="primary" onclick="openWinterCase()">ОТКРЫТЬ ЗА 200 🍬</button><div id="caseResult" class="result"></div></div>
 </section>
-<footer>Новогодние предметы остаются в инвентаре и не продаются.</footer>
+<footer>Новогодние предметы остаются в инвентаре и не продаются.</footer><div id="previewModal" class="hidden" style="position:fixed;inset:0;z-index:20;background:#000c;place-items:center;padding:20px" onclick="if(event.target===this)closePreview()"><div class="panel" style="width:min(360px,100%);text-align:center"><div id="previewIcon" style="font-size:86px"></div><h2 id="previewName"></h2><p class="muted">Новогодний коллекционный предмет SKEBOB</p><button onclick="closePreview()">ЗАКРЫТЬ</button></div></div>
 </main>
 <script>
 const KEY="skebobNewYear2026", SAVE_KEY="skebobSave";
@@ -65,8 +65,10 @@ function loadGame(){try{return JSON.parse(localStorage.getItem(SAVE_KEY)||"{}")}
 function saveEvent(){localStorage.setItem(KEY,JSON.stringify(event));document.getElementById("candies").textContent=event.candies}
 function saveGame(){localStorage.setItem(SAVE_KEY,JSON.stringify(game))}
 function showTab(id,btn){document.querySelectorAll("main section").forEach(x=>x.classList.add("hidden"));document.getElementById(id).classList.remove("hidden");document.querySelectorAll(".tabs button").forEach(x=>x.classList.remove("active"));btn.classList.add("active");if(id==="tasks")renderTask()}
-function renderShop(){document.getElementById("shopGrid").innerHTML=items.map(x=>{let owned=event.owned.includes(x.id);return '<div class="item"><div class="art">'+x.icon+'</div><h3>'+x.name+'</h3><div class="muted">Коллекционный предмет</div><button '+(owned?'disabled':'class="primary"')+' onclick="buyItem(\''+x.id+'\')">'+(owned?'УЖЕ В КОЛЛЕКЦИИ':'400 🍬')+'</button></div>'}).join("")}
+function renderShop(){document.getElementById("shopGrid").innerHTML=items.map(x=>{let owned=event.owned.includes(x.id);return '<div class="item"><div class="art" onclick="previewItem(&quot;'+x.id+'&quot;)" style="cursor:pointer">'+x.icon+'</div><h3>'+x.name+'</h3><div class="muted">Коллекционный предмет</div><button onclick="previewItem(&quot;'+x.id+'&quot;)">ПОСМОТРЕТЬ</button><button '+(owned?'disabled':'class="primary"')+' onclick="buyItem(\''+x.id+'\')">'+(owned?'УЖЕ В КОЛЛЕКЦИИ':'400 🍬')+'</button></div>'}).join("")}
 function addInventoryItem(x){game=loadGame();game.inventory=Array.isArray(game.inventory)?game.inventory:[];if(!game.inventory.some(p=>p.id===x.id)){game.inventory.push({id:x.id,name:x.name,collection:"Новый год",icon:x.icon,value:0,newYear:true,tradable:false});saveGame()}}
+function previewItem(id){let x=items.find(p=>p.id===id);if(!x)return;document.getElementById("previewIcon").textContent=x.icon;document.getElementById("previewName").textContent=x.name;let m=document.getElementById("previewModal");m.classList.remove("hidden");m.style.display="grid"}
+function closePreview(){let m=document.getElementById("previewModal");m.classList.add("hidden");m.style.display="none"}
 function buyItem(id){let x=items.find(p=>p.id===id);if(!x||event.owned.includes(id))return;if(event.candies<400){alert("Не хватает конфет!");return}event.candies-=400;event.owned.push(id);addInventoryItem(x);saveEvent();renderShop()}
 function getStat(key){game=loadGame();return Number(game.stats?.[key]||0)}
 function hourId(){return Math.floor(Date.now()/3600000)}
