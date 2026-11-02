@@ -3050,7 +3050,7 @@ id="profileBalance"
 
 <!-- BLACKJACK ONLINE: no-stakes social mode -->
 <section id="blackjack" class="hidden">
-<!-- SKEBOB_BUILD_20261102_BJ_CARD_SYNC_FIX -->
+<!-- SKEBOB_BUILD_20261102_BJ_WAIT_ALL_PLAYERS_FIX -->
 <h2>🃏 BLACKJACK ONLINE</h2>
 <p class="small">До 4 игроков за столом. Выбирай ставку перед входом в раунд и играй против общего дилера.</p>
 <div class="panel">
@@ -8411,7 +8411,7 @@ function bjOnlineBeginRound(payload){
  bjOnlineRoundLocked=true;
  bjOnlineMembers=bjOnlineMembers.map(p=>({...p,done:false,hand:[],turn:"Ходит"}));bjOnlineRound={id:payload.id,host:payload.host,finished:false,bet};bjOnlineDealer={cards:payload.dealer,revealed:false};bjOnlineBotHand=Array.isArray(payload.botHand)?payload.botHand.filter(c=>c&&BJ_RANKS.includes(c.rank)&&BJ_SUITS.includes(c.suit)):[];bjOnlineBotTurn="Ожидает своего хода";bjOnlineMyHand=[bjOnlineCard(),bjOnlineCard()];bjOnlineMyTurn=true;
  bjOnlineChannel.track({id:bjOnlineId,name:bjOnlineName(),done:false,joinedAt:bjOnlineJoinedAt,phase:"playing",bet,badgeColor:storageGet(BJ_OFFICIAL_BADGE_KEY)||"black"});
- bjOnlinePublishState();bjOnlineRender();if(bjOnlineValue(bjOnlineMyHand)===21){bjOnlineMyTurn=false;bjOnlineSend("player-done",{id:bjOnlineId,score:21,hand:bjOnlineMyHand});bjOnlineStatus("Сразу выпал блэкджек — твой ход завершён.");if(bjOnlineHost)bjOnlineFinishDealer();}else{bjOnlineStartTurnTimer();bjOnlineStatus("Раунд начался! Твой ход — бери карту или нажми «Хватит».");}return true;
+ bjOnlinePublishState();bjOnlineRender();if(bjOnlineValue(bjOnlineMyHand)===21){bjOnlineMyTurn=false;bjOnlineMembers=bjOnlineMembers.map(p=>p.id===bjOnlineId?{...p,done:true,hand:bjOnlineMyHand,turn:"Ход завершён"}:p);bjOnlineSend("player-done",{id:bjOnlineId,score:21,hand:bjOnlineMyHand});bjOnlineStatus("Сразу выпал блэкджек — твой ход завершён.");if(bjOnlineHost)bjOnlineFinishDealer();}else{bjOnlineStartTurnTimer();bjOnlineStatus("Раунд начался! Твой ход — бери карту или нажми «Хватит».");}return true;
 }
 function bjOnlineStart(){
  if(!bjOnlineHost||!bjOnlineChannel||bjOnlineMembers.length===0||bjOnlineRound&&!bjOnlineRound.finished)return;
@@ -8430,18 +8430,18 @@ function bjOnlineHit(){
 
 function bjOnlineStand(auto=false){
  if(!bjOnlineMyTurn||!bjOnlineRound||bjOnlineRound.finished){bjOnlineStatus("Сейчас нет активного хода.");return;}
- bjOnlineStopTurnTimer();bjOnlineMyTurn=false;bjOnlineChannel?.track({id:bjOnlineId,name:bjOnlineName(),done:true,joinedAt:bjOnlineJoinedAt,phase:"playing",bet:bjOnlineCurrentBet,badgeColor:storageGet(BJ_OFFICIAL_BADGE_KEY)||"black"});bjOnlinePublishState();bjOnlineSend("player-done",{id:bjOnlineId,score:bjOnlineValue(bjOnlineMyHand),hand:bjOnlineMyHand});
+ bjOnlineStopTurnTimer();bjOnlineMyTurn=false;bjOnlineMembers=bjOnlineMembers.map(p=>p.id===bjOnlineId?{...p,done:true,hand:bjOnlineMyHand,turn:"Ход завершён"}:p);bjOnlineChannel?.track({id:bjOnlineId,name:bjOnlineName(),done:true,joinedAt:bjOnlineJoinedAt,phase:"playing",bet:bjOnlineCurrentBet,badgeColor:storageGet(BJ_OFFICIAL_BADGE_KEY)||"black"});bjOnlinePublishState();bjOnlineSend("player-done",{id:bjOnlineId,score:bjOnlineValue(bjOnlineMyHand),hand:bjOnlineMyHand});
  bjOnlineStatus(auto?"Время вышло — ты автоматически завершил ход.":"Ты завершил ход. Ждём завершения раунда.");
  bjOnlineRender();
  if(bjOnlineHost)bjOnlineFinishDealer();
 }
 function bjOnlineFinishDealer(){
  if(!bjOnlineHost||!bjOnlineRound||bjOnlineRound.finished)return;
- const allDone=bjOnlineMembers.every(p=>p.done);
- if(!allDone)return;
+ const allDone=bjOnlineMembers.length>0&&bjOnlineMembers.every(p=>p.done===true);
+ if(!allDone){bjOnlineStatus("Ожидаем, пока каждый игрок завершит свой ход…");return;}
  bjOnlineBotTurn="Ходит";bjOnlineRender();bjOnlineStatus("Все игроки завершили ход. Теперь ходит SKEBOB BOT…");
  while(bjOnlineValue(bjOnlineBotHand)<17&&bjOnlineBotHand.length<12)bjOnlineDraw(bjOnlineBotHand);
- bjOnlineBotTurn="Завершил ход";
+ bjOnlineBotTurn="Завершил ход";bjOnlineRender();
  const dealer=bjOnlineDealer.cards.slice();while(bjOnlineValue(dealer)<17)bjOnlineDraw(dealer);
  bjOnlineDealer={cards:dealer,revealed:true};bjOnlineRound.finished=true;bjOnlineMyTurn=false;bjOnlineStopTurnTimer();
  bjOnlineSend("dealer-final",{round:bjOnlineRound.id,host:bjOnlineRound.host,cards:dealer,botHand:bjOnlineBotHand});
