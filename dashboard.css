@@ -277,3 +277,26 @@ body.dashboard-home #skebobDashboard .sk-game:nth-child(3n + 1) .sk-art img{anim
   text-overflow:clip!important;overflow-wrap:anywhere!important;
  }
 }
+
+
+/* v10: menu artwork fills each navigation tile edge-to-edge */
+#skebobDashboard .sk-side .sk-menu-item{
+ position:relative!important;display:block!important;padding:0!important;
+ overflow:hidden!important;isolation:isolate!important;
+}
+#skebobDashboard .sk-side .sk-menu-item img{
+ position:absolute!important;inset:0!important;display:block!important;
+ width:100%!important;height:100%!important;min-width:0!important;min-height:0!important;
+ max-width:none!important;max-height:none!important;flex:none!important;
+ object-fit:fill!important;object-position:center!important;border-radius:inherit!important;
+ z-index:0!important;
+}
+#skebobDashboard .sk-side .sk-menu-item span{display:none!important}
+#skebobDashboard .sk-side .sk-menu-item:hover{transform:none!important;filter:brightness(1.08)}
+@media(max-width:760px){
+ #skebobDashboard .sk-side .sk-menu-item{
+  width:100%!important;min-width:0!important;max-width:100%!important;
+  height:76px!important;min-height:76px!important;max-height:76px!important;
+  flex:0 0 76px!important;margin:0!important;
+ }
+}
