@@ -8142,14 +8142,15 @@ function bjSpecialAccountBadge(value){
 }
 function bjShowSpecialAccountBadge(kind){alert(kind==="media"?"Медиа-партнёр":"VIP-пользователь");}
 function bjIsSpecialAccount(value){return !!bjSpecialAccountInfo(value);}
+function bjIsVipAccount(value){return bjSpecialAccountInfo(value)?.kind==="vip";}
 function renderSpecialAccountControls(){
  const host=document.getElementById("specialAccountControls");
  if(!host)return;
- if(!bjIsSpecialAccount(getNickname())){host.innerHTML="";return;}
+ if(!bjIsVipAccount(getNickname())){host.innerHTML="";return;}
  host.innerHTML='<div class="special-account-controls"><b>⭐ Управление аккаунтом</b><div class="small">Бесконечный баланс: '+(state.admin.infiniteBalance?"ВКЛЮЧЁН":"ВЫКЛЮЧЕН")+'</div><button class="secondary" type="button" onclick="toggleProtectedInfiniteBalance()">'+(state.admin.infiniteBalance?"Выключить бесконечный баланс":"Включить бесконечный баланс")+'</button></div>';
 }
 function toggleProtectedInfiniteBalance(){
- if(!bjIsSpecialAccount(getNickname()))return;
+ if(!bjIsVipAccount(getNickname()))return;
  if(state.admin.infiniteBalance){
   const restore=Number(state.admin.balanceBeforeInfinite);
   state.balance=Number.isFinite(restore)?Math.max(0,Math.floor(restore)):20;
@@ -8180,7 +8181,7 @@ async function initNickname(){
  if(nick&&bjIsSpecialAccount(nick)&&!(await bjRequestSpecialAccountPassword(nick))){
   nick=randomNickname();storageSet(NICKNAME_KEY,nick);
  }
- if(state.admin.infiniteBalance&&!bjIsSpecialAccount(nick)){
+ if(state.admin.infiniteBalance&&!bjIsVipAccount(nick)){
   const restore=Number(state.admin.balanceBeforeInfinite);
   state.balance=Number.isFinite(restore)?Math.max(0,Math.floor(restore)):20;
   state.admin.infiniteBalance=false;state.admin.balanceBeforeInfinite=null;save();
@@ -8205,7 +8206,7 @@ async function changeNickname(){
  if(bjIsSpecialAccount(nick)&&!(await bjRequestSpecialAccountPassword(nick)))return;
  if(bjIsOfficialNickname(nick)&&!bjRequestOfficialCode())return;
  if(!storageSet(NICKNAME_KEY,nick)){alert("Не удалось сохранить nickname. Попробуй ещё раз.");return;}
- if(state.admin.infiniteBalance&&!bjIsSpecialAccount(nick)){
+ if(state.admin.infiniteBalance&&!bjIsVipAccount(nick)){
   const restore=Number(state.admin.balanceBeforeInfinite);
   state.balance=Number.isFinite(restore)?Math.max(0,Math.floor(restore)):20;
   state.admin.infiniteBalance=false;state.admin.balanceBeforeInfinite=null;save();
