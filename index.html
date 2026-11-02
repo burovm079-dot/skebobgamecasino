@@ -1737,6 +1737,12 @@ background-color:var(--panel)!important;
 <script>
 // Независимый аварийный таймер заставки.
 (()=>{const splash=document.getElementById("entrySplash");if(!splash)return;requestAnimationFrame(()=>splash.classList.add("loading"));setTimeout(()=>splash.classList.add("splash-hidden"),4500);})();
+
+/* Branded in-game dialogs replace browser popups that expose the site domain */
+function skebobDialog(type,message,defaultValue=""){return new Promise(resolve=>{const root=document.getElementById("skebobDialog");if(!root){resolve(type==="confirm"?false:type==="prompt"?null:undefined);return;}const title=root.querySelector("[data-dialog-title]"),body=root.querySelector("[data-dialog-message]"),field=root.querySelector("[data-dialog-input]"),cancel=root.querySelector("[data-dialog-cancel]"),ok=root.querySelector("[data-dialog-ok]");title.textContent=type==="confirm"?"Подтверждение":type==="prompt"?"Введите данные":"Уведомление";body.textContent=String(message??"");field.style.display=type==="prompt"?"block":"none";field.value=defaultValue??"";cancel.style.display=type==="alert"?"none":"";root.style.display="flex";const finish=value=>{root.style.display="none";ok.onclick=null;cancel.onclick=null;root.onkeydown=null;resolve(value);};ok.onclick=()=>finish(type==="prompt"?field.value:type==="confirm");cancel.onclick=()=>finish(type==="prompt"?null:false);root.onkeydown=e=>{if(e.key==="Escape"&&type!=="alert"){e.preventDefault();finish(type==="prompt"?null:false)}else if(e.key==="Enter"){e.preventDefault();finish(type==="prompt"?field.value:type==="confirm")}};setTimeout(()=>{(type==="prompt"?field:ok).focus()},30)})}
+window.alert=message=>{void skebobDialog("alert",message)};
+window.confirm=message=>{void skebobDialog("confirm",message);return false};
+window.prompt=(message,value)=>{void skebobDialog("prompt",message,value);return null};
 </script>
 
 <header>
@@ -5478,7 +5484,7 @@ save();
 
 }
 
-function sellAllItems(){
+async function sellAllItems(){
 
 if(
 !state.inventory.length
@@ -5497,15 +5503,7 @@ x.value||0
 const count=
 state.inventory.length;
 
-if(
-!confirm(
-"Продать всё за "+
-total.toLocaleString(
-"ru-RU"
-)+
-" 🪙?"
-)
-)return;
+if(!(await skebobDialog("confirm","Продать всё за "+total.toLocaleString("ru-RU")+" 🪙?")))return;
 
 state.balance+=total;
 
@@ -7625,13 +7623,9 @@ state.admin.manualLevel
    RESET
 ========================= */
 
-function resetGame(){
+async function resetGame(){
 
-if(
-!confirm(
-"Сбросить игровой прогресс?"
-)
-)return;
+if(!(await skebobDialog("confirm","Сбросить игровой прогресс?")))return;
 
 state={
 
@@ -8146,8 +8140,8 @@ function bjSetOfficialBadgeColor(color){
  if(typeof renderBjOnlineTable==="function")renderBjOnlineTable();
 }
 function bjShowOfficialBadge(){alert("Официальный аккаунт SKEBOB OFFICIAL");}
-function bjRequestOfficialCode(){
- const entered=prompt("SKEBOB OFFICIAL — введи код доступа:");
+async function bjRequestOfficialCode(){
+ const entered=await skebobDialog("prompt","SKEBOB OFFICIAL — введи код доступа:");
  if(entered!=="666666"){alert("Неверный код. Вход в официальный аккаунт запрещён.");return false;}
  return true;
 }
@@ -8173,7 +8167,7 @@ async function bjSpecialPasswordMatches(nick,password){
 }
 async function bjRequestSpecialAccountPassword(nick){
  if(!bjSpecialAccountInfo(nick))return true;
- const entered=prompt("Аккаунт "+nick+" защищён паролем. Введи пароль для входа:");
+ const entered=await skebobDialog("prompt","Аккаунт "+nick+" защищён паролем. Введи пароль для входа:");
  if(entered===null)return false;
  const ok=await bjSpecialPasswordMatches(nick,entered);
  if(!ok)alert("Неверный пароль. Вход в этот аккаунт запрещён.");
@@ -8294,13 +8288,13 @@ async function saveFirstNickname(){
  updateNicknameUI();
 }
 async function changeNickname(){
- const next=prompt("Введи новый nickname:",getNickname());
+ const next=await skebobDialog("prompt","Введи новый nickname:",getNickname());
  if(next===null)return;
  const nick=next.trim().replace(/\s+/g," ").slice(0,18);
  if(nick.length<2){alert("Ник должен содержать минимум 2 символа.");return;}
  if(bjNickTaken(nick,bjOnlineId)){alert("Этот nickname уже занят игроком за столом. Придумай другой.");return;}
  if(bjIsSpecialAccount(nick)&&!(await bjRequestSpecialAccountPassword(nick)))return;
- if(bjIsOfficialNickname(nick)&&!bjRequestOfficialCode())return;
+ if(bjIsOfficialNickname(nick)&&!(await bjRequestOfficialCode()))return;
  if(!storageSet(NICKNAME_KEY,nick)){alert("Не удалось сохранить nickname. Попробуй ещё раз.");return;}
  if(state.admin.infiniteBalance&&!bjIsSpecialAccount(nick)){
   const restore=Number(state.admin.balanceBeforeInfinite);
@@ -8457,6 +8451,8 @@ document.addEventListener("DOMContentLoaded",initNickname,{once:true});
   <button class="goldbtn" onclick="saveFirstNickname()">СОХРАНИТЬ NICKNAME</button>
  </div>
 </div>
+
+<div id="skebobDialog" role="dialog" aria-modal="true" style="display:none;position:fixed;inset:0;z-index:30000;background:rgba(0,0,0,.78);align-items:center;justify-content:center;padding:20px"><div style="width:100%;max-width:430px;background:var(--panel);color:var(--text);border:1px solid var(--gold);border-radius:22px;padding:24px;box-shadow:0 18px 60px #000b"><h2 data-dialog-title style="margin:0 0 16px;color:var(--gold)">Уведомление</h2><div data-dialog-message style="font-size:16px;line-height:1.55;white-space:pre-wrap;overflow-wrap:anywhere"></div><input data-dialog-input type="text" style="display:none;margin-top:16px"><div style="display:flex;gap:10px;justify-content:flex-end;margin-top:22px"><button data-dialog-cancel type="button" class="secondary">Отмена</button><button data-dialog-ok type="button" class="goldbtn" style="width:auto;min-width:110px;margin:0;padding:12px 20px">ОК</button></div></div></div>
 </body>
     </html>
 
