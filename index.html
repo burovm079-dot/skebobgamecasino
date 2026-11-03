@@ -6,51 +6,38 @@
 <title>SKEBOB CASINO</title>
 <script src="https://telegram.org/js/telegram-web-app.js?62"></script>
 <script>
-/* Reliable image loading for Telegram WebView and slow/mobile connections. */
+/* Telegram WebView image recovery: retry transient failures without blocking UI. */
 (function(){
  if(window.__skebobImageRecoveryInstalled)return;
  window.__skebobImageRecoveryInstalled=true;
- function recoverImage(img){
-  if(!img||!img.tagName||img.tagName.toLowerCase()!=="img")return;
+ function retry(img){
+  if(!img||img.tagName!=="IMG")return;
   const src=img.dataset.originalSrc||img.getAttribute("src")||"";
   if(!src||/^(data:|blob:)/i.test(src))return;
   img.dataset.originalSrc=src;
-  const tries=Number(img.dataset.imageRetry||0);
-  if(tries<2){
-   img.dataset.imageRetry=String(tries+1);
+  const n=Number(img.dataset.imageRetry||0);
+  if(n>=5){img.classList.add("image-load-failed");return;}
+  img.dataset.imageRetry=String(n+1);
+  const wait=Math.min(8000,700*Math.pow(2,n));
+  setTimeout(function(){
+   if(!img.isConnected)return;
    const clean=src.replace(/([?&])__img_retry=\d+/g,"").replace(/[?&]$/,"");
-   img.src=clean+(clean.includes("?")?"&":"?")+"__img_retry="+Date.now()+"_"+tries;
-   return true;
-  }
-  img.classList.add("image-load-failed");
-  img.style.visibility="hidden";
-  if(img.parentElement){
-   img.parentElement.classList.add("image-fallback-surface");
-   img.parentElement.style.background="linear-gradient(135deg,rgba(35,20,58,.98),rgba(9,7,20,.98))";
-  }
-  return false;
+   img.src=clean+(clean.includes("?")?"&":"?")+"__img_retry="+Date.now();
+  },wait);
  }
- window.addEventListener("error",function(event){
-  const target=event.target;
-  if(target&&target.tagName&&target.tagName.toLowerCase()==="img"){
-   const retrying=recoverImage(target);
-   if(retrying)event.stopImmediatePropagation();
+ document.addEventListener("error",function(e){
+  if(e.target&&e.target.tagName==="IMG")retry(e.target);
+ },true);
+ document.addEventListener("load",function(e){
+  if(e.target&&e.target.tagName==="IMG"){
+   e.target.dataset.imageRetry="0";
+   e.target.classList.remove("image-load-failed");
   }
  },true);
- function retryFailedImages(){
-  if(navigator.onLine===false)return;
+ window.addEventListener("online",function(){
   document.querySelectorAll("img.image-load-failed").forEach(function(img){
-   const src=img.dataset.originalSrc;
-   if(!src)return;
-   img.classList.remove("image-load-failed");
-   img.style.visibility="";
-   img.dataset.imageRetry="0";
-   img.src=src+(src.includes("?")?"&":"?")+"__img_retry="+Date.now();
+   img.classList.remove("image-load-failed");img.dataset.imageRetry="0";retry(img);
   });
- }
- window.addEventListener("online",retryFailedImages);
- document.addEventListener("visibilitychange",function(){
-  if(document.visibilityState==="visible")retryFailedImages();
  });
 })();
 </script>
@@ -1911,7 +1898,7 @@ body.legacy-page-active .nav,body.legacy-page-active .balance,body.legacy-page-a
 <body class="dashboard-home">
 
 <div id="entrySplash" aria-label="Заставка SKEBOB CASINO">
- <img class="splash-background" src="assets/games/assets/games/Золотой%20казино-замок%20в%20лунном%20лесу.png" alt="">
+ <img class="splash-background" src="/skebobgamecasino/assets/games/assets/games/Золотой%20казино-замок%20в%20лунном%20лесу.png" alt="">
  <div class="splash-shade"></div>
 
 </div>
@@ -1963,16 +1950,16 @@ window.prompt=(message,value)=>{void skebobDialog("prompt",message,value);return
 <div id="skebobDashboard">
 <aside class="sk-side">
 <div class="sk-brand">👑 SKEBOB<span>GAME</span></div>
-<button class="sk-menu-item" onclick="showPage('dashboard')"><img src="assets/games/assets/games/menu/01-home.png" alt=""><span>Главная</span></button>
-<button class="sk-menu-item" onclick="openPromoPage()"><img src="assets/games/assets/games/menu/02-promo-code.png" alt=""><span>Промокод</span></button>
-<button class="sk-menu-item" onclick="showPage('cases',this)"><img src="assets/games/assets/games/menu/03-cases.png" alt=""><span>Кейсы</span></button>
-<button class="sk-menu-item" onclick="showPage('tasks')"><img src="assets/games/assets/games/menu/04-quests.png" alt=""><span>Задания</span></button>
-<button class="sk-menu-item" onclick="showPage('inventory')"><img src="assets/games/assets/games/menu/05-inventory.png" alt=""><span>Инвентарь</span></button>
-<button class="sk-menu-item" onclick="showPage('collection',this)"><img src="assets/games/assets/games/menu/06-collection.png" alt=""><span>Коллекции</span></button>
-<button class="sk-menu-item" onclick="showPage('profile')"><img src="assets/games/assets/games/menu/07-profile.png" alt=""><span>Профиль</span></button>
-<button class="sk-menu-item" onclick="window.open('https://t.me/skebobcasino/5','_blank','noopener,noreferrer')"><img src="assets/games/assets/games/menu/08-media-partner.png" alt=""><span>Медиа партнёр</span></button>
-<button class="sk-menu-item" onclick="showPage('settings')"><img src="assets/games/assets/games/menu/09-settings.png" alt=""><span>Настройки</span></button>
-<a class="header-buy-admin sk-side-admin sk-menu-item" href="https://t.me/ggggg06767" target="_blank" rel="noopener noreferrer"><img src="assets/games/assets/games/menu/10-buy-admin-panel.png" alt=""><span>Купить админ панель</span></a>
+<button class="sk-menu-item" onclick="showPage('dashboard')"><img src="/skebobgamecasino/assets/games/assets/games/menu/01-home.png" alt=""><span>Главная</span></button>
+<button class="sk-menu-item" onclick="openPromoPage()"><img src="/skebobgamecasino/assets/games/assets/games/menu/02-promo-code.png" alt=""><span>Промокод</span></button>
+<button class="sk-menu-item" onclick="showPage('cases',this)"><img src="/skebobgamecasino/assets/games/assets/games/menu/03-cases.png" alt=""><span>Кейсы</span></button>
+<button class="sk-menu-item" onclick="showPage('tasks')"><img src="/skebobgamecasino/assets/games/assets/games/menu/04-quests.png" alt=""><span>Задания</span></button>
+<button class="sk-menu-item" onclick="showPage('inventory')"><img src="/skebobgamecasino/assets/games/assets/games/menu/05-inventory.png" alt=""><span>Инвентарь</span></button>
+<button class="sk-menu-item" onclick="showPage('collection',this)"><img src="/skebobgamecasino/assets/games/assets/games/menu/06-collection.png" alt=""><span>Коллекции</span></button>
+<button class="sk-menu-item" onclick="showPage('profile')"><img src="/skebobgamecasino/assets/games/assets/games/menu/07-profile.png" alt=""><span>Профиль</span></button>
+<button class="sk-menu-item" onclick="window.open('https://t.me/skebobcasino/5','_blank','noopener,noreferrer')"><img src="/skebobgamecasino/assets/games/assets/games/menu/08-media-partner.png" alt=""><span>Медиа партнёр</span></button>
+<button class="sk-menu-item" onclick="showPage('settings')"><img src="/skebobgamecasino/assets/games/assets/games/menu/09-settings.png" alt=""><span>Настройки</span></button>
+<a class="header-buy-admin sk-side-admin sk-menu-item" href="https://t.me/ggggg06767" target="_blank" rel="noopener noreferrer"><img src="/skebobgamecasino/assets/games/assets/games/menu/10-buy-admin-panel.png" alt=""><span>Купить админ панель</span></a>
 <div class="sk-side-crown">♛</div>
 </aside>
 <div class="sk-work">
@@ -1983,20 +1970,20 @@ window.prompt=(message,value)=>{void skebobDialog("prompt",message,value);return
 
 </div>
 <div class="sk-games">
-<button class="sk-game" onclick="showPage('plane')"><span class="sk-art"><img src="assets/games/assets/games/plane.webp" alt="Самолёт" loading="eager"></span><span class="sk-game-name">Самолёт</span><span class="sk-play">Играть →</span></button>
-<button class="sk-game" onclick="showPage('slots')"><span class="sk-art"><img src="assets/games/assets/games/slots.webp" alt="Слоты" loading="eager"></span><span class="sk-game-name">Слоты</span><span class="sk-play">Играть →</span></button>
-<button class="sk-game" onclick="showPage('upgrade')"><span class="sk-art"><img src="assets/games/assets/games/upgrade.webp" alt="Апгрейд" loading="eager"></span><span class="sk-game-name">Апгрейд</span><span class="sk-play">Играть →</span></button>
-<button class="sk-game" onclick="showPage('mines')"><span class="sk-art"><img src="assets/games/assets/games/mines.webp" alt="Мины" loading="eager"></span><span class="sk-game-name">Mines</span><span class="sk-play">Играть →</span></button>
-<button class="sk-game" onclick="showPage('plinko')"><span class="sk-art"><img src="assets/games/assets/games/plinko.webp" alt="Плинко" loading="eager"></span><span class="sk-game-name">Plinko</span><span class="sk-play">Играть →</span></button>
-<button class="sk-game" onclick="showPage('race')"><span class="sk-art"><img src="assets/games/assets/games/race.webp" alt="Гонки" loading="eager"></span><span class="sk-game-name">Race</span><span class="sk-play">Играть →</span></button>
-<button class="sk-game" onclick="showPage('pickaxe')"><span class="sk-art"><img src="assets/games/assets/games/pickaxe.webp" alt="Кирка" loading="eager"></span><span class="sk-game-name">Кирка</span><span class="sk-play">Играть →</span></button>
-<button class="sk-game" onclick="showPage('battles')"><span class="sk-art"><img src="assets/games/assets/games/battles.webp" alt="Битвы" loading="eager"></span><span class="sk-game-name">Батлы</span><span class="sk-play">Играть →</span></button>
-<button class="sk-game" onclick="showPage('blackjack')"><span class="sk-art"><img src="assets/games/assets/games/blackjack.webp" alt="Блэкджек" loading="eager"></span><span class="sk-game-name">Blackjack</span><span class="sk-play">Играть →</span></button>
-<button class="sk-game" onclick="showPage('dice')"><span class="sk-art"><img src="assets/games/assets/games/dice.webp" alt="Кости" loading="eager"></span><span class="sk-game-name">Кости</span><span class="sk-play">Играть →</span></button>
-<button class="sk-game" onclick="showPage('tictactoe')"><span class="sk-art"><img src="assets/games/assets/games/tictactoe.webp" alt="Крестики-нолики" loading="eager"></span><span class="sk-game-name">Крестики-нолики</span><span class="sk-play">Играть →</span></button>
-<button class="sk-game" onclick="showPage('billiards')"><span class="sk-art"><img src="assets/games/assets/games/billiards.webp" alt="Бильярд" loading="eager"></span><span class="sk-game-name">Бильярд</span><span class="sk-play">Играть →</span></button>
-<button class="sk-game" onclick="showPage('chickenroad')"><span class="sk-art"><img src="assets/games/assets/games/chicken-road.webp" alt="Chicken Road" loading="eager"></span><span class="sk-game-name">Chicken Road</span><span class="sk-play">Играть →</span></button>
-<button class="sk-game" onclick="showPage('skebobTap')"><span class="sk-art"><img src="assets/games/assets/games/skebob-tap.webp" alt="Skebob Tap" loading="eager"></span><span class="sk-game-name">Skebob Tap</span><span class="sk-play">Играть →</span></button>
+<button class="sk-game" onclick="showPage('plane')"><span class="sk-art"><img src="/skebobgamecasino/assets/games/assets/games/plane.webp" alt="Самолёт" loading="eager"></span><span class="sk-game-name">Самолёт</span><span class="sk-play">Играть →</span></button>
+<button class="sk-game" onclick="showPage('slots')"><span class="sk-art"><img src="/skebobgamecasino/assets/games/assets/games/slots.webp" alt="Слоты" loading="eager"></span><span class="sk-game-name">Слоты</span><span class="sk-play">Играть →</span></button>
+<button class="sk-game" onclick="showPage('upgrade')"><span class="sk-art"><img src="/skebobgamecasino/assets/games/assets/games/upgrade.webp" alt="Апгрейд" loading="eager"></span><span class="sk-game-name">Апгрейд</span><span class="sk-play">Играть →</span></button>
+<button class="sk-game" onclick="showPage('mines')"><span class="sk-art"><img src="/skebobgamecasino/assets/games/assets/games/mines.webp" alt="Мины" loading="eager"></span><span class="sk-game-name">Mines</span><span class="sk-play">Играть →</span></button>
+<button class="sk-game" onclick="showPage('plinko')"><span class="sk-art"><img src="/skebobgamecasino/assets/games/assets/games/plinko.webp" alt="Плинко" loading="eager"></span><span class="sk-game-name">Plinko</span><span class="sk-play">Играть →</span></button>
+<button class="sk-game" onclick="showPage('race')"><span class="sk-art"><img src="/skebobgamecasino/assets/games/assets/games/race.webp" alt="Гонки" loading="eager"></span><span class="sk-game-name">Race</span><span class="sk-play">Играть →</span></button>
+<button class="sk-game" onclick="showPage('pickaxe')"><span class="sk-art"><img src="/skebobgamecasino/assets/games/assets/games/pickaxe.webp" alt="Кирка" loading="eager"></span><span class="sk-game-name">Кирка</span><span class="sk-play">Играть →</span></button>
+<button class="sk-game" onclick="showPage('battles')"><span class="sk-art"><img src="/skebobgamecasino/assets/games/assets/games/battles.webp" alt="Битвы" loading="eager"></span><span class="sk-game-name">Батлы</span><span class="sk-play">Играть →</span></button>
+<button class="sk-game" onclick="showPage('blackjack')"><span class="sk-art"><img src="/skebobgamecasino/assets/games/assets/games/blackjack.webp" alt="Блэкджек" loading="eager"></span><span class="sk-game-name">Blackjack</span><span class="sk-play">Играть →</span></button>
+<button class="sk-game" onclick="showPage('dice')"><span class="sk-art"><img src="/skebobgamecasino/assets/games/assets/games/dice.webp" alt="Кости" loading="eager"></span><span class="sk-game-name">Кости</span><span class="sk-play">Играть →</span></button>
+<button class="sk-game" onclick="showPage('tictactoe')"><span class="sk-art"><img src="/skebobgamecasino/assets/games/assets/games/tictactoe.webp" alt="Крестики-нолики" loading="eager"></span><span class="sk-game-name">Крестики-нолики</span><span class="sk-play">Играть →</span></button>
+<button class="sk-game" onclick="showPage('billiards')"><span class="sk-art"><img src="/skebobgamecasino/assets/games/assets/games/billiards.webp" alt="Бильярд" loading="eager"></span><span class="sk-game-name">Бильярд</span><span class="sk-play">Играть →</span></button>
+<button class="sk-game" onclick="showPage('chickenroad')"><span class="sk-art"><img src="/skebobgamecasino/assets/games/assets/games/chicken-road.webp" alt="Chicken Road" loading="eager"></span><span class="sk-game-name">Chicken Road</span><span class="sk-play">Играть →</span></button>
+<button class="sk-game" onclick="showPage('skebobTap')"><span class="sk-art"><img src="/skebobgamecasino/assets/games/assets/games/skebob-tap.webp" alt="Skebob Tap" loading="eager"></span><span class="sk-game-name">Skebob Tap</span><span class="sk-play">Играть →</span></button>
 </div></div></div>
 
 <header>
@@ -4261,7 +4248,7 @@ if(games)games.classList.toggle("hidden",!isDashboard);
 if(isDashboard){
 document.querySelectorAll("section[id]").forEach(section=>section.classList.add("hidden"));
 if(pageView){Array.from(pageView.children).forEach(section=>{if(section&&section.matches("section[id]")){section.classList.add("hidden");document.body.appendChild(section);}else{section.remove();}});}
-window.scrollTo({top:0,behavior:"smooth"});
+window.scrollTo({top:0,behavior:"auto"});
 return;
 }
 if(id==="skebobTap")renderSkebobTap();
@@ -4279,7 +4266,7 @@ document.querySelectorAll(".nav button").forEach(b=>b.classList.remove("active")
 if(button)button.classList.add("active");
 if(id==="profile")renderProfile();
 if(id==="adminPanel")renderAdminSettings();
-window.scrollTo({top:0,behavior:"smooth"});
+window.scrollTo({top:0,behavior:"auto"});
 }
 
 /* =========================
