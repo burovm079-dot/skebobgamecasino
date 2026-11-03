@@ -5172,8 +5172,7 @@ button.disabled=false;
 button.textContent=
 "Я ПОДПИСАЛСЯ — ОТКРЫТЬ";
 
-timer.textContent=
-"🎁 DAILY CASE доступен!";
+if(timer)timer.textContent="🎁 DAILY CASE доступен!";
 
 return;
 
@@ -5208,13 +5207,7 @@ Math.floor(
 (r%60000)/1000
 );
 
-timer.textContent=
-"Следующий через "+
-String(h).padStart(2,"0")+
-":"+
-String(m).padStart(2,"0")+
-":"+
-String(s).padStart(2,"0");
+if(timer)timer.textContent="Следующий через "+String(h).padStart(2,"0")+":"+String(m).padStart(2,"0")+":"+String(s).padStart(2,"0");
 
 }
 
@@ -5465,8 +5458,8 @@ document.getElementById(
 function setQty(n,b){
 
 if(caseOpeningBusy)return;
-
-qty=n;
+const allowed=[1,2,3,5];
+qty=allowed.includes(Number(n))?Number(n):1;
 
 document
 .querySelectorAll(
@@ -5486,13 +5479,8 @@ b.classList.add(
 
 }
 
-document.getElementById(
-"totalPrice"
-).textContent=
-"Итого: "+
-cases[selectedCase].price*
-qty+
-" 🪙";
+const totalPrice=document.getElementById("totalPrice");
+if(totalPrice&&cases[selectedCase])totalPrice.textContent="Итого: "+(cases[selectedCase].price*qty)+" 🪙";
 
 }
 
@@ -5527,14 +5515,15 @@ if(secretOpening){
  if(elapsed>=SECRET_DROP_WINDOW||Number(state.secretDropUsedPeriod)===period){alert("Секретный кейс уже исчез или попытка использована!");closeCase();return;}
  qty=1;
 }
-const cost=
-cases[selectedCase].price*
-qty;
-
-if(
-state.balance<
-cost
-){
+const casePrice=Number(cases[selectedCase].price);
+const count=cases[selectedCase].secret?1:qty;
+const cost=casePrice*count;
+if(!Number.isSafeInteger(casePrice)||casePrice<0||!Number.isSafeInteger(cost)||cost<0){
+ alert("Не удалось рассчитать стоимость кейса.");
+ return;
+}
+qty=count;
+if(!Number.isFinite(state.balance)||state.balance<cost){
 
 alert(
 "Недостаточно монет!"
@@ -5875,15 +5864,16 @@ document.getElementById(
 "inventoryList"
 );
 
-const total=
-state.inventory.reduce(
-(s,x)=>
-s+
-Number(
-x.value||0
-),
-0
-);
+const values=state.inventory.map(x=>Number(x?.value));
+if(values.some(v=>!Number.isSafeInteger(v)||v<0)){
+ alert("Продажа отменена: в инвентаре найден предмет с некорректной стоимостью.");
+ return;
+}
+const total=values.reduce((sum,value)=>sum+value,0);
+if(!Number.isSafeInteger(total)||!Number.isSafeInteger(state.balance+total)){
+ alert("Сумма продажи превышает допустимый лимит.");
+ return;
+}
 
 document.getElementById(
 "inventoryTotal"
@@ -5945,21 +5935,12 @@ onclick="sellItem(${i})"
 }
 
 function sellItem(i){
-
-const p=
-state.inventory.splice(
-i,
-1
-)[0];
-
-if(!p)return;
-
-const value=
-Number(
-p.value||0
-);
-
-state.balance+=value;
+if(!Number.isInteger(i)||i<0||i>=state.inventory.length)return;
+const p=state.inventory[i];
+const value=Number(p?.value);
+if(!Number.isSafeInteger(value)||value<0)return;
+state.inventory.splice(i,1);
+state.balance=Math.min(Number.MAX_SAFE_INTEGER,state.balance+value);
 
 state.stats.itemsSold++;
 addDailyTaskProgress("sales",1);
@@ -7438,20 +7419,14 @@ save();
 }
 
 function adminGive(){
-
-const p=
-prizes[
-Number(
-document.getElementById(
-"adminItem"
-).value
-)
-];
-
-state.inventory.push({
-...p,
-id:Date.now()
-});
+const select=document.getElementById("adminItem");
+const index=Number(select?.value);
+if(!Number.isInteger(index)||index<0||index>=prizes.length||!prizes[index]){
+ alert("Выбери корректный предмет.");
+ return;
+}
+const p=prizes[index];
+state.inventory.push({...p,id:Date.now()});
 
 save();
 
