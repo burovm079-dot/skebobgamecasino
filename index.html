@@ -2085,10 +2085,10 @@ body.light #settings .reference-setting-row{background:linear-gradient(110deg,#6
  user-select:none!important;-webkit-user-drag:none!important
 }
 #settings .settings-remove-theme{
- position:absolute!important;z-index:4!important;left:5.5%!important;top:33.8%!important;
+ position:absolute!important;z-index:40!important;left:5.5%!important;top:33.8%!important;
  width:89%!important;height:7.0%!important;border-radius:18px!important;
- background:linear-gradient(110deg,rgba(53,0,91,.98),rgba(76,0,125,.98) 48%,rgba(48,0,83,.98))!important;
- border:2px solid #ffbd32!important;box-shadow:0 0 9px #ed00ff,inset 0 0 14px #26003f!important;pointer-events:none!important
+ background:#4b0874!important;border:2px solid #ffbd32!important;
+ box-shadow:0 0 9px #ed00ff,inset 0 0 14px #26003f!important;pointer-events:none!important
 }
 #settings .settings-picture-hit{
  position:absolute!important;z-index:10!important;display:block!important;
@@ -4220,7 +4220,17 @@ function formatMoney(amount){
  return getCurrency()==="USD"?"$"+(n/80).toLocaleString("en-US",{minimumFractionDigits:2,maximumFractionDigits:2}):Math.floor(n).toLocaleString("ru-RU")+" ₽";
 }
 function updateSettingsCurrencyVisual(){const currency=getCurrency();const rub=document.querySelector("#settings .settings-currency-rub");const usd=document.querySelector("#settings .settings-currency-usd");if(rub){rub.classList.toggle("is-selected",currency==="RUB");rub.setAttribute("aria-pressed",currency==="RUB"?"true":"false");}if(usd){usd.classList.toggle("is-selected",currency==="USD");usd.setAttribute("aria-pressed",currency==="USD"?"true":"false");}}
-function setCurrency(value){storageSet("skebobCurrency",value==="USD"?"USD":"RUB");render();renderCases();const e=document.getElementById("currencySelect");if(e)e.value=getCurrency();updateSettingsCurrencyVisual();if(typeof updateUpgradeInfo==="function")updateUpgradeInfo();if(typeof renderDailyTasks==="function")renderDailyTasks();}
+function setCurrency(value){
+ const next=value==="USD"?"USD":"RUB";
+ storageSet("skebobCurrency",next);
+ updateSettingsCurrencyVisual();
+ const select=document.getElementById("currencySelect");
+ if(select)select.value=next;
+ try{render();}catch(error){console.warn("Currency display refresh:",error);}
+ try{renderCases();}catch(error){console.warn("Cases currency refresh:",error);}
+ try{if(typeof updateUpgradeInfo==="function")updateUpgradeInfo();}catch(error){console.warn(error);}
+ try{if(typeof renderDailyTasks==="function")renderDailyTasks();}catch(error){console.warn(error);}
+}
 function loadCurrency(){const e=document.getElementById("currencySelect");if(e)e.value=getCurrency();}
 function save(){
 
