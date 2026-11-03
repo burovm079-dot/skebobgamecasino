@@ -722,3 +722,70 @@ body.legacy-page-active #skebobDashboard .sk-work.settings-workspace #settings .
   body.legacy-page-active #skebobDashboard .sk-work.settings-workspace{height:100dvh!important;min-height:100dvh!important}
   body.legacy-page-active #skebobDashboard .sk-work.settings-workspace .sk-top{padding:8px 7px!important}
 }
+
+
+/* SETTINGS FULL RIGHT-PANE LAYOUT — same proven grid structure as promo view. */
+body.settings-page #skebobDashboard{
+ display:grid!important;
+ grid-template-columns:188px minmax(0,1fr)!important;
+ grid-template-rows:minmax(0,1fr)!important;
+ width:100%!important;height:100dvh!important;min-height:100dvh!important;
+ overflow:hidden!important;align-items:stretch!important;
+}
+body.settings-page #skebobDashboard>.sk-side{
+ grid-column:1!important;grid-row:1!important;position:sticky!important;
+ left:auto!important;top:0!important;width:auto!important;height:100dvh!important;min-width:0!important;
+}
+body.settings-page #skebobDashboard>.sk-work.settings-workspace{
+ grid-column:2!important;grid-row:1!important;position:relative!important;
+ left:auto!important;right:auto!important;top:auto!important;bottom:auto!important;
+ transform:none!important;float:none!important;display:flex!important;flex-direction:column!important;
+ width:100%!important;height:100dvh!important;min-width:0!important;min-height:0!important;
+ max-width:none!important;margin:0!important;padding:0!important;overflow:hidden!important;
+}
+body.settings-page #skebobDashboard>.sk-work.settings-workspace>.sk-top,
+body.settings-page #skebobDashboard>.sk-work.settings-workspace>.sk-games{display:none!important}
+body.settings-page #skebobDashboard>.sk-work.settings-workspace>#sk-page-view{
+ position:relative!important;inset:auto!important;display:flex!important;
+ flex:1 1 0!important;flex-direction:column!important;
+ width:100%!important;height:100%!important;min-width:0!important;min-height:0!important;
+ max-width:none!important;margin:0!important;padding:0!important;overflow:hidden!important;
+}
+body.settings-page #skebobDashboard>.sk-work.settings-workspace>#sk-page-view>section#settings:not(.hidden){
+ position:relative!important;inset:auto!important;display:flex!important;flex:1 1 0!important;
+ flex-direction:column!important;width:100%!important;height:100%!important;
+ min-width:0!important;min-height:0!important;max-width:none!important;
+ margin:0!important;padding:0!important;overflow:hidden!important;
+ border:0!important;border-radius:0!important;background:transparent!important;box-shadow:none!important;
+}
+body.settings-page #skebobDashboard>.sk-work.settings-workspace #settings .settings-picture-ui{
+ position:relative!important;display:block!important;flex:1 1 0!important;
+ width:100%!important;height:100%!important;min-width:0!important;min-height:0!important;
+ max-width:none!important;max-height:none!important;aspect-ratio:auto!important;
+ margin:0!important;padding:0!important;border:0!important;border-radius:0!important;
+ overflow:hidden!important;
+}
+body.settings-page #skebobDashboard>.sk-work.settings-workspace #settings .settings-picture-ui-image{
+ position:absolute!important;inset:0!important;display:block!important;
+ width:100%!important;height:100%!important;min-width:100%!important;min-height:100%!important;
+ max-width:none!important;max-height:none!important;margin:0!important;padding:0!important;
+ object-fit:fill!important;object-position:center!important;transform:none!important;
+}
+body.settings-page #skebobDashboard #settings .settings-picture-toggle,
+body.settings-page #skebobDashboard #settings .settings-picture-hit{
+ z-index:20!important;pointer-events:auto!important;touch-action:manipulation!important;
+}
+body.settings-page #skebobDashboard #settings .settings-picture-toggle input{
+ z-index:2!important;pointer-events:auto!important;cursor:pointer!important;
+}
+body.settings-page #skebobDashboard #settings .settings-picture-hit{
+ min-width:0!important;min-height:0!important;
+}
+@media(max-width:760px){
+ body.settings-page #skebobDashboard{grid-template-columns:82px minmax(0,1fr)!important}
+ body.settings-page #skebobDashboard>.sk-side{width:82px!important}
+}
+@media(max-width:380px){
+ body.settings-page #skebobDashboard{grid-template-columns:76px minmax(0,1fr)!important}
+ body.settings-page #skebobDashboard>.sk-side{width:76px!important}
+}
