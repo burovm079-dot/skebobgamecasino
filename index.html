@@ -1928,7 +1928,7 @@ body.legacy-page-active .nav,body.legacy-page-active .balance,body.legacy-page-a
 @media(max-aspect-ratio:4/5){#entrySplash .splash-background{object-fit:cover;}#entrySplash .splash-shade:after{left:24%;width:0;}#entrySplash.loading .splash-shade:after{width:52%;}}
 
 </style>
-<link rel="stylesheet" href="./dashboard.css?v=19">
+<link rel="stylesheet" href="./dashboard.css?v=20">
 </head>
 
 <body class="dashboard-home">
@@ -4301,6 +4301,19 @@ const target=document.getElementById(id);
 if(target){
 if(pageView&&target.parentElement!==pageView)pageView.appendChild(target);
 target.classList.remove("hidden");
+if(id==="promo"){
+ const panel=target.querySelector(".promo-panel");
+ const art=target.querySelector(".promo-art");
+ const controls=target.querySelector(".promo-controls");
+ const important=(el,styles)=>{if(el)Object.entries(styles).forEach(([k,v])=>el.style.setProperty(k,v,"important"));};
+ important(work,{display:"flex",flexDirection:"column",width:"100%",height:"100dvh",minHeight:"100dvh",padding:"0",overflow:"hidden"});
+ important(work.querySelector(".sk-top"),{flex:"0 0 auto",margin:"0",padding:"10px 12px"});
+ important(pageView,{display:"flex",flex:"1 1 0",flexDirection:"column",width:"100%",height:"auto",maxWidth:"none",minWidth:"0",minHeight:"0",margin:"0",padding:"0",overflow:"hidden"});
+ important(target,{display:"block",position:"relative",flex:"1 1 0",width:"100%",height:"100%",maxWidth:"none",minWidth:"0",minHeight:"0",margin:"0",padding:"0",overflow:"hidden",border:"0",borderRadius:"0",background:"#10071c"});
+ important(panel,{position:"absolute",inset:"0",display:"block",width:"100%",height:"100%",minHeight:"0",margin:"0",padding:"0",overflow:"hidden",border:"0",borderRadius:"0",background:"#10071c"});
+ important(art,{position:"absolute",inset:"0",display:"block",width:"100%",height:"100%",maxWidth:"none",maxHeight:"none",margin:"0",padding:"0",objectFit:"fill",objectPosition:"center"});
+ important(controls,{position:"absolute",inset:"0",width:"100%",height:"100%",zIndex:"10",pointerEvents:"auto"});
+}
 }else{
 console.warn("Страница не найдена:",id);
 }
