@@ -2,43 +2,145 @@
 <html lang="ru"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no"><title>SKEBOB POKER</title>
 <style>
 :root{color-scheme:dark;--gold:#f4c75e;--panel:#191a20;--muted:#a6a8b4}*{box-sizing:border-box}body{margin:0;background:radial-gradient(ellipse at top,#174c3c,#091510 65%,#080b10);color:#fff;font:15px Arial,sans-serif;min-height:100vh;padding:16px}button{cursor:pointer;font-weight:800;border:0;border-radius:11px;padding:12px 15px;background:#f4c75e;color:#17120a}button:disabled{opacity:.4;cursor:not-allowed}.wrap{max-width:900px;margin:auto}.top{display:flex;justify-content:space-between;align-items:center;gap:10px}.top a{color:var(--gold);text-decoration:none}.sub{color:var(--muted);font-size:13px}.felt{margin:20px 0;padding:20px 14px;border:8px solid #76552c;border-radius:32px;background:radial-gradient(ellipse,#16734e,#075039 65%,#063326);box-shadow:0 15px 40px #0008;text-align:center}.seats{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin-bottom:22px}.seat{background:#071e18a8;border:1px solid #ffffff35;border-radius:15px;padding:12px;min-height:112px}.seat.you{border:2px solid var(--gold)}.seat.folded{opacity:.4}.seat strong{display:block;margin-bottom:7px}.cards{display:flex;justify-content:center;gap:6px;flex-wrap:wrap;min-height:65px}.card{width:42px;height:59px;border-radius:7px;background:#fff;color:#171717;display:grid;place-items:center;font-size:18px;font-weight:900;box-shadow:0 3px 6px #0007}.card.red{color:#d62945}.card.back{background:repeating-linear-gradient(45deg,#243e87,#243e87 5px,#e6e8f2 6px,#243e87 8px);border:3px solid white;color:transparent}.board{display:flex;justify-content:center;gap:7px;flex-wrap:wrap;min-height:70px;margin:12px 0}.pot{font-size:20px;color:#ffe08a;font-weight:900;margin:12px}.status{min-height:42px;color:#ffe08a;line-height:1.5}.stats{display:flex;justify-content:space-around;gap:8px;flex-wrap:wrap;background:#071e18a8;border-radius:12px;padding:12px}.controls{background:var(--panel);border:1px solid #554629;border-radius:16px;padding:15px;margin:14px 0}.actions{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:10px}.actions button{min-height:46px}.actions .secondary{background:#30333c;color:white}.actions .danger{background:#a83242;color:white}.actions .allin{background:#a35de0;color:white}.raise{display:flex;align-items:center;gap:10px;margin-top:10px}.raise input{width:100%;accent-color:var(--gold)}.rankings{font-size:12px;color:var(--muted);line-height:1.6;margin:14px 0}.hidden{display:none!important}@media(min-width:650px){.seats{grid-template-columns:repeat(4,1fr)}.seat.you{grid-column:auto}}
-</style></head><body><div class="wrap">
+.seat.acting{border:2px solid #ffe08a;box-shadow:0 0 18px #f4c75e66;transform:translateY(-2px)}.turn-clock{margin-top:12px;background:#252a30;border-radius:12px;padding:10px;text-align:center}.turn-clock b{color:#ffe08a;font-size:20px}.timer-track{height:7px;background:#ffffff22;border-radius:9px;overflow:hidden;margin-top:7px}.timer-fill{height:100%;width:100%;background:linear-gradient(90deg,#36d78a,#f4c75e);transition:width .25s linear}</style></head><body><div class="wrap">
 <div class="top"><div><a href="./index.html">← В казино</a><h1 style="margin:8px 0;color:#f4c75e">♠ SKEBOB POKER</h1><div class="sub">Texas Hold'em · игра против ботов · только виртуальные фишки</div></div><button id="new">Новая раздача</button></div>
 <div class="felt"><div class="seats" id="seats"></div><div class="sub">ОБЩИЕ КАРТЫ</div><div class="board" id="board"></div><div class="pot" id="pot">Банк: 0</div><div class="status" id="status">Нажми «Новая раздача», чтобы начать</div></div>
 <div class="stats"><span>Твои фишки: <b id="stack">1000</b></span><span>Текущая ставка: <b id="bet">0</b></span><span>Раунд: <b id="street">—</b></span></div>
-<div class="controls"><div><b id="turnLabel">Твой ход</b> <span class="sub" id="hint">Выбери действие</span></div><div class="raise"><label for="raise">Рейз</label><input id="raise" type="range" min="20" max="300" step="10" value="50"><b id="raiseVal">50</b></div><div class="actions"><button id="check">Чек</button><button id="call">Колл</button><button id="raiseBtn">Рейз</button><button id="fold" class="danger">Фолд</button><button id="allin" class="allin">Олл-ин</button><button id="next" class="secondary" disabled>Следующая раздача</button></div></div>
+<div class="turn-clock"><div>⏱ До конца хода: <b id="timerText">—</b></div><div class="timer-track"><div class="timer-fill" id="timerFill"></div></div></div><div class="controls"><div><b id="turnLabel">Твой ход</b> <span class="sub" id="hint">Выбери действие</span></div><div class="raise"><label for="raise">Рейз</label><input id="raise" type="range" min="20" max="300" step="10" value="50"><b id="raiseVal">50</b></div><div class="actions"><button id="check">Чек</button><button id="call">Колл</button><button id="raiseBtn">Рейз</button><button id="fold" class="danger">Фолд</button><button id="allin" class="allin">Олл-ин</button><button id="next" class="secondary" disabled>Следующая раздача</button></div></div>
 <div class="rankings"><b>Комбинации от сильной к слабой:</b> Роял-флеш · Стрит-флеш · Каре · Фулл-хаус · Флеш · Стрит · Тройка · Две пары · Пара · Старшая карта. Туз может быть младшей картой в A-2-3-4-5. Масти равны.</div>
 </div>
 <script>
 (()=>{
-const names=['Ты','Бот Макс','Бот Лиса','Бот Гром','Бот Ника'];const suits=['♠','♥','♦','♣'],ranks='23456789TJQKA'.split(''),rv=Object.fromEntries(ranks.map((r,i)=>[r,i+2]));
-let deck=[],players=[],board=[],pot=0,street=0,currentBet=0,raiseMin=20,active=false,handOver=true,turn=0,playerStack=1000,roundName=['Префлоп','Флоп','Терн','Ривер','Шоудаун'];
+const names=['Ты','Бот Макс','Бот Лиса','Бот Гром','Бот Ника'];
+const suits=['♠','♥','♦','♣'],ranks='23456789TJQKA'.split(''),rv=Object.fromEntries(ranks.map((r,i)=>[r,i+2]));
 const $=id=>document.getElementById(id);
+let deck=[],players=[],board=[],pot=0,street=0,currentBet=0,active=false,handOver=true,playerStack=1000;
+let current=0,acted=new Set(),turnTimer=null,botTimer=null,secondsLeft=15,turnToken=0;
+const roundName=['Префлоп','Флоп','Терн','Ривер','Шоудаун'];
 function shuffle(a){for(let i=a.length-1;i>0;i--){let j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a}
-function card(){return deck.pop()}function money(p,n){n=Math.max(0,Math.min(n,p.stack));p.stack-=n;p.put+=n;pot+=n}
+function card(){return deck.pop()}
+function money(p,n){n=Math.max(0,Math.min(Math.floor(n),p.stack));p.stack-=n;p.put+=n;pot+=n;return n}
 function makeDeck(){deck=shuffle(suits.flatMap(s=>ranks.map(r=>({r,s}))))}
 function score(cards){
- let c=cards.map(x=>({v:rv[x.r],s:x.s})),counts={};c.forEach(x=>counts[x.v]=(counts[x.v]||0)+1);
- let vals=Object.keys(counts).map(Number).sort((a,b)=>b-a),groups=Object.entries(counts).map(([v,n])=>({v:+v,n})).sort((a,b)=>b.n-a||b.v-a.v);
- let flush=suits.find(s=>c.filter(x=>x.s===s).length>=5),sv=flush?c.filter(x=>x.s===flush).map(x=>x.v).sort((a,b)=>b-a):[];
- let uniq=[...new Set(vals)];if(uniq.includes(14))uniq.push(1);let straight=0;for(let i=0;i<=uniq.length-5;i++)if(uniq[i]-uniq[i+4]===4){straight=uniq[i];break}
- let sf=0;if(flush){let u=[...new Set(sv)];if(u.includes(14))u.push(1);for(let i=0;i<=u.length-5;i++)if(u[i]-u[i+4]===4){sf=u[i];break}}
- let result;if(sf===14)result=[9,14];else if(sf)result=[8,sf];else if(groups[0].n===4)result=[7,groups[0].v,groups[1].v];else if(groups[0].n===3&&groups[1]?.n>=2)result=[6,groups[0].v,groups[1].v];else if(flush)result=[5,...sv.slice(0,5)];else if(straight)result=[4,straight];else if(groups[0].n===3)result=[3,groups[0].v,...vals.filter(v=>v!==groups[0].v).slice(0,2)];else if(groups[0].n===2&&groups[1]?.n===2)result=[2,Math.max(groups[0].v,groups[1].v),Math.min(groups[0].v,groups[1].v),...vals.filter(v=>v!==groups[0].v&&v!==groups[1].v).slice(0,1)];else if(groups[0].n===2)result=[1,groups[0].v,...vals.filter(v=>v!==groups[0].v).slice(0,3)];else result=[0,...vals.slice(0,5)];return result;
+ const c=cards.map(x=>({v:rv[x.r],s:x.s})),counts={};c.forEach(x=>counts[x.v]=(counts[x.v]||0)+1);
+ const vals=Object.keys(counts).map(Number).sort((a,b)=>b-a);
+ const groups=Object.entries(counts).map(([v,n])=>({v:+v,n})).sort((a,b)=>b.n-a.n||b.v-a.v);
+ const flush=suits.find(s=>c.filter(x=>x.s===s).length>=5);
+ const sv=flush?c.filter(x=>x.s===flush).map(x=>x.v).sort((a,b)=>b-a):[];
+ const straightHigh=a=>{let u=[...new Set(a)].sort((x,y)=>y-x);if(u.includes(14))u.push(1);for(let i=0;i<=u.length-5;i++)if(u[i]-u[i+4]===4)return u[i];return 0};
+ const sf=flush?straightHigh(sv):0,st=straightHigh(vals);
+ if(sf===14)return [9,14];
+ if(sf)return [8,sf];
+ if(groups[0].n===4)return [7,groups[0].v,groups[1].v];
+ if(groups[0].n===3&&groups[1]?.n>=2)return [6,groups[0].v,groups[1].v];
+ if(flush)return [5,...sv.slice(0,5)];
+ if(st)return [4,st];
+ if(groups[0].n===3)return [3,groups[0].v,...vals.filter(v=>v!==groups[0].v).slice(0,2)];
+ if(groups[0].n===2&&groups[1]?.n===2)return [2,Math.max(groups[0].v,groups[1].v),Math.min(groups[0].v,groups[1].v),...vals.filter(v=>v!==groups[0].v&&v!==groups[1].v).slice(0,1)];
+ if(groups[0].n===2)return [1,groups[0].v,...vals.filter(v=>v!==groups[0].v).slice(0,3)];
+ return [0,...vals.slice(0,5)];
 }
-function best(cards){let out=null;for(let a=0;a<cards.length-4;a++)for(let b=a+1;b<cards.length-3;b++)for(let c=b+1;c<cards.length-2;c++)for(let d=c+1;d<cards.length-1;d++)for(let e=d+1;e<cards.length;e++){let v=score([cards[a],cards[b],cards[c],cards[d],cards[e]]);if(!out||cmp(v,out)>0)out=v}return out}
-function cmp(a,b){for(let i=0;i<Math.max(a.length,b.length);i++){let d=(a[i]||0)-(b[i]||0);if(d)return d}return 0}
+function best(cards){let out=null;for(let a=0;a<cards.length-4;a++)for(let b=a+1;b<cards.length-3;b++)for(let c=b+1;c<cards.length-2;c++)for(let d=c+1;d<cards.length-1;d++)for(let e=d+1;e<cards.length;e++){const v=score([cards[a],cards[b],cards[c],cards[d],cards[e]]);if(!out||cmp(v,out)>0)out=v}return out}
+function cmp(a,b){for(let i=0;i<Math.max(a.length,b.length);i++){const d=(a[i]||0)-(b[i]||0);if(d)return d}return 0}
 function rankName(v){return ['Старшая карта','Пара','Две пары','Тройка','Стрит','Флеш','Фулл-хаус','Каре','Стрит-флеш','Роял-флеш'][v[0]]}
-function fmt(c){return c?c.r+c.s:'?'}function htmlCard(c,hidden=false){return '<span class="card '+(hidden?'back':(['♥','♦'].includes(c.s)?'red':''))+'">'+(hidden?'◆':fmt(c))+'</span>'}
-function render(reveal=false){$('seats').innerHTML=players.map((p,i)=>'<div class="seat '+(i===0?'you ':'')+(p.fold?'folded':'')+'"><strong>'+(i===0?'🙂 ': '🤖 ')+p.name+(p.fold?' · фолд':'')+'</strong><div class="cards">'+(p.hand||[]).map((c,j)=>htmlCard(c,i!==0&&!reveal&&!p.fold)).join('')+'</div><div class="sub">Фишки: '+p.stack+' · ставка: '+p.put+'</div></div>').join('');$('board').innerHTML=board.map(c=>htmlCard(c)).join('');$('pot').textContent='Банк: '+pot;$('stack').textContent=players[0]?.stack??playerStack;$('bet').textContent=currentBet;$('street').textContent=roundName[street]||'—';$('raiseVal').textContent=$('raise').value;$('check').disabled=!active||currentBet>players[0].put;$('call').disabled=!active||currentBet===players[0].put;$('raiseBtn').disabled=!active;$('fold').disabled=!active;$('allin').disabled=!active;$('next').disabled=!handOver}
+function fmt(c){return c.r+c.s}
+function htmlCard(c,hidden=false){return '<span class="card '+(hidden?'back':(['♥','♦'].includes(c.s)?'red':''))+'">'+(hidden?'◆':fmt(c))+'</span>'}
+function eligible(){return players.filter(p=>!p.fold&&!p.allin)}
+function pending(){return players.filter(p=>!p.fold&&!p.allin&&(!acted.has(p.id)||p.put!==currentBet))}
+function render(reveal=false){
+ $('seats').innerHTML=players.map((p,i)=>'<div class="seat '+(i===0?'you ':'')+(p.fold?'folded':'')+(i===current&&active?' acting':'')+'"><strong>'+(i===0?'🙂 ':'🤖 ')+p.name+(p.fold?' · фолд':p.allin?' · олл-ин':i===current&&active?' · ходит':'')+'</strong><div class="cards">'+(p.hand||[]).map(c=>htmlCard(c,i!==0&&!reveal&&!p.fold)).join('')+'</div><div class="sub">Фишки: '+p.stack+' · ставка: '+p.put+'</div></div>').join('');
+ $('board').innerHTML=board.map(c=>htmlCard(c)).join('');$('pot').textContent='Банк: '+pot;$('stack').textContent=players[0]?.stack??playerStack;$('bet').textContent=currentBet;$('street').textContent=roundName[street]||'—';$('raiseVal').textContent=$('raise').value;
+ const you=active&&current===0;
+ $('check').disabled=!you||currentBet>players[0].put;$('call').disabled=!you||currentBet===players[0].put;$('raiseBtn').disabled=!you;$('fold').disabled=!you;$('allin').disabled=!you;$('next').disabled=!handOver;
+ $('turnLabel').textContent=you?'ТВОЙ ХОД':active?players[current]?.name+' думает…':'Раздача завершена';
+ $('hint').textContent=you?'У тебя 15 секунд на решение':active?'Ход переходит по очереди':'Нажми «Новая раздача»';
+ $('timerText')&&($('timerText').textContent=you?secondsLeft+' сек.':'—');
+ $('timerFill')&&($('timerFill').style.width=(you?secondsLeft/15*100:0)+'%');
+}
 function msg(t){$('status').textContent=t}
-function live(){return players.filter(p=>!p.fold&&p.stack+p.put>=0)}
-function start(){makeDeck();pot=0;board=[];street=0;currentBet=0;active=true;handOver=false;players=names.map((name,i)=>({name,stack:i===0?playerStack:1000,hand:[card(),card()],put:0,fold:false,allin:false}));money(players[1],10);money(players[2],20);currentBet=20;msg('Раздача! Малый блайнд 10, большой блайнд 20. Твой ход.');$('hint').textContent='Уравняй 20, повысь или сбрось';render();$('turnLabel').textContent='Твой ход'}
-function bots(){for(let i=1;i<players.length;i++){let p=players[i];if(p.fold||p.allin)continue;let need=currentBet-p.put;if(need===0){if(Math.random()<.18&&p.stack>40){let n=Math.min(p.stack,40);money(p,n);currentBet=Math.max(currentBet,p.put)}continue}let strength=best([...p.hand,...board]);let chance=Math.random()+(strength[0]*.09);if(chance<.27){p.fold=true}else if(chance>.76&&p.stack>need+40){money(p,Math.min(p.stack,need+40));currentBet=Math.max(currentBet,p.put)}else money(p,need)}}
-function playerAction(type){if(!active)return;let p=players[0],need=Math.max(0,currentBet-p.put);if(type==='fold'){p.fold=true;msg('Ты сбросил карты.');}else if(type==='check'&&need===0){msg('Ты чекаешь.');}else if(type==='call'){money(p,need);msg('Ты уравнял ставку.');}else if(type==='raise'){let n=Math.max(need+20,Number($('raise').value));money(p,n);currentBet=Math.max(currentBet,p.put);msg('Ты повысил ставку.');}else if(type==='allin'){money(p,p.stack);p.allin=true;currentBet=Math.max(currentBet,p.put);msg('Ты пошёл олл-ин!');}else return;bots();render();if(players[0].fold){finish('Ты проиграл раздачу — фолд.');return}if(players.filter(x=>!x.fold).length===1){let w=players.find(x=>!x.fold);w.stack+=pot;finish(w.name+' забирает банк без вскрытия.');return}advance()}
-function advance(){if(street===0){board.push(card(),card(),card())}else if(street===1||street===2)board.push(card());street++;players.forEach(p=>p.put=0);currentBet=0;if(street>=4){showdown();return}msg(roundName[street]+': карты открыты. Боты сделали свои ходы — твоя очередь.');render()}
-function showdown(){let contenders=players.filter(p=>!p.fold);let scored=contenders.map(p=>({p,v:best([...p.hand,...board])})).sort((a,b)=>cmp(b.v,a.v));let winners=scored.filter(x=>cmp(x.v,scored[0].v)===0);let share=Math.floor(pot/winners.length);winners.forEach(x=>x.p.stack+=share);let text=winners.map(x=>x.p.name+' ('+rankName(x.v)+')').join(', ');render(true);finish('Победитель: '+text+'. Банк разделён между победителями.')}
-function finish(t){active=false;handOver=true;playerStack=players[0].stack;msg(t);$('turnLabel').textContent='Раздача завершена';render(true)}
-$('new').onclick=start;$('next').onclick=start;$('check').onclick=()=>playerAction('check');$('call').onclick=()=>playerAction('call');$('raiseBtn').onclick=()=>playerAction('raise');$('fold').onclick=()=>playerAction('fold');$('allin').onclick=()=>playerAction('allin');$('raise').oninput=()=> $('raiseVal').textContent=$('raise').value;
+function stopClocks(){clearInterval(turnTimer);clearTimeout(botTimer);turnTimer=null;botTimer=null;turnToken++}
+function startClock(){
+ stopClocks();const token=turnToken;secondsLeft=15;render();
+ if(current===0){
+  $('timerText').textContent='15 сек.';$('timerFill').style.width='100%';
+  turnTimer=setInterval(()=>{if(token!==turnToken)return;secondsLeft--;if(secondsLeft<=0){stopClocks();msg('Время вышло — автоматический фолд.');applyAction('fold',true);return}render()},1000);
+ }else{
+  const delay=900+Math.random()*1800;
+  botTimer=setTimeout(()=>{if(token===turnToken&&active)botAct(players[current])},delay);
+ }
+}
+function nextFrom(i){for(let step=1;step<=players.length;step++){const j=(i+step)%players.length,p=players[j];if(!p.fold&&!p.allin&&(!acted.has(p.id)||p.put!==currentBet))return j}return -1}
+function beginTurn(i){if(!active)return;const next=nextFrom(i-1);if(next<0){closeStreet();return}current=next;startClock()}
+function beginStreet(first){
+ acted.clear();currentBet=0;players.forEach(p=>p.put=0);
+ if(street===1)board.push(card(),card(),card());else if(street===2||street===3)board.push(card());
+ if(street>=4){showdown();return}
+ msg(roundName[street]+'. Торговля идёт по очереди.');beginTurn(first);
+}
+function start(){
+ stopClocks();makeDeck();pot=0;board=[];street=0;currentBet=20;active=true;handOver=false;acted.clear();
+ players=names.map((name,i)=>({id:i,name,stack:i===0?playerStack:1000,hand:[card(),card()],put:0,fold:false,allin:false}));
+ money(players[1],10);money(players[2],20);
+ msg('Префлоп: малый блайнд 10, большой блайнд 20. Первым действует игрок слева от большого блайнда.');
+ beginTurn(2);
+}
+function botAct(p){
+ if(!active||p.id!==current)return;
+ const need=Math.max(0,currentBet-p.put),strength=best([...p.hand,...board]),power=strength[0],random=Math.random();
+ let action='call';
+ if(need===0){
+  if(power>=3&&random<.35&&p.stack>40)action='raise';
+  else if(power===0&&random<.12)action='raise';
+  else action='check';
+ }else{
+  const pressure=need/Math.max(1,p.stack);
+  if((power===0&&random<.48)||pressure>.55&&power<2)action='fold';
+  else if(power>=3&&random<.28&&p.stack>need+40)action='raise';
+  else action='call';
+ }
+ if(action==='raise'&&p.stack>need+20){const extra=Math.min(p.stack-need,Math.max(30,Math.floor(p.stack*.12)));money(p,need+extra);currentBet=p.put;acted.clear();acted.add(p.id);msg(p.name+' повышает до '+currentBet+'.')}
+ else if(action==='fold'){p.fold=true;acted.add(p.id);msg(p.name+' сбрасывает карты.')}
+ else if(action==='call'){money(p,need);acted.add(p.id);msg(p.name+' уравнивает '+(need||0)+'.')}
+ else{acted.add(p.id);msg(p.name+' чекает.')}
+ afterAction();
+}
+function applyAction(type,automatic=false){
+ if(!active||current!==0)return;
+ const p=players[0],need=Math.max(0,currentBet-p.put);
+ if(type==='fold'){p.fold=true;acted.add(p.id);if(!automatic)msg('Ты сбросил карты.')}
+ else if(type==='check'&&need===0){acted.add(p.id);msg('Ты чекаешь.')}
+ else if(type==='call'){money(p,need);acted.add(p.id);msg('Ты уравнял ставку на '+need+'.')}
+ else if(type==='raise'){
+  const target=Math.max(currentBet+20,Number($('raise').value));
+  const total=Math.max(need,target-p.put);money(p,total);currentBet=p.put;acted.clear();acted.add(p.id);msg('Ты повышаешь ставку до '+currentBet+'.');
+ }else if(type==='allin'){
+  const total=p.stack;money(p,total);p.allin=true;currentBet=Math.max(currentBet,p.put);acted.clear();acted.add(p.id);msg('Ты идёшь олл-ин!');
+ }else return;
+ stopClocks();afterAction();
+}
+function afterAction(){
+ render();
+ if(eligible().length<=1){const winner=eligible()[0];if(winner){winner.stack+=pot;finish(winner.name+' забирает банк — все остальные сбросили карты.')}return}
+ if(pending().length===0){closeStreet();return}
+ beginTurn(current);
+}
+function closeStreet(){
+ stopClocks();
+ if(street===3){showdown();return}
+ street++;beginStreet(0);
+}
+function showdown(){
+ stopClocks();const contenders=players.filter(p=>!p.fold);
+ const scored=contenders.map(p=>({p,v:best([...p.hand,...board])})).sort((a,b)=>cmp(b.v,a.v));
+ const winners=scored.filter(x=>cmp(x.v,scored[0].v)===0),share=Math.floor(pot/winners.length),remainder=pot-share*winners.length;
+ winners.forEach((x,i)=>x.p.stack+=share+(i===0?remainder:0));
+ const result=winners.map(x=>x.p.name+' ('+rankName(x.v)+')').join(', ');
+ finish('Шоудаун! Победитель: '+result+'. Банк разделён по силе комбинаций.',true);
+}
+function finish(t,reveal=false){stopClocks();active=false;handOver=true;playerStack=players[0].stack;msg(t);render(reveal);$('turnLabel').textContent='Раздача завершена'}
+$('new').onclick=start;$('next').onclick=start;
+$('check').onclick=()=>applyAction('check');$('call').onclick=()=>applyAction('call');$('raiseBtn').onclick=()=>applyAction('raise');$('fold').onclick=()=>applyAction('fold');$('allin').onclick=()=>applyAction('allin');
+$('raise').oninput=()=>$('raiseVal').textContent=$('raise').value;
 render();
 })();
 </script></body></html>
