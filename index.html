@@ -8284,7 +8284,7 @@ async function changeNickname(){
   if(nick.length<2){status.textContent="Ник должен содержать минимум 2 символа.";input.focus();return;}
   try{
    saveButton.disabled=true;saveButton.textContent="СОХРАНЕНИЕ…";status.textContent="";
-   if(bjNickTaken(nick,bjOnlineId)){status.textContent="Этот nickname уже занят игроком за столом.";input.focus();return;}
+   if(bjNickTaken(nick)){status.textContent="Этот nickname уже занят игроком за столом.";input.focus();return;}
    if(bjIsSpecialAccount(nick)&&!(await bjRequestSpecialAccountPassword(nick)))return;
    if(bjIsOfficialNickname(nick)&&!(await bjRequestOfficialCode()))return;
    if(!storageSet(NICKNAME_KEY,nick)){status.textContent="Не удалось сохранить nickname. Проверь память браузера и попробуй снова.";return;}
@@ -8295,7 +8295,7 @@ async function changeNickname(){
    }
    updateNicknameUI();
    close();
-   if(bjOnlineChannel){try{bjOnlineChannel.track({id:bjOnlineId,name:nick,done:!bjOnlineMyTurn,joinedAt:bjOnlineJoinedAt,phase:bjOnlineRound&&!bjOnlineRound.finished?"playing":"waiting"});}catch(trackError){console.warn("Nickname saved; online presence update failed:",trackError);}}
+   // Online presence is refreshed by the blackjack module; nickname saving must not depend on its initialization.
   }catch(error){
    console.error("Nickname save failed:",error);
    status.textContent="Ошибка сохранения: "+(error&&error.message?error.message:"попробуй ещё раз");
