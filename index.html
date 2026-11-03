@@ -332,6 +332,7 @@ border:0;
 color:#e9bd55;
 padding:10px 0;
 }
+.game-list-back{display:block;width:100%;text-align:left;margin:0 0 12px;padding:11px 14px;border:1px solid var(--border);border-radius:12px;background:var(--panel2);color:var(--gold);font-size:14px;font-weight:900;}
 
 .prize-grid{
 display:grid;
@@ -4483,6 +4484,18 @@ const target=document.getElementById(id);
 if(target){
 if(pageView&&target.parentElement!==pageView)pageView.appendChild(target);
 target.classList.remove("hidden");
+const gamePages=new Set(["skebobTap","tictactoe","billiards","chickenroad","cases","secretDrop","battles","upgrade","mines","plane","pickaxe","plinko","race","crash","slots","blackjack","dice"]);
+if(gamePages.has(id)){
+let back=target.querySelector(":scope > .game-list-back");
+if(!back){
+back=document.createElement("button");
+back.type="button";
+back.className="game-list-back";
+back.textContent="← К играм";
+back.addEventListener("click",()=>showPage("dashboard"));
+target.insertBefore(back,target.firstChild);
+}
+}
 }else{
 console.warn("Страница не найдена:",id);
 }
