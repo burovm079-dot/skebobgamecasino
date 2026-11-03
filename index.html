@@ -4539,6 +4539,7 @@ if(work)work.classList.toggle("tasks-workspace",id==="tasks");
 const games=work&&work.querySelector(".sk-games");
 let pageView=work&&work.querySelector("#sk-page-view");
 if(work&&!pageView){pageView=document.createElement("div");pageView.id="sk-page-view";pageView.className="sk-page-view";if(games)games.insertAdjacentElement("afterend",pageView);else work.appendChild(pageView);}
+if(pageView){pageView.style.display=isDashboard?"none":"block";pageView.style.visibility="visible";pageView.style.opacity="1";pageView.style.width="100%";pageView.style.minWidth="0";pageView.style.minHeight="0";pageView.style.boxSizing="border-box";}
 if(games)games.classList.toggle("hidden",!isDashboard);
 if(isDashboard){
 document.querySelectorAll("section[id]").forEach(section=>section.classList.add("hidden"));
@@ -4554,6 +4555,7 @@ const target=document.getElementById(id);
 if(target){
 if(pageView&&target.parentElement!==pageView)pageView.appendChild(target);
 target.classList.remove("hidden");
+target.style.display="block";target.style.visibility="visible";target.style.opacity="1";target.style.width="100%";target.style.maxWidth="100%";target.style.boxSizing="border-box";
 const gamePages=new Set(["skebobTap","tictactoe","billiards","chickenroad","cases","secretDrop","battles","upgrade","mines","plane","plinko","race","crash","slots","blackjack","poker","dice"]);
 if(gamePages.has(id)){
 let back=target.querySelector(":scope > .game-list-back");
