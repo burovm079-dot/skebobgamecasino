@@ -2102,14 +2102,25 @@ body.light #settings .reference-setting-row{background:linear-gradient(110deg,#6
 #settings .settings-currency-rub{left:56.2%!important;top:42%!important;width:17%!important;height:7.2%!important}
 #settings .settings-currency-usd{left:74.7%!important;top:42%!important;width:17.5%!important;height:7.2%!important}
 #settings .settings-currency-rub,#settings .settings-currency-usd{
- border-radius:12px!important;transition:background-color .15s!important;
+ display:flex!important;align-items:center!important;justify-content:center!important;
+ overflow:hidden!important;border-radius:13px!important;
+ border:1px solid rgba(220,190,255,.48)!important;
+ background:#21152f!important;color:#fff!important;
+ transition:background-color .15s!important;
  outline:0!important;box-shadow:none!important;filter:none!important;
+ font-size:0!important;padding:0!important;
 }
-#settings .settings-currency-rub:not(.is-selected),#settings .settings-currency-usd:not(.is-selected){
- background:rgba(35,30,48,.42)!important;
+#settings .settings-currency-rub::after,#settings .settings-currency-usd::after{
+ position:absolute!important;inset:0!important;display:flex!important;
+ align-items:center!important;justify-content:center!important;
+ color:#fff!important;font-family:Arial,sans-serif!important;
+ font-size:clamp(12px,2.5vw,22px)!important;font-weight:500!important;
+ line-height:1!important;white-space:nowrap!important;pointer-events:none!important;
 }
+#settings .settings-currency-rub::after{content:"₽ Рубли"!important}
+#settings .settings-currency-usd::after{content:"$ Доллары"!important}
 #settings .settings-currency-rub.is-selected,#settings .settings-currency-usd.is-selected{
- background:rgba(151,0,224,.58)!important;
+ background:#9200dc!important;border-color:#d9a0ff!important;
 }
 #settings .settings-music-hit{left:78.2%!important;top:50.2%!important;width:15.5%!important;height:5.5%!important;border-radius:999px!important}
 #settings .settings-music-hit::before{
