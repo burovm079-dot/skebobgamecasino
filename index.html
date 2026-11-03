@@ -3930,8 +3930,6 @@ onclick="adminGive()"
 <script>
 
 /* BLACKJACK ONLINE — Supabase Realtime, no wagers or payouts */
-const BJ_ONLINE_URL="https://quglxnyhtqoojzbimtmv.supabase.co";
-const BJ_ONLINE_KEY="sb_publishable_qm5CyU510e0Yu1ayUq4tlw_je8hQhbL";
 
 /* =========================
    DATA
@@ -8387,7 +8385,7 @@ async function bjOnlineJoin(){
  if(bjOnlineChannel)return;
  const joinButton=document.getElementById("bjOnlineJoin");if(joinButton)joinButton.disabled=true;
  if(!window.supabase?.createClient){if(joinButton)joinButton.disabled=false;bjOnlineStatus("Не удалось загрузить Supabase. Обнови страницу и попробуй снова.");return}
- bjOnlineClient=bjOnlineClient||window.supabase.createClient(BJ_ONLINE_URL,BJ_ONLINE_KEY);
+ bjOnlineClient=bjOnlineClient||window.supabase.createClient("https://quglxnyhtqoojzbimtmv.supabase.co","sb_publishable_qm5CyU510e0Yu1ayUq4tlw_je8hQhbL");
  bjOnlineId=crypto.randomUUID?crypto.randomUUID():String(Date.now())+Math.random();
  bjOnlineRoom="QUICK";
  bjOnlineHost=false;bjOnlineMembers=[];bjOnlineRound=null;bjOnlineMyHand=[];bjOnlineSeconds=60;
