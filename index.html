@@ -3667,7 +3667,7 @@ id="profileBalance"
     <div class="promo-controls">
       <label class="promo-label" for="promoInput">Введите промокод</label>
       <input id="promoInput" class="promo-input" type="text" maxlength="40" autocomplete="off" placeholder="Введите промокод..." />
-      <button id="promoActivate" class="promo-activate" type="button" onclick="showPromoNotice()">Активировать</button>
+      <button id="promoActivate" class="promo-activate" type="button" onclick="activatePromo()">Активировать</button>
       <p id="promoStatus" class="promo-status" role="status" aria-live="polite"></p>
     </div>
   </div>
@@ -4299,7 +4299,7 @@ updateDailyTasks(false);
 let saved=false;
 try{
  storageSet("skebobSave",JSON.stringify(state));
- saved=true;
+ saved=storageSet("skebobSave",JSON.stringify(state));
 }catch(error){
  console.warn("Не удалось сохранить прогресс в этом браузере:",error);
 }
