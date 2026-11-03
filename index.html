@@ -1078,10 +1078,11 @@ body.promo-page>header,body.promo-page>.balance,body.promo-page>main>.nav{visibi
 #promo{position:fixed!important;inset:0!important;z-index:50000!important;display:block;width:auto;height:auto;min-height:0;margin:0;padding:0;overflow:hidden;background:#10071c}
 #promo.hidden{display:none!important}
 #promo .promo-panel{position:absolute;inset:0;overflow:hidden;display:block;box-sizing:border-box;width:100%;height:100%;min-height:0;margin:0;padding:0;border:0;border-radius:0;background:#10071c;box-shadow:none}
-#promo .promo-art{position:absolute;z-index:1;display:block;width:auto!important;height:auto!important;max-width:100%!important;max-height:100%!important;left:50%;top:50%;right:auto;bottom:auto;transform:translate(-50%,-50%);margin:0;padding:0;border:0;border-radius:0;object-fit:contain;object-position:center;background:transparent}
+#promo .promo-art{position:absolute;z-index:1;display:block;width:100%!important;height:100%!important;max-width:none!important;max-height:none!important;left:0;top:0;right:0;bottom:0;transform:none;margin:0;padding:0;border:0;border-radius:0;object-fit:fill;object-position:center;background:transparent}
 @supports(height:100dvh){#promo{height:100dvh}}
 @supports(height:100svh){#promo{height:100svh}}
-@media(max-width:600px){#promo .promo-panel{padding:0}}
+@media(max-width:600px){#promo{inset:0!important;width:100vw!important;height:100vh!important;height:100dvh!important}#promo .promo-panel{padding:0;width:100%;height:100%}#promo .promo-art{width:100vw!important;height:100%!important}}
+
  
 /* SETTINGS */
 
