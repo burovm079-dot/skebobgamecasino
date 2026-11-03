@@ -2315,6 +2315,8 @@ a:focus:not(:focus-visible),
   -webkit-user-drag:none!important;
 }
 
+/* TEXAS HOLD'EM */
+.poker-panel{background:linear-gradient(145deg,#123d32,#09251f);border-color:#b48a42}.poker-top{display:flex;justify-content:space-between;color:#f7d47a;font-weight:900}.poker-community{display:flex;justify-content:center;gap:7px;flex-wrap:wrap;margin:14px 0}.poker-card{width:52px;height:74px;display:grid;place-items:center;border-radius:8px;background:#fff;color:#171717;font-size:22px;font-weight:900;border:2px solid #eee}.poker-card.red{color:#d52d42}.poker-card.back{background:repeating-linear-gradient(45deg,#193d83,#193d83 5px,#e8d08b 6px,#193d83 8px);color:white}.poker-seats{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;margin:12px 0}.poker-seat{background:#071b18;border:1px solid #7a7549;border-radius:12px;padding:10px;text-align:center}.poker-seat strong{display:block;color:#f5d47c}.poker-seat span{font-size:12px;color:#d4e4d9}.poker-seat.folded{opacity:.45}.poker-you{text-align:center;border-top:1px solid #8b7947;padding-top:12px}.poker-actions{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:7px;margin:10px 0}.poker-actions button{min-height:44px}
 </style>
 <link rel="stylesheet" href="./dashboard.css?v=26">
 </head>
@@ -2510,7 +2512,7 @@ rel="noopener noreferrer"
 <button onclick="showPage('crash',this)">📈 КРАШ</button>
 <button onclick="showPage('battles',this)">⚔️ БАТЛЫ</button>
 <button onclick="showPage('slots',this)">🎰 СЛОТЫ</button>
-<button onclick="showPage('blackjack',this)">🃏 BLACKJACK</button>
+<button onclick="showPage('blackjack',this)">🃏 BLACKJACK</button><button onclick="showPage('poker',this)">♠️ ПОКЕР</button>
 <button onclick="showPage('dice',this)">🎲 КОСТИ</button>
 
 <button onclick="showPage('tictactoe',this)">⭕ КРЕСТИКИ</button>
@@ -3635,6 +3637,16 @@ id="profileBalance"
 </section>
 
 
+<section id="poker" class="hidden">
+<h2>♠️ ТЕХАССКИЙ ХОЛДЕМ</h2><p class="small">Ты против трёх ботов. Виртуальные фишки, блайнды 10/20. Собери лучшую комбинацию из пяти карт или заставь соперников сбросить карты.</p>
+<div class="panel poker-panel"><div class="poker-top"><span id="pokerStreet">ПРЕФЛОП</span><strong id="pokerPot">БАНК: 0 🪙</strong></div>
+<div class="poker-community" id="pokerCommunity"></div><div id="pokerSeats" class="poker-seats"></div>
+<div class="poker-you"><b>ТВОИ КАРТЫ</b><div id="pokerHand" class="poker-community"></div><div id="pokerHandName" class="small"></div></div>
+<div id="pokerMessage" class="game-status">Готов к раздаче?</div>
+<div class="poker-controls"><label>РАЗМЕР СТАВКИ / РЕЙЗА</label><div class="bet-main"><button onclick="pokerAdjustBet(-10)">−</button><input id="pokerBet" type="number" min="20" step="10" value="40"><button onclick="pokerAdjustBet(10)">+</button></div>
+<div class="poker-actions"><button class="secondary" id="pokerCheck" onclick="pokerAct('check')">ЧЕК</button><button class="secondary" id="pokerCall" onclick="pokerAct('call')">КОЛЛ</button><button class="secondary" id="pokerRaise" onclick="pokerAct('raise')">РЕЙЗ</button><button class="secondary" id="pokerFold" onclick="pokerAct('fold')">ФОЛД</button><button class="secondary" id="pokerAllin" onclick="pokerAct('allin')">ОЛЛ-ИН</button></div>
+<button class="game-main" id="pokerStart" onclick="pokerStart()">♠️ НОВАЯ РАЗДАЧА</button></div>
+<div class="small">Комбинации: рояль-флеш, стрит-флеш, каре, фулл-хаус, флеш, стрит, тройка, две пары, пара, старшая карта. Масти равны.</div></div></section>
 <section id="dice" class="hidden">
 <h2>🎲 КОСТИ — ТУРНИР</h2>
 <p class="small">Ты против случайных ботов. Каждый раунд собирает от 2 до 4 соперников (всего до 5 игроков). Все ставят одинаково — победитель забирает банк.</p>
@@ -4539,7 +4551,7 @@ const target=document.getElementById(id);
 if(target){
 if(pageView&&target.parentElement!==pageView)pageView.appendChild(target);
 target.classList.remove("hidden");
-const gamePages=new Set(["skebobTap","tictactoe","billiards","chickenroad","cases","secretDrop","battles","upgrade","mines","plane","plinko","race","crash","slots","blackjack","dice"]);
+const gamePages=new Set(["skebobTap","tictactoe","billiards","chickenroad","cases","secretDrop","battles","upgrade","mines","plane","plinko","race","crash","slots","blackjack","poker","dice"]);
 if(gamePages.has(id)){
 let back=target.querySelector(":scope > .game-list-back");
 if(!back){
@@ -8487,6 +8499,23 @@ function renderSkebobTap(){skebobTapResetIfReady();const t=state.tapGame,earned=
 function skebobTap(){skebobTapResetIfReady();const t=state.tapGame;if(t.cooldownUntil&&Date.now()<t.cooldownUntil){renderSkebobTap();return;}if(t.earnedCents>=SKEBOB_TAP_LIMIT){t.cooldownUntil=Date.now()+SKEBOB_TAP_WINDOW;save();renderSkebobTap();return;}if(!t.hourStartedAt)t.hourStartedAt=Date.now();t.earnedCents++;t.pendingCents++;if(t.pendingCents>=100){const whole=Math.floor(t.pendingCents/100);state.balance+=whole;t.pendingCents-=whole*100;}if(t.earnedCents>=SKEBOB_TAP_LIMIT)t.cooldownUntil=Date.now()+SKEBOB_TAP_WINDOW;save();renderSkebobTap();if(t.cooldownUntil){const status=document.getElementById("tapStatus");if(status)status.textContent="⏳ Часовой лимит тапалки достигнут! Возвращайся через час.";}}
 setInterval(()=>{const page=document.getElementById("skebobTap");if(page&&!page.classList.contains("hidden"))renderSkebobTap();},1000);
 
+
+/* TEXAS HOLD'EM VS LOCAL BOTS */
+const pokerRanks="23456789TJQKA",pokerSuits=["♠","♥","♦","♣"];let pokerGame=null;
+function pokerDeck(){let d=[];for(const r of pokerRanks)for(const u of pokerSuits)d.push({r,u});for(let i=d.length-1;i>0;i--){let j=Math.floor(Math.random()*(i+1));[d[i],d[j]]=[d[j],d[i]];}return d;}
+function pokerCard(c){return '<span class="poker-card '+("♥♦".includes(c.u)?"red":"")+'">'+c.r+c.u+'</span>';}
+function pokerEvaluate(cs){let v=cs.map(c=>pokerRanks.indexOf(c.r)+2).sort((a,b)=>b-a),cnt={};cs.forEach(c=>cnt[c.r]=(cnt[c.r]||0)+1);let gr=Object.entries(cnt).map(([r,n])=>({v:pokerRanks.indexOf(r)+2,n})).sort((a,b)=>b.n-a.n||b.v-a.v),ss={};cs.forEach(c=>(ss[c.u]??=[]).push(pokerRanks.indexOf(c.r)+2));let fl=Object.values(ss).find(a=>a.length>=5),uniq=[...new Set(v)];if(uniq.includes(14))uniq.push(1);let st=0;for(let i=0;i<=uniq.length-5;i++)if(uniq[i]-uniq[i+4]===4){st=uniq[i];break;}let sf=0;if(fl){let a=[...new Set(fl)].sort((x,y)=>y-x);if(a.includes(14))a.push(1);for(let i=0;i<=a.length-5;i++)if(a[i]-a[i+4]===4){sf=a[i];break;}}const out=(n,...x)=>[n,...x];if(sf===14)return out(10,14);if(sf)return out(9,sf);if(gr[0]?.n===4)return out(8,gr[0].v,...gr.slice(1).map(x=>x.v));if(gr[0]?.n===3&&gr.some(x=>x.n>=2&&x.v!==gr[0].v))return out(7,gr[0].v,gr.find(x=>x.n>=2&&x.v!==gr[0].v).v);if(fl)return out(6,...fl.sort((a,b)=>b-a).slice(0,5));if(st)return out(5,st);if(gr[0]?.n===3)return out(4,gr[0].v,...gr.filter(x=>x.n===1).map(x=>x.v).slice(0,2));let p=gr.filter(x=>x.n===2);if(p.length>1)return out(3,p[0].v,p[1].v,...gr.filter(x=>x.n===1).map(x=>x.v).slice(0,1));if(p.length)return out(2,p[0].v,...gr.filter(x=>x.n===1).map(x=>x.v).slice(0,3));return out(1,...v.slice(0,5));}
+function pokerCompare(a,b){for(let i=0;i<Math.max(a.length,b.length);i++)if((a[i]||0)!==(b[i]||0))return(a[i]||0)>(b[i]||0)?1:-1;return 0;}
+function pokerLabel(v){return ["","Старшая карта","Пара","Две пары","Тройка","Стрит","Флеш","Фулл-хаус","Каре","Стрит-флеш","Рояль-флеш"][v[0]];}
+function pokerRender(){let g=pokerGame;if(!g)return;document.getElementById("pokerPot").textContent="БАНК: "+g.pot+" 🪙";document.getElementById("pokerStreet").textContent=["ПРЕФЛОП","ФЛОП","ТЁРН","РИВЕР","ШОУДАУН"][g.street];document.getElementById("pokerCommunity").innerHTML=Array.from({length:5},(_,i)=>g.board[i]?pokerCard(g.board[i]):'<span class="poker-card back">?</span>').join("");document.getElementById("pokerHand").innerHTML=g.players[0].hand.map(pokerCard).join("");document.getElementById("pokerHandName").textContent=g.board.length>=3?pokerLabel(pokerEvaluate([...g.players[0].hand,...g.board])):"Карманные карты";document.getElementById("pokerSeats").innerHTML=g.players.map((p,i)=>'<div class="poker-seat '+(p.folded?"folded":"")+'"><strong>'+(i?"🤖 "+p.name:"ТЫ")+(p.folded?" · ФОЛД":"")+'</strong><span>Фишки: '+p.stack+' · Ставка: '+p.put+'</span>'+(g.done&&i?'<div>'+p.hand.map(c=>c.r+c.u).join(" ")+'</div>':"")+'</div>').join("");document.getElementById("pokerMessage").textContent=g.message;let owed=Math.max(0,g.currentBet-g.players[0].put),ok=g.active&&!g.players[0].folded;["pokerCheck","pokerCall","pokerRaise","pokerFold","pokerAllin"].forEach(id=>document.getElementById(id).disabled=!ok);document.getElementById("pokerCheck").disabled=!ok||owed>0;document.getElementById("pokerCall").disabled=!ok||!owed;document.getElementById("pokerCall").textContent="КОЛЛ "+owed;document.getElementById("pokerStart").disabled=g.active;}
+function pokerPut(p,n){n=Math.max(0,Math.min(p.stack,n));p.stack-=n;p.put+=n;pokerGame.pot+=n;}
+function pokerStart(){if(pokerGame?.active)return;if(state.balance<20){document.getElementById("pokerMessage").textContent="Нужно минимум 20 монет.";return;}let d=pokerDeck(),names=["Ты","SKEBOB BOT","Lucky Bot","Poker Face"],ps=names.map((name,i)=>({name,stack:i?1000:state.balance,hand:[d.pop(),d.pop()],put:0,folded:false,allin:false}));pokerGame={deck:d,players:ps,board:[],pot:0,currentBet:20,street:0,active:true,done:false,message:"Блайнды 10/20. Твой ход.",acted:new Set()};pokerPut(ps[0],10);pokerPut(ps[1],20);state.balance=ps[0].stack;save();pokerRender();}
+function pokerAdjustBet(n){let e=document.getElementById("pokerBet");e.value=Math.max(20,(Number(e.value)||40)+n);}
+function pokerAct(a){let g=pokerGame;if(!g?.active)return;let p=g.players[0],owed=Math.max(0,g.currentBet-p.put);if(a==="fold"){p.folded=true;g.message="Ты сбросил карты.";}else if(a==="check"){if(owed)return;g.message="Ты чекнул.";}else if(a==="call"){pokerPut(p,owed);g.message="Ты уравнял ставку.";}else if(a==="raise"){let n=Math.max(g.currentBet+20,Number(document.getElementById("pokerBet").value)||40);pokerPut(p,n-p.put);g.currentBet=p.put;g.message="Ты повысил ставку.";}else if(a==="allin"){pokerPut(p,p.stack);p.allin=true;g.currentBet=Math.max(g.currentBet,p.put);g.message="ОЛЛ-ИН!";}pokerBots();}
+function pokerBots(){let g=pokerGame;if(!g||g.done)return;for(let i=1;i<4;i++){let p=g.players[i];if(p.folded||p.allin)continue;let owed=Math.max(0,g.currentBet-p.put),strength=g.board.length>=3?pokerEvaluate([...p.hand,...g.board])[0]:(p.hand[0].r===p.hand[1].r?2:1);if(owed>p.stack||(owed>0&&strength===1&&Math.random()<.42)){p.folded=true;continue;}if(owed)pokerPut(p,owed);else if(strength>=3&&Math.random()<.2){pokerPut(p,20);g.currentBet=Math.max(g.currentBet,p.put);}}let alive=g.players.filter(p=>!p.folded);if(alive.length===1){pokerFinish(alive[0],"Все соперники сбросили карты — банк твой!");return;}if(alive.filter(p=>!p.allin).length<=1||g.street===3){pokerRunout();pokerFinish(null,"Шоудаун!");return;}pokerNext();}
+function pokerNext(){let g=pokerGame;g.players.forEach(p=>p.put=0);g.currentBet=0;g.street++;if(g.street===1)g.board.push(g.deck.pop(),g.deck.pop(),g.deck.pop());else g.board.push(g.deck.pop());g.message=["","Флоп открыт. Твой ход.","Тёрн! Твой ход.","Ривер! Последний раунд торгов."][g.street];if(g.players[0].folded||g.players[0].allin){pokerBots();return;}pokerRender();}
+function pokerRunout(){let g=pokerGame;while(g.board.length<5)g.board.push(g.deck.pop());}
+function pokerFinish(winner,msg){let g=pokerGame;g.active=false;g.done=true;if(!winner){let live=g.players.filter(p=>!p.folded),best=null,w=[];live.forEach(p=>{let v=pokerEvaluate([...p.hand,...g.board]),c=best?pokerCompare(v,best):1;if(c>0){best=v;w=[p];}else if(c===0)w.push(p);});let share=Math.floor(g.pot/w.length);w.forEach(p=>{p.stack+=share;if(p===g.players[0])state.balance+=share;});msg+=" Победитель: "+w.map(p=>p.name).join(", ")+". "+pokerLabel(best);}else{winner.stack+=g.pot;if(winner===g.players[0])state.balance+=g.pot;}save();g.message=msg+" Банк: "+g.pot+" 🪙";pokerRender();}
 
 /* Telegram Mini App viewport and fresh UI initialization */
 (function(){try{const tg=window.Telegram&&window.Telegram.WebApp;if(tg){tg.ready();tg.expand();}}catch(e){console.warn("Telegram WebApp init:",e)}})();
