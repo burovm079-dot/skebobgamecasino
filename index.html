@@ -2216,23 +2216,24 @@ body.tasks-page #skebobDashboard #tasks #dailyTasksList .daily-art-task{
  padding:0!important;
 }
 body.tasks-page #skebobDashboard #tasks #dailyTasksList .daily-art-task small{display:none!important}
-/* Seamlessly replace the printed "24 часа": transparent overlay, condensed gold lettering. */
+/* Mask the artwork's printed "24 часа" cleanly, then render one live countdown in its place. */
 body.tasks-page #skebobDashboard #tasks #tasksTimer{
- position:absolute!important;left:57.0%!important;top:30.65%!important;width:18.5%!important;height:3.25%!important;
+ position:absolute!important;left:56.6%!important;top:30.65%!important;width:19.4%!important;height:3.25%!important;
  z-index:10!important;display:flex!important;align-items:center!important;justify-content:center!important;
- box-sizing:border-box!important;white-space:nowrap!important;overflow:visible!important;
- padding:0!important;border:0!important;border-radius:0!important;background:transparent!important;
+ box-sizing:border-box!important;white-space:nowrap!important;overflow:hidden!important;
+ padding:0 2px!important;border:0!important;border-radius:0!important;
+ background:linear-gradient(90deg,rgba(38,8,51,0) 0%,#260833 7%,#260833 93%,rgba(38,8,51,0) 100%)!important;
  font-family:"Arial Narrow","Roboto Condensed","Liberation Sans Narrow",Impact,sans-serif!important;
- font-size:clamp(13px,1.9vw,18px)!important;font-weight:700!important;
- letter-spacing:-1.05px!important;text-align:center!important;color:#ffd936!important;
- text-shadow:0 0 1px #ffb900,0 1px 1px #6d2b00!important;
- transform:scaleX(.88)!important;transform-origin:center center!important;pointer-events:none!important;
+ font-size:clamp(12px,1.75vw,16px)!important;font-weight:700!important;
+ letter-spacing:0!important;text-align:center!important;color:#ffdc43!important;
+ text-shadow:0 0 1px #ffbd16,0 1px 1px #6d2b00!important;
+ transform:none!important;pointer-events:none!important;
 }
 @media(max-width:600px){
  body.tasks-page #skebobDashboard #tasks #dailyTasksList .daily-art-task{font-size:0!important}
  body.tasks-page #skebobDashboard #tasks #tasksTimer{
-  left:57.0%!important;top:30.65%!important;width:18.5%!important;height:3.25%!important;
-  font-size:clamp(13px,1.9vw,17px)!important;letter-spacing:-1.05px!important;
+  left:56.6%!important;top:30.65%!important;width:19.4%!important;height:3.25%!important;
+  font-size:clamp(12px,1.75vw,16px)!important;letter-spacing:0!important;
  }
 }
 
