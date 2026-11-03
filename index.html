@@ -2100,7 +2100,18 @@ body.light #settings .reference-setting-row{background:linear-gradient(110deg,#6
 }
 #settings .settings-picture-hit:focus-visible{outline:3px solid #fff3a8!important;outline-offset:2px!important}
 #settings .settings-currency-rub{left:49%!important;top:41.2%!important;width:16.5%!important;height:7.2%!important}
-#settings .settings-currency-usd{left:66%!important;top:41.2%!important;width:18.5%!important;height:7.2%!important}\n#settings .settings-currency-rub.is-selected,#settings .settings-currency-usd.is-selected{background:rgba(169,35,255,.42)!important;outline:2px solid #df8cff!important;outline-offset:-2px!important;box-shadow:0 0 10px #c000ff,0 0 22px rgba(174,0,255,.85),inset 0 0 12px rgba(225,145,255,.45)!important}
+#settings .settings-currency-usd{left:66%!important;top:41.2%!important;width:18.5%!important;height:7.2%!important}
+#settings .settings-currency-rub,#settings .settings-currency-usd{
+ border-radius:12px!important;transition:background .15s,box-shadow .15s!important;
+}
+#settings .settings-currency-rub:not(.is-selected),#settings .settings-currency-usd:not(.is-selected){
+ background:rgba(65,65,75,.78)!important;outline:1px solid rgba(180,180,195,.45)!important;
+ box-shadow:inset 0 0 8px rgba(0,0,0,.55)!important;
+}
+#settings .settings-currency-rub.is-selected,#settings .settings-currency-usd.is-selected{
+ background:rgba(139,0,220,.94)!important;outline:2px solid #d98aff!important;outline-offset:-2px!important;
+ box-shadow:inset 0 0 14px rgba(235,180,255,.42),0 0 9px rgba(174,0,255,.85)!important;
+}
 #settings .settings-music-hit{left:78.2%!important;top:50.2%!important;width:15.5%!important;height:5.5%!important;border-radius:999px!important}
 #settings .settings-music-hit::before{
  content:"";position:absolute;inset:0;border:2px solid #ffca45;border-radius:999px;
