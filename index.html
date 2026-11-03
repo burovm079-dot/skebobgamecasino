@@ -2285,6 +2285,36 @@ body.tasks-page #skebobDashboard #tasks #tasksTimer{
  }
 }
 
+
+/* Remove persistent mobile tap/focus rectangles without changing button artwork or click behavior. */
+html,body,body *{
+  -webkit-tap-highlight-color:transparent!important;
+}
+button,a,[role="button"],input,select,textarea,
+button:focus,a:focus,[role="button"]:focus,
+button:focus-visible,a:focus-visible,[role="button"]:focus-visible{
+  -webkit-tap-highlight-color:transparent!important;
+}
+button:focus:not(:focus-visible),
+a:focus:not(:focus-visible),
+[role="button"]:focus:not(:focus-visible){
+  outline:none!important;
+  box-shadow:none!important;
+}
+#skebobDashboard .sk-side .sk-menu-item,
+#skebobDashboard .sk-side .sk-menu-item:focus,
+#skebobDashboard .sk-side .sk-menu-item:focus-visible,
+#skebobDashboard .sk-side .sk-menu-item:active{
+  -webkit-tap-highlight-color:transparent!important;
+  -webkit-focus-ring-color:transparent!important;
+  outline:none!important;
+}
+#skebobDashboard .sk-side .sk-menu-item img{
+  -webkit-tap-highlight-color:transparent!important;
+  user-select:none!important;
+  -webkit-user-drag:none!important;
+}
+
 </style>
 <link rel="stylesheet" href="./dashboard.css?v=26">
 </head>
