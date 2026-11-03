@@ -1105,6 +1105,13 @@ body.promo-page>header,body.promo-page>.balance,body.promo-page>main>.nav{visibi
 #promo.hidden{display:none!important}
 #promo .promo-panel{position:absolute;inset:0;overflow:hidden;display:block;box-sizing:border-box;width:100%;height:100%;min-height:0;margin:0;padding:0;border:0;border-radius:0;background:#10071c;box-shadow:none}
 #promo .promo-art{position:absolute;z-index:1;display:block;width:auto!important;height:auto!important;max-width:100%!important;max-height:100%!important;left:50%;top:50%;right:auto;bottom:auto;transform:translate(-50%,-50%);margin:0;padding:0;border:0;border-radius:0;object-fit:contain;object-position:center;background:transparent}
+#promo .promo-controls{position:absolute;z-index:4;left:50%;bottom:max(7%,env(safe-area-inset-bottom));transform:translateX(-50%);width:min(86%,420px);display:flex;flex-direction:column;align-items:stretch;gap:10px;pointer-events:auto}
+#promo .promo-label{color:#fff;text-align:center;font:700 15px Arial,sans-serif;text-shadow:0 1px 5px #000}
+#promo .promo-input{box-sizing:border-box;width:100%;min-height:48px;padding:10px 14px;border:2px solid #bd65ff;border-radius:12px;background:#210d35;color:#fff;font:600 16px Arial,sans-serif;pointer-events:auto}
+#promo .promo-input::placeholder{color:#cbb8dc}
+#promo .promo-activate{width:100%;min-height:48px;border:2px solid #aaff36;border-radius:12px;background:linear-gradient(180deg,#8bff16,#16b900);color:#fff;font:900 17px Arial,sans-serif;cursor:pointer;pointer-events:auto;touch-action:manipulation}
+#promo .promo-status{min-height:20px;margin:0;color:#fff;text-align:center;font:700 13px Arial,sans-serif;text-shadow:0 1px 4px #000}
+
 @supports(height:100dvh){#promo{height:100dvh}}
 @supports(height:100svh){#promo{height:100svh}}
 @media(max-width:600px){#promo .promo-panel{padding:0}}
@@ -3644,6 +3651,12 @@ id="profileBalance"
 <section id="promo" class="hidden">
   <div class="promo-panel">
     <img class="promo-art" src="/skebobgamecasino/assets/games/assets/games/Промокоды и золотые награды.png" alt="Промокоды и золотые награды" loading="eager" fetchpriority="high">
+    <div class="promo-controls">
+      <label class="promo-label" for="promoInput">Введите промокод</label>
+      <input id="promoInput" class="promo-input" type="text" maxlength="40" autocomplete="off" placeholder="Введите промокод..." />
+      <button id="promoActivate" class="promo-activate" type="button" onclick="showPromoNotice()">Активировать</button>
+      <p id="promoStatus" class="promo-status" role="status" aria-live="polite"></p>
+    </div>
   </div>
 </section>
 
@@ -4908,6 +4921,16 @@ state.admin.infiniteBalance?"∞":Math.floor(state.balance).toLocaleString("ru-R
 /* =========================
    PROMO
 ========================= */
+
+function showPromoNotice(){
+ const input=document.getElementById("promoInput");
+ const status=document.getElementById("promoStatus");
+ if(!input||!status)return;
+ status.textContent=input.value.trim()
+  ?"Промокоды сейчас отключены."
+  :"Сначала введите текст промокода.";
+ status.style.color="#ffe28a";
+}
 
 function openPromoPage(){
 
