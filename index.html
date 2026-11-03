@@ -10,7 +10,7 @@
 (function(){
  if(window.__skebobImageRecoveryInstalled)return;
  window.__skebobImageRecoveryInstalled=true;
- const MAX_RETRIES=6;
+ const MAX_RETRIES=12;
  function originalSource(img){
   if(!img.dataset.originalSrc){
    const src=img.getAttribute("src")||"";
@@ -79,6 +79,38 @@
    }
   });
  }
+ /* Force a fresh request for bundled artwork: Telegram WebView can retain cached 404s. */
+ function refreshBundledArtwork(){
+  document.querySelectorAll('img[src*="assets/games/assets/games/"]').forEach(function(img){
+   img.loading="eager";
+   img.decoding="async";
+   try{img.fetchPriority="high";}catch(error){}
+   const src=img.getAttribute("src")||"";
+   if(src&&!/[?&]v=/.test(src)){
+    img.dataset.originalSrc=src;
+    img.dataset.imageRetry="0";
+    img.src=src+(src.includes("?")?"&":"?")+"v=artwork-20261103";
+   }
+  });
+ }
+ if(document.readyState==="loading")document.addEventListener("DOMContentLoaded",refreshBundledArtwork,{once:true});
+ else refreshBundledArtwork();
+ const artworkObserver=new MutationObserver(function(records){
+  records.forEach(function(record){
+   record.addedNodes.forEach(function(node){
+    if(node.nodeType!==1)return;
+    const imgs=node.matches&&node.matches('img[src*="assets/games/assets/games/"]')?[node]:[];
+    if(node.querySelectorAll)imgs.push(...node.querySelectorAll('img[src*="assets/games/assets/games/"]'));
+    imgs.forEach(function(img){
+     const src=img.getAttribute("src")||"";
+     if(src&&!/[?&]v=/.test(src)){
+      img.loading="eager";img.decoding="async";img.dataset.originalSrc=src;img.src=src+(src.includes("?")?"&":"?")+"v=artwork-20261103";
+     }
+    });
+   });
+  });
+ });
+ if(document.documentElement)artworkObserver.observe(document.documentElement,{childList:true,subtree:true});
  window.addEventListener("online",retryFailedImages);
  document.addEventListener("visibilitychange",function(){
   if(document.visibilityState==="visible")retryFailedImages();
@@ -1960,7 +1992,7 @@ body.legacy-page-active .nav,body.legacy-page-active .balance,body.legacy-page-a
 @media(max-aspect-ratio:4/5){#entrySplash .splash-background{object-fit:cover;}#entrySplash .splash-shade:after{left:24%;width:0;}#entrySplash.loading .splash-shade:after{width:52%;}}
 
 </style>
-<link rel="stylesheet" href="./dashboard.css?v=22">
+<link rel="stylesheet" href="./dashboard.css?v=23">
 </head>
 
 <body class="dashboard-home">
