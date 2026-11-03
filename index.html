@@ -2174,14 +2174,15 @@ body.tasks-page #skebobDashboard #tasks.daily-tasks-page::before{content:""!impo
 body.tasks-page #skebobDashboard #tasks.daily-tasks-page .daily-artboard{width:min(100%,calc(100dvh * 1184 / 1536))!important;height:auto!important;max-height:100%!important;aspect-ratio:1184 / 1536!important;flex:0 1 auto!important;z-index:1!important}
 body.tasks-page #skebobDashboard #tasks .daily-artwork{width:100%!important;height:100%!important;object-fit:contain!important}
 
-/* Daily tasks use the full right pane without distorting the source image. */
+/* Daily tasks: make the complete artwork and its live controls fill the entire right pane. */
 body.tasks-page #skebobDashboard{grid-template-columns:188px minmax(0,1fr)!important;height:100dvh!important;min-height:100dvh!important;overflow:hidden!important}
 body.tasks-page #skebobDashboard .sk-work.tasks-workspace{display:flex!important;flex-direction:column!important;height:100dvh!important;min-height:0!important;padding:0!important;overflow:hidden!important}
 body.tasks-page #skebobDashboard .tasks-workspace>.sk-top,body.tasks-page #skebobDashboard .tasks-workspace>.sk-games{display:none!important}
-body.tasks-page #skebobDashboard .tasks-workspace #sk-page-view{display:flex!important;flex:1!important;align-items:center!important;justify-content:center!important;min-height:0!important;padding:0!important;overflow:hidden!important}
-body.tasks-page #skebobDashboard #tasks:not(.hidden){display:flex!important;flex:1!important;align-items:center!important;justify-content:center!important;width:100%!important;height:100%!important;max-width:none!important;margin:0!important;padding:0!important;overflow:hidden!important}
-body.tasks-page #skebobDashboard #tasks .daily-artboard{width:min(100%,calc(100dvh * 1184 / 1536))!important;max-width:100%!important;max-height:100%!important;aspect-ratio:1184 / 1536!important;margin:0!important;border-radius:0!important;box-shadow:none!important}
-body.tasks-page #skebobDashboard #tasks .daily-artwork{width:100%!important;height:100%!important;object-fit:contain!important}
+body.tasks-page #skebobDashboard .tasks-workspace #sk-page-view{display:flex!important;flex:1!important;align-items:stretch!important;justify-content:stretch!important;min-width:0!important;min-height:0!important;padding:0!important;overflow:hidden!important}
+body.tasks-page #skebobDashboard #tasks:not(.hidden){display:flex!important;flex:1 1 100%!important;align-items:stretch!important;justify-content:stretch!important;width:100%!important;height:100%!important;min-width:0!important;min-height:0!important;max-width:none!important;margin:0!important;padding:0!important;overflow:hidden!important}
+body.tasks-page #skebobDashboard #tasks.daily-tasks-page::before{display:none!important}
+body.tasks-page #skebobDashboard #tasks .daily-artboard{position:relative!important;display:block!important;flex:1 1 100%!important;width:100%!important;height:100%!important;min-width:0!important;min-height:0!important;max-width:none!important;max-height:none!important;aspect-ratio:auto!important;margin:0!important;border-radius:0!important;box-shadow:none!important;overflow:hidden!important}
+body.tasks-page #skebobDashboard #tasks .daily-artwork{display:block!important;width:100%!important;height:100%!important;object-fit:fill!important}
 body.tasks-page #skebobDashboard #tasks .daily-art-caption{display:none!important}
 @media(max-width:760px){body.tasks-page #skebobDashboard{grid-template-columns:82px minmax(0,1fr)!important}}
 @media(max-width:380px){body.tasks-page #skebobDashboard{grid-template-columns:76px minmax(0,1fr)!important}}
