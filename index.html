@@ -2208,14 +2208,30 @@ body.tasks-page #skebobDashboard #tasks #dailyTasksList .daily-art-task{
  text-shadow:none!important;outline:0!important;
 }
 body.tasks-page #skebobDashboard #tasks #dailyTasksList .daily-art-task:active:not(:disabled){transform:none!important}
-/* Invisible click targets only: all button artwork and labels are baked into the image. */
+/* Keep unfinished hotspots visually invisible; reveal a green, fully clickable button only when earned. */
 body.tasks-page #skebobDashboard #tasks #dailyTasksList .daily-art-task{
  background:transparent!important;background-image:none!important;border:0!important;
- box-shadow:none!important;border-radius:0!important;color:transparent!important;
+ box-shadow:none!important;border-radius:18px!important;color:transparent!important;
  text-shadow:none!important;outline:0!important;font-size:0!important;gap:0!important;
- padding:0!important;
+ padding:0!important;cursor:pointer!important;touch-action:manipulation!important;
 }
-body.tasks-page #skebobDashboard #tasks #dailyTasksList .daily-art-task small{display:none!important}
+body.tasks-page #skebobDashboard #tasks #dailyTasksList .daily-art-task.is-ready{
+ background:linear-gradient(180deg,#caffaa 0%,#55e58d 48%,#159c58 100%)!important;
+ border:2px solid #e4ffd2!important;
+ box-shadow:0 0 18px #48ff9aaa,inset 0 2px 5px #ffffffbb!important;
+ color:#073c22!important;text-shadow:0 1px 1px #d7ffd4!important;
+ font-size:clamp(10px,1.45vw,16px)!important;font-weight:1000!important;
+ gap:3px!important;padding:0 3px!important;pointer-events:auto!important;
+}
+body.tasks-page #skebobDashboard #tasks #dailyTasksList .daily-art-task.is-ready small{
+ display:block!important;font-size:.68em!important;color:#073c22!important;
+}
+body.tasks-page #skebobDashboard #tasks #dailyTasksList .daily-art-task.is-claimed{
+ background:linear-gradient(180deg,#497b65,#1c573e)!important;
+ border:2px solid #a2e8bb!important;color:#e7ffed!important;
+ font-size:clamp(9px,1.3vw,14px)!important;box-shadow:0 0 10px #35ff9166!important;
+}
+body.tasks-page #skebobDashboard #tasks #dailyTasksList .daily-art-task.is-claimed small{display:block!important;font-size:.65em!important}
 /* Mask the artwork's printed "24 часа" cleanly, then render one live countdown in its place. */
 body.tasks-page #skebobDashboard #tasks #tasksTimer{
  position:absolute!important;left:56.6%!important;top:30.65%!important;width:19.4%!important;height:3.25%!important;
@@ -4350,7 +4366,9 @@ function claimDailyTask(id){
  d.claimed.push(id);
  state.balance+=DAILY_TASK_REWARD;
  save();
+ render();
  renderDailyTasks();
+ alert("Награда получена: +"+DAILY_TASK_REWARD+" монет!");
 }
 function renderDailyTasks(){
  updateDailyTasks();
@@ -4360,9 +4378,16 @@ function renderDailyTasks(){
   const progress=Math.min(t.target,Math.max(0,Number(state.dailyTasks.progress[t.id])||0));
   const done=progress>=t.target,claimed=state.dailyTasks.claimed.includes(t.id);
   const cls=claimed?"is-claimed":done?"is-ready":"";
-  const label=claimed?"✓ ПОЛУЧЕНО":done?"ЗАБРАТЬ НАГРАДУ":"ПОЛУЧИТЬ НАГРАДУ";
-  return '<button type="button" class="daily-art-task '+cls+'" data-task-id="'+t.id+'" aria-label="'+t.title+'. Прогресс '+progress+' из '+t.target+'. '+(claimed?"Награда получена":done?"Забрать награду":"Задание не выполнено")+'" '+(claimed?'disabled':'')+' onclick="claimDailyTask(\''+t.id+'\')">'+label+'<small>'+progress+'/'+t.target+(claimed?" · +50 🪙":" · 50 🪙")+'</small></button>';
+  const label=claimed?"✓ ПОЛУЧЕНО":done?"ЗАБРАТЬ НАГРАДУ":"";
+  return '<button type="button" class="daily-art-task '+cls+'" data-task-id="'+t.id+'" aria-label="'+t.title+'. Прогресс '+progress+' из '+t.target+'. '+(claimed?"Награда получена":done?"Забрать награду":"Задание не выполнено")+'" '+(claimed?'disabled':'')+'>'+label+(done||claimed?'<small>'+progress+'/'+t.target+(claimed?" · +50 🪙":" · 50 🪙")+'</small>':'')+'</button>';
  }).join("");
+ list.onclick=function(event){
+  const button=event.target.closest("button.daily-art-task[data-task-id]");
+  if(!button||button.disabled)return;
+  event.preventDefault();
+  event.stopPropagation();
+  claimDailyTask(button.dataset.taskId);
+ };
  const left=Math.max(0,getNextDailyTaskReset()-Date.now());
  const h=Math.floor(left/3600000),m=Math.floor(left%3600000/60000),sec=Math.floor(left%60000/1000);
  const timer=document.getElementById("tasksTimer");
