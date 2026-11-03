@@ -8255,21 +8255,39 @@ async function saveFirstNickname(){
  updateNicknameUI();
 }
 async function changeNickname(){
- const next=await skebobDialog("prompt","Введи новый nickname:",getNickname());
- if(next===null)return;
- const nick=next.trim().replace(/\s+/g," ").slice(0,18);
- if(nick.length<2){alert("Ник должен содержать минимум 2 символа.");return;}
- if(bjNickTaken(nick,bjOnlineId)){alert("Этот nickname уже занят игроком за столом. Придумай другой.");return;}
- if(bjIsSpecialAccount(nick)&&!(await bjRequestSpecialAccountPassword(nick)))return;
- if(bjIsOfficialNickname(nick)&&!(await bjRequestOfficialCode()))return;
- if(!storageSet(NICKNAME_KEY,nick)){alert("Не удалось сохранить nickname. Попробуй ещё раз.");return;}
- if(state.admin.infiniteBalance&&!bjIsSpecialAccount(nick)){
-  const restore=Number(state.admin.balanceBeforeInfinite);
-  state.balance=Number.isFinite(restore)?Math.max(0,Math.floor(restore)):20;
-  state.admin.infiniteBalance=false;state.admin.balanceBeforeInfinite=null;save();
- }
- updateNicknameUI();
- if(bjOnlineChannel){bjOnlineChannel.track({id:bjOnlineId,name:nick,done:!bjOnlineMyTurn,joinedAt:bjOnlineJoinedAt,phase:bjOnlineRound&&!bjOnlineRound.finished?"playing":"waiting"});}
+ const existing=document.getElementById("nicknameChangeModal");
+ if(existing)existing.remove();
+ const overlay=document.createElement("div");
+ overlay.id="nicknameChangeModal";
+ overlay.style.cssText="position:fixed;inset:0;z-index:31000;background:rgba(0,0,0,.82);display:flex;align-items:center;justify-content:center;padding:20px";
+ const panel=document.createElement("form");
+ panel.style.cssText="width:100%;max-width:430px;background:var(--panel);color:var(--text);border:2px solid var(--gold);border-radius:20px;padding:22px;box-shadow:0 15px 50px #000b";
+ panel.innerHTML='<h2 style="margin:0 0 10px;color:var(--gold)">✏️ ИЗМЕНИТЬ NICKNAME</h2><p class="small" style="margin:0 0 14px">Введи новый nickname (от 2 до 18 символов).</p><input id="nicknameChangeInput" type="text" maxlength="18" autocomplete="nickname" style="width:100%;box-sizing:border-box;margin-bottom:16px" placeholder="Твой nickname"><div style="display:flex;gap:10px"><button type="button" class="secondary" id="nicknameChangeCancel" style="flex:1">ОТМЕНА</button><button type="submit" class="goldbtn" style="flex:1">СОХРАНИТЬ</button></div>';
+ overlay.appendChild(panel);
+ document.body.appendChild(overlay);
+ const input=panel.querySelector("#nicknameChangeInput");
+ const close=()=>overlay.remove();
+ panel.querySelector("#nicknameChangeCancel").addEventListener("click",close);
+ overlay.addEventListener("click",e=>{if(e.target===overlay)close();});
+ panel.addEventListener("submit",async e=>{
+  e.preventDefault();
+  const nick=(input.value||"").trim().replace(/\\s+/g," ").slice(0,18);
+  if(nick.length<2){alert("Ник должен содержать минимум 2 символа.");input.focus();return;}
+  if(bjNickTaken(nick,bjOnlineId)){alert("Этот nickname уже занят игроком за столом. Придумай другой.");input.focus();return;}
+  if(bjIsSpecialAccount(nick)&&!(await bjRequestSpecialAccountPassword(nick)))return;
+  if(bjIsOfficialNickname(nick)&&!(await bjRequestOfficialCode()))return;
+  if(!storageSet(NICKNAME_KEY,nick)){alert("Не удалось сохранить nickname. Попробуй ещё раз.");return;}
+  if(state.admin.infiniteBalance&&!bjIsSpecialAccount(nick)){
+   const restore=Number(state.admin.balanceBeforeInfinite);
+   state.balance=Number.isFinite(restore)?Math.max(0,Math.floor(restore)):20;
+   state.admin.infiniteBalance=false;state.admin.balanceBeforeInfinite=null;save();
+  }
+  close();
+  updateNicknameUI();
+  if(bjOnlineChannel){bjOnlineChannel.track({id:bjOnlineId,name:nick,done:!bjOnlineMyTurn,joinedAt:bjOnlineJoinedAt,phase:bjOnlineRound&&!bjOnlineRound.finished?"playing":"waiting"});}
+ });
+ input.value=getNickname();
+ setTimeout(()=>{input.focus();input.select();},50);
 }
 
 /* BLACKJACK ONLINE — Supabase Realtime, no wagers or payouts */
