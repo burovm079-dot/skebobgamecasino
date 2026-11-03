@@ -4222,7 +4222,7 @@ if(work&&!pageView){pageView=document.createElement("div");pageView.id="sk-page-
 if(games)games.classList.toggle("hidden",!isDashboard);
 if(isDashboard){
 document.querySelectorAll("section[id]").forEach(section=>section.classList.add("hidden"));
-if(pageView)pageView.replaceChildren();
+if(pageView){Array.from(pageView.children).forEach(section=>{if(section&&section.matches("section[id]")){section.classList.add("hidden");document.body.appendChild(section);}else{section.remove();}});}
 window.scrollTo({top:0,behavior:"smooth"});
 return;
 }
