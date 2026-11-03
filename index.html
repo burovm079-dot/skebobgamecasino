@@ -1098,16 +1098,19 @@ text-align:center;
 
 .promo-icon{font-size:58px}
 
-/* PROMO — artwork fills the entire tab; no legacy form controls */
-body.promo-page{overflow:hidden}
-body.promo-page>header,body.promo-page>.balance,body.promo-page>main>.nav{visibility:hidden}
-#promo{position:fixed!important;inset:0!important;z-index:50000!important;display:block;width:auto;height:auto;min-height:0;margin:0;padding:0;overflow:hidden;background:#10071c}
-#promo.hidden{display:none!important}
-#promo .promo-panel{position:absolute;inset:0;overflow:hidden;display:block;box-sizing:border-box;width:100%;height:100%;min-height:0;margin:0;padding:0;border:0;border-radius:0;background:#10071c;box-shadow:none}
-#promo .promo-art{position:absolute;z-index:1;display:block;width:auto!important;height:auto!important;max-width:100%!important;max-height:100%!important;left:50%;top:50%;right:auto;bottom:auto;transform:translate(-50%,-50%);margin:0;padding:0;border:0;border-radius:0;object-fit:contain;object-position:center;background:transparent}
-@supports(height:100dvh){#promo{height:100dvh}}
-@supports(height:100svh){#promo{height:100svh}}
-@media(max-width:600px){#promo .promo-panel{padding:0}}
+/* PROMO — working form on the left, artwork contained on the right */
+#promo{width:100%;min-height:0;padding:12px 0 28px;background:transparent;overflow:visible}
+#promo .promo-panel{display:grid;grid-template-columns:minmax(0,1fr) minmax(220px,.9fr);align-items:center;gap:22px;width:100%;min-height:320px;margin:0;padding:22px;border:1px solid #8051a5;border-radius:20px;background:linear-gradient(145deg,#1d1230,#100d1b);box-shadow:0 12px 35px #0005;text-align:left;overflow:hidden}
+#promo .promo-form{min-width:0;position:relative;z-index:2}
+#promo .promo-form h2{margin:0 0 10px;color:#f4c75e;font-size:clamp(20px,3vw,28px)}
+#promo .promo-form p{color:var(--muted);line-height:1.5}
+#promo .promo-art-wrap{display:flex;align-items:center;justify-content:center;min-width:0;min-height:260px;height:100%;overflow:hidden}
+#promo .promo-art{display:block;width:100%;height:100%;max-width:100%;max-height:380px;object-fit:contain;object-position:center;margin:0;border:0;border-radius:12px;background:transparent}
+#promoInput{width:100%;margin:12px 0 8px;padding:15px;border:1px solid #8051a5;border-radius:12px;background:#171020;color:#fff;font-size:16px}
+#promo .promo-enter{width:100%;padding:13px;border:1px solid #a66ce0;border-radius:12px;background:#38204f;color:#fff;font-weight:900}
+#promo .promo-activate{width:100%;margin-top:10px;padding:15px;border:0;border-radius:12px;background:linear-gradient(110deg,#20b96a,#31df82);color:#071b10;font-weight:900;font-size:16px}
+#promoStatus{min-height:24px;margin:12px 0 0;font-weight:800;line-height:1.45}
+@media(max-width:620px){#promo .promo-panel{grid-template-columns:minmax(0,1fr);gap:14px;padding:16px}#promo .promo-art-wrap{grid-row:1;min-height:150px;max-height:230px}#promo .promo-art{max-height:230px}#promo .promo-form{grid-row:2}}
  
 /* SETTINGS */
 
@@ -3643,7 +3646,17 @@ id="profileBalance"
 <!-- PROMO -->
 <section id="promo" class="hidden">
   <div class="promo-panel">
-    <img class="promo-art" src="/skebobgamecasino/assets/games/assets/games/Промокоды и золотые награды.png" alt="Промокоды и золотые награды" loading="eager" fetchpriority="high">
+    <div class="promo-form">
+      <h2>🎁 ПРОМОКОДЫ</h2>
+      <p>Введи промокод и нажми «Активировать», чтобы получить игровые монеты.</p>
+      <button type="button" class="promo-enter" id="promoEnterButton">ВВЕДИТЕ ПРОМОКОД</button>
+      <input id="promoInput" type="text" maxlength="32" autocomplete="off" autocapitalize="characters" placeholder="Введите промокод">
+      <button type="button" class="promo-activate" id="promoActivateButton">АКТИВИРОВАТЬ</button>
+      <p id="promoStatus" role="status" aria-live="polite"></p>
+    </div>
+    <div class="promo-art-wrap">
+      <img class="promo-art" src="/skebobgamecasino/assets/games/assets/games/Промокоды и золотые награды.png" alt="Промокоды и золотые награды" loading="eager" fetchpriority="high">
+    </div>
   </div>
 </section>
 
@@ -4923,16 +4936,20 @@ document.getElementById(
 "promoStatus"
 );
 
-input.value="";
-
-status.textContent="";
-
-setTimeout(
-()=>input.focus(),
-100
-);
+if(input)input.value="";
+if(status)status.textContent="";
+setTimeout(()=>{if(input)input.focus();},100);
 
 }
+
+document.addEventListener("DOMContentLoaded",()=>{
+ const input=document.getElementById("promoInput");
+ const enter=document.getElementById("promoEnterButton");
+ const activate=document.getElementById("promoActivateButton");
+ if(enter)enter.addEventListener("click",()=>{if(input)input.focus();});
+ if(activate)activate.addEventListener("click",activatePromo);
+ if(input)input.addEventListener("keydown",event=>{if(event.key==="Enter"){event.preventDefault();activatePromo();}});
+},{once:true});
 
 function getUsedPromocodes(){
 
@@ -4959,20 +4976,16 @@ return[];
 
 function activatePromo(){
 
-const input=
-document.getElementById(
-"promoInput"
-);
-
-const status=
-document.getElementById(
-"promoStatus"
-);
-
-const code=
-input.value
-.trim()
-.toUpperCase();
+const input=document.getElementById("promoInput");
+const status=document.getElementById("promoStatus");
+if(!input||!status)return;
+const code=input.value.trim().toUpperCase();
+if(!code){
+ status.style.color="#e34b55";
+ status.textContent="❌ Сначала введи промокод.";
+ input.focus();
+ return;
+}
 
 if(!PROMOCODES[code]){
 
@@ -5002,13 +5015,7 @@ used.includes(code)
 status.style.color=
 "#e34b55";
 
-status.textContent=
-"Ошибка вы уже вводили данный промокод";
-
-alert(
-"Ошибка вы уже вводили данный промокод"
-);
-
+status.textContent="❌ Этот промокод уже использован.";
 return;
 
 }
