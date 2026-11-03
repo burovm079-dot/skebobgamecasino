@@ -3608,7 +3608,7 @@ id="profileBalance"
  <p class="small">Ставка за раунд: выбери сумму ниже. Победа — x2, блэкджек — x2,5, ничья — возврат ставки.</p>
  <div class="game-control"><label>ТВОЯ СТАВКА</label><div class="bet-main"><button onclick="bjOnlineChangeBet(-10)">−</button><input id="bjOnlineBet" type="text" inputmode="numeric" pattern="[0-9]*" autocomplete="off" min="10" value="100" oninput="bjOnlineUpdateBet()" onblur="bjOnlineClampBet()" style="pointer-events:auto;touch-action:manipulation;user-select:text;-webkit-user-select:text"><button onclick="bjOnlineChangeBet(10)">+</button></div><div class="bet-presets"><button onclick="bjOnlineSetBet(100)">100</button><button onclick="bjOnlineSetBet(500)">500</button><button onclick="bjOnlineSetBet(1000)">1K</button><button onclick="bjOnlineSetBet('max')">MAX</button></div></div>
  <div class="bj-actions">
-  <button class="game-main" id="bjOnlineJoin" onclick="bjOnlineJoin()">🎮 ИГРАТЬ</button>
+  <button class="game-main" id="bjOnlineJoin" onclick="bjOnlineJoinClick()">🎮 ИГРАТЬ</button>
   <button class="secondary" id="bjOnlineLeave" onclick="bjOnlineLeave()" disabled>ВЫЙТИ ИЗ ИГРЫ</button>
  </div>
  <div class="game-status" id="bjOnlineStatus">Нажми «Играть», чтобы войти в очередь на следующий раунд.</div>
@@ -8351,6 +8351,24 @@ function bjOnlineRender(){
 function bjEscape(v){return String(v).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]))}
 function bjOnlineStatus(t){const e=document.getElementById("bjOnlineStatus");if(e)e.textContent=t}
 function bjOnlineSend(event,payload){if(bjOnlineChannel){try{return bjOnlineChannel.send({type:"broadcast",event,payload})}catch(e){console.warn("Blackjack broadcast failed:",e);bjOnlineStatus("Не удалось отправить действие. Проверь соединение.");}}}
+function bjOnlineJoinClick(){
+ const status=document.getElementById("bjOnlineStatus");
+ const button=document.getElementById("bjOnlineJoin");
+ if(status)status.textContent="Запускаем подключение к онлайн-столу…";
+ if(button)button.disabled=true;
+ try{
+  const result=bjOnlineJoin();
+  Promise.resolve(result).catch(error=>{
+   console.error("Blackjack join failed:",error);
+   if(status)status.textContent="Ошибка запуска: "+(error&&error.message?error.message:"неизвестная ошибка");
+   if(button)button.disabled=false;
+  });
+ }catch(error){
+  console.error("Blackjack join failed:",error);
+  if(status)status.textContent="Ошибка запуска: "+(error&&error.message?error.message:"неизвестная ошибка");
+  if(button)button.disabled=false;
+ }
+}
 async function bjOnlineJoin(){
  if(bjOnlineChannel)return;
  const joinButton=document.getElementById("bjOnlineJoin");if(joinButton)joinButton.disabled=true;
