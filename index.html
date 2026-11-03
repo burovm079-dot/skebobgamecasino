@@ -2208,16 +2208,26 @@ body.tasks-page #skebobDashboard #tasks #dailyTasksList .daily-art-task{
  text-shadow:none!important;outline:0!important;
 }
 body.tasks-page #skebobDashboard #tasks #dailyTasksList .daily-art-task:active:not(:disabled){transform:none!important}
-body.tasks-page #skebobDashboard #tasks #dailyTasksList .daily-art-task small{
- position:absolute!important;left:50%!important;bottom:3%!important;transform:translateX(-50%)!important;
- display:block!important;font-size:clamp(8px,0.9vw,11px)!important;line-height:1!important;
- color:#fff!important;text-shadow:0 1px 3px #24102e,0 0 4px #24102e!important;
- background:#24102ecc!important;border-radius:8px!important;padding:2px 5px!important;
- white-space:nowrap!important;
+/* Invisible click targets only: all button artwork and labels are baked into the image. */
+body.tasks-page #skebobDashboard #tasks #dailyTasksList .daily-art-task{
+ background:transparent!important;background-image:none!important;border:0!important;
+ box-shadow:none!important;border-radius:0!important;color:transparent!important;
+ text-shadow:none!important;outline:0!important;font-size:0!important;gap:0!important;
+ padding:0!important;
 }
-/* Replace the static "24 часа" line inside the printed restart banner with a live countdown. */
-body.tasks-page #skebobDashboard #tasks #tasksTimer{position:absolute!important;left:34%!important;top:30.4%!important;width:48%!important;height:3.8%!important;z-index:10!important;display:flex!important;align-items:center!important;justify-content:center!important;white-space:nowrap!important;font-size:clamp(9px,1.35vw,16px)!important;font-weight:1000!important;letter-spacing:0!important;text-align:center!important;color:#ffe05b!important;text-shadow:0 1px 3px #2c092b,0 0 6px #ffb300!important;pointer-events:none!important}
-@media(max-width:600px){body.tasks-page #skebobDashboard #tasks #dailyTasksList .daily-art-task{font-size:clamp(8px,2.1vw,13px)!important;border-radius:9px!important;padding:0 2px!important;gap:1px!important}body.tasks-page #skebobDashboard #tasks #tasksTimer{font-size:clamp(8px,2vw,13px)!important}}
+body.tasks-page #skebobDashboard #tasks #dailyTasksList .daily-art-task small{display:none!important}
+/* Countdown replaces only the printed "24 часа" on the banner; no extra label. */
+body.tasks-page #skebobDashboard #tasks #tasksTimer{
+ position:absolute!important;left:59.2%!important;top:31.0%!important;width:17.5%!important;height:3.0%!important;
+ z-index:10!important;display:flex!important;align-items:center!important;justify-content:center!important;
+ white-space:nowrap!important;font-size:clamp(9px,1.65vw,15px)!important;font-weight:1000!important;
+ letter-spacing:-.2px!important;text-align:center!important;color:#ffe45c!important;
+ text-shadow:0 1px 2px #2c092b,0 0 4px #ffb300!important;pointer-events:none!important;
+}
+@media(max-width:600px){
+ body.tasks-page #skebobDashboard #tasks #dailyTasksList .daily-art-task{font-size:0!important}
+ body.tasks-page #skebobDashboard #tasks #tasksTimer{font-size:clamp(8px,1.75vw,12px)!important;letter-spacing:-.35px!important}
+}
 
 </style>
 <link rel="stylesheet" href="./dashboard.css?v=26">
@@ -4348,7 +4358,7 @@ function renderDailyTasks(){
  const left=Math.max(0,getNextDailyTaskReset()-Date.now());
  const h=Math.floor(left/3600000),m=Math.floor(left%3600000/60000),sec=Math.floor(left%60000/1000);
  const timer=document.getElementById("tasksTimer");
- if(timer)timer.textContent="РЕСТАРТ ЧЕРЕЗ "+[h,m,sec].map(v=>String(v).padStart(2,"0")).join(":");
+ if(timer)timer.textContent=[h,m,sec].map(v=>String(v).padStart(2,"0")).join(":");
  const doneCount=DAILY_TASKS_FIXED.filter(t=>(Number(state.dailyTasks.progress[t.id])||0)>=t.target).length;
  const done=document.getElementById("tasksDone");
  if(done)done.textContent=doneCount+"/3";
