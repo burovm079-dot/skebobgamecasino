@@ -2216,17 +2216,24 @@ body.tasks-page #skebobDashboard #tasks #dailyTasksList .daily-art-task{
  padding:0!important;
 }
 body.tasks-page #skebobDashboard #tasks #dailyTasksList .daily-art-task small{display:none!important}
-/* Countdown replaces only the printed "24 часа" on the banner; no extra label. */
+/* Replace the printed "24 часа" itself: the live countdown occupies only that text area. */
 body.tasks-page #skebobDashboard #tasks #tasksTimer{
- position:absolute!important;left:59.2%!important;top:31.0%!important;width:17.5%!important;height:3.0%!important;
+ position:absolute!important;left:59.15%!important;top:25.0%!important;width:14.0%!important;height:3.15%!important;
  z-index:10!important;display:flex!important;align-items:center!important;justify-content:center!important;
- white-space:nowrap!important;font-size:clamp(9px,1.65vw,15px)!important;font-weight:1000!important;
- letter-spacing:-.2px!important;text-align:center!important;color:#ffe45c!important;
- text-shadow:0 1px 2px #2c092b,0 0 4px #ffb300!important;pointer-events:none!important;
+ box-sizing:border-box!important;white-space:nowrap!important;overflow:hidden!important;
+ padding:0!important;border:0!important;border-radius:3px!important;
+ background:linear-gradient(90deg,#260b3a 0%,#21082f 50%,#260b3a 100%)!important;
+ font-family:Impact,"Arial Narrow",sans-serif!important;font-stretch:condensed!important;
+ font-size:clamp(8px,1.45vw,17px)!important;font-weight:900!important;
+ letter-spacing:-.45px!important;text-align:center!important;color:#ffdc35!important;
+ text-shadow:0 1px 1px #6d2b00,0 0 2px #ffb000!important;pointer-events:none!important;
 }
 @media(max-width:600px){
  body.tasks-page #skebobDashboard #tasks #dailyTasksList .daily-art-task{font-size:0!important}
- body.tasks-page #skebobDashboard #tasks #tasksTimer{font-size:clamp(8px,1.75vw,12px)!important;letter-spacing:-.35px!important}
+ body.tasks-page #skebobDashboard #tasks #tasksTimer{
+  left:59.15%!important;top:25.0%!important;width:14.0%!important;height:3.15%!important;
+  font-size:clamp(8px,1.45vw,13px)!important;letter-spacing:-.45px!important;
+ }
 }
 
 </style>
