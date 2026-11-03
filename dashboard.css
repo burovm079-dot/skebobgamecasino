@@ -556,3 +556,35 @@ body.promo-page #skebobDashboard .sk-work.promo-workspace #promo .promo-art{
  margin:0!important;padding:0!important;object-fit:fill!important;object-position:center!important;
 }
 body.promo-page #skebobDashboard .sk-work.promo-workspace #promo{position:relative!important;inset:auto!important;z-index:auto!important}
+
+
+/* FINAL PROMO ALIGNMENT: cancel legacy centering transform and fill right pane only. */
+body.promo-page #skebobDashboard{
+ display:grid!important;
+ grid-template-columns:188px minmax(0,1fr)!important;
+ width:100%!important;min-width:0!important;overflow:hidden!important;
+}
+body.promo-page #skebobDashboard .sk-side{
+ grid-column:1!important;grid-row:1!important;min-width:0!important;
+}
+body.promo-page #skebobDashboard .sk-work.promo-workspace{
+ grid-column:2!important;grid-row:1!important;
+ width:100%!important;min-width:0!important;max-width:none!important;
+ margin:0!important;box-sizing:border-box!important;
+}
+body.promo-page #skebobDashboard .sk-work.promo-workspace #promo .promo-art{
+ left:0!important;top:0!important;right:0!important;bottom:0!important;
+ inset:0!important;transform:none!important;
+ width:100%!important;height:100%!important;
+ max-width:none!important;max-height:none!important;
+ object-fit:fill!important;object-position:50% 50%!important;
+}
+@media(max-width:760px){
+ body.promo-page #skebobDashboard{grid-template-columns:82px minmax(0,1fr)!important}
+ body.promo-page #skebobDashboard .sk-side{width:82px!important}
+ body.promo-page #skebobDashboard .sk-work.promo-workspace{grid-column:2!important}
+}
+@media(max-width:380px){
+ body.promo-page #skebobDashboard{grid-template-columns:76px minmax(0,1fr)!important}
+ body.promo-page #skebobDashboard .sk-side{width:76px!important}
+}
