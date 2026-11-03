@@ -8081,6 +8081,10 @@ setInterval(updateSecretDrop,1000);
 
 
 
+let bjOnlineClient=null,bjOnlineChannel=null,bjOnlineRoom="",bjOnlineId="",bjOnlineHost=false;
+let bjOnlineMembers=[],bjOnlineTimer=null,bjOnlineSeconds=60,bjOnlineRound=null,bjOnlineMyHand=[],bjOnlineDealer=null,bjOnlineMyTurn=false,bjOnlineJoinedAt=0;
+let bjOnlineRoundLocked=false,bjOnlineTurnTimer=null,bjOnlineTurnSeconds=15;
+
 /* PLAYER NICKNAME */
 const NICKNAME_KEY="skebobNickname";
 function randomNickname(){
@@ -8257,10 +8261,6 @@ async function saveFirstNickname(){
 /* BLACKJACK ONLINE — Supabase Realtime, no wagers or payouts */
 const BJ_ONLINE_URL="https://quglxnyhtqoojzbimtmv.supabase.co";
 const BJ_ONLINE_KEY="sb_publishable_qm5CyU510e0Yu1ayUq4tlw_je8hQhbL";
-let bjOnlineClient=null,bjOnlineChannel=null,bjOnlineRoom="",bjOnlineId="",bjOnlineHost=false;
-let bjOnlineMembers=[],bjOnlineTimer=null,bjOnlineSeconds=60,bjOnlineRound=null,bjOnlineMyHand=[],bjOnlineDealer=null,bjOnlineMyTurn=false,bjOnlineJoinedAt=0;
-let bjOnlineRoundLocked=false,bjOnlineTurnTimer=null,bjOnlineTurnSeconds=15;
-
 async function changeNickname(){
  const existing=document.getElementById("nicknameChangeModal");
  if(existing)existing.remove();
