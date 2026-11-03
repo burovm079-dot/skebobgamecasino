@@ -3929,6 +3929,10 @@ onclick="adminGive()"
 
 <script>
 
+/* BLACKJACK ONLINE — Supabase Realtime, no wagers or payouts */
+const BJ_ONLINE_URL="https://quglxnyhtqoojzbimtmv.supabase.co";
+const BJ_ONLINE_KEY="sb_publishable_qm5CyU510e0Yu1ayUq4tlw_je8hQhbL";
+
 /* =========================
    DATA
 ========================= */
@@ -8271,9 +8275,6 @@ async function saveFirstNickname(){
  const m=document.getElementById("nicknameModal");if(m)m.style.display="none";
  updateNicknameUI();
 }
-/* BLACKJACK ONLINE — Supabase Realtime, no wagers or payouts */
-const BJ_ONLINE_URL="https://quglxnyhtqoojzbimtmv.supabase.co";
-const BJ_ONLINE_KEY="sb_publishable_qm5CyU510e0Yu1ayUq4tlw_je8hQhbL";
 async function changeNickname(){
  const existing=document.getElementById("nicknameChangeModal");
  if(existing)existing.remove();
