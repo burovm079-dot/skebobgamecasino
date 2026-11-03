@@ -1928,7 +1928,7 @@ body.legacy-page-active .nav,body.legacy-page-active .balance,body.legacy-page-a
 @media(max-aspect-ratio:4/5){#entrySplash .splash-background{object-fit:cover;}#entrySplash .splash-shade:after{left:24%;width:0;}#entrySplash.loading .splash-shade:after{width:52%;}}
 
 </style>
-<link rel="stylesheet" href="./dashboard.css?v=18">
+<link rel="stylesheet" href="./dashboard.css?v=19">
 </head>
 
 <body class="dashboard-home">
@@ -4282,6 +4282,7 @@ document.body.classList.remove("promo-page");
 
 const shell=document.getElementById("skebobDashboard");
 const work=shell&&shell.querySelector(".sk-work");
+if(work)work.classList.toggle("promo-workspace",id==="promo");
 const games=work&&work.querySelector(".sk-games");
 let pageView=work&&work.querySelector("#sk-page-view");
 if(work&&!pageView){pageView=document.createElement("div");pageView.id="sk-page-view";pageView.className="sk-page-view";if(games)games.insertAdjacentElement("afterend",pageView);else work.appendChild(pageView);}
