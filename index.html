@@ -2069,25 +2069,54 @@ body.light #settings .reference-setting-row{background:linear-gradient(110deg,#6
 }
 
 
-/* Exact supplied settings artwork with functional transparent hit areas. */
-#settings{padding:8px 6px 24px}
-#settings .settings-picture-ui{position:relative;width:min(100%,680px);aspect-ratio:2/3;margin:0 auto;overflow:hidden;isolation:isolate}
-#settings .settings-picture-ui-image{position:absolute;inset:0;width:100%;height:100%;display:block;object-fit:fill;user-select:none;-webkit-user-drag:none}
-#settings .settings-picture-hidden-control{position:absolute!important;width:1px!important;height:1px!important;opacity:0!important;pointer-events:none!important;overflow:hidden!important}
-#settings .settings-picture-toggle{position:absolute;z-index:2;display:block;width:14%;height:4.4%;cursor:pointer;border-radius:999px;background:linear-gradient(180deg,#ae00ff,#6500b9);border:2px solid #ffce48;box-shadow:0 0 7px #e100ff,0 0 5px #ffb52d;box-sizing:border-box}
-#settings .settings-picture-toggle input{position:absolute;opacity:0;inset:0;width:100%;height:100%;margin:0;cursor:pointer}
-#settings .settings-picture-toggle span{position:absolute;top:7%;left:4%;width:39%;height:82%;border-radius:50%;background:linear-gradient(#fff,#eeeaff);box-shadow:0 1px 5px #321044;transition:left .18s}
-#settings .settings-picture-toggle:has(input:checked) span{left:57%}
-#settings .settings-picture-theme{left:78.4%;top:34.2%}
-#settings .settings-picture-music{left:78.4%;top:51.2%}
-#settings .settings-picture-hit{position:absolute;z-index:3;display:block;padding:0;margin:0;border:0;background:transparent;cursor:pointer}
-#settings .settings-currency-rub{left:55.5%;top:42.1%;width:19%;height:5.2%}
-#settings .settings-currency-usd{left:74.8%;top:42.1%;width:18.5%;height:5.2%}
-#settings .settings-admin{left:5.5%;top:57.2%;width:89%;height:7.5%}
-#settings .settings-buy{left:5.5%;top:66%;width:89%;height:7.5%}
-#settings .settings-reset{left:5.5%;top:74.2%;width:89%;height:7.5%}
-#settings .settings-picture-hit:focus-visible,#settings .settings-picture-toggle:focus-within{outline:3px solid #fff3a8;outline-offset:2px}
-@media(max-width:390px){#settings{padding-left:0;padding-right:0}#settings .settings-picture-ui{width:100%}}
+
+/* Supplied artwork: real hit-target buttons; theme option intentionally removed. */
+#settings{padding:0!important;margin:0!important}
+#settings .settings-picture-ui{
+ position:relative!important;width:100%!important;height:100%!important;
+ min-width:0!important;min-height:0!important;max-width:none!important;max-height:none!important;
+ aspect-ratio:auto!important;margin:0!important;padding:0!important;overflow:hidden!important;isolation:isolate!important
+}
+#settings .settings-picture-ui-image{
+ position:absolute!important;inset:0!important;z-index:1!important;
+ display:block!important;width:100%!important;height:100%!important;
+ min-width:100%!important;min-height:100%!important;max-width:none!important;max-height:none!important;
+ object-fit:fill!important;object-position:center!important;pointer-events:none!important;
+ user-select:none!important;-webkit-user-drag:none!important
+}
+#settings .settings-remove-theme{
+ position:absolute!important;z-index:4!important;left:77.5%!important;top:33.7%!important;
+ width:16.5%!important;height:5.4%!important;border-radius:999px!important;
+ background:linear-gradient(110deg,#6500a9 0%,#3b005f 55%,#520080 100%)!important;
+ box-shadow:inset 0 0 9px #24003f!important;pointer-events:none!important
+}
+#settings .settings-picture-hit{
+ position:absolute!important;z-index:10!important;display:block!important;
+ margin:0!important;padding:0!important;border:0!important;border-radius:12px!important;
+ background:transparent!important;cursor:pointer!important;pointer-events:auto!important;
+ touch-action:manipulation!important;-webkit-tap-highlight-color:transparent!important;
+ min-width:0!important;min-height:0!important
+}
+#settings .settings-picture-hit:focus-visible{outline:3px solid #fff3a8!important;outline-offset:2px!important}
+#settings .settings-currency-rub{left:55.5%!important;top:42.1%!important;width:19%!important;height:5.2%!important}
+#settings .settings-currency-usd{left:74.8%!important;top:42.1%!important;width:18.5%!important;height:5.2%!important}
+#settings .settings-music-hit{left:78.2%!important;top:50.2%!important;width:15.5%!important;height:5.5%!important;border-radius:999px!important}
+#settings .settings-music-hit::before{
+ content:"";position:absolute;inset:0;border:2px solid #ffca45;border-radius:999px;
+ background:linear-gradient(90deg,#6a00b7,#a400ec);box-shadow:0 0 8px #e000ff,0 0 6px #ffb52d
+}
+#settings .settings-music-hit::after{
+ content:"";position:absolute;left:5%;top:8%;width:42%;height:80%;border-radius:50%;
+ background:linear-gradient(#fff,#e9e1ff);box-shadow:0 1px 5px #321044;transition:left .18s
+}
+#settings .settings-music-hit.is-on::after{left:53%}
+#settings .settings-admin{left:5.5%!important;top:57.2%!important;width:89%!important;height:7.5%!important}
+#settings .settings-buy{left:5.5%!important;top:66%!important;width:89%!important;height:7.5%!important}
+#settings .settings-reset{left:5.5%!important;top:74.2%!important;width:89%!important;height:7.5%!important}
+#settings .settings-picture-hit:active{filter:brightness(1.25)!important}
+@media(max-width:760px){
+ #settings .settings-picture-ui{width:100%!important;height:100%!important}
+}
 
 </style>
 <link rel="stylesheet" href="./dashboard.css?v=25">
@@ -3580,17 +3609,11 @@ class="hidden"
 >
 <div class="settings-picture-ui" aria-label="Панель настроек SKEBOB CASINO">
   <img class="settings-picture-ui-image" src="https://raw.githubusercontent.com/burovm079-dot/skebobgamecasino/main/assets/games/assets/games/%D0%9D%D0%B5%D0%BE%D0%BD%D0%BE%D0%B2%D0%B0%D1%8F%20%D0%BF%D0%B0%D0%BD%D0%B5%D0%BB%D1%8C%20%D0%BD%D0%B0%D1%81%D1%82%D1%80%D0%BE%D0%B5%D0%BA%20SKEBOB%20CASINO.png" alt="SKEBOB CASINO — настройки" />
-  <label class="settings-picture-toggle settings-picture-theme" aria-label="Переключить тему">
-    <input type="checkbox" id="themeToggle" onchange="toggleTheme()">
-    <span></span>
-  </label>
-  <input type="checkbox" id="casinoMusicToggle" class="settings-picture-hidden-control" onchange="toggleCasinoMusic()" aria-label="Включить или выключить музыку">
-  <label class="settings-picture-toggle settings-picture-music" for="casinoMusicToggle" aria-label="Переключить музыку"><span></span></label>
-  <select id="currencySelect" class="settings-picture-hidden-control" onchange="setCurrency(this.value)" aria-label="Выбрать валюту">
-    <option value="RUB">RUB</option><option value="USD">USD</option>
-  </select>
-  <button type="button" class="settings-picture-hit settings-currency-rub" aria-label="Выбрать рубли" onclick="document.getElementById('currencySelect').value='RUB';setCurrency('RUB')"></button>
-  <button type="button" class="settings-picture-hit settings-currency-usd" aria-label="Выбрать доллары" onclick="document.getElementById('currencySelect').value='USD';setCurrency('USD')"></button>
+  <div class="settings-remove-theme" aria-hidden="true"></div>
+
+  <button type="button" class="settings-picture-hit settings-currency-rub" aria-label="Выбрать рубли" onclick="setCurrency('RUB')"></button>
+  <button type="button" class="settings-picture-hit settings-currency-usd" aria-label="Выбрать доллары" onclick="setCurrency('USD')"></button>
+  <button type="button" class="settings-picture-hit settings-music-hit" id="settingsMusicButton" aria-label="Включить или выключить музыку" aria-pressed="false" onclick="toggleSettingsMusic()"></button>
   <button type="button" class="settings-picture-hit settings-admin" aria-label="Открыть админ-панель" onclick="showPage('adminLogin')"></button>
   <a class="settings-picture-hit settings-buy" href="https://t.me/ggggg06767" target="_blank" rel="noopener noreferrer" aria-label="Купить админ-панель"></a>
   <button type="button" class="settings-picture-hit settings-reset" aria-label="Сбросить прогресс" onclick="resetGame()"></button>
@@ -4364,6 +4387,7 @@ document.body.classList.toggle("dashboard-home",isDashboard);
 document.body.classList.toggle("legacy-page-active",!isDashboard);
 document.body.classList.toggle("promo-page",id==="promo");
 document.body.classList.toggle("settings-page",id==="settings");
+if(id==="settings"&&typeof updateSettingsMusicVisual==="function")updateSettingsMusicVisual();
 
 const shell=document.getElementById("skebobDashboard");
 const work=shell&&shell.querySelector(".sk-work");
@@ -7283,6 +7307,28 @@ function updateCasinoMusicText(){
  const title=document.getElementById("musicSettingTitle");
  if(title)title.textContent=storageGet("skebobCasinoMusic")==="on"?"🎵 Музыка включена":"🔇 Музыка выключена";
 }
+
+function updateSettingsMusicVisual(){
+ const button=document.getElementById("settingsMusicButton");
+ if(!button)return;
+ const enabled=storageGet("skebobCasinoMusic")==="on";
+ button.classList.toggle("is-on",enabled);
+ button.setAttribute("aria-pressed",enabled?"true":"false");
+}
+async function toggleSettingsMusic(){
+ const enabled=storageGet("skebobCasinoMusic")!=="on";
+ storageSet("skebobCasinoMusic",enabled?"on":"off");
+ updateSettingsMusicVisual();
+ updateCasinoMusicText();
+ if(!enabled){
+  if(casinoMusicTimer){clearInterval(casinoMusicTimer);casinoMusicTimer=null;}
+  if(casinoAudio){await casinoAudio.close();casinoAudio=null;}
+  casinoMusicStarted=false;
+  return;
+ }
+ await startCasinoMusic();
+}
+
 async function toggleCasinoMusic(){
  const toggle=document.getElementById("casinoMusicToggle");
  const enabled=!!(toggle&&toggle.checked);
