@@ -2166,6 +2166,14 @@ body.settings-page #skebobDashboard #settings .settings-picture-hit.settings-buy
 .daily-art-caption{max-width:760px;margin:12px auto 0;padding:0 12px;text-align:center;color:#d5c2e7;font-size:12px;line-height:1.5}
 @media(max-width:480px){#tasks.daily-tasks-page{padding-top:4px}.daily-artboard{border-radius:12px}.daily-art-task{border-width:1px;border-radius:10px;padding:0 2px;gap:1px}.daily-art-task small{font-size:.58em}.daily-art-count{padding:2px 6px}}
 
+
+/* DAILY TASKS TRUE FULL-BLEED PANE: blurred artwork fills all remaining space,
+   while the complete original image stays centered, sharp, and undistorted. */
+body.tasks-page #skebobDashboard #tasks.daily-tasks-page{position:relative!important;isolation:isolate!important;background:#10051f!important}
+body.tasks-page #skebobDashboard #tasks.daily-tasks-page::before{content:""!important;position:absolute!important;inset:-18px!important;z-index:-1!important;background-image:url("https://raw.githubusercontent.com/burovm079-dot/skebobgamecasino/main/assets/games/assets/games/%D0%95%D0%B6%D0%B5%D0%B4%D0%BD%D1%8B%D0%B5%20%D0%B7%D0%B0%D0%B4%D0%B0%D0%BD%D0%B8%D1%8F%20%D0%B2%20%D0%BA%D0%B0%D0%B7%D0%B8%D0%BD%D0%BE.jpg")!important;background-size:cover!important;background-position:center!important;filter:blur(16px) brightness(.48) saturate(1.2)!important;transform:scale(1.04)!important;pointer-events:none!important}
+body.tasks-page #skebobDashboard #tasks.daily-tasks-page .daily-artboard{width:min(100%,calc(100dvh * 1184 / 1536))!important;height:auto!important;max-height:100%!important;aspect-ratio:1184 / 1536!important;flex:0 1 auto!important;z-index:1!important}
+body.tasks-page #skebobDashboard #tasks .daily-artwork{width:100%!important;height:100%!important;object-fit:contain!important}
+
 /* Daily tasks use the full right pane without distorting the source image. */
 body.tasks-page #skebobDashboard{grid-template-columns:188px minmax(0,1fr)!important;height:100dvh!important;min-height:100dvh!important;overflow:hidden!important}
 body.tasks-page #skebobDashboard .sk-work.tasks-workspace{display:flex!important;flex-direction:column!important;height:100dvh!important;min-height:0!important;padding:0!important;overflow:hidden!important}
