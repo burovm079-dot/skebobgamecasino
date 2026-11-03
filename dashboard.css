@@ -508,3 +508,18 @@ body.legacy-page-active #skebobDashboard .sk-work.promo-workspace #promo .promo-
 body.legacy-page-active #skebobDashboard .sk-work.promo-workspace #promo .promo-controls{
   position:absolute!important;inset:0!important;width:100%!important;height:100%!important;
 }
+
+
+/* Reliable sizing and visibility for artwork in Telegram's WebView. */
+#skebobDashboard .sk-menu-item img{
+ width:38px!important;height:38px!important;min-width:38px!important;max-width:38px!important;
+ object-fit:contain!important;display:block!important;flex:0 0 38px!important;
+}
+#skebobDashboard .sk-art img{
+ display:block!important;width:100%!important;height:100%!important;max-width:100%!important;max-height:100%!important;
+ object-fit:contain!important;object-position:center!important;position:relative;z-index:0;
+}
+#skebobDashboard .sk-game:after{pointer-events:none}
+#skebobDashboard .sk-game{touch-action:manipulation;transition:none}
+#skebobDashboard .sk-menu-item{touch-action:manipulation}
+@media(prefers-reduced-motion:reduce){#skebobDashboard *{scroll-behavior:auto!important;animation:none!important;transition:none!important}}
