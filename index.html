@@ -4738,7 +4738,7 @@ function activatePromo(){
  const button=document.getElementById("promoActivate");
  if(!input||!status||!button)return;
  if(window.__promoSubmitting)return;
- const code=String(input.value||"").trim().replace(/\\s+/g,"").toUpperCase();
+ const code=String(input.value||"").trim().replace(/\s+/g,"").toUpperCase();
  if(!code){
   status.style.color="#ff8585";
   status.textContent="Введите промокод.";
