@@ -6,116 +6,52 @@
 <title>SKEBOB CASINO</title>
 <script src="https://telegram.org/js/telegram-web-app.js?62"></script>
 <script>
-/* Resilient image loading for Telegram WebView and unstable mobile networks. */
+/* Reliable image loading for Telegram WebView and slow/mobile connections. */
 (function(){
  if(window.__skebobImageRecoveryInstalled)return;
  window.__skebobImageRecoveryInstalled=true;
- const MAX_RETRIES=12;
- function originalSource(img){
-  if(!img.dataset.originalSrc){
-   const src=img.getAttribute("src")||"";
-   if(src&&!/^(data:|blob:)/i.test(src))img.dataset.originalSrc=src;
+ function recoverImage(img){
+  if(!img||!img.tagName||img.tagName.toLowerCase()!=="img")return;
+  const src=img.dataset.originalSrc||img.getAttribute("src")||"";
+  if(!src||/^(data:|blob:)/i.test(src))return;
+  img.dataset.originalSrc=src;
+  const tries=Number(img.dataset.imageRetry||0);
+  if(tries<2){
+   img.dataset.imageRetry=String(tries+1);
+   const clean=src.replace(/([?&])__img_retry=\d+/g,"").replace(/[?&]$/,"");
+   img.src=clean+(clean.includes("?")?"&":"?")+"__img_retry="+Date.now()+"_"+tries;
+   return true;
   }
-  return img.dataset.originalSrc||"";
- }
- function markFailed(img){
   img.classList.add("image-load-failed");
   img.style.visibility="hidden";
   if(img.parentElement){
    img.parentElement.classList.add("image-fallback-surface");
    img.parentElement.style.background="linear-gradient(135deg,rgba(35,20,58,.98),rgba(9,7,20,.98))";
   }
- }
- function markLoaded(img){
-  img.dataset.imageRetry="0";
-  img.classList.remove("image-load-failed");
-  img.style.visibility="";
-  if(img.parentElement&&img.parentElement.classList.contains("image-fallback-surface")){
-   img.parentElement.classList.remove("image-fallback-surface");
-   img.parentElement.style.removeProperty("background");
-  }
- }
- function retrySource(src,count){
-  const clean=src.replace(/([?&])__sk_retry=[^&]*/g,"").replace(/[?&]$/,"");
-  return clean+(clean.includes("?")?"&":"?")+"__sk_retry="+Date.now()+"_"+count;
- }
- function queueRetry(img,immediate){
-  const src=originalSource(img);
-  if(!src||navigator.onLine===false)return;
-  if(img.__skRetryTimer)return;
-  let count=Number(img.dataset.imageRetry||0);
-  if(count>=MAX_RETRIES){markFailed(img);return;}
-  count++;
-  img.dataset.imageRetry=String(count);
-  const delay=immediate?0:Math.min(15000,900*Math.pow(2,count-1));
-  img.__skRetryTimer=setTimeout(function(){
-   img.__skRetryTimer=null;
-   if(!img.isConnected)return;
-   img.src=retrySource(src,count);
-  },delay);
+  return false;
  }
  window.addEventListener("error",function(event){
-  const img=event.target;
-  if(!img||!img.tagName||img.tagName.toLowerCase()!=="img")return;
-  if(!originalSource(img))return;
-  markFailed(img);
-  queueRetry(img,false);
- },true);
- window.addEventListener("load",function(event){
-  const img=event.target;
-  if(img&&img.tagName&&img.tagName.toLowerCase()==="img"){
-   if(img.__skRetryTimer){clearTimeout(img.__skRetryTimer);img.__skRetryTimer=null;}
-   markLoaded(img);
+  const target=event.target;
+  if(target&&target.tagName&&target.tagName.toLowerCase()==="img"){
+   const retrying=recoverImage(target);
+   if(retrying)event.stopImmediatePropagation();
   }
  },true);
  function retryFailedImages(){
   if(navigator.onLine===false)return;
-  document.querySelectorAll("img").forEach(function(img){
-   if(img.classList.contains("image-load-failed")||(img.complete&&img.naturalWidth===0)){
-    if(img.__skRetryTimer){clearTimeout(img.__skRetryTimer);img.__skRetryTimer=null;}
-    img.dataset.imageRetry="0";
-    img.style.visibility="";
-    queueRetry(img,true);
-   }
+  document.querySelectorAll("img.image-load-failed").forEach(function(img){
+   const src=img.dataset.originalSrc;
+   if(!src)return;
+   img.classList.remove("image-load-failed");
+   img.style.visibility="";
+   img.dataset.imageRetry="0";
+   img.src=src+(src.includes("?")?"&":"?")+"__img_retry="+Date.now();
   });
  }
- /* Force a fresh request for bundled artwork: Telegram WebView can retain cached 404s. */
- function refreshBundledArtwork(){
-  document.querySelectorAll('img[src*="assets/games/assets/games/"]').forEach(function(img){
-   img.loading="eager";
-   img.decoding="async";
-   try{img.fetchPriority="high";}catch(error){}
-   const src=img.getAttribute("src")||"";
-   if(src&&!/[?&]v=/.test(src)){
-    img.dataset.originalSrc=src;
-    img.dataset.imageRetry="0";
-    img.src=src+(src.includes("?")?"&":"?")+"v=artwork-20261103";
-   }
-  });
- }
- if(document.readyState==="loading")document.addEventListener("DOMContentLoaded",refreshBundledArtwork,{once:true});
- else refreshBundledArtwork();
- const artworkObserver=new MutationObserver(function(records){
-  records.forEach(function(record){
-   record.addedNodes.forEach(function(node){
-    if(node.nodeType!==1)return;
-    const imgs=node.matches&&node.matches('img[src*="assets/games/assets/games/"]')?[node]:[];
-    if(node.querySelectorAll)imgs.push(...node.querySelectorAll('img[src*="assets/games/assets/games/"]'));
-    imgs.forEach(function(img){
-     const src=img.getAttribute("src")||"";
-     if(src&&!/[?&]v=/.test(src)){
-      img.loading="eager";img.decoding="async";img.dataset.originalSrc=src;img.src=src+(src.includes("?")?"&":"?")+"v=artwork-20261103";
-     }
-    });
-   });
-  });
- });
- if(document.documentElement)artworkObserver.observe(document.documentElement,{childList:true,subtree:true});
  window.addEventListener("online",retryFailedImages);
  document.addEventListener("visibilitychange",function(){
   if(document.visibilityState==="visible")retryFailedImages();
  });
- window.addEventListener("pageshow",retryFailedImages);
 })();
 </script>
 
@@ -1136,39 +1072,16 @@ text-align:center;
 
 .promo-icon{font-size:58px}
 
-/* PROMO now behaves like a normal right-side menu page */
-/* Fill the entire right-hand work area, below its top bar */
-#sk-page-view{width:100%;min-width:0}
-#sk-page-view #promo{position:relative!important;inset:auto!important;z-index:auto!important;display:block;width:100%;height:calc(100vh - 72px);height:calc(100dvh - 72px);min-height:420px;margin:0;padding:0;overflow:hidden;background:#10071c;isolation:auto}
-#sk-page-view #promo .promo-panel{position:absolute;inset:0;display:block;width:100%;height:100%;min-height:0;margin:0;padding:0;overflow:hidden;border:0;border-radius:0;background:#10071c;box-shadow:none;isolation:auto}
-#sk-page-view #promo .promo-art{position:absolute;inset:0;display:block;width:100%!important;height:100%!important;max-width:none!important;max-height:none!important;object-fit:fill;object-position:center;margin:0}
-#sk-page-view #promo .promo-controls{position:absolute!important;inset:0!important;width:100%;height:100%;z-index:10}
-@media(max-width:700px){#sk-page-view #promo{height:calc(100dvh - 56px);min-height:360px}}
-
 /* PROMO — artwork fills the entire tab; no legacy form controls */
 body.promo-page{overflow:hidden}
 body.promo-page>header,body.promo-page>.balance,body.promo-page>main>.nav{visibility:hidden}
-#promo{position:fixed!important;inset:0!important;z-index:2147483000!important;isolation:isolate;display:block;width:auto;height:auto;min-height:0;margin:0;padding:0;overflow:hidden;background:#10071c;pointer-events:auto}
-#promo .promo-panel{position:absolute;inset:0;z-index:0;isolation:isolate}
-#promo .promo-art{pointer-events:none!important}
-#promo .promo-controls{position:absolute!important;inset:0!important;z-index:2147483001!important;pointer-events:auto!important;touch-action:manipulation}
-#promo #promoInput,#promo #promoActivate{pointer-events:auto!important;touch-action:manipulation}
+#promo{position:fixed!important;inset:0!important;z-index:50000!important;display:block;width:auto;height:auto;min-height:0;margin:0;padding:0;overflow:hidden;background:#10071c}
 #promo.hidden{display:none!important}
 #promo .promo-panel{position:absolute;inset:0;overflow:hidden;display:block;box-sizing:border-box;width:100%;height:100%;min-height:0;margin:0;padding:0;border:0;border-radius:0;background:#10071c;box-shadow:none}
-#promo .promo-art{position:absolute;z-index:1;display:block;width:100%!important;height:100%!important;max-width:none!important;max-height:none!important;left:0;top:0;right:0;bottom:0;transform:none;margin:0;padding:0;border:0;border-radius:0;object-fit:fill;object-position:center;background:transparent}
+#promo .promo-art{position:absolute;z-index:1;display:block;width:auto!important;height:auto!important;max-width:100%!important;max-height:100%!important;left:50%;top:50%;right:auto;bottom:auto;transform:translate(-50%,-50%);margin:0;padding:0;border:0;border-radius:0;object-fit:contain;object-position:center;background:transparent}
 @supports(height:100dvh){#promo{height:100dvh}}
 @supports(height:100svh){#promo{height:100svh}}
-@media(max-width:600px){#promo{inset:0!important;width:100vw!important;height:100vh!important;height:100dvh!important}#promo .promo-panel{padding:0;width:100%;height:100%}#promo .promo-art{width:100vw!important;height:100%!important}}
-/* Invisible hit areas aligned with the controls drawn in the promo artwork. */
-#promo .promo-controls{position:absolute;inset:0;z-index:9999;width:100%;height:100%;margin:0;padding:0;border:0;background:transparent;box-shadow:none;pointer-events:auto;display:block}
-#promo .promo-label{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap}
-#promo #promoInput{position:absolute;left:4%;bottom:18%;width:92%;height:18%;min-height:32px;box-sizing:border-box;margin:0;padding:4px 12px;border:0;border-radius:0;outline:none;background:transparent;color:#fff1c2;font:800 clamp(14px,3.5vw,22px)/1.2 system-ui,sans-serif;text-align:center;text-transform:uppercase;text-shadow:0 1px 3px #241000;pointer-events:auto;touch-action:manipulation;z-index:2}
-#promo #promoInput::placeholder{color:transparent}
-#promo #promoInput:focus{outline:2px solid rgba(255,220,140,.45);outline-offset:-2px}
-#promo .promo-activate{position:absolute;left:4%;bottom:0%;width:92%;height:20%;min-height:34px;margin:0;padding:0;border:0;border-radius:0;background:transparent;color:transparent;font-size:0;cursor:pointer;pointer-events:auto;touch-action:manipulation;z-index:3}
-#promo .promo-activate:disabled{opacity:1;cursor:wait}
-#promo .promo-status{position:absolute;left:8%;bottom:2%;width:84%;min-height:18px;color:#ffe9ad;text-align:center;font-size:12px;font-weight:800;text-shadow:0 1px 4px #160b20;overflow-wrap:anywhere;pointer-events:none}
-@media(max-width:600px){#promo #promoInput{min-height:28px;font-size:clamp(13px,4vw,19px)}#promo .promo-activate{min-height:30px}}
+@media(max-width:600px){#promo .promo-panel{padding:0}}
  
 /* SETTINGS */
 
@@ -1992,17 +1905,7 @@ body.legacy-page-active .nav,body.legacy-page-active .balance,body.legacy-page-a
 @media(max-aspect-ratio:4/5){#entrySplash .splash-background{object-fit:cover;}#entrySplash .splash-shade:after{left:24%;width:0;}#entrySplash.loading .splash-shade:after{width:52%;}}
 
 </style>
-<style id="skebob-startup-safety">
-/* Critical Mini App shell: keep the actual game visible even if the external stylesheet is delayed. */
-body.dashboard-home #entrySplash{display:none!important;visibility:hidden!important;pointer-events:none!important}
-body.dashboard-home #skebobDashboard{display:grid!important;grid-template-columns:188px minmax(0,1fr)!important;min-height:100vh!important;width:100%!important;visibility:visible!important;opacity:1!important}
-body.dashboard-home #skebobDashboard .sk-side{display:flex!important}
-body.dashboard-home #skebobDashboard .sk-work{display:block!important;min-width:0!important}
-body.dashboard-home #skebobDashboard .sk-games{display:grid!important;grid-template-columns:repeat(4,minmax(0,1fr))}
-body.dashboard-home>header,body.dashboard-home>.balance,body.dashboard-home>main{display:none!important}
-@media(max-width:760px){body.dashboard-home #skebobDashboard{display:flex!important;flex-direction:column!important;min-height:100svh!important}body.dashboard-home #skebobDashboard .sk-games{grid-template-columns:repeat(2,minmax(0,1fr))!important}}
-</style>
-<link rel="stylesheet" href="./dashboard.css?v=24">
+<link rel="stylesheet" href="./dashboard.css?v=25">
 </head>
 
 <body class="dashboard-home">
@@ -3454,12 +3357,6 @@ id="profileBalance"
 <section id="promo" class="hidden">
   <div class="promo-panel">
     <img class="promo-art" src="./assets/games/assets/games/Промокоды и золотые награды.png" alt="Промокоды и золотые награды" loading="eager" fetchpriority="high">
-    <form class="promo-controls" id="promoForm" action="#" method="get" novalidate aria-label="Активация промокода">
-      <label class="promo-label" for="promoInput">Введите промокод</label>
-      <input id="promoInput" name="promo" type="text" inputmode="text" autocomplete="off" autocapitalize="characters" spellcheck="false" maxlength="32" placeholder="Введите промокод" aria-label="Введите промокод">
-      <button id="promoActivate" class="promo-activate" type="button" onclick="activatePromo();return false;" aria-label="Активировать промокод">Активировать</button>
-      <div id="promoStatus" class="promo-status" role="status" aria-live="polite"></div>
-    </form>
   </div>
 </section>
 
@@ -4166,7 +4063,8 @@ checkAllNftAchievement();
 updateDailyTasks(false);
 let saved=false;
 try{
- saved=storageSet("skebobSave",JSON.stringify(state));
+ storageSet("skebobSave",JSON.stringify(state));
+ saved=true;
 }catch(error){
  console.warn("Не удалось сохранить прогресс в этом браузере:",error);
 }
@@ -4352,11 +4250,10 @@ function showPage(id,button){
 const isDashboard=id==="dashboard";
 document.body.classList.toggle("dashboard-home",isDashboard);
 document.body.classList.toggle("legacy-page-active",!isDashboard);
-document.body.classList.remove("promo-page");
+document.body.classList.toggle("promo-page",id==="promo");
 
 const shell=document.getElementById("skebobDashboard");
 const work=shell&&shell.querySelector(".sk-work");
-if(work)work.classList.toggle("promo-workspace",id==="promo");
 const games=work&&work.querySelector(".sk-games");
 let pageView=work&&work.querySelector("#sk-page-view");
 if(work&&!pageView){pageView=document.createElement("div");pageView.id="sk-page-view";pageView.className="sk-page-view";if(games)games.insertAdjacentElement("afterend",pageView);else work.appendChild(pageView);}
@@ -4375,40 +4272,6 @@ const target=document.getElementById(id);
 if(target){
 if(pageView&&target.parentElement!==pageView)pageView.appendChild(target);
 target.classList.remove("hidden");
-if(id==="promo"){
- const panel=target.querySelector(".promo-panel");
- const art=target.querySelector(".promo-art");
- const controls=target.querySelector(".promo-controls");
- const important=(el,styles)=>{if(el)Object.entries(styles).forEach(([k,v])=>el.style.setProperty(k,v,"important"));};
- important(work,{display:"flex",flexDirection:"column",width:"100%",height:"100dvh",minHeight:"100dvh",padding:"0",overflow:"hidden"});
- important(work.querySelector(".sk-top"),{flex:"0 0 auto",margin:"0",padding:"10px 12px"});
- important(pageView,{display:"flex",flex:"1 1 0",flexDirection:"column",width:"100%",height:"auto",maxWidth:"none",minWidth:"0",minHeight:"0",margin:"0",padding:"0",overflow:"hidden"});
- important(target,{display:"block",position:"relative",flex:"1 1 0",width:"100%",height:"100%",maxWidth:"none",minWidth:"0",minHeight:"0",margin:"0",padding:"0",overflow:"hidden",border:"0",borderRadius:"0",background:"#10071c"});
- important(panel,{position:"absolute",inset:"0",display:"block",width:"100%",height:"100%",minHeight:"0",margin:"0",padding:"0",overflow:"hidden",border:"0",borderRadius:"0",background:"#10071c"});
- important(art,{position:"absolute",inset:"0",display:"block",visibility:"visible",opacity:"1",width:"100%",height:"100%",maxWidth:"none",maxHeight:"none",margin:"0",padding:"0",objectFit:"fill",objectPosition:"center",zIndex:"1"});
- art.loading="eager";
- art.fetchPriority="high";
- art.decoding="async";
- const promoImage="./assets/games/assets/games/%D0%9F%D1%80%D0%BE%D0%BC%D0%BE%D0%BA%D0%BE%D0%B4%D1%8B%20%D0%B8%20%D0%B7%D0%BE%D0%BB%D0%BE%D1%82%D1%8B%D0%B5%20%D0%BD%D0%B0%D0%B3%D1%80%D0%B0%D0%B4%D1%8B.png";
- if(art.getAttribute("src")!==promoImage||!art.complete||art.naturalWidth===0){
-  art.dataset.originalSrc=promoImage;
-  art.dataset.imageRetry="0";
-  art.classList.remove("image-load-failed");
-  art.style.setProperty("visibility","visible","important");
-  art.src=promoImage+"?v=promo-20261103";
- }
- important(controls,{position:"absolute",inset:"0",width:"100%",height:"100%",zIndex:"10",pointerEvents:"auto"});
-}else{
- const clear=(el,props)=>{if(el)props.forEach(k=>el.style.removeProperty(k));};
- const panel=target.querySelector(".promo-panel"),art=target.querySelector(".promo-art"),controls=target.querySelector(".promo-controls");
- clear(work,["display","flex-direction","width","height","min-height","padding","overflow"]);
- clear(work.querySelector(".sk-top"),["flex","margin","padding"]);
- clear(pageView,["display","flex","flex-direction","width","height","max-width","min-width","min-height","margin","padding","overflow"]);
- clear(target,["display","position","flex","width","height","max-width","min-width","min-height","margin","padding","overflow","border","border-radius","background"]);
- clear(panel,["position","inset","display","width","height","min-height","margin","padding","overflow","border","border-radius","background"]);
- clear(art,["position","inset","display","width","height","max-width","max-height","margin","padding","object-fit","object-position"]);
- clear(controls,["position","inset","width","height","z-index","pointer-events"]);
-}
 }else{
 console.warn("Страница не найдена:",id);
 }
@@ -4823,11 +4686,28 @@ state.admin.infiniteBalance?"∞":Math.floor(state.balance).toLocaleString("ru-R
 ========================= */
 
 function openPromoPage(){
- showPage("promo");
- const input=document.getElementById("promoInput");
- const status=document.getElementById("promoStatus");
- if(input) input.value="";
- if(status){status.textContent="";status.style.color="#fff";}
+
+showPage("promo");
+
+const input=
+document.getElementById(
+"promoInput"
+);
+
+const status=
+document.getElementById(
+"promoStatus"
+);
+
+input.value="";
+
+status.textContent="";
+
+setTimeout(
+()=>input.focus(),
+100
+);
+
 }
 
 function getUsedPromocodes(){
@@ -4854,66 +4734,86 @@ return[];
 }
 
 function activatePromo(){
- const input=document.getElementById("promoInput");
- const status=document.getElementById("promoStatus");
- const button=document.getElementById("promoActivate");
- if(!input||!status||!button)return false;
- if(window.__promoSubmitting)return false;
- const code=String(input.value||"").replace(/\s+/g,"").toUpperCase();
- const show=(message,ok)=>{
-  status.style.color=ok?"#72f0a5":"#ff8585";
-  status.textContent=message;
- };
- if(!code){show("Введите промокод.",false);input.focus();return false;}
- if(!Object.prototype.hasOwnProperty.call(PROMOCODES,code)){show("Неверный промокод.",false);input.focus();return false;}
- const used=getUsedPromocodes();
- if(code==="SKEBOB" && (!Number(state.createdAt)||Date.now()-Number(state.createdAt)>=24*60*60*1000)){
-  show("Промокод SKEBOB доступен только в первые 24 часа после первого входа.",false);return false;
- }
- if(used.includes(code)){show("Ты уже активировал этот промокод.",false);return false;}
- const reward=Math.max(0,Number(PROMOCODES[code].reward)||0);
- const previousBalance=Number(state.balance)||0;
- window.__promoSubmitting=true;
- button.disabled=true;
- button.textContent="АКТИВАЦИЯ…";
- try{
-  used.push(code);
-  if(!storageSet("skebobUsedPromocodes",JSON.stringify(used))){
-   show("Не удалось сохранить промокод. Разреши хранилище Telegram и попробуй ещё раз.",false);
-   return false;
-  }
-  state.balance=previousBalance+reward;
-  if(!save()){
-   state.balance=previousBalance;
-   storageSet("skebobUsedPromocodes",JSON.stringify(used.filter(item=>item!==code)));
-   save();
-   show("Не удалось сохранить награду. Попробуй ещё раз.",false);
-   return false;
-  }
-  show("Успешно! Получено +"+formatMoney(reward),true);
-  input.value="";
-  return true;
- }catch(error){
-  console.error("Ошибка активации промокода:",error);
-  state.balance=previousBalance;
-  storageSet("skebobUsedPromocodes",JSON.stringify(used.filter(item=>item!==code)));
-  show("Не удалось активировать промокод. Попробуй ещё раз.",false);
-  return false;
- }finally{
-  window.__promoSubmitting=false;
-  button.disabled=false;
-  button.textContent="АКТИВИРОВАТЬ";
- }
+
+const input=
+document.getElementById(
+"promoInput"
+);
+
+const status=
+document.getElementById(
+"promoStatus"
+);
+
+const code=
+input.value
+.trim()
+.toUpperCase();
+
+if(!PROMOCODES[code]){
+
+status.style.color=
+"#e34b55";
+
+status.textContent=
+"❌ Неверный промокод.";
+
+return;
+
 }
 
-document.addEventListener("DOMContentLoaded",function(){
- const form=document.getElementById("promoForm");
- const input=document.getElementById("promoInput");
- if(form)form.addEventListener("submit",function(event){event.preventDefault();activatePromo();});
- if(input)input.addEventListener("keydown",function(event){
-  if(event.key==="Enter"){event.preventDefault();activatePromo();}
- });
-});
+const used=
+getUsedPromocodes();
+
+if(code==="SKEBOB" && Date.now()-Number(state.createdAt||0)>=24*60*60*1000){
+ status.style.color="#e34b55";
+ status.textContent="❌ Промокод SKEBOB доступен только в первые 24 часа после первого входа.";
+ return;
+}
+
+if(
+used.includes(code)
+){
+
+status.style.color=
+"#e34b55";
+
+status.textContent=
+"Ошибка вы уже вводили данный промокод";
+
+alert(
+"Ошибка вы уже вводили данный промокод"
+);
+
+return;
+
+}
+
+used.push(code);
+
+storageSet(
+"skebobUsedPromocodes",
+JSON.stringify(used)
+);
+
+state.balance+=
+PROMOCODES[code].reward;
+
+save();
+
+status.style.color=
+"#24cf78";
+
+status.textContent="✅ Получено +"+formatMoney(PROMOCODES[code].reward);
+
+input.value="";
+
+}
+
+/* =========================
+   DAILY CASE
+========================= */
+
 function getDailyLastOpen(){
 
 return Number(
