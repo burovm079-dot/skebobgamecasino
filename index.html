@@ -1968,10 +1968,11 @@ body.legacy-page-active .nav,body.legacy-page-active .balance,body.legacy-page-a
 #entrySplash:before,#entrySplash:after{display:none!important}
 #entrySplash .splash-background{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:center center;display:block;}
 #entrySplash .splash-shade{position:absolute;inset:0;background:linear-gradient(180deg,rgba(4,5,20,.06) 45%,rgba(4,5,20,.12) 70%,rgba(4,5,20,.42) 100%);}
-/* Animate the progress strip printed in the artwork without drawing a second track */
-#entrySplash .splash-shade:after{content:"";position:absolute;left:27%;top:82.4%;width:0;height:1.15%;min-height:5px;max-height:13px;border-radius:999px;background:linear-gradient(90deg,#ff9b16,#ffe27a,#ffae24);mix-blend-mode:screen;opacity:.9;}
-#entrySplash.loading .splash-shade:after{width:46%;transition:width var(--splash-duration) linear;}
-@media(max-aspect-ratio:4/5){#entrySplash .splash-background{object-fit:cover;}#entrySplash .splash-shade:after{left:24%;width:0;}#entrySplash.loading .splash-shade:after{width:52%;}}
+/* One animated fill on the upper loading track; hide the baked-in lower caption and duplicate bar. */
+#entrySplash .splash-shade:before{content:"";position:absolute;z-index:2;left:0;top:79%;width:100%;height:12%;background:linear-gradient(180deg,rgba(5,10,28,.86),rgba(5,10,28,.96));backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);pointer-events:none;}
+#entrySplash .splash-shade:after{content:"";position:absolute;z-index:3;left:6%;top:73.5%;width:0;height:1.25%;min-height:6px;max-height:14px;border-radius:999px;background:linear-gradient(90deg,#ff9b16,#ffe27a,#ffae24);mix-blend-mode:screen;opacity:.98;box-shadow:0 0 10px #ffb52c;}
+#entrySplash.loading .splash-shade:after{width:88%;transition:width var(--splash-duration) linear;}
+@media(max-aspect-ratio:4/5){#entrySplash .splash-background{object-fit:cover;}#entrySplash .splash-shade:after{left:6%;width:0;}#entrySplash.loading .splash-shade:after{width:88%;}}
 
 
 /* SKEBOB SETTINGS — purple/gold autumn fantasy skin */
