@@ -6,47 +6,75 @@
 <title>SKEBOB CASINO</title>
 <script src="https://telegram.org/js/telegram-web-app.js?62"></script>
 <script>
-/* Reliable loader for sidebar and game-card artwork only. Promo image and animation are not touched. */
+/* Persistent image loader: sidebar + game cards only. Promo artwork and promo animation are excluded. */
 (function(){
- if(window.__skebobNavGameImagesV2)return;
- window.__skebobNavGameImagesV2=true;
+ if(window.__skebobNavGameImagesV3)return;
+ window.__skebobNavGameImagesV3=true;
  const selector="#skebobDashboard .sk-side .sk-menu-item img, #skebobDashboard .sk-games .sk-game .sk-art img";
+ const mirror="https://raw.githubusercontent.com/burovm079-dot/skebobgamecasino/main/";
+ function isTarget(img){return !!(img&&img.tagName==="IMG"&&img.matches(selector));}
+ function original(img){return img.dataset.skOriginalSrc||img.getAttribute("src")||"";}
+ function mirrorUrl(src){
+  let path=src;
+  try{if(/^https?:/i.test(src)){const u=new URL(src);path=u.pathname.replace(/^\/skebobgamecasino\//,"");}}
+  catch(e){}
+  path=path.replace(/^\/?skebobgamecasino\//,"").replace(/^\//,"");
+  return mirror+path.split("/").map(encodeURIComponent).join("/");
+ }
+ function retry(img,force){
+  if(!isTarget(img)||!img.isConnected)return;
+  const base=original(img);if(!base)return;
+  if(!img.dataset.skOriginalSrc)img.dataset.skOriginalSrc=base;
+  if(img.dataset.skRetryPending==="1"&&!force)return;
+  img.dataset.skRetryPending="1";
+  const n=Number(img.dataset.skRetryCount||0);
+  img.dataset.skRetryCount=String(n+1);
+  const useMirror=n>=2;
+  const target=useMirror?mirrorUrl(base):base;
+  const delay=force?0:Math.min(30000,1200*Math.pow(1.7,Math.min(n,8)));
+  window.setTimeout(function(){
+   if(!img.isConnected){img.dataset.skRetryPending="0";return;}
+   img.dataset.skRetryPending="0";
+   const stamp=Date.now()+"_"+n;
+   img.src=target+(target.includes("?")?"&":"?")+"skebob_asset_retry="+stamp;
+  },delay);
+ }
  function prepare(img){
-  if(!img||img.tagName!=="IMG"||!img.matches(selector))return;
-  const src=img.dataset.skOriginalSrc||img.getAttribute("src")||"";
-  if(!src)return;
-  img.dataset.skOriginalSrc=src;
+  if(!isTarget(img))return;
+  if(!img.dataset.skOriginalSrc)img.dataset.skOriginalSrc=img.getAttribute("src")||"";
   img.loading="eager";img.decoding="async";img.fetchPriority="high";
   if(img.dataset.skRetryBound==="1")return;
-  img.dataset.skRetryBound="1";img.dataset.skRetryCount="0";
-  img.addEventListener("error",function(){
-   const count=Number(img.dataset.skRetryCount||0);
-   if(count>=6)return;
-   img.dataset.skRetryCount=String(count+1);
-   window.setTimeout(function(){
-    if(!img.isConnected)return;
-    const base=img.dataset.skOriginalSrc;
-    img.src=base+(base.includes("?")?"&":"?")+"skimg_retry="+Date.now()+"_"+count;
-   },Math.min(6000,500*Math.pow(2,count)));
+  img.dataset.skRetryBound="1";
+  img.addEventListener("load",function(){
+   img.dataset.skRetryPending="0";img.dataset.skRetryCount="0";
+   img.dataset.skLoaded="1";
   });
-  img.addEventListener("load",function(){img.dataset.skRetryCount="0";});
+  img.addEventListener("error",function(){
+   img.dataset.skLoaded="0";retry(img,false);
+  });
+  if(img.complete&&img.naturalWidth===0)retry(img,true);
  }
  function scan(root){
-  if(root&&root.nodeType===1&&root.matches&&root.matches("img"))prepare(root);
+  if(root&&root.nodeType===1&&root.tagName==="IMG")prepare(root);
   if(root&&root.querySelectorAll)root.querySelectorAll(selector).forEach(prepare);
  }
  function start(){scan(document);}
+ document.addEventListener("error",function(e){
+  if(isTarget(e.target))retry(e.target,false);
+ },true);
  if(document.readyState==="loading")document.addEventListener("DOMContentLoaded",start,{once:true});else start();
+ window.addEventListener("load",start,{once:true});
  new MutationObserver(function(records){
   records.forEach(function(record){record.addedNodes.forEach(function(node){if(node.nodeType===1)scan(node);});});
  }).observe(document.documentElement,{childList:true,subtree:true});
  window.addEventListener("online",function(){
   document.querySelectorAll(selector).forEach(function(img){
-   if(!img.complete||img.naturalWidth===0){
-    img.dataset.skRetryCount="0";
-    const base=img.dataset.skOriginalSrc||img.getAttribute("src");
-    if(base)img.src=base+(base.includes("?")?"&":"?")+"skimg_online="+Date.now();
-   }
+   if(!img.complete||img.naturalWidth===0){img.dataset.skRetryPending="0";retry(img,true);}
+  });
+ });
+ document.addEventListener("visibilitychange",function(){
+  if(!document.hidden)document.querySelectorAll(selector).forEach(function(img){
+   if(!img.complete||img.naturalWidth===0){img.dataset.skRetryPending="0";retry(img,true);}
   });
  });
 })();
