@@ -2186,6 +2186,16 @@ body.tasks-page #skebobDashboard #tasks .daily-artwork{display:block!important;w
 body.tasks-page #skebobDashboard #tasks .daily-art-caption{display:none!important}
 @media(max-width:760px){body.tasks-page #skebobDashboard{grid-template-columns:82px minmax(0,1fr)!important}}
 @media(max-width:380px){body.tasks-page #skebobDashboard{grid-template-columns:76px minmax(0,1fr)!important}}
+/* Daily task controls: precise overlay alignment and a readable live reset label. */
+body.tasks-page #skebobDashboard #tasks .daily-artboard{position:relative!important}
+body.tasks-page #skebobDashboard #tasks #dailyTasksList{position:absolute!important;inset:0!important;width:100%!important;height:100%!important;z-index:8!important;pointer-events:none!important}
+body.tasks-page #skebobDashboard #tasks #dailyTasksList .daily-art-task{position:absolute!important;left:69.7%!important;width:25.8%!important;height:8.5%!important;margin:0!important;padding:0 5px!important;box-sizing:border-box!important;display:flex!important;align-items:center!important;justify-content:center!important;flex-direction:column!important;gap:3px!important;transform:none!important;pointer-events:auto!important;z-index:9!important;font-size:clamp(10px,1.55vw,18px)!important;line-height:1.08!important}
+body.tasks-page #skebobDashboard #tasks #dailyTasksList .daily-art-task:nth-child(1){top:34.2%!important}
+body.tasks-page #skebobDashboard #tasks #dailyTasksList .daily-art-task:nth-child(2){top:49.4%!important}
+body.tasks-page #skebobDashboard #tasks #dailyTasksList .daily-art-task:nth-child(3){top:64.5%!important}
+body.tasks-page #skebobDashboard #tasks #dailyTasksList .daily-art-task small{display:block!important;font-size:.68em!important;line-height:1.1!important}
+body.tasks-page #skebobDashboard #tasks #tasksTimer{position:absolute!important;left:47%!important;top:24.6%!important;width:43%!important;height:4.2%!important;z-index:10!important;display:flex!important;align-items:center!important;justify-content:center!important;white-space:nowrap!important;font-size:clamp(10px,1.65vw,19px)!important;letter-spacing:.02em!important;text-align:center!important;color:#ffe05b!important;text-shadow:0 2px 3px #2c092b,0 0 8px #ffb300!important;pointer-events:none!important}
+@media(max-width:600px){body.tasks-page #skebobDashboard #tasks #dailyTasksList .daily-art-task{font-size:clamp(8px,2.1vw,13px)!important;border-radius:9px!important;padding:0 2px!important;gap:1px!important}body.tasks-page #skebobDashboard #tasks #tasksTimer{font-size:clamp(8px,2vw,13px)!important}}
 
 </style>
 <link rel="stylesheet" href="./dashboard.css?v=26">
@@ -4316,7 +4326,7 @@ function renderDailyTasks(){
  const left=Math.max(0,getNextDailyTaskReset()-Date.now());
  const h=Math.floor(left/3600000),m=Math.floor(left%3600000/60000),sec=Math.floor(left%60000/1000);
  const timer=document.getElementById("tasksTimer");
- if(timer)timer.textContent=[h,m,sec].map(v=>String(v).padStart(2,"0")).join(":");
+ if(timer)timer.textContent="СБРОС ЧЕРЕЗ "+[h,m,sec].map(v=>String(v).padStart(2,"0")).join(":");
  const doneCount=DAILY_TASKS_FIXED.filter(t=>(Number(state.dailyTasks.progress[t.id])||0)>=t.target).length;
  const done=document.getElementById("tasksDone");
  if(done)done.textContent=doneCount+"/3";
