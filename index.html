@@ -2068,6 +2068,27 @@ body.light #settings .reference-setting-row{background:linear-gradient(110deg,#6
  #settings .reference-chevron{flex-basis:38px;height:46px;font-size:40px}
 }
 
+
+/* Exact supplied settings artwork with functional transparent hit areas. */
+#settings{padding:8px 6px 24px}
+#settings .settings-picture-ui{position:relative;width:min(100%,680px);aspect-ratio:2/3;margin:0 auto;overflow:hidden;isolation:isolate}
+#settings .settings-picture-ui-image{position:absolute;inset:0;width:100%;height:100%;display:block;object-fit:fill;user-select:none;-webkit-user-drag:none}
+#settings .settings-picture-hidden-control{position:absolute!important;width:1px!important;height:1px!important;opacity:0!important;pointer-events:none!important;overflow:hidden!important}
+#settings .settings-picture-toggle{position:absolute;z-index:2;display:block;width:14%;height:4.4%;cursor:pointer;border-radius:999px;background:linear-gradient(180deg,#ae00ff,#6500b9);border:2px solid #ffce48;box-shadow:0 0 7px #e100ff,0 0 5px #ffb52d;box-sizing:border-box}
+#settings .settings-picture-toggle input{position:absolute;opacity:0;inset:0;width:100%;height:100%;margin:0;cursor:pointer}
+#settings .settings-picture-toggle span{position:absolute;top:7%;left:4%;width:39%;height:82%;border-radius:50%;background:linear-gradient(#fff,#eeeaff);box-shadow:0 1px 5px #321044;transition:left .18s}
+#settings .settings-picture-toggle:has(input:checked) span{left:57%}
+#settings .settings-picture-theme{left:78.4%;top:34.2%}
+#settings .settings-picture-music{left:78.4%;top:51.2%}
+#settings .settings-picture-hit{position:absolute;z-index:3;display:block;padding:0;margin:0;border:0;background:transparent;cursor:pointer}
+#settings .settings-currency-rub{left:55.5%;top:42.1%;width:19%;height:5.2%}
+#settings .settings-currency-usd{left:74.8%;top:42.1%;width:18.5%;height:5.2%}
+#settings .settings-admin{left:5.5%;top:57.2%;width:89%;height:7.5%}
+#settings .settings-buy{left:5.5%;top:66%;width:89%;height:7.5%}
+#settings .settings-reset{left:5.5%;top:74.2%;width:89%;height:7.5%}
+#settings .settings-picture-hit:focus-visible,#settings .settings-picture-toggle:focus-within{outline:3px solid #fff3a8;outline-offset:2px}
+@media(max-width:390px){#settings{padding-left:0;padding-right:0}#settings .settings-picture-ui{width:100%}}
+
 </style>
 <link rel="stylesheet" href="./dashboard.css?v=25">
 </head>
@@ -3557,60 +3578,22 @@ id="profileBalance"
 id="settings"
 class="hidden"
 >
-<div class="settings-neon settings-reference-layout">
-  <header class="reference-settings-header">
-    <div class="reference-brand">
-      <span class="reference-crown">👑</span>
-      <span class="reference-brand-main">SKEBOB</span>
-      <span class="reference-brand-sub">CASINO</span>
-    </div>
-    <div class="reference-wood-title"><span>⚙️</span><strong>НАСТРОЙКИ</strong><span>⚙️</span></div>
-  </header>
-
-  <div class="reference-setting-row">
-    <div class="reference-icon">☀️<span>🌙</span></div>
-    <div class="reference-copy"><b id="themeSettingTitle">🌙 Тёмная тема</b><small>Сменить тему оформления</small></div>
-    <label class="switch reference-switch">
-      <input type="checkbox" id="themeToggle" aria-label="Переключить светлую и тёмную тему" onchange="toggleTheme()">
-      <span class="switch-slider"></span>
-    </label>
-  </div>
-
-  <div class="reference-setting-row">
-    <div class="reference-icon">🪙</div>
-    <div class="reference-copy"><b>Валюта</b><small>Выбрать отображение валюты</small></div>
-    <select id="currencySelect" onchange="setCurrency(this.value)" aria-label="Выбрать валюту">
-      <option value="RUB">₽ Рубли</option>
-      <option value="USD">$ Доллары</option>
-    </select>
-  </div>
-
-  <div class="reference-setting-row">
-    <div class="reference-icon">🎵</div>
-    <div class="reference-copy"><b id="musicSettingTitle">Музыка</b><small>Включить / выключить</small></div>
-    <label class="switch reference-switch">
-      <input type="checkbox" id="casinoMusicToggle" aria-label="Включить или выключить музыку" onchange="toggleCasinoMusic()">
-      <span class="switch-slider"></span>
-    </label>
-  </div>
-
-  <button type="button" class="reference-setting-row reference-action" onclick="showPage('adminLogin')">
-    <span class="reference-icon">🛡️</span>
-    <span class="reference-copy"><b>Админ панель</b><small>Панель управления</small></span>
-    <span class="reference-chevron">›</span>
-  </button>
-
-  <a class="reference-setting-row reference-action" href="https://t.me/ggggg06767" target="_blank" rel="noopener noreferrer">
-    <span class="reference-icon">👑</span>
-    <span class="reference-copy"><b>Купить админ панель</b><small>Получить доступ</small></span>
-    <span class="reference-chevron">›</span>
-  </a>
-
-  <button type="button" class="reference-setting-row reference-action reference-reset" onclick="resetGame()">
-    <span class="reference-icon">🔄</span>
-    <span class="reference-copy"><b>Сброс прогресса</b><small>Сбросить весь прогресс</small></span>
-    <span class="reference-chevron">›</span>
-  </button>
+<div class="settings-picture-ui" aria-label="Панель настроек SKEBOB CASINO">
+  <img class="settings-picture-ui-image" src="https://raw.githubusercontent.com/burovm079-dot/skebobgamecasino/main/assets/games/assets/games/%D0%9D%D0%B5%D0%BE%D0%BD%D0%BE%D0%B2%D0%B0%D1%8F%20%D0%BF%D0%B0%D0%BD%D0%B5%D0%BB%D1%8C%20%D0%BD%D0%B0%D1%81%D1%82%D1%80%D0%BE%D0%B5%D0%BA%20SKEBOB%20CASINO.png" alt="SKEBOB CASINO — настройки" />
+  <label class="settings-picture-toggle settings-picture-theme" aria-label="Переключить тему">
+    <input type="checkbox" id="themeToggle" onchange="toggleTheme()">
+    <span></span>
+  </label>
+  <input type="checkbox" id="casinoMusicToggle" class="settings-picture-hidden-control" onchange="toggleCasinoMusic()" aria-label="Включить или выключить музыку">
+  <label class="settings-picture-toggle settings-picture-music" for="casinoMusicToggle" aria-label="Переключить музыку"><span></span></label>
+  <select id="currencySelect" class="settings-picture-hidden-control" onchange="setCurrency(this.value)" aria-label="Выбрать валюту">
+    <option value="RUB">RUB</option><option value="USD">USD</option>
+  </select>
+  <button type="button" class="settings-picture-hit settings-currency-rub" aria-label="Выбрать рубли" onclick="document.getElementById('currencySelect').value='RUB';setCurrency('RUB')"></button>
+  <button type="button" class="settings-picture-hit settings-currency-usd" aria-label="Выбрать доллары" onclick="document.getElementById('currencySelect').value='USD';setCurrency('USD')"></button>
+  <button type="button" class="settings-picture-hit settings-admin" aria-label="Открыть админ-панель" onclick="showPage('adminLogin')"></button>
+  <a class="settings-picture-hit settings-buy" href="https://t.me/ggggg06767" target="_blank" rel="noopener noreferrer" aria-label="Купить админ-панель"></a>
+  <button type="button" class="settings-picture-hit settings-reset" aria-label="Сбросить прогресс" onclick="resetGame()"></button>
 </div>
 </section>
 
