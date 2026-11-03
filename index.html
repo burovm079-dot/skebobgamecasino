@@ -4219,7 +4219,8 @@ function formatMoney(amount){
  const n=Number(amount)||0;
  return getCurrency()==="USD"?"$"+(n/80).toLocaleString("en-US",{minimumFractionDigits:2,maximumFractionDigits:2}):Math.floor(n).toLocaleString("ru-RU")+" ₽";
 }
-function updateSettingsCurrencyVisual(){const currency=getCurrency();const rub=document.querySelector("#settings .settings-currency-rub");const usd=document.querySelector("#settings .settings-currency-usd");if(rub){rub.classList.toggle("is-selected",currency==="RUB");rub.setAttribute("aria-pressed",currency==="RUB"?"true":"false");}if(usd){usd.classList.toggle("is-selected",currency==="USD");usd.setAttribute("aria-pressed",currency==="USD"?"true":"false");}}\nfunction setCurrency(value){storageSet("skebobCurrency",value==="USD"?"USD":"RUB");render();renderCases();const e=document.getElementById("currencySelect");if(e)e.value=getCurrency();updateSettingsCurrencyVisual();if(typeof updateUpgradeInfo==="function")updateUpgradeInfo();if(typeof renderDailyTasks==="function")renderDailyTasks();}
+function updateSettingsCurrencyVisual(){const currency=getCurrency();const rub=document.querySelector("#settings .settings-currency-rub");const usd=document.querySelector("#settings .settings-currency-usd");if(rub){rub.classList.toggle("is-selected",currency==="RUB");rub.setAttribute("aria-pressed",currency==="RUB"?"true":"false");}if(usd){usd.classList.toggle("is-selected",currency==="USD");usd.setAttribute("aria-pressed",currency==="USD"?"true":"false");}}
+function setCurrency(value){storageSet("skebobCurrency",value==="USD"?"USD":"RUB");render();renderCases();const e=document.getElementById("currencySelect");if(e)e.value=getCurrency();updateSettingsCurrencyVisual();if(typeof updateUpgradeInfo==="function")updateUpgradeInfo();if(typeof renderDailyTasks==="function")renderDailyTasks();}
 function loadCurrency(){const e=document.getElementById("currencySelect");if(e)e.value=getCurrency();}
 function save(){
 
