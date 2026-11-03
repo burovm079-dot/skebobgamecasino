@@ -5233,7 +5233,9 @@ function openDailyCase(){
  updateDailyCase();
  try{
   if(prize.type==="coins"){
-   state.balance+=prize.amount;
+   const amount=Number(prize.amount);
+   if(!Number.isSafeInteger(amount)||amount<0)throw new Error("Некорректная сумма ежедневной награды");
+   state.balance=Math.min(Number.MAX_SAFE_INTEGER,state.balance+amount);
   }else{
    const item={...prize,id:Date.now()};
    delete item.type;
@@ -5243,7 +5245,7 @@ function openDailyCase(){
    // Best-effort rollback if the main game save could not be written.
    if(previousStamp===null)storageSet("skebobDailyLastOpen","");
    else storageSet("skebobDailyLastOpen",previousStamp);
-   if(prize.type==="coins")state.balance-=prize.amount;
+   if(prize.type==="coins")state.balance=Math.max(0,state.balance-prize.amount);
    else state.inventory.pop();
    dailyOpening=false;updateDailyCase();
    alert("Не удалось сохранить награду. Кейс не был открыт — попробуй ещё раз.");
@@ -8423,7 +8425,12 @@ function bjOnlineShowResult(){
  else if(p===d)result="Ничья.";
  else result="Дилер победил.";
  let payout=0;if(p>21)payout=0;else if(d>21||p>d)payout=(p===21&&bjOnlineMyHand.length===2)?Math.floor(bjOnlineCurrentBet*2.5):bjOnlineCurrentBet*2;else if(p===d)payout=bjOnlineCurrentBet;
- if(bjOnlinePaidRound!==bjOnlineRound.id){state.balance+=payout;save();bjOnlinePaidRound=bjOnlineRound.id;}
+ payout=Math.max(0,Math.min(Number.MAX_SAFE_INTEGER,Math.floor(Number(payout)||0)));
+ if(bjOnlinePaidRound!==bjOnlineRound.id){
+  bjOnlinePaidRound=bjOnlineRound.id;
+  state.balance=Math.min(Number.MAX_SAFE_INTEGER,state.balance+payout);
+  save();
+ }
  const el=document.getElementById("bjOnlineResult");if(el)el.textContent=result+" Твои очки: "+p+" · Дилер: "+d+" · "+(payout?"Выплата: "+payout.toLocaleString("ru-RU")+" 🪙":"Ставка проиграна.");
  bjOnlineRoundLocked=false;bjOnlineRender();bjOnlineStatus("Раунд завершён.");
 }
