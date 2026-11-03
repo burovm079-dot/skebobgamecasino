@@ -2200,7 +2200,19 @@ body.tasks-page #skebobDashboard #tasks #dailyTasksList .daily-art-task{position
 body.tasks-page #skebobDashboard #tasks #dailyTasksList .daily-art-task:nth-child(1){top:42.4%!important}
 body.tasks-page #skebobDashboard #tasks #dailyTasksList .daily-art-task:nth-child(2){top:60.2%!important}
 body.tasks-page #skebobDashboard #tasks #dailyTasksList .daily-art-task:nth-child(3){top:78.5%!important}
-body.tasks-page #skebobDashboard #tasks #dailyTasksList .daily-art-task small{display:block!important;font-size:.68em!important;line-height:1.1!important}
+/* The artwork already contains the button graphics and label. Keep only a transparent
+   clickable hotspot so the CSS button cannot create a second, misaligned frame. */
+body.tasks-page #skebobDashboard #tasks #dailyTasksList .daily-art-task{
+ background:transparent!important;background-image:none!important;border:0!important;
+ box-shadow:none!important;border-radius:0!important;color:transparent!important;
+ text-shadow:none!important;outline:0!important;
+}
+body.tasks-page #skebobDashboard #tasks #dailyTasksList .daily-art-task:active:not(:disabled){transform:none!important}
+body.tasks-page #skebobDashboard #tasks #dailyTasksList .daily-art-task small{
+ display:block!important;font-size:clamp(9px,1.05vw,13px)!important;line-height:1.1!important;
+ color:#fff!important;text-shadow:0 1px 3px #24102e,0 0 4px #24102e!important;
+ background:#24102e99!important;border-radius:8px!important;padding:2px 5px!important;
+}
 body.tasks-page #skebobDashboard #tasks #tasksTimer{position:absolute!important;left:47%!important;top:24.6%!important;width:43%!important;height:4.2%!important;z-index:10!important;display:flex!important;align-items:center!important;justify-content:center!important;white-space:nowrap!important;font-size:clamp(10px,1.65vw,19px)!important;letter-spacing:.02em!important;text-align:center!important;color:#ffe05b!important;text-shadow:0 2px 3px #2c092b,0 0 8px #ffb300!important;pointer-events:none!important}
 @media(max-width:600px){body.tasks-page #skebobDashboard #tasks #dailyTasksList .daily-art-task{font-size:clamp(8px,2.1vw,13px)!important;border-radius:9px!important;padding:0 2px!important;gap:1px!important}body.tasks-page #skebobDashboard #tasks #tasksTimer{font-size:clamp(8px,2vw,13px)!important}}
 
