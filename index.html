@@ -1072,6 +1072,12 @@ text-align:center;
 
 .promo-icon{font-size:58px}
 
+/* PROMO now behaves like a normal right-side menu page */
+#sk-page-view #promo{position:relative!important;inset:auto!important;z-index:auto!important;display:block;width:100%;height:auto;min-height:0;margin:0;padding:0;overflow:visible;background:transparent;isolation:auto}
+#sk-page-view #promo .promo-panel{position:relative;inset:auto;display:block;width:100%;height:auto;min-height:0;margin:0;padding:0;overflow:visible;border:0;border-radius:0;background:transparent;box-shadow:none;isolation:auto}
+#sk-page-view #promo .promo-art{position:relative;inset:auto;display:block;width:100%!important;height:auto!important;max-width:100%!important;max-height:none!important;object-fit:contain;object-position:center}
+#sk-page-view #promo .promo-controls{position:absolute!important;inset:0!important;width:100%;height:100%;z-index:10}
+
 /* PROMO — artwork fills the entire tab; no legacy form controls */
 body.promo-page{overflow:hidden}
 body.promo-page>header,body.promo-page>.balance,body.promo-page>main>.nav{visibility:hidden}
@@ -4269,7 +4275,7 @@ function showPage(id,button){
 const isDashboard=id==="dashboard";
 document.body.classList.toggle("dashboard-home",isDashboard);
 document.body.classList.toggle("legacy-page-active",!isDashboard);
-document.body.classList.toggle("promo-page",id==="promo");
+document.body.classList.remove("promo-page");
 
 const shell=document.getElementById("skebobDashboard");
 const work=shell&&shell.querySelector(".sk-work");
@@ -4706,10 +4712,6 @@ state.admin.infiniteBalance?"∞":Math.floor(state.balance).toLocaleString("ru-R
 
 function openPromoPage(){
  showPage("promo");
- const promo=document.getElementById("promo");
- // Keep the promo overlay outside the animated dashboard/work containers.
- // A transformed/isolated ancestor can trap fixed layers and swallow taps.
- if(promo && promo.parentElement!==document.body) document.body.appendChild(promo);
  const input=document.getElementById("promoInput");
  const status=document.getElementById("promoStatus");
  if(input) input.value="";
