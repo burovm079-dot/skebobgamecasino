@@ -4313,6 +4313,16 @@ if(id==="promo"){
  important(panel,{position:"absolute",inset:"0",display:"block",width:"100%",height:"100%",minHeight:"0",margin:"0",padding:"0",overflow:"hidden",border:"0",borderRadius:"0",background:"#10071c"});
  important(art,{position:"absolute",inset:"0",display:"block",width:"100%",height:"100%",maxWidth:"none",maxHeight:"none",margin:"0",padding:"0",objectFit:"fill",objectPosition:"center"});
  important(controls,{position:"absolute",inset:"0",width:"100%",height:"100%",zIndex:"10",pointerEvents:"auto"});
+}else{
+ const clear=(el,props)=>{if(el)props.forEach(k=>el.style.removeProperty(k));};
+ const panel=target.querySelector(".promo-panel"),art=target.querySelector(".promo-art"),controls=target.querySelector(".promo-controls");
+ clear(work,["display","flex-direction","width","height","min-height","padding","overflow"]);
+ clear(work.querySelector(".sk-top"),["flex","margin","padding"]);
+ clear(pageView,["display","flex","flex-direction","width","height","max-width","min-width","min-height","margin","padding","overflow"]);
+ clear(target,["display","position","flex","width","height","max-width","min-width","min-height","margin","padding","overflow","border","border-radius","background"]);
+ clear(panel,["position","inset","display","width","height","min-height","margin","padding","overflow","border","border-radius","background"]);
+ clear(art,["position","inset","display","width","height","max-width","max-height","margin","padding","object-fit","object-position"]);
+ clear(controls,["position","inset","width","height","z-index","pointer-events"]);
 }
 }else{
 console.warn("Страница не найдена:",id);
