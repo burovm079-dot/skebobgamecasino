@@ -2165,6 +2165,19 @@ body.settings-page #skebobDashboard #settings .settings-picture-hit.settings-buy
 .daily-art-task:focus-visible{outline:3px solid #fff;outline-offset:3px}
 .daily-art-caption{max-width:760px;margin:12px auto 0;padding:0 12px;text-align:center;color:#d5c2e7;font-size:12px;line-height:1.5}
 @media(max-width:480px){#tasks.daily-tasks-page{padding-top:4px}.daily-artboard{border-radius:12px}.daily-art-task{border-width:1px;border-radius:10px;padding:0 2px;gap:1px}.daily-art-task small{font-size:.58em}.daily-art-count{padding:2px 6px}}
+
+/* Daily tasks use the full right pane without distorting the source image. */
+body.tasks-page #skebobDashboard{grid-template-columns:188px minmax(0,1fr)!important;height:100dvh!important;min-height:100dvh!important;overflow:hidden!important}
+body.tasks-page #skebobDashboard .sk-work.tasks-workspace{display:flex!important;flex-direction:column!important;height:100dvh!important;min-height:0!important;padding:0!important;overflow:hidden!important}
+body.tasks-page #skebobDashboard .tasks-workspace>.sk-top,body.tasks-page #skebobDashboard .tasks-workspace>.sk-games{display:none!important}
+body.tasks-page #skebobDashboard .tasks-workspace #sk-page-view{display:flex!important;flex:1!important;align-items:center!important;justify-content:center!important;min-height:0!important;padding:0!important;overflow:hidden!important}
+body.tasks-page #skebobDashboard #tasks:not(.hidden){display:flex!important;flex:1!important;align-items:center!important;justify-content:center!important;width:100%!important;height:100%!important;max-width:none!important;margin:0!important;padding:0!important;overflow:hidden!important}
+body.tasks-page #skebobDashboard #tasks .daily-artboard{width:min(100%,calc(100dvh * 1184 / 1536))!important;max-width:100%!important;max-height:100%!important;aspect-ratio:1184 / 1536!important;margin:0!important;border-radius:0!important;box-shadow:none!important}
+body.tasks-page #skebobDashboard #tasks .daily-artwork{width:100%!important;height:100%!important;object-fit:contain!important}
+body.tasks-page #skebobDashboard #tasks .daily-art-caption{display:none!important}
+@media(max-width:760px){body.tasks-page #skebobDashboard{grid-template-columns:82px minmax(0,1fr)!important}}
+@media(max-width:380px){body.tasks-page #skebobDashboard{grid-template-columns:76px minmax(0,1fr)!important}}
+
 </style>
 <link rel="stylesheet" href="./dashboard.css?v=26">
 </head>
@@ -4340,12 +4353,14 @@ document.body.classList.toggle("dashboard-home",isDashboard);
 document.body.classList.toggle("legacy-page-active",!isDashboard);
 document.body.classList.toggle("promo-page",id==="promo");
 document.body.classList.toggle("settings-page",id==="settings");
+document.body.classList.toggle("tasks-page",id==="tasks");
 if(id==="settings"){if(typeof updateSettingsMusicVisual==="function")updateSettingsMusicVisual();if(typeof updateSettingsCurrencyVisual==="function")updateSettingsCurrencyVisual();}
 
 const shell=document.getElementById("skebobDashboard");
 const work=shell&&shell.querySelector(".sk-work");
 if(work)work.classList.toggle("promo-workspace",id==="promo");
 if(work)work.classList.toggle("settings-workspace",id==="settings");
+if(work)work.classList.toggle("tasks-workspace",id==="tasks");
 const games=work&&work.querySelector(".sk-games");
 let pageView=work&&work.querySelector("#sk-page-view");
 if(work&&!pageView){pageView=document.createElement("div");pageView.id="sk-page-view";pageView.className="sk-page-view";if(games)games.insertAdjacentElement("afterend",pageView);else work.appendChild(pageView);}
