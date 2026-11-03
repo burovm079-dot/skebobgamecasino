@@ -8260,32 +8260,45 @@ async function changeNickname(){
  const overlay=document.createElement("div");
  overlay.id="nicknameChangeModal";
  overlay.style.cssText="position:fixed;inset:0;z-index:31000;background:rgba(0,0,0,.82);display:flex;align-items:center;justify-content:center;padding:20px";
- const panel=document.createElement("form");
+ const panel=document.createElement("div");
  panel.style.cssText="width:100%;max-width:430px;background:var(--panel);color:var(--text);border:2px solid var(--gold);border-radius:20px;padding:22px;box-shadow:0 15px 50px #000b";
- panel.innerHTML='<h2 style="margin:0 0 10px;color:var(--gold)">✏️ ИЗМЕНИТЬ NICKNAME</h2><p class="small" style="margin:0 0 14px">Введи новый nickname (от 2 до 18 символов).</p><input id="nicknameChangeInput" type="text" maxlength="18" autocomplete="nickname" style="width:100%;box-sizing:border-box;margin-bottom:16px" placeholder="Твой nickname"><div style="display:flex;gap:10px"><button type="button" class="secondary" id="nicknameChangeCancel" style="flex:1">ОТМЕНА</button><button type="submit" class="goldbtn" style="flex:1">СОХРАНИТЬ</button></div>';
+ panel.innerHTML='<h2 style="margin:0 0 10px;color:var(--gold)">✏️ ИЗМЕНИТЬ NICKNAME</h2><p class="small" style="margin:0 0 14px">Введи новый nickname (от 2 до 18 символов).</p><input id="nicknameChangeInput" type="text" maxlength="18" autocomplete="nickname" style="width:100%;box-sizing:border-box;margin-bottom:16px" placeholder="Твой nickname"><div style="display:flex;gap:10px"><button type="button" class="secondary" id="nicknameChangeCancel" style="flex:1">ОТМЕНА</button><button type="button" class="goldbtn" id="nicknameChangeSave" style="flex:1">СОХРАНИТЬ</button></div><p id="nicknameChangeStatus" role="status" style="margin:12px 0 0;font-size:13px;min-height:18px"></p>';
  overlay.appendChild(panel);
  document.body.appendChild(overlay);
  const input=panel.querySelector("#nicknameChangeInput");
  const close=()=>overlay.remove();
+ const saveButton=panel.querySelector("#nicknameChangeSave");
+ const status=panel.querySelector("#nicknameChangeStatus");
  panel.querySelector("#nicknameChangeCancel").addEventListener("click",close);
  overlay.addEventListener("click",e=>{if(e.target===overlay)close();});
- panel.addEventListener("submit",async e=>{
-  e.preventDefault();
-  const nick=(input.value||"").trim().replace(/\\s+/g," ").slice(0,18);
-  if(nick.length<2){alert("Ник должен содержать минимум 2 символа.");input.focus();return;}
-  if(bjNickTaken(nick,bjOnlineId)){alert("Этот nickname уже занят игроком за столом. Придумай другой.");input.focus();return;}
-  if(bjIsSpecialAccount(nick)&&!(await bjRequestSpecialAccountPassword(nick)))return;
-  if(bjIsOfficialNickname(nick)&&!(await bjRequestOfficialCode()))return;
-  if(!storageSet(NICKNAME_KEY,nick)){alert("Не удалось сохранить nickname. Попробуй ещё раз.");return;}
-  if(state.admin.infiniteBalance&&!bjIsSpecialAccount(nick)){
-   const restore=Number(state.admin.balanceBeforeInfinite);
-   state.balance=Number.isFinite(restore)?Math.max(0,Math.floor(restore)):20;
-   state.admin.infiniteBalance=false;state.admin.balanceBeforeInfinite=null;save();
+ const saveNickname=async()=>{
+  if(saveButton.disabled)return;
+  const nick=(input.value||"").trim().replace(/\s+/g," ").slice(0,18);
+  if(nick.length<2){status.textContent="Ник должен содержать минимум 2 символа.";input.focus();return;}
+  try{
+   saveButton.disabled=true;saveButton.textContent="СОХРАНЕНИЕ…";status.textContent="";
+   if(bjNickTaken(nick,bjOnlineId)){status.textContent="Этот nickname уже занят игроком за столом.";input.focus();return;}
+   if(bjIsSpecialAccount(nick)&&!(await bjRequestSpecialAccountPassword(nick)))return;
+   if(bjIsOfficialNickname(nick)&&!(await bjRequestOfficialCode()))return;
+   if(!storageSet(NICKNAME_KEY,nick)){status.textContent="Не удалось сохранить nickname. Проверь память браузера и попробуй снова.";return;}
+   if(state.admin.infiniteBalance&&!bjIsSpecialAccount(nick)){
+    const restore=Number(state.admin.balanceBeforeInfinite);
+    state.balance=Number.isFinite(restore)?Math.max(0,Math.floor(restore)):20;
+    state.admin.infiniteBalance=false;state.admin.balanceBeforeInfinite=null;save();
+   }
+   updateNicknameUI();
+   close();
+   if(bjOnlineChannel){try{bjOnlineChannel.track({id:bjOnlineId,name:nick,done:!bjOnlineMyTurn,joinedAt:bjOnlineJoinedAt,phase:bjOnlineRound&&!bjOnlineRound.finished?"playing":"waiting"});}catch(trackError){console.warn("Nickname saved; online presence update failed:",trackError);}}
+  }catch(error){
+   console.error("Nickname save failed:",error);
+   status.textContent="Ошибка сохранения: "+(error&&error.message?error.message:"попробуй ещё раз");
+  }finally{
+   if(overlay.isConnected){saveButton.disabled=false;saveButton.textContent="СОХРАНИТЬ";}
   }
-  close();
-  updateNicknameUI();
-  if(bjOnlineChannel){bjOnlineChannel.track({id:bjOnlineId,name:nick,done:!bjOnlineMyTurn,joinedAt:bjOnlineJoinedAt,phase:bjOnlineRound&&!bjOnlineRound.finished?"playing":"waiting"});}
- });
+ };
+ saveButton.addEventListener("click",saveNickname);
+ input.addEventListener("keydown",e=>{if(e.key==="Enter"){e.preventDefault();saveNickname();}});
+
  input.value=getNickname();
  setTimeout(()=>{input.focus();input.select();},50);
 }
