@@ -3343,7 +3343,7 @@ id="profileBalance"
 <!-- PROMO -->
 <section id="promo" class="hidden">
   <div class="promo-panel">
-    <img class="promo-art" src="./assets/games/assets/games/Промокоды и золотые награды.png" alt="Промокоды и золотые награды" loading="eager" fetchpriority="high">
+    <img class="promo-art" src="/skebobgamecasino/assets/games/assets/games/Промокоды и золотые награды.png" alt="Промокоды и золотые награды" loading="eager" fetchpriority="high">
   </div>
 </section>
 
@@ -4241,6 +4241,7 @@ document.body.classList.toggle("promo-page",id==="promo");
 
 const shell=document.getElementById("skebobDashboard");
 const work=shell&&shell.querySelector(".sk-work");
+if(work)work.classList.toggle("promo-workspace",id==="promo");
 const games=work&&work.querySelector(".sk-games");
 let pageView=work&&work.querySelector("#sk-page-view");
 if(work&&!pageView){pageView=document.createElement("div");pageView.id="sk-page-view";pageView.className="sk-page-view";if(games)games.insertAdjacentElement("afterend",pageView);else work.appendChild(pageView);}
