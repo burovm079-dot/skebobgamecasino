@@ -1942,10 +1942,29 @@ body.legacy-page-active .nav,body.legacy-page-active .balance,body.legacy-page-a
 </div>
 
 <script>
-/* Telegram Mini App bootstrap: reveal the game immediately; splash must never block startup. */
+/* Telegram Mini App bootstrap: show the branded loader while the game initializes. */
 (function(){
  const splash=document.getElementById("entrySplash");
- if(splash){splash.classList.add("splash-hidden");splash.style.display="none";}
+ const started=Date.now();
+ let finished=false;
+ function hideSplash(){
+  if(finished||!splash)return;
+  finished=true;
+  const wait=Math.max(0,1800-(Date.now()-started));
+  setTimeout(function(){
+   splash.classList.remove("loading");
+   splash.classList.add("splash-hidden");
+   setTimeout(function(){splash.style.display="none";},500);
+  },wait);
+ }
+ if(splash){
+  splash.style.display="block";
+  splash.classList.remove("splash-hidden");
+  splash.style.setProperty("--splash-duration","2.2s");
+  requestAnimationFrame(function(){requestAnimationFrame(function(){splash.classList.add("loading");});});
+  window.addEventListener("load",hideSplash,{once:true});
+  setTimeout(hideSplash,8000);
+ }
  try{
   const tg=window.Telegram&&window.Telegram.WebApp;
   if(tg){tg.ready();tg.expand();}
@@ -7954,11 +7973,7 @@ updateDailyCase,
 );
 setInterval(updateSecretDrop,1000);
 
-// Заставка отключена: не задерживаем запуск игры в Telegram Mini App.
-(()=>{
- const splash=document.getElementById("entrySplash");
- if(splash){splash.classList.add("splash-hidden");splash.style.display="none";}
-})();
+// Заставка управляется Telegram bootstrap и скрывается после загрузки игры.
 
 
 
