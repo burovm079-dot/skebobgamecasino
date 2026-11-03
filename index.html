@@ -7370,52 +7370,20 @@ document.getElementById(
 }
 
 function adminChange(sign){
-
-const n=
-Math.floor(
-Number(
-document.getElementById(
-"adminAmount"
-).value
-)
-);
-
-if(
-!Number.isFinite(n)||
-n<0
-)return;
-
-state.balance=
-Math.max(
-0,
-state.balance+
-sign*n
-);
-
-save();
-
+ const input=document.getElementById("adminAmount");
+ const n=Number(input?.value);
+ if(!Number.isSafeInteger(n)||n<0||![1,-1].includes(sign))return;
+ const delta=sign*n;
+ state.balance=Math.max(0,Math.min(Number.MAX_SAFE_INTEGER,state.balance+delta));
+ save();
 }
 
 function adminSet(){
-
-const n=
-Math.floor(
-Number(
-document.getElementById(
-"adminAmount"
-).value
-)
-);
-
-if(
-!Number.isFinite(n)||
-n<0
-)return;
-
-state.balance=n;
-
-save();
-
+ const input=document.getElementById("adminAmount");
+ const n=Number(input?.value);
+ if(!Number.isSafeInteger(n)||n<0)return;
+ state.balance=n;
+ save();
 }
 
 function adminGive(){
