@@ -4174,6 +4174,14 @@ if(!Number.isFinite(Number(state.createdAt))||Number(state.createdAt)<=0)state.c
 
 // Восстанавливаем корректную структуру сохранения, если старый файл повреждён.
 state.balance=Number.isFinite(Number(state.balance))?Math.max(0,Math.min(Number.MAX_SAFE_INTEGER,Math.floor(Number(state.balance)))):20;
+
+// Однократная установка стартового игрового баланса: существующие сохранения получают 20 монет один раз.
+// Далее баланс продолжает сохраняться в skebobSave и не сбрасывается при перезагрузке страницы.
+if(storageGet("skebobStartingBalance20Applied")!=="1"){
+ state.balance=20;
+ storageSet("skebobSave",JSON.stringify(state));
+ storageSet("skebobStartingBalance20Applied","1");
+}
 if(!Array.isArray(state.inventory))state.inventory=[];
 state.inventory=state.inventory.filter(item=>item&&typeof item==="object").map((item,i)=>({...item,id:item.id??(Date.now()+i),value:Number.isFinite(Number(item.value))?Math.max(0,Number(item.value)):0,name:String(item.name||"Предмет")}));
 for(const key of Object.keys(defaultStats)){const value=Number(state.stats[key]);state.stats[key]=Number.isFinite(value)?Math.max(0,value):0;}
