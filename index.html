@@ -3926,6 +3926,10 @@ onclick="adminGive()"
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
 <script>
+// Initialize blackjack state before any startup/render callbacks can reference it.
+var bjOnlineClient=null,bjOnlineChannel=null,bjOnlineRoom="",bjOnlineId="",bjOnlineHost=false;
+let bjOnlineMembers=[],bjOnlineTimer=null,bjOnlineSeconds=60,bjOnlineRound=null,bjOnlineMyHand=[],bjOnlineDealer=null,bjOnlineMyTurn=false,bjOnlineJoinedAt=0;
+let bjOnlineRoundLocked=false,bjOnlineTurnTimer=null,bjOnlineTurnSeconds=15;
 
 /* BLACKJACK ONLINE — Supabase Realtime, no wagers or payouts */
 
@@ -8035,9 +8039,7 @@ setInterval(updateSecretDrop,1000);
 
 
 
-var bjOnlineClient=null,bjOnlineChannel=null,bjOnlineRoom="",bjOnlineId="",bjOnlineHost=false;
-let bjOnlineMembers=[],bjOnlineTimer=null,bjOnlineSeconds=60,bjOnlineRound=null,bjOnlineMyHand=[],bjOnlineDealer=null,bjOnlineMyTurn=false,bjOnlineJoinedAt=0;
-let bjOnlineRoundLocked=false,bjOnlineTurnTimer=null,bjOnlineTurnSeconds=15;
+
 
 /* PLAYER NICKNAME */
 const NICKNAME_KEY="skebobNickname";
