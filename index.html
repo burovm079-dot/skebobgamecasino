@@ -950,40 +950,6 @@ line-height:1.6;
 @media(max-width:480px){.plane-world{height:330px}.plane-world .plane-flight-hud span{padding:4px 6px}.plane-world .plane-multiplier{font-size:16px}}
 
 
-/* PICKAXE — вертикальная шахта как в референсном видео */
-.pick-panel{background:var(--panel3);border:1px solid var(--border2);border-radius:22px;padding:12px}
-.pick-mine-hud{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:8px 0 10px}
-.pick-hud-card{background:#15202b;border:1px solid #53616d;border-radius:10px;padding:8px;color:#eaf4ff;text-align:center;font-size:11px}
-.pick-hud-card strong{display:block;font-size:17px;color:#fff;margin-top:3px}
-.pick-hp-track{height:9px;background:#303b48;border-radius:10px;overflow:hidden;margin-top:6px}
-.pick-hp-fill{height:100%;width:100%;background:linear-gradient(90deg,#35d47a,#a5e85a);transition:width .2s}
-.pick-mine-window{position:relative;height:min(72vh,680px);min-height:460px;overflow:hidden;border:3px solid #45485a;border-radius:12px;background:linear-gradient(180deg,#79b8e9 0%,#a8d5e9 13%,#667b8c 13.5%,#303d4a 100%);box-shadow:inset 0 0 30px #0008}
-.pick-sky{position:absolute;inset:0 0 auto;height:16%;background:linear-gradient(180deg,#8bc9f4,#d5eafa 72%,#7e9ba8);overflow:hidden}
-.pick-sky:before{content:"";position:absolute;left:-8%;bottom:-45%;width:75%;height:100%;background:#66a86a;clip-path:polygon(0 100%,25% 20%,43% 62%,63% 0,100% 100%)}
-.pick-sky:after{content:"";position:absolute;right:-10%;bottom:-50%;width:80%;height:100%;background:#729b83;clip-path:polygon(0 100%,30% 0,55% 65%,78% 15%,100% 100%)}
-.pick-mine-grid{position:absolute;top:16%;bottom:0;left:0;right:0;display:grid;grid-template-columns:repeat(9,minmax(0,1fr));grid-auto-rows:34px;gap:1px;padding:2px;background:#222b35;overflow:hidden}
-.pick-block{position:relative;display:grid;place-items:center;min-width:0;border:1px solid #737b85;background:linear-gradient(135deg,#7b8389,#505b65 55%,#3d4650);box-shadow:inset 2px 2px #ffffff22,inset -3px -3px #0005;color:#fff;font-size:clamp(12px,3.5vw,20px);font-weight:900;transition:opacity .16s,transform .16s,filter .16s}
-.pick-block:before{content:"";position:absolute;inset:0;background:repeating-linear-gradient(135deg,transparent 0 8px,#ffffff09 9px 11px);pointer-events:none}
-.pick-block.crack{filter:brightness(1.5);transform:scale(.9)}
-.pick-block.broken{opacity:0;transform:scale(.25);pointer-events:none}
-.pick-block.ore-coal{background:linear-gradient(135deg,#6a7179,#252b31);border-color:#9da5ac}
-.pick-block.ore-copper{background:linear-gradient(135deg,#d87542,#743d2a);border-color:#ffae7b}
-.pick-block.ore-iron{background:linear-gradient(135deg,#c4a08b,#66564d);border-color:#f0c9ad}
-.pick-block.ore-gold{background:linear-gradient(135deg,#ffe36b,#a66b12);border-color:#fff0a0}
-.pick-block.ore-emerald{background:linear-gradient(135deg,#8cf56c,#147a38);border-color:#c1ff9d}
-.pick-block.ore-diamond{background:linear-gradient(135deg,#a5faff,#1888bb);border-color:#d8ffff;box-shadow:0 0 9px #54eaff99}
-.pick-block.ore-chest{background:linear-gradient(135deg,#ffd46b,#86501c);border:2px solid #ffe6a2}
-.pick-block.ore-tnt{background:repeating-linear-gradient(135deg,#e84848 0 8px,#a51e2c 8px 16px);border:2px solid #ff9b9b}
-.pick-miner{position:absolute;z-index:5;left:50%;top:50%;transform:translate(-50%,-50%);font-size:27px;filter:drop-shadow(0 2px 3px #000);pointer-events:none;transition:left .14s,top .14s}
-.pick-miner.swing{animation:mineSwing .22s ease-in-out}
-@keyframes mineSwing{0%{transform:translate(-50%,-50%) rotate(0) scale(1)}55%{transform:translate(-50%,-50%) rotate(-55deg) scale(1.35)}100%{transform:translate(-50%,-50%) rotate(0) scale(1)}}
-.pick-mine-grid.blast{animation:mineBlast .35s}
-@keyframes mineBlast{0%,100%{filter:none}35%{filter:brightness(2.2) sepia(1)}}
-.pick-floating{position:absolute;z-index:7;font-weight:900;color:#fff3a0;text-shadow:0 2px 4px #000;pointer-events:none;animation:mineFloat .8s forwards}
-@keyframes mineFloat{to{transform:translateY(-35px);opacity:0}}
-.pick-depth-label{position:absolute;z-index:4;right:7px;top:7px;background:#101820cc;color:#fff;padding:5px 8px;border-radius:7px;font-size:10px}
-.pick-description{font-size:12px;line-height:1.5;color:var(--muted);margin-top:9px}
-@media(max-width:480px){.pick-mine-window{min-height:440px}.pick-mine-grid{grid-auto-rows:32px}.pick-mine-hud{gap:5px}}
 /* PLINKO */
 .plinko-panel{background:var(--panel3);border:1px solid var(--border2);border-radius:22px;padding:12px}
 .plinko-risk{display:grid;grid-template-columns:repeat(3,1fr);gap:7px;margin:14px 0}
@@ -2287,7 +2253,7 @@ window.prompt=(message,value)=>{void skebobDialog("prompt",message,value);return
 <button class="sk-game" onclick="showPage('mines')"><span class="sk-art"><img src="/skebobgamecasino/assets/games/assets/games/mines.webp" alt="Мины" loading="eager"></span><span class="sk-game-name">Mines</span><span class="sk-play">Играть →</span></button>
 <button class="sk-game" onclick="showPage('plinko')"><span class="sk-art"><img src="/skebobgamecasino/assets/games/assets/games/plinko.webp" alt="Плинко" loading="eager"></span><span class="sk-game-name">Plinko</span><span class="sk-play">Играть →</span></button>
 <button class="sk-game" onclick="showPage('race')"><span class="sk-art"><img src="/skebobgamecasino/assets/games/assets/games/race.webp" alt="Гонки" loading="eager"></span><span class="sk-game-name">Race</span><span class="sk-play">Играть →</span></button>
-<button class="sk-game" onclick="showPage('pickaxe')"><span class="sk-art"><img src="/skebobgamecasino/assets/games/assets/games/pickaxe.webp" alt="Кирка" loading="eager"></span><span class="sk-game-name">Кирка</span><span class="sk-play">Играть →</span></button>
+
 <button class="sk-game" onclick="showPage('battles')"><span class="sk-art"><img src="/skebobgamecasino/assets/games/assets/games/battles.webp" alt="Битвы" loading="eager"></span><span class="sk-game-name">Батлы</span><span class="sk-play">Играть →</span></button>
 <button class="sk-game" onclick="showPage('blackjack')"><span class="sk-art"><img src="/skebobgamecasino/assets/games/assets/games/blackjack.webp" alt="Блэкджек" loading="eager"></span><span class="sk-game-name">Blackjack</span><span class="sk-play">Играть →</span></button>
 <button class="sk-game" onclick="showPage('dice')"><span class="sk-art"><img src="/skebobgamecasino/assets/games/assets/games/dice.webp" alt="Кости" loading="eager"></span><span class="sk-game-name">Кости</span><span class="sk-play">Играть →</span></button>
@@ -2368,9 +2334,7 @@ rel="noopener noreferrer"
 ✈️ САМОЛЁТ
 </button>
 
-<button onclick="showPage('pickaxe',this)">
-⛏ КИРКА
-</button>
+
 
 <button onclick="showPage('plinko',this)">
 🔴 PLINKO
@@ -3056,129 +3020,6 @@ class="game-status"
 
 </section>
 
-<!-- PICKAXE -->
-
-<section
-id="pickaxe"
-class="hidden"
->
-
-<h2>⛏ КИРКА</h2>
-
-<div class="pick-panel">
-
-<div class="game-stats">
-
-<div class="game-stat">
-<span>УДАРОВ</span>
-<strong id="pickHits">0 / 14</strong>
-</div>
-
-<div class="game-stat">
-<span>ГЛУБИНА</span>
-<strong id="pickDepth">0</strong>
-</div>
-
-<div class="game-stat">
-<span>ДОБЫТО</span>
-<strong
-class="orange"
-id="pickWin"
->
-0 🪙
-</strong>
-</div>
-
-</div>
-
-<div class="pick-mine-hud">
-<div class="pick-hud-card">❤️ ЗДОРОВЬЕ <strong id="pickHealthText">400 / 400</strong><div class="pick-hp-track"><div class="pick-hp-fill" id="pickHealthBar"></div></div></div>
-<div class="pick-hud-card">⛏ ГЛУБИНА <strong><span id="pickDepth">0</span> м</strong><span id="pickMineLoot">Руда ещё не найдена</span></div>
-</div>
-<div class="pick-mine-window">
-<div class="pick-sky"></div>
-<div class="pick-depth-label" id="pickDepthLabel">ПОВЕРХНОСТЬ</div>
-<div class="pick-mine-grid" id="pickaxeBoard"></div>
-<div class="pick-miner" id="pickMiner">⛏️</div>
-</div>
-
-<button
-class="game-main"
-id="pickaxePlayButton"
-onclick="startPickaxeGame()"
->
-⛏ КОПАТЬ ЗА 100 🪙
-</button>
-
-<div class="game-control">
-
-<div
-class="small"
-style="text-align:center"
->
-СТАВКА
-</div>
-
-<div class="bet-main">
-
-<button onclick="changePickaxeBet(-1)">
-−
-</button>
-
-<input
-id="pickaxeBet"
-type="number"
-value="100"
-min="10"
-oninput="updatePickaxeControls()"
->
-
-<button onclick="changePickaxeBet(1)">
-+
-</button>
-
-</div>
-
-<div class="bet-presets pick-presets">
-
-<button onclick="setPickaxeBet(10,this)">
-10
-</button>
-
-<button
-class="selected"
-onclick="setPickaxeBet(100,this)"
->
-100
-</button>
-
-<button onclick="setPickaxeBet(500,this)">
-500
-</button>
-
-<button onclick="setPickaxeBet(1000,this)">
-1 000
-</button>
-
-<button onclick="setPickaxeBet('max',this)">
-МАКС
-</button>
-
-</div>
-
-</div>
-
-<div
-id="pickaxeStatus"
-class="game-status"
->
-В блоках спрятаны денежные призы 🪙
-</div>
-
-</div>
-
-</section>
-
 <!-- PLINKO -->
 <section id="plinko" class="hidden">
 <h2>🔴 PLINKO</h2>
@@ -3511,31 +3352,7 @@ id="statPlaneWins"
 
 </div>
 
-<div class="profile-card">
 
-<div class="profile-card-label">
-Кирка:
-</div>
-
-<div
-class="profile-card-value"
-id="statPickaxeGames"
->
-0
-</div>
-
-<div
-class="profile-card-extra"
-id="statPickaxeWins"
->
-побед 0
-</div>
-
-<div class="profile-card-icon">
-⛏️
-</div>
-
-</div>
 
 <div class="profile-card">
 
@@ -4117,10 +3934,6 @@ planeGames:0,
 
 planeWins:0,
 
-pickaxeGames:0,
-
-pickaxeWins:0,
-
 plinkoGames:0,
 
 plinkoWins:0,
@@ -4501,7 +4314,7 @@ const target=document.getElementById(id);
 if(target){
 if(pageView&&target.parentElement!==pageView)pageView.appendChild(target);
 target.classList.remove("hidden");
-const gamePages=new Set(["skebobTap","tictactoe","billiards","chickenroad","cases","secretDrop","battles","upgrade","mines","plane","pickaxe","plinko","race","crash","slots","blackjack","dice"]);
+const gamePages=new Set(["skebobTap","tictactoe","billiards","chickenroad","cases","secretDrop","battles","upgrade","mines","plane","plinko","race","crash","slots","blackjack","dice"]);
 if(gamePages.has(id)){
 let back=target.querySelector(":scope > .game-list-back");
 if(!back){
@@ -4896,16 +4709,7 @@ setText(
 state.stats.planeWins
 );
 
-setText(
-"statPickaxeGames",
-state.stats.pickaxeGames
-);
 
-setText(
-"statPickaxeWins",
-"побед "+
-state.stats.pickaxeWins
-);
 
 setText(
 "statTurnover",
@@ -6817,158 +6621,6 @@ async function startPlaneGame(){
 function initPlane(){resetPlaneVisual();updatePlaneControls();}
 
 /* =========================
-   PICKAXE — шахта из блоков
-========================= */
-const PICK_ROWS=18, PICK_COLS=9, PICK_HITS=28, PICK_MAX_HP=400;
-let pickaxeBusy=false,pickaxeBet=100,pickaxeCurrentWin=0,pickaxeHits=0,pickaxeDepth=0,pickaxeHealth=PICK_MAX_HP,pickaxeMine=[];
-const PICK_TYPES=[
- {type:"stone",icon:"",name:"КАМЕНЬ",weight:58,value:0},
- {type:"coal",icon:"⚫",name:"УГОЛЬ",weight:17,value:.12},
- {type:"copper",icon:"🟠",name:"МЕДЬ",weight:8,value:.22},
- {type:"iron",icon:"⚙️",name:"ЖЕЛЕЗО",weight:7,value:.35},
- {type:"gold",icon:"🟡",name:"ЗОЛОТО",weight:4,value:.65},
- {type:"emerald",icon:"💚",name:"ИЗУМРУД",weight:2.5,value:1.1},
- {type:"diamond",icon:"💎",name:"АЛМАЗ",weight:1.5,value:1.8},
- {type:"chest",icon:"🧰",name:"СУНДУК",weight:1,"value":2.2},
- {type:"tnt",icon:"🧨",name:"TNT",weight:3,value:0}
-];
-function pickaxeWait(ms){return new Promise(r=>setTimeout(r,ms))}
-function pickRandomType(row,col){
- const roll=Math.random()*100;
- let total=0;
- for(const item of PICK_TYPES){total+=item.weight;if(roll<total)return {...item};}
- return {...PICK_TYPES[0]};
-}
-function createPickaxeMine(){
- pickaxeMine=[];
- for(let r=0;r<PICK_ROWS;r++){
-  const line=[];
-  for(let c=0;c<PICK_COLS;c++){
-   let item=pickRandomType(r,c);
-   if(r<2&&item.type!=="stone"&&item.type!=="coal")item={...PICK_TYPES[0]};
-   if(r>3&&Math.random()<.22){const vein=["copper","iron","gold","emerald","diamond"];const kind=vein[Math.floor(Math.random()*vein.length)];item={...PICK_TYPES.find(x=>x.type===kind)};}
-   line.push({...item,hp:item.type==="stone"?2:1,opened:false});
-  }
-  pickaxeMine.push(line);
- }
- // Veins form visible clusters, as in the reference.
- for(let r=3;r<PICK_ROWS-2;r+=3){
-  const c=1+Math.floor(Math.random()*(PICK_COLS-3));
-  const kind=["copper","iron","gold","emerald"][Math.floor(Math.random()*4)];
-  for(let y=r;y<Math.min(PICK_ROWS,r+2);y++)for(let x=c;x<Math.min(PICK_COLS,c+2);x++){
-   if(Math.random()<.78)pickaxeMine[y][x]={...PICK_TYPES.find(z=>z.type===kind),hp:1,opened:false};
-  }
- }
-}
-function renderPickaxeMine(){
- const board=document.getElementById("pickaxeBoard");
- board.innerHTML="";
- for(let r=0;r<PICK_ROWS;r++)for(let c=0;c<PICK_COLS;c++){
-  const cell=document.createElement("div"),item=pickaxeMine[r][c];
-  cell.className="pick-block"+(item.type!=="stone"?" ore-"+item.type:"");
-  cell.dataset.row=r;cell.dataset.col=c;
-  cell.textContent=item.icon||"";
-  board.appendChild(cell);
- }
-}
-function updatePickaxeStats(){
- const hits=document.getElementById("pickHits");
- if(hits)hits.textContent=pickaxeHits+" / "+PICK_HITS;
- document.querySelectorAll("#pickDepth").forEach(el=>el.textContent=pickaxeDepth);
- document.getElementById("pickWin").textContent=Math.floor(pickaxeCurrentWin).toLocaleString("ru-RU")+" 🪙";
- const hp=Math.max(0,pickaxeHealth);
- document.getElementById("pickHealthText").textContent=hp+" / "+PICK_MAX_HP;
- document.getElementById("pickHealthBar").style.width=(hp/PICK_MAX_HP*100)+"%";
- document.getElementById("pickDepthLabel").textContent=pickaxeDepth>0?"ГЛУБИНА "+pickaxeDepth+" м":"ПОВЕРХНОСТЬ";
-}
-function updatePickaxeControls(){
- const input=document.getElementById("pickaxeBet"),button=document.getElementById("pickaxePlayButton");
- const value=Math.max(10,Math.floor(Number(input.value)||10));
- input.value=value;pickaxeBet=value;input.disabled=pickaxeBusy;button.disabled=pickaxeBusy;
- button.textContent=pickaxeBusy?"⛏ ДОБЫЧА...":"⛏ НАЧАТЬ КОПАТЬ ЗА "+value.toLocaleString("ru-RU")+" 🪙";
-}
-function setPickaxeBet(v,b){
- if(pickaxeBusy)return;
- document.getElementById("pickaxeBet").value=v==="max"?Math.max(10,Math.floor(state.balance)):v;
- document.querySelectorAll(".pick-presets button").forEach(x=>x.classList.remove("selected"));
- if(b)b.classList.add("selected");updatePickaxeControls();
-}
-function changePickaxeBet(d){
- if(pickaxeBusy)return;const input=document.getElementById("pickaxeBet");
- const x=Math.max(10,Math.floor(Number(input.value)||10)),step=x<100?10:100;
- input.value=d>0?x+step:Math.max(10,x-step);updatePickaxeControls();
-}
-function initPickaxe(){
- createPickaxeMine();renderPickaxeMine();pickaxeHealth=PICK_MAX_HP;
- updatePickaxeStats();updatePickaxeControls();
-}
-function pickaxePopup(text,x,y){
- const board=document.getElementById("pickaxeBoard"),el=document.createElement("span");
- el.className="pick-floating";el.textContent=text;el.style.left=x+"px";el.style.top=y+"px";board.appendChild(el);
- setTimeout(()=>el.remove(),850);
-}
-function pickaxeBreakCell(row,col,depth){
- const item=pickaxeMine[row][col],cell=document.querySelector('.pick-block[data-row="'+row+'"][data-col="'+col+'"]');
- if(!cell||item.opened)return 0;
- item.opened=true;cell.classList.add("broken");
- let reward=0;
- if(item.value>0){
-  const mult=item.value*(1+Math.min(depth,20)*.035);
-  reward=Math.max(1,Math.floor(pickaxeBet*mult));
-  pickaxeCurrentWin+=reward;
-  document.getElementById("pickMineLoot").textContent=item.name+" +"+reward.toLocaleString("ru-RU")+" 🪙";
-  pickaxePopup("+"+reward.toLocaleString("ru-RU"),cell.offsetLeft,cell.offsetTop);
-  if(item.type==="chest"){const bonus=Math.floor(pickaxeBet*1.5);pickaxeCurrentWin+=bonus;pickaxePopup("СУНДУК +"+bonus,cell.offsetLeft,cell.offsetTop+12);}
- }else if(item.type==="stone"){
-  document.getElementById("pickMineLoot").textContent="Камень разрушен";
- }
- if(item.type==="tnt"){
-  const board=document.getElementById("pickaxeBoard");board.classList.remove("blast");void board.offsetWidth;board.classList.add("blast");
-  pickaxePopup("💥 TNT!",cell.offsetLeft,cell.offsetTop);
-  for(let y=Math.max(0,row-1);y<=Math.min(PICK_ROWS-1,row+1);y++)for(let x=Math.max(0,col-1);x<=Math.min(PICK_COLS-1,col+1);x++){
-   if(y===row&&x===col)continue;
-   const extra=pickaxeMine[y][x],el=document.querySelector('.pick-block[data-row="'+y+'"][data-col="'+x+'"]');
-   if(!extra.opened&&el){extra.opened=true;el.classList.add("broken");if(extra.value>0){const bonus=Math.floor(pickaxeBet*extra.value);pickaxeCurrentWin+=bonus;}}
-  }
- }
- return reward;
-}
-async function startPickaxeGame(){
- if(pickaxeBusy)return;
- const bet=Math.floor(Number(document.getElementById("pickaxeBet").value));
- if(!Number.isSafeInteger(bet)||bet<10||!Number.isFinite(state.balance)||bet>state.balance){alert("Недостаточно монет или неверная ставка.");return;}
- state.balance-=bet;addTurnover(bet);state.stats.pickaxeGames++;save();
- pickaxeBusy=true;pickaxeBet=bet;pickaxeCurrentWin=0;pickaxeHits=0;pickaxeDepth=0;pickaxeHealth=PICK_MAX_HP;
- createPickaxeMine();renderPickaxeMine();updatePickaxeStats();updatePickaxeControls();
- const board=document.getElementById("pickaxeBoard"),miner=document.getElementById("pickMiner"),status=document.getElementById("pickaxeStatus");
- status.style.color="#ffbd42";status.textContent="⛏️ Кирка пробивается сквозь породу...";
- let col=4;
- for(let hit=0;hit<PICK_HITS;hit++){
-  if(pickaxeHealth<=0)break;
-  const row=Math.min(PICK_ROWS-1,1+Math.floor(hit/2));
-  col=Math.max(0,Math.min(PICK_COLS-1,col+(Math.floor(Math.random()*3)-1)));
-  const cell=document.querySelector('.pick-block[data-row="'+row+'"][data-col="'+col+'"]');
-  if(!cell||pickaxeMine[row][col].opened)continue;
-  miner.style.left=((col+.5)/PICK_COLS*100)+"%";
-  miner.style.top=(16+(row+.5)/PICK_ROWS*84)+"%";
-  miner.classList.remove("swing");void miner.offsetWidth;miner.classList.add("swing");
-  cell.classList.add("crack");await pickaxeWait(190);
-  pickaxeHealth=Math.max(0,pickaxeHealth-10);
-  pickaxeHits++;pickaxeDepth=Math.max(pickaxeDepth,row*2+hit%2);
-  pickaxeBreakCell(row,col,pickaxeDepth);
-  updatePickaxeStats();
-  status.textContent="⛏️ Добыча продолжается · найдено "+Math.floor(pickaxeCurrentWin).toLocaleString("ru-RU")+" 🪙";
-  await pickaxeWait(130);
- }
- miner.classList.remove("swing");
- const win=Math.floor(pickaxeCurrentWin);
- state.balance+=win;
- if(win>0){state.stats.pickaxeWins++;registerWin(win);}
- save();pickaxeBusy=false;updatePickaxeControls();
- status.style.color=win?"#24cf78":"#e34b55";
- status.innerHTML=win?"🏆 ДОБЫТО <b>"+win.toLocaleString("ru-RU")+" 🪙</b>":"😢 В этой шахте ничего ценного не попалось.";
-}
-/* =========================
    PLINKO
 ========================= */
 const PLINKO_ROWS=12;
@@ -7725,15 +7377,7 @@ mineActive=false;
 
 mineFound=0;
 
-planeBusy=false;
 
-pickaxeBusy=false;
-
-pickaxeCurrentWin=0;
-
-pickaxeHits=0;
-
-pickaxeDepth=0;
 
 localStorage.removeItem(
 "skebobDailyLastOpen"
