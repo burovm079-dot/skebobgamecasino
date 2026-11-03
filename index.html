@@ -2118,8 +2118,37 @@ body.light #settings .reference-setting-row{background:linear-gradient(110deg,#6
  #settings .settings-picture-ui{width:100%!important;height:100%!important}
 }
 
+
+/* SETTINGS IMAGE VISIBILITY HOTFIX v26 */
+body.settings-page #skebobDashboard>.sk-work.settings-workspace{
+ display:flex!important;visibility:visible!important;opacity:1!important;
+}
+body.settings-page #skebobDashboard>.sk-work.settings-workspace>#sk-page-view{
+ display:flex!important;visibility:visible!important;opacity:1!important;
+}
+body.settings-page #skebobDashboard #sk-page-view>section#settings:not(.hidden){
+ display:flex!important;visibility:visible!important;opacity:1!important;
+}
+body.settings-page #skebobDashboard #settings .settings-picture-ui{
+ display:block!important;visibility:visible!important;opacity:1!important;
+ position:relative!important;flex:1 1 auto!important;
+ width:100%!important;height:100%!important;min-height:0!important;
+}
+body.settings-page #skebobDashboard #settings .settings-picture-ui-image{
+ display:block!important;visibility:visible!important;opacity:1!important;
+ position:absolute!important;inset:0!important;width:100%!important;height:100%!important;
+ object-fit:fill!important;z-index:1!important;
+}
+body.settings-page #skebobDashboard #settings .settings-picture-hit{
+ display:block!important;visibility:visible!important;opacity:1!important;
+ z-index:50!important;pointer-events:auto!important;cursor:pointer!important;
+}
+body.settings-page #skebobDashboard #settings .settings-picture-hit.settings-buy{
+ background:transparent!important;
+}
+
 </style>
-<link rel="stylesheet" href="./dashboard.css?v=25">
+<link rel="stylesheet" href="./dashboard.css?v=26">
 </head>
 
 <body class="dashboard-home">
