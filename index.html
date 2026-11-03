@@ -1968,11 +1968,12 @@ body.legacy-page-active .nav,body.legacy-page-active .balance,body.legacy-page-a
 #entrySplash:before,#entrySplash:after{display:none!important}
 #entrySplash .splash-background{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:center center;display:block;}
 #entrySplash .splash-shade{position:absolute;inset:0;background:linear-gradient(180deg,rgba(4,5,20,.06) 45%,rgba(4,5,20,.12) 70%,rgba(4,5,20,.42) 100%);}
-/* One animated fill on the upper loading track; hide the baked-in lower caption and duplicate bar. */
-#entrySplash .splash-shade:before{content:"";position:absolute;z-index:2;left:0;top:79%;width:100%;height:12%;background:linear-gradient(180deg,rgba(5,10,28,.86),rgba(5,10,28,.96));backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);pointer-events:none;}
-#entrySplash .splash-shade:after{content:"";position:absolute;z-index:3;left:6%;top:73.5%;width:0;height:1.25%;min-height:6px;max-height:14px;border-radius:999px;background:linear-gradient(90deg,#ff9b16,#ffe27a,#ffae24);mix-blend-mode:screen;opacity:.98;box-shadow:0 0 10px #ffb52c;}
-#entrySplash.loading .splash-shade:after{width:88%;transition:width var(--splash-duration) linear;}
-@media(max-aspect-ratio:4/5){#entrySplash .splash-background{object-fit:cover;}#entrySplash .splash-shade:after{left:6%;width:0;}#entrySplash.loading .splash-shade:after{width:88%;}}
+/* Mask the progress graphics baked into the artwork, then draw one clean animated track in the cleared area. */
+#entrySplash .splash-shade:before{content:"";position:absolute;z-index:2;inset:70% 0 0;background:linear-gradient(180deg,rgba(4,8,24,.98) 0%,rgba(4,8,24,.98) 63%,rgba(4,8,24,.78) 82%,rgba(4,8,24,.18) 100%);pointer-events:none;}
+#entrySplash .splash-progress-track{position:absolute;z-index:3;left:6%;top:80.5%;width:88%;height:2.2%;min-height:12px;max-height:28px;overflow:hidden;border:2px solid rgba(255,194,65,.95);border-radius:999px;background:rgba(3,5,17,.96);box-shadow:0 0 12px rgba(255,166,30,.55),inset 0 0 6px rgba(0,0,0,.9);pointer-events:none;}
+#entrySplash .splash-progress-fill{display:block;width:0;height:100%;border-radius:inherit;background:linear-gradient(90deg,#ff9415 0%,#ffd84c 48%,#fff0a0 58%,#ffae20 100%);box-shadow:0 0 12px rgba(255,190,55,.9);}
+#entrySplash.loading .splash-progress-fill{width:100%;transition:width var(--splash-duration) linear;}
+@media(max-aspect-ratio:4/5){#entrySplash .splash-progress-track{left:6%;width:88%;top:80.5%;}}
 
 
 /* SKEBOB SETTINGS — purple/gold autumn fantasy skin */
@@ -2190,6 +2191,7 @@ body.settings-page #skebobDashboard #settings .settings-picture-hit.settings-buy
 <div id="entrySplash" aria-label="Заставка SKEBOB CASINO">
  <img class="splash-background" src="/skebobgamecasino/assets/games/assets/games/Золотой%20казино-замок%20в%20лунном%20лесу.png" alt="">
  <div class="splash-shade"></div>
+ <div class="splash-progress-track" aria-hidden="true"><span class="splash-progress-fill"></span></div>
 
 </div>
 
