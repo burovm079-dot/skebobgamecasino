@@ -2085,10 +2085,10 @@ body.light #settings .reference-setting-row{background:linear-gradient(110deg,#6
  user-select:none!important;-webkit-user-drag:none!important
 }
 #settings .settings-remove-theme{
- position:absolute!important;z-index:4!important;left:77.5%!important;top:33.7%!important;
- width:16.5%!important;height:5.4%!important;border-radius:999px!important;
- background:linear-gradient(110deg,#6500a9 0%,#3b005f 55%,#520080 100%)!important;
- box-shadow:inset 0 0 9px #24003f!important;pointer-events:none!important
+ position:absolute!important;z-index:4!important;left:5.5%!important;top:33.8%!important;
+ width:89%!important;height:7.0%!important;border-radius:18px!important;
+ background:linear-gradient(110deg,rgba(53,0,91,.98),rgba(76,0,125,.98) 48%,rgba(48,0,83,.98))!important;
+ border:2px solid #ffbd32!important;box-shadow:0 0 9px #ed00ff,inset 0 0 14px #26003f!important;pointer-events:none!important
 }
 #settings .settings-picture-hit{
  position:absolute!important;z-index:10!important;display:block!important;
@@ -2099,7 +2099,7 @@ body.light #settings .reference-setting-row{background:linear-gradient(110deg,#6
 }
 #settings .settings-picture-hit:focus-visible{outline:3px solid #fff3a8!important;outline-offset:2px!important}
 #settings .settings-currency-rub{left:55.5%!important;top:42.1%!important;width:19%!important;height:5.2%!important}
-#settings .settings-currency-usd{left:74.8%!important;top:42.1%!important;width:18.5%!important;height:5.2%!important}
+#settings .settings-currency-usd{left:74.8%!important;top:42.1%!important;width:18.5%!important;height:5.2%!important}\n#settings .settings-currency-rub.is-selected,#settings .settings-currency-usd.is-selected{background:rgba(255,190,40,.22)!important;outline:2px solid #ffd34d!important;outline-offset:-2px!important;box-shadow:0 0 12px #ffb52d!important}
 #settings .settings-music-hit{left:78.2%!important;top:50.2%!important;width:15.5%!important;height:5.5%!important;border-radius:999px!important}
 #settings .settings-music-hit::before{
  content:"";position:absolute;inset:0;border:2px solid #ffca45;border-radius:999px;
@@ -4219,7 +4219,7 @@ function formatMoney(amount){
  const n=Number(amount)||0;
  return getCurrency()==="USD"?"$"+(n/80).toLocaleString("en-US",{minimumFractionDigits:2,maximumFractionDigits:2}):Math.floor(n).toLocaleString("ru-RU")+" ₽";
 }
-function setCurrency(value){storageSet("skebobCurrency",value==="USD"?"USD":"RUB");render();renderCases();const e=document.getElementById("currencySelect");if(e)e.value=getCurrency();if(typeof updateUpgradeInfo==="function")updateUpgradeInfo();if(typeof renderDailyTasks==="function")renderDailyTasks();}
+function updateSettingsCurrencyVisual(){const currency=getCurrency();const rub=document.querySelector("#settings .settings-currency-rub");const usd=document.querySelector("#settings .settings-currency-usd");if(rub){rub.classList.toggle("is-selected",currency==="RUB");rub.setAttribute("aria-pressed",currency==="RUB"?"true":"false");}if(usd){usd.classList.toggle("is-selected",currency==="USD");usd.setAttribute("aria-pressed",currency==="USD"?"true":"false");}}\nfunction setCurrency(value){storageSet("skebobCurrency",value==="USD"?"USD":"RUB");render();renderCases();const e=document.getElementById("currencySelect");if(e)e.value=getCurrency();updateSettingsCurrencyVisual();if(typeof updateUpgradeInfo==="function")updateUpgradeInfo();if(typeof renderDailyTasks==="function")renderDailyTasks();}
 function loadCurrency(){const e=document.getElementById("currencySelect");if(e)e.value=getCurrency();}
 function save(){
 
@@ -4416,7 +4416,7 @@ document.body.classList.toggle("dashboard-home",isDashboard);
 document.body.classList.toggle("legacy-page-active",!isDashboard);
 document.body.classList.toggle("promo-page",id==="promo");
 document.body.classList.toggle("settings-page",id==="settings");
-if(id==="settings"&&typeof updateSettingsMusicVisual==="function")updateSettingsMusicVisual();
+if(id==="settings"){if(typeof updateSettingsMusicVisual==="function")updateSettingsMusicVisual();if(typeof updateSettingsCurrencyVisual==="function")updateSettingsCurrencyVisual();}
 
 const shell=document.getElementById("skebobDashboard");
 const work=shell&&shell.querySelector(".sk-work");
