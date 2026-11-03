@@ -71,7 +71,7 @@
  function retryFailedImages(){
   if(navigator.onLine===false)return;
   document.querySelectorAll("img").forEach(function(img){
-   if(img.classList.contains("image-load-failed")||!img.complete||img.naturalWidth===0){
+   if(img.classList.contains("image-load-failed")||(img.complete&&img.naturalWidth===0)){
     if(img.__skRetryTimer){clearTimeout(img.__skRetryTimer);img.__skRetryTimer=null;}
     img.dataset.imageRetry="0";
     img.style.visibility="";
