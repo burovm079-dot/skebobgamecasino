@@ -6,37 +6,47 @@
 <title>SKEBOB CASINO</title>
 <script src="https://telegram.org/js/telegram-web-app.js?62"></script>
 <script>
-/* Telegram WebView image recovery: retry transient failures without blocking UI. */
+/* Reliable loader for sidebar and game-card artwork only. Promo image and animation are not touched. */
 (function(){
- if(window.__skebobImageRecoveryInstalled)return;
- window.__skebobImageRecoveryInstalled=true;
- function retry(img){
-  if(!img||img.tagName!=="IMG")return;
-  const src=img.dataset.originalSrc||img.getAttribute("src")||"";
-  if(!src||/^(data:|blob:)/i.test(src))return;
-  img.dataset.originalSrc=src;
-  const n=Number(img.dataset.imageRetry||0);
-  if(n>=5){img.classList.add("image-load-failed");return;}
-  img.dataset.imageRetry=String(n+1);
-  const wait=Math.min(8000,700*Math.pow(2,n));
-  setTimeout(function(){
-   if(!img.isConnected)return;
-   const clean=src.replace(/([?&])__img_retry=\d+/g,"").replace(/[?&]$/,"");
-   img.src=clean+(clean.includes("?")?"&":"?")+"__img_retry="+Date.now();
-  },wait);
+ if(window.__skebobNavGameImagesV2)return;
+ window.__skebobNavGameImagesV2=true;
+ const selector="#skebobDashboard .sk-side .sk-menu-item img, #skebobDashboard .sk-games .sk-game .sk-art img";
+ function prepare(img){
+  if(!img||img.tagName!=="IMG"||!img.matches(selector))return;
+  const src=img.dataset.skOriginalSrc||img.getAttribute("src")||"";
+  if(!src)return;
+  img.dataset.skOriginalSrc=src;
+  img.loading="eager";img.decoding="async";img.fetchPriority="high";
+  if(img.dataset.skRetryBound==="1")return;
+  img.dataset.skRetryBound="1";img.dataset.skRetryCount="0";
+  img.addEventListener("error",function(){
+   const count=Number(img.dataset.skRetryCount||0);
+   if(count>=6)return;
+   img.dataset.skRetryCount=String(count+1);
+   window.setTimeout(function(){
+    if(!img.isConnected)return;
+    const base=img.dataset.skOriginalSrc;
+    img.src=base+(base.includes("?")?"&":"?")+"skimg_retry="+Date.now()+"_"+count;
+   },Math.min(6000,500*Math.pow(2,count)));
+  });
+  img.addEventListener("load",function(){img.dataset.skRetryCount="0";});
  }
- document.addEventListener("error",function(e){
-  if(e.target&&e.target.tagName==="IMG")retry(e.target);
- },true);
- document.addEventListener("load",function(e){
-  if(e.target&&e.target.tagName==="IMG"){
-   e.target.dataset.imageRetry="0";
-   e.target.classList.remove("image-load-failed");
-  }
- },true);
+ function scan(root){
+  if(root&&root.nodeType===1&&root.matches&&root.matches("img"))prepare(root);
+  if(root&&root.querySelectorAll)root.querySelectorAll(selector).forEach(prepare);
+ }
+ function start(){scan(document);}
+ if(document.readyState==="loading")document.addEventListener("DOMContentLoaded",start,{once:true});else start();
+ new MutationObserver(function(records){
+  records.forEach(function(record){record.addedNodes.forEach(function(node){if(node.nodeType===1)scan(node);});});
+ }).observe(document.documentElement,{childList:true,subtree:true});
  window.addEventListener("online",function(){
-  document.querySelectorAll("img.image-load-failed").forEach(function(img){
-   img.classList.remove("image-load-failed");img.dataset.imageRetry="0";retry(img);
+  document.querySelectorAll(selector).forEach(function(img){
+   if(!img.complete||img.naturalWidth===0){
+    img.dataset.skRetryCount="0";
+    const base=img.dataset.skOriginalSrc||img.getAttribute("src");
+    if(base)img.src=base+(base.includes("?")?"&":"?")+"skimg_online="+Date.now();
+   }
   });
  });
 })();
