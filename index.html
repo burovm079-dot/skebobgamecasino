@@ -6,54 +6,86 @@
 <title>SKEBOB CASINO</title>
 <script src="https://telegram.org/js/telegram-web-app.js?62"></script>
 <script>
-/* Reliable image loading for Telegram WebView and slow/mobile connections. */
+/* Resilient image loading for Telegram WebView and unstable mobile networks. */
 (function(){
  if(window.__skebobImageRecoveryInstalled)return;
  window.__skebobImageRecoveryInstalled=true;
- function recoverImage(img){
-  if(!img||!img.tagName||img.tagName.toLowerCase()!=="img")return;
-  const src=img.dataset.originalSrc||img.getAttribute("src")||"";
-  if(!src||/^(data:|blob:)/i.test(src))return;
-  img.dataset.originalSrc=src;
-  const tries=Number(img.dataset.imageRetry||0);
-  if(tries<2){
-   img.dataset.imageRetry=String(tries+1);
-   const clean=src.replace(/([?&])__img_retry=\d+/g,"").replace(/[?&]$/,"");
-   img.src=clean+(clean.includes("?")?"&":"?")+"__img_retry="+Date.now()+"_"+tries;
-   return true;
+ const MAX_RETRIES=6;
+ function originalSource(img){
+  if(!img.dataset.originalSrc){
+   const src=img.getAttribute("src")||"";
+   if(src&&!/^(data:|blob:)/i.test(src))img.dataset.originalSrc=src;
   }
+  return img.dataset.originalSrc||"";
+ }
+ function markFailed(img){
   img.classList.add("image-load-failed");
   img.style.visibility="hidden";
   if(img.parentElement){
    img.parentElement.classList.add("image-fallback-surface");
    img.parentElement.style.background="linear-gradient(135deg,rgba(35,20,58,.98),rgba(9,7,20,.98))";
   }
-  return false;
+ }
+ function markLoaded(img){
+  img.dataset.imageRetry="0";
+  img.classList.remove("image-load-failed");
+  img.style.visibility="";
+  if(img.parentElement&&img.parentElement.classList.contains("image-fallback-surface")){
+   img.parentElement.classList.remove("image-fallback-surface");
+   img.parentElement.style.removeProperty("background");
+  }
+ }
+ function retrySource(src,count){
+  const clean=src.replace(/([?&])__sk_retry=[^&]*/g,"").replace(/[?&]$/,"");
+  return clean+(clean.includes("?")?"&":"?")+"__sk_retry="+Date.now()+"_"+count;
+ }
+ function queueRetry(img,immediate){
+  const src=originalSource(img);
+  if(!src||navigator.onLine===false)return;
+  if(img.__skRetryTimer)return;
+  let count=Number(img.dataset.imageRetry||0);
+  if(count>=MAX_RETRIES){markFailed(img);return;}
+  count++;
+  img.dataset.imageRetry=String(count);
+  const delay=immediate?0:Math.min(15000,900*Math.pow(2,count-1));
+  img.__skRetryTimer=setTimeout(function(){
+   img.__skRetryTimer=null;
+   if(!img.isConnected)return;
+   img.src=retrySource(src,count);
+  },delay);
  }
  window.addEventListener("error",function(event){
-  const target=event.target;
-  if(target&&target.tagName&&target.tagName.toLowerCase()==="img"){
-   const retrying=recoverImage(target);
-   if(retrying)event.stopImmediatePropagation();
+  const img=event.target;
+  if(!img||!img.tagName||img.tagName.toLowerCase()!=="img")return;
+  if(!originalSource(img))return;
+  markFailed(img);
+  queueRetry(img,false);
+ },true);
+ window.addEventListener("load",function(event){
+  const img=event.target;
+  if(img&&img.tagName&&img.tagName.toLowerCase()==="img"){
+   if(img.__skRetryTimer){clearTimeout(img.__skRetryTimer);img.__skRetryTimer=null;}
+   markLoaded(img);
   }
  },true);
  function retryFailedImages(){
   if(navigator.onLine===false)return;
-  document.querySelectorAll("img.image-load-failed").forEach(function(img){
-   const src=img.dataset.originalSrc;
-   if(!src)return;
-   img.classList.remove("image-load-failed");
-   img.style.visibility="";
-   img.dataset.imageRetry="0";
-   img.src=src+(src.includes("?")?"&":"?")+"__img_retry="+Date.now();
+  document.querySelectorAll("img").forEach(function(img){
+   if(img.classList.contains("image-load-failed")||!img.complete||img.naturalWidth===0){
+    if(img.__skRetryTimer){clearTimeout(img.__skRetryTimer);img.__skRetryTimer=null;}
+    img.dataset.imageRetry="0";
+    img.style.visibility="";
+    queueRetry(img,true);
+   }
   });
  }
  window.addEventListener("online",retryFailedImages);
  document.addEventListener("visibilitychange",function(){
   if(document.visibilityState==="visible")retryFailedImages();
  });
+ window.addEventListener("pageshow",retryFailedImages);
 })();
-</script>
+
 
 <style>
 *{box-sizing:border-box}
@@ -1928,7 +1960,7 @@ body.legacy-page-active .nav,body.legacy-page-active .balance,body.legacy-page-a
 @media(max-aspect-ratio:4/5){#entrySplash .splash-background{object-fit:cover;}#entrySplash .splash-shade:after{left:24%;width:0;}#entrySplash.loading .splash-shade:after{width:52%;}}
 
 </style>
-<link rel="stylesheet" href="./dashboard.css?v=20">
+<link rel="stylesheet" href="./dashboard.css?v=21">
 </head>
 
 <body class="dashboard-home">
