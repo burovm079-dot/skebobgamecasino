@@ -3367,10 +3367,10 @@ id="profileBalance"
 <section id="promo" class="hidden">
   <div class="promo-panel">
     <img class="promo-art" src="./assets/games/assets/games/Промокоды и золотые награды.png" alt="Промокоды и золотые награды" loading="eager" fetchpriority="high">
-    <form class="promo-controls" id="promoForm" onsubmit="event.preventDefault();activatePromo();">
+    <form class="promo-controls" id="promoForm" action="#" method="get" novalidate>
       <label class="promo-label" for="promoInput">ВВЕДИТЕ ПРОМОКОД</label>
       <input id="promoInput" name="promo" type="text" inputmode="text" autocomplete="off" autocapitalize="characters" spellcheck="false" maxlength="32" placeholder="Введите промокод" aria-label="Введите промокод">
-      <button id="promoActivate" class="promo-activate" type="submit">АКТИВИРОВАТЬ</button>
+      <button id="promoActivate" class="promo-activate" type="button" onclick="activatePromo()">АКТИВИРОВАТЬ</button>
       <div id="promoStatus" class="promo-status" role="status" aria-live="polite"></div>
     </form>
   </div>
@@ -4079,8 +4079,7 @@ checkAllNftAchievement();
 updateDailyTasks(false);
 let saved=false;
 try{
- storageSet("skebobSave",JSON.stringify(state));
- saved=true;
+ saved=storageSet("skebobSave",JSON.stringify(state));
 }catch(error){
  console.warn("Не удалось сохранить прогресс в этом браузере:",error);
 }
@@ -4736,49 +4735,48 @@ function activatePromo(){
  const input=document.getElementById("promoInput");
  const status=document.getElementById("promoStatus");
  const button=document.getElementById("promoActivate");
- if(!input||!status||!button)return;
- if(window.__promoSubmitting)return;
- const code=String(input.value||"").trim().replace(/\s+/g,"").toUpperCase();
- if(!code){
-  status.style.color="#ff8585";
-  status.textContent="Введите промокод.";
-  return;
- }
- if(!Object.prototype.hasOwnProperty.call(PROMOCODES,code)){
-  status.style.color="#ff8585";
-  status.textContent="Неверный промокод.";
-  return;
- }
+ if(!input||!status||!button)return false;
+ if(window.__promoSubmitting)return false;
+ const code=String(input.value||"").replace(/\\s+/g,"").toUpperCase();
+ const show=(message,ok)=>{
+  status.style.color=ok?"#72f0a5":"#ff8585";
+  status.textContent=message;
+ };
+ if(!code){show("Введите промокод.",false);input.focus();return false;}
+ if(!Object.prototype.hasOwnProperty.call(PROMOCODES,code)){show("Неверный промокод.",false);input.focus();return false;}
  const used=getUsedPromocodes();
  if(code==="SKEBOB" && (!Number(state.createdAt)||Date.now()-Number(state.createdAt)>=24*60*60*1000)){
-  status.style.color="#ff8585";
-  status.textContent="Промокод SKEBOB доступен только в первые 24 часа после первого входа.";
-  return;
+  show("Промокод SKEBOB доступен только в первые 24 часа после первого входа.",false);return false;
  }
- if(used.includes(code)){
-  status.style.color="#ff8585";
-  status.textContent="Ты уже активировал этот промокод.";
-  return;
- }
+ if(used.includes(code)){show("Ты уже активировал этот промокод.",false);return false;}
+ const reward=Math.max(0,Number(PROMOCODES[code].reward)||0);
+ const previousBalance=Number(state.balance)||0;
  window.__promoSubmitting=true;
  button.disabled=true;
  button.textContent="АКТИВАЦИЯ…";
  try{
   used.push(code);
   if(!storageSet("skebobUsedPromocodes",JSON.stringify(used))){
-   status.style.color="#ff8585";
-   status.textContent="Не удалось сохранить активацию. Проверь хранилище браузера и попробуй ещё раз.";
-   return;
+   show("Не удалось сохранить промокод. Разреши хранилище Telegram и попробуй ещё раз.",false);
+   return false;
   }
-  state.balance=Number(state.balance||0)+Number(PROMOCODES[code].reward||0);
-  save();
-  status.style.color="#72f0a5";
-  status.textContent="Получено +"+formatMoney(PROMOCODES[code].reward);
+  state.balance=previousBalance+reward;
+  if(!save()){
+   state.balance=previousBalance;
+   storageSet("skebobUsedPromocodes",JSON.stringify(used.filter(item=>item!==code)));
+   save();
+   show("Не удалось сохранить награду. Попробуй ещё раз.",false);
+   return false;
+  }
+  show("Успешно! Получено +"+formatMoney(reward),true);
   input.value="";
+  return true;
  }catch(error){
   console.error("Ошибка активации промокода:",error);
-  status.style.color="#ff8585";
-  status.textContent="Не удалось активировать промокод. Попробуй ещё раз.";
+  state.balance=previousBalance;
+  storageSet("skebobUsedPromocodes",JSON.stringify(used.filter(item=>item!==code)));
+  show("Не удалось активировать промокод. Попробуй ещё раз.",false);
+  return false;
  }finally{
   window.__promoSubmitting=false;
   button.disabled=false;
@@ -4786,6 +4784,14 @@ function activatePromo(){
  }
 }
 
+document.addEventListener("DOMContentLoaded",function(){
+ const form=document.getElementById("promoForm");
+ const input=document.getElementById("promoInput");
+ if(form)form.addEventListener("submit",function(event){event.preventDefault();activatePromo();});
+ if(input)input.addEventListener("keydown",function(event){
+  if(event.key==="Enter"){event.preventDefault();activatePromo();}
+ });
+});
 function getDailyLastOpen(){
 
 return Number(
