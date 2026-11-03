@@ -1159,6 +1159,15 @@ background:#ffae19;
 .switch input:checked + .switch-slider:before{
 transform:translateX(26px);
 }
+.switch input:focus-visible + .switch-slider{
+outline:3px solid var(--gold,#ffae19);
+outline-offset:3px;
+}
+.setting-row > div{min-width:0}
+.setting-row .small{line-height:1.4}
+#currencySelect{min-height:40px;cursor:pointer}
+.setting-row button,.setting-row a{min-width:104px;min-height:40px;cursor:pointer}
+.setting-row button:active,.setting-row a:active{transform:scale(.97)}
 
 /* PROFILE CUSTOMIZATION */
 .profile-hero.frame-gold{border:2px solid #f4c75e;box-shadow:0 0 0 3px #f4c75e22,0 0 22px #f4c75e35}
@@ -3440,6 +3449,7 @@ class="hidden"
 <input
 type="checkbox"
 id="themeToggle"
+aria-label="Переключить светлую и тёмную тему"
 onchange="toggleTheme()"
 >
 
@@ -3462,7 +3472,7 @@ onchange="toggleTheme()"
 </div>
 
 <label class="switch">
-<input type="checkbox" id="casinoMusicToggle" onchange="toggleCasinoMusic()">
+<input type="checkbox" id="casinoMusicToggle" aria-label="Включить или выключить музыку" onchange="toggleCasinoMusic()">
 <span class="switch-slider"></span>
 </label>
 
@@ -3518,7 +3528,7 @@ style="display:inline-flex;align-items:center;justify-content:center;text-decora
 
 <button
 class="secondary"
-onclick="resetGame()"
+onclick="resetGame()" aria-label="Сбросить прогресс после подтверждения"
 >
 СБРОСИТЬ
 </button>
@@ -7209,10 +7219,15 @@ async function startCasinoMusic(){
   casinoMusicStarted=true;
  }catch(e){casinoAudio=null;casinoMusicTimer=null;}
 }
+function updateCasinoMusicText(){
+ const title=document.getElementById("musicSettingTitle");
+ if(title)title.textContent=storageGet("skebobCasinoMusic")==="on"?"🎵 Музыка включена":"🔇 Музыка выключена";
+}
 async function toggleCasinoMusic(){
  const toggle=document.getElementById("casinoMusicToggle");
  const enabled=!!(toggle&&toggle.checked);
  storageSet("skebobCasinoMusic",enabled?"on":"off");
+ updateCasinoMusicText();
  if(!enabled){
   if(casinoMusicTimer){clearInterval(casinoMusicTimer);casinoMusicTimer=null;}
   if(casinoAudio){await casinoAudio.close();casinoAudio=null;}
@@ -7226,6 +7241,7 @@ function loadCasinoMusicSetting(){
  if(storageGet("skebobCasinoMusic")===null)storageSet("skebobCasinoMusic","on");
  const enabled=storageGet("skebobCasinoMusic")==="on";
  if(toggle)toggle.checked=enabled;
+ updateCasinoMusicText();
  if(enabled){
   const unlock=()=>{if(storageGet("skebobCasinoMusic")==="on")startCasinoMusic();};
   ["pointerdown","touchstart","keydown"].forEach(ev=>document.addEventListener(ev,unlock,{once:true,passive:true}));
