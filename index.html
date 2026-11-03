@@ -8341,8 +8341,22 @@ async function bjOnlineJoin(){
  bjOnlineChannel.on("broadcast",{event:"player-done"},({payload})=>{if(!payload||!bjOnlineRound||payload.round!==bjOnlineRound.id||bjOnlineRound.finished)return;const p=bjOnlineMembers.find(x=>x.id===payload.id);if(!p)return;p.done=true;if(Array.isArray(payload.hand))p.hand=payload.hand.filter(c=>c&&BJ_RANKS.includes(c.rank)&&BJ_SUITS.includes(c.suit));p.turn="Завершил ход";bjOnlineRender();if(bjOnlineHost)bjOnlineFinishDealer()});
  bjOnlineChannel.on("broadcast",{event:"room-full"},()=>bjOnlineStatus("Комната заполнена. Попробуй ещё раз."));
  bjOnlineStatus("Подключаемся к комнате…");
- const status=await bjOnlineChannel.subscribe(async st=>{
+ const connectingChannel=bjOnlineChannel;
+ let connectionSettled=false;
+ const connectionTimeout=setTimeout(()=>{
+  if(connectionSettled||bjOnlineChannel!==connectingChannel)return;
+  connectionSettled=true;
+  bjOnlineChannel=null;
+  if(bjOnlineTimer){clearInterval(bjOnlineTimer);bjOnlineTimer=null;}
+  const join=document.getElementById("bjOnlineJoin"),leave=document.getElementById("bjOnlineLeave");
+  if(join)join.disabled=false;if(leave)leave.disabled=true;
+  bjOnlineStatus("Не удалось подключиться за 15 секунд. Проверь интернет и доступность Supabase Realtime, затем нажми «Играть» ещё раз.");
+  bjOnlineClient.removeChannel(connectingChannel).catch(error=>console.warn("Blackjack timeout cleanup:",error));
+ },15000);
+ try{
+ await bjOnlineChannel.subscribe(async st=>{
   if(st==="SUBSCRIBED"){
+   connectionSettled=true;clearTimeout(connectionTimeout);
    const duplicate=bjNickTaken(bjOnlineName());
    if(duplicate){bjOnlineStatus("Этот nickname уже занят. Измени его в профиле и попробуй снова.");await bjOnlineClient.removeChannel(bjOnlineChannel);bjOnlineChannel=null;document.getElementById("bjOnlineJoin").disabled=false;document.getElementById("bjOnlineLeave").disabled=true;return;}
    bjOnlineJoinedAt=Date.now();await bjOnlineChannel.track({id:bjOnlineId,name:bjOnlineName(),done:false,joinedAt:bjOnlineJoinedAt,phase:"waiting",badgeColor:storageGet(BJ_OFFICIAL_BADGE_KEY)||"black"});
@@ -8351,15 +8365,26 @@ async function bjOnlineJoin(){
    bjOnlineStatus("Ищем игроков. Ставка за раунд: "+bjOnlineGetBet().toLocaleString("ru-RU")+" 🪙. Ожидание — до 60 секунд.");
    if(bjOnlineTimer)clearInterval(bjOnlineTimer);
    bjOnlineTimer=setInterval(()=>{const first=bjOnlineMembers[0];const remaining=Math.max(0,60-Math.floor((Date.now()-(first?.joinedAt||bjOnlineJoinedAt))/1000));bjOnlineSeconds=remaining;const c=document.getElementById("bjOnlineCountdown");if(c)c.textContent="До автоматического старта: "+remaining+" сек.";if(remaining<=0){clearInterval(bjOnlineTimer);if(bjOnlineHost){bjOnlineStatus("⏱ 60 секунд прошло. Игра начинается автоматически!");bjOnlineStart();}else{bjOnlineStatus("⏱ Набор завершён. Ждём автоматического старта ведущим.");}}},500);
-  }else if(st==="CHANNEL_ERROR"||st==="TIMED_OUT"){
+  }else if(st==="CHANNEL_ERROR"||st==="TIMED_OUT"||st==="CLOSED"){
+   connectionSettled=true;clearTimeout(connectionTimeout);
    const failedChannel=bjOnlineChannel;bjOnlineChannel=null;
    if(bjOnlineTimer){clearInterval(bjOnlineTimer);bjOnlineTimer=null;}
    const join=document.getElementById("bjOnlineJoin"),leave=document.getElementById("bjOnlineLeave");
    if(join)join.disabled=false;if(leave)leave.disabled=true;
    if(failedChannel){try{await bjOnlineClient.removeChannel(failedChannel)}catch(e){console.warn("Blackjack connection cleanup:",e)}}
-   bjOnlineStatus("Ошибка соединения с онлайн-столом. Проверь интернет и настройки Realtime, затем нажми «Играть» ещё раз.");
+   bjOnlineStatus(st==="TIMED_OUT"?"Supabase не ответил вовремя. Проверь интернет и настройки Realtime, затем нажми «Играть» ещё раз.":"Соединение с онлайн-столом закрыто или завершилось ошибкой ("+st+"). Нажми «Играть», чтобы повторить подключение.");
   }
  });
+ }catch(error){
+  connectionSettled=true;clearTimeout(connectionTimeout);
+  const failedChannel=bjOnlineChannel;bjOnlineChannel=null;
+  if(bjOnlineTimer){clearInterval(bjOnlineTimer);bjOnlineTimer=null;}
+  const join=document.getElementById("bjOnlineJoin"),leave=document.getElementById("bjOnlineLeave");
+  if(join)join.disabled=false;if(leave)leave.disabled=true;
+  if(failedChannel){try{await bjOnlineClient.removeChannel(failedChannel)}catch(cleanupError){console.warn("Blackjack connection cleanup:",cleanupError)}}
+  console.error("Blackjack subscribe failed:",error);
+  bjOnlineStatus("Ошибка запуска онлайн-стола: "+(error&&error.message?error.message:"неизвестная ошибка")+". Попробуй подключиться ещё раз.");
+ }
 }
 async function bjOnlineLeave(){
  bjOnlineStopTurnTimer();
