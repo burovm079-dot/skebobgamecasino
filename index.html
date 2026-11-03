@@ -2196,6 +2196,20 @@ body.tasks-page #skebobDashboard #tasks #dailyTasksList{position:absolute!import
    Percent positioning keeps each hit-area attached to the artwork at every viewport size. */
 body.tasks-page #skebobDashboard #tasks #dailyTasksList{position:absolute!important;inset:0!important;width:100%!important;height:100%!important;z-index:8!important;pointer-events:none!important}
 body.tasks-page #skebobDashboard #tasks #dailyTasksList .daily-art-task{position:absolute!important;left:69.7%!important;width:25.8%!important;height:10.3%!important;margin:0!important;padding:0 5px!important;box-sizing:border-box!important;display:flex!important;align-items:center!important;justify-content:center!important;flex-direction:column!important;gap:3px!important;transform:none!important;pointer-events:auto!important;z-index:9!important;font-size:clamp(10px,1.55vw,18px)!important;line-height:1.08!important}
+/* Fine alignment from the supplied mobile screenshot:
+   keep a narrow silver bevel visible around each green state overlay. */
+body.tasks-page #skebobDashboard #tasks #dailyTasksList .daily-art-task{
+ left:70.6%!important;width:23.5%!important;height:8.7%!important;
+ box-sizing:border-box!important;padding:0 2px!important;
+}
+body.tasks-page #skebobDashboard #tasks #dailyTasksList .daily-art-task:nth-child(1){top:42.2%!important}
+body.tasks-page #skebobDashboard #tasks #dailyTasksList .daily-art-task:nth-child(2){top:60.6%!important}
+body.tasks-page #skebobDashboard #tasks #dailyTasksList .daily-art-task:nth-child(3){top:79.0%!important}
+body.tasks-page #skebobDashboard #tasks #dailyTasksList .daily-art-task.is-ready,
+body.tasks-page #skebobDashboard #tasks #dailyTasksList .daily-art-task.is-claimed{
+ border:0!important;border-radius:14% / 13%!important;
+}
+
 /* Hotspots now cover the complete printed silver button, including its lower rim and shadow. */
 body.tasks-page #skebobDashboard #tasks #dailyTasksList .daily-art-task:nth-child(1){top:41.5%!important}
 body.tasks-page #skebobDashboard #tasks #dailyTasksList .daily-art-task:nth-child(2){top:59.9%!important}
