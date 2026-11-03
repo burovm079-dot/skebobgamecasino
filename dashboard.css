@@ -588,3 +588,43 @@ body.promo-page #skebobDashboard .sk-work.promo-workspace #promo .promo-art{
  body.promo-page #skebobDashboard{grid-template-columns:76px minmax(0,1fr)!important}
  body.promo-page #skebobDashboard .sk-side{width:76px!important}
 }
+
+
+/* PROMO HARD LAYOUT FIX: anchor the workspace to the right of the fixed sidebar.
+   This avoids grid/fixed-sidebar offsets that made the artwork drift left. */
+body.promo-page #skebobDashboard .sk-work.promo-workspace{
+ position:fixed!important;
+ left:188px!important;right:0!important;top:0!important;bottom:0!important;
+ width:auto!important;height:auto!important;min-width:0!important;min-height:0!important;
+ max-width:none!important;margin:0!important;padding:0!important;
+ display:flex!important;flex-direction:column!important;
+ overflow:hidden!important;transform:none!important;
+}
+body.promo-page #skebobDashboard .sk-work.promo-workspace #sk-page-view{
+ position:absolute!important;left:0!important;right:0!important;top:0!important;bottom:0!important;
+ width:auto!important;height:auto!important;min-width:0!important;min-height:0!important;
+ max-width:none!important;margin:0!important;padding:0!important;
+ display:flex!important;overflow:hidden!important;
+}
+body.promo-page #skebobDashboard .sk-work.promo-workspace #sk-page-view>section#promo:not(.hidden){
+ position:relative!important;inset:auto!important;flex:1 1 auto!important;
+ width:100%!important;height:100%!important;min-width:0!important;min-height:0!important;
+ max-width:none!important;margin:0!important;padding:0!important;overflow:hidden!important;
+}
+body.promo-page #skebobDashboard .sk-work.promo-workspace #promo .promo-panel{
+ position:absolute!important;inset:0!important;width:100%!important;height:100%!important;
+ margin:0!important;padding:0!important;overflow:hidden!important;
+}
+body.promo-page #skebobDashboard .sk-work.promo-workspace #promo .promo-art{
+ position:absolute!important;left:0!important;top:0!important;right:0!important;bottom:0!important;
+ inset:0!important;display:block!important;transform:none!important;
+ width:100%!important;height:100%!important;min-width:100%!important;min-height:100%!important;
+ max-width:none!important;max-height:none!important;margin:0!important;padding:0!important;
+ object-fit:fill!important;object-position:center!important;
+}
+@media(max-width:760px){
+ body.promo-page #skebobDashboard .sk-work.promo-workspace{left:82px!important}
+}
+@media(max-width:380px){
+ body.promo-page #skebobDashboard .sk-work.promo-workspace{left:76px!important}
+}
