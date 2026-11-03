@@ -2195,11 +2195,11 @@ body.tasks-page #skebobDashboard #tasks #dailyTasksList{position:absolute!import
    button 3: x=829..1126, y=995..1125
    Percent positioning keeps each hit-area attached to the artwork at every viewport size. */
 body.tasks-page #skebobDashboard #tasks #dailyTasksList{position:absolute!important;inset:0!important;width:100%!important;height:100%!important;z-index:8!important;pointer-events:none!important}
-body.tasks-page #skebobDashboard #tasks #dailyTasksList .daily-art-task{position:absolute!important;left:70%!important;width:25.1%!important;height:8.4%!important;margin:0!important;padding:0 5px!important;box-sizing:border-box!important;display:flex!important;align-items:center!important;justify-content:center!important;flex-direction:column!important;gap:3px!important;transform:none!important;pointer-events:auto!important;z-index:9!important;font-size:clamp(10px,1.55vw,18px)!important;line-height:1.08!important}
-/* Vertical positions measured from the button artwork in the supplied mobile screenshot. */
-body.tasks-page #skebobDashboard #tasks #dailyTasksList .daily-art-task:nth-child(1){top:42.4%!important}
-body.tasks-page #skebobDashboard #tasks #dailyTasksList .daily-art-task:nth-child(2){top:60.2%!important}
-body.tasks-page #skebobDashboard #tasks #dailyTasksList .daily-art-task:nth-child(3){top:78.5%!important}
+body.tasks-page #skebobDashboard #tasks #dailyTasksList .daily-art-task{position:absolute!important;left:69.7%!important;width:25.8%!important;height:10.3%!important;margin:0!important;padding:0 5px!important;box-sizing:border-box!important;display:flex!important;align-items:center!important;justify-content:center!important;flex-direction:column!important;gap:3px!important;transform:none!important;pointer-events:auto!important;z-index:9!important;font-size:clamp(10px,1.55vw,18px)!important;line-height:1.08!important}
+/* Hotspots now cover the complete printed silver button, including its lower rim and shadow. */
+body.tasks-page #skebobDashboard #tasks #dailyTasksList .daily-art-task:nth-child(1){top:41.5%!important}
+body.tasks-page #skebobDashboard #tasks #dailyTasksList .daily-art-task:nth-child(2){top:59.9%!important}
+body.tasks-page #skebobDashboard #tasks #dailyTasksList .daily-art-task:nth-child(3){top:78.2%!important}
 /* The artwork already contains the button graphics and label. Keep only a transparent
    clickable hotspot so the CSS button cannot create a second, misaligned frame. */
 body.tasks-page #skebobDashboard #tasks #dailyTasksList .daily-art-task{
@@ -2217,8 +2217,9 @@ body.tasks-page #skebobDashboard #tasks #dailyTasksList .daily-art-task{
 }
 body.tasks-page #skebobDashboard #tasks #dailyTasksList .daily-art-task.is-ready{
  background:linear-gradient(180deg,#caffaa 0%,#55e58d 48%,#159c58 100%)!important;
- border:2px solid #e4ffd2!important;
- box-shadow:0 0 18px #48ff9aaa,inset 0 2px 5px #ffffffbb!important;
+ border:0!important;
+ border-radius:27% / 22%!important;
+ box-shadow:0 0 16px #48ff9a99,inset 0 2px 5px #ffffffbb!important;
  color:#073c22!important;text-shadow:0 1px 1px #d7ffd4!important;
  font-size:clamp(10px,1.45vw,16px)!important;font-weight:1000!important;
  gap:3px!important;padding:0 3px!important;pointer-events:auto!important;
@@ -2228,7 +2229,7 @@ body.tasks-page #skebobDashboard #tasks #dailyTasksList .daily-art-task.is-ready
 }
 body.tasks-page #skebobDashboard #tasks #dailyTasksList .daily-art-task.is-claimed{
  background:linear-gradient(180deg,#497b65,#1c573e)!important;
- border:2px solid #a2e8bb!important;color:#e7ffed!important;
+ border:0!important;border-radius:27% / 22%!important;color:#e7ffed!important;
  font-size:clamp(9px,1.3vw,14px)!important;box-shadow:0 0 10px #35ff9166!important;
 }
 body.tasks-page #skebobDashboard #tasks #dailyTasksList .daily-art-task.is-claimed small{display:block!important;font-size:.65em!important}
