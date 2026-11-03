@@ -686,3 +686,39 @@ body.promo-page #skebobDashboard>.sk-work.promo-workspace #promo img.promo-art{
  body.promo-page #skebobDashboard{grid-template-columns:76px minmax(0,1fr)!important}
  body.promo-page #skebobDashboard>.sk-side{width:76px!important}
 }
+
+
+/* SETTINGS: let the supplied artwork occupy the entire right workspace. */
+body.legacy-page-active #skebobDashboard .sk-work.settings-workspace{
+  display:flex!important;flex-direction:column!important;
+  width:100%!important;height:100dvh!important;min-height:100dvh!important;
+  min-width:0!important;padding:0!important;overflow:hidden!important;
+}
+body.legacy-page-active #skebobDashboard .sk-work.settings-workspace .sk-top{
+  display:grid!important;flex:0 0 auto!important;
+  grid-template-columns:minmax(0,1fr)!important;
+  margin:0!important;padding:10px 12px!important;
+}
+body.legacy-page-active #skebobDashboard .sk-work.settings-workspace #sk-page-view{
+  display:flex!important;flex:1 1 auto!important;flex-direction:column!important;
+  width:100%!important;max-width:none!important;min-width:0!important;min-height:0!important;
+  margin:0!important;padding:0!important;overflow:hidden!important;
+}
+body.legacy-page-active #skebobDashboard .sk-work.settings-workspace #sk-page-view>section#settings:not(.hidden){
+  display:flex!important;flex:1 1 auto!important;flex-direction:column!important;
+  width:100%!important;max-width:none!important;height:100%!important;min-height:0!important;
+  margin:0!important;padding:0!important;overflow:hidden!important;
+  border:0!important;border-radius:0!important;background:transparent!important;box-shadow:none!important;
+}
+body.legacy-page-active #skebobDashboard .sk-work.settings-workspace #settings .settings-picture-ui{
+  flex:1 1 auto!important;width:100%!important;max-width:none!important;
+  height:100%!important;min-height:0!important;aspect-ratio:auto!important;
+  margin:0!important;border-radius:0!important;overflow:hidden!important;
+}
+body.legacy-page-active #skebobDashboard .sk-work.settings-workspace #settings .settings-picture-ui-image{
+  width:100%!important;height:100%!important;object-fit:fill!important;
+}
+@media(max-width:760px){
+  body.legacy-page-active #skebobDashboard .sk-work.settings-workspace{height:100dvh!important;min-height:100dvh!important}
+  body.legacy-page-active #skebobDashboard .sk-work.settings-workspace .sk-top{padding:8px 7px!important}
+}
