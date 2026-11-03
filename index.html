@@ -1868,13 +1868,10 @@ body.legacy-page-active .nav,body.legacy-page-active .balance,body.legacy-page-a
 </div>
 
 <script>
-/* Telegram Mini App boot watchdog: never leave the entry overlay covering the app. */
+/* Telegram Mini App bootstrap: reveal the game immediately; splash must never block startup. */
 (function(){
  const splash=document.getElementById("entrySplash");
- const reveal=()=>{if(splash)splash.classList.add("splash-hidden");};
- window.addEventListener("error",reveal,{once:true});
- window.addEventListener("unhandledrejection",reveal,{once:true});
- setTimeout(reveal,8000);
+ if(splash){splash.classList.add("splash-hidden");splash.style.display="none";}
  try{
   const tg=window.Telegram&&window.Telegram.WebApp;
   if(tg){tg.ready();tg.expand();}
@@ -7882,14 +7879,10 @@ updateDailyCase,
 );
 setInterval(updateSecretDrop,1000);
 
-// Автоматическая заставка: случайная длительность от 2 до 10 секунд.
+// Заставка отключена: не задерживаем запуск игры в Telegram Mini App.
 (()=>{
  const splash=document.getElementById("entrySplash");
- if(!splash)return;
- const duration=2000+Math.random()*8000;
- splash.style.setProperty("--splash-duration",duration+"ms");
- requestAnimationFrame(()=>splash.classList.add("loading"));
- setTimeout(()=>splash.classList.add("splash-hidden"),duration);
+ if(splash){splash.classList.add("splash-hidden");splash.style.display="none";}
 })();
 
 
