@@ -4298,7 +4298,6 @@ checkAllNftAchievement();
 updateDailyTasks(false);
 let saved=false;
 try{
- storageSet("skebobSave",JSON.stringify(state));
  saved=storageSet("skebobSave",JSON.stringify(state));
 }catch(error){
  console.warn("Не удалось сохранить прогресс в этом браузере:",error);
