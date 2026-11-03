@@ -70,7 +70,7 @@ function startClock(){
  }
 }
 function nextFrom(i){for(let step=1;step<=players.length;step++){const j=(i+step)%players.length,p=players[j];if(!p.fold&&!p.allin&&(!acted.has(p.id)||p.put!==currentBet))return j}return -1}
-function beginTurn(i){if(!active)return;const next=nextFrom(i-1);if(next<0){closeStreet();return}current=next;startClock()}
+function beginTurn(after){if(!active)return;const next=nextFrom(after);if(next<0){closeStreet();return}current=next;startClock()}
 function beginStreet(first){
  acted.clear();currentBet=0;players.forEach(p=>p.put=0);
  if(street===1)board.push(card(),card(),card());else if(street===2||street===3)board.push(card());
