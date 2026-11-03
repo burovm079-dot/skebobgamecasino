@@ -473,3 +473,38 @@ body.legacy-page-active{background:#07020f!important;color:#fff!important}
  #skebobDashboard .sk-page-view>section:not(.hidden){padding:12px 9px;border-radius:14px}
 }
 @media(max-width:380px){body.legacy-page-active #skebobDashboard{grid-template-columns:76px minmax(0,1fr)!important}body.legacy-page-active #skebobDashboard .sk-side{width:76px!important}}
+
+
+/* PROMO: edge-to-edge content across the complete right workspace */
+body.legacy-page-active #skebobDashboard .sk-work.promo-workspace{
+  display:flex!important;flex-direction:column!important;min-width:0!important;
+  width:100%!important;height:100dvh!important;min-height:100dvh!important;
+  padding:0!important;overflow:hidden!important;
+}
+body.legacy-page-active #skebobDashboard .sk-work.promo-workspace .sk-top{
+  flex:0 0 auto!important;margin:0!important;padding:10px 12px!important;
+}
+body.legacy-page-active #skebobDashboard .sk-work.promo-workspace #sk-page-view{
+  display:flex!important;flex:1 1 auto!important;flex-direction:column!important;
+  min-width:0!important;min-height:0!important;width:100%!important;max-width:none!important;
+  margin:0!important;padding:0!important;overflow:hidden!important;
+}
+body.legacy-page-active #skebobDashboard .sk-work.promo-workspace #sk-page-view>section#promo:not(.hidden){
+  display:block!important;position:relative!important;flex:1 1 auto!important;
+  min-width:0!important;min-height:0!important;width:100%!important;height:auto!important;
+  max-width:none!important;margin:0!important;padding:0!important;overflow:hidden!important;
+  border:0!important;border-radius:0!important;background:#10071c!important;box-shadow:none!important;
+}
+body.legacy-page-active #skebobDashboard .sk-work.promo-workspace #promo .promo-panel{
+  position:absolute!important;inset:0!important;width:100%!important;height:100%!important;
+  min-height:0!important;margin:0!important;padding:0!important;overflow:hidden!important;
+  border:0!important;border-radius:0!important;background:#10071c!important;box-shadow:none!important;
+}
+body.legacy-page-active #skebobDashboard .sk-work.promo-workspace #promo .promo-art{
+  position:absolute!important;inset:0!important;display:block!important;
+  width:100%!important;height:100%!important;max-width:none!important;max-height:none!important;
+  margin:0!important;padding:0!important;object-fit:fill!important;object-position:center!important;
+}
+body.legacy-page-active #skebobDashboard .sk-work.promo-workspace #promo .promo-controls{
+  position:absolute!important;inset:0!important;width:100%!important;height:100%!important;
+}
