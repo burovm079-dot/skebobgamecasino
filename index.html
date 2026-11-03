@@ -4367,11 +4367,7 @@ return "newbie";
 }
 
 function getCasinoLevel(){
-
-return
-state.admin.manualLevel||
-getAutomaticLevel();
-
+return state.admin.manualLevel || getAutomaticLevel();
 }
 
 /*
@@ -7595,32 +7591,27 @@ async function resetGame(){
 
 if(!(await skebobDialog("confirm","Сбросить игровой прогресс?")))return;
 
+const resetCreatedAt=Number(state.createdAt)||Date.now();
+const resetDailyLastOpen=storageGet("skebobDailyLastOpen");
+const resetSecretDropUsedPeriod=state.secretDropUsedPeriod;
+
 state={
-
-balance:50,
-
-inventory:[],
-
-stats:{
-...defaultStats
-},
-
-admin:{
-alwaysWin:false,
-manualLevel:null
-}
-
+ balance:50,
+ tapGame:{hourStartedAt:0,earnedCents:0,pendingCents:0,cooldownUntil:0},
+ inventory:[],
+ stats:{...defaultStats},
+ admin:{alwaysWin:false,manualLevel:null,infiniteBalance:false,balanceBeforeInfinite:null},
+ profileStyle:{frame:"classic",background:"default",accent:"gold",collapsed:false},
+ dailyTasks:{dayKey:getDailyTaskDayKey(),progress:{},claimed:[]},
+ createdAt:resetCreatedAt,
+ secretDropUsedPeriod:resetSecretDropUsedPeriod
 };
 
 mineActive=false;
-
 mineFound=0;
-
-
-
-localStorage.removeItem(
-"skebobDailyLastOpen"
-);
+mineBet=1000;
+mineMultiplier=1;
+if(resetDailyLastOpen!==null)storageSet("skebobDailyLastOpen",resetDailyLastOpen);
 
 /*
 Промокоды НЕ очищаются.
