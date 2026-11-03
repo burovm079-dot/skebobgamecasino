@@ -1960,7 +1960,7 @@ body.legacy-page-active .nav,body.legacy-page-active .balance,body.legacy-page-a
 @media(max-aspect-ratio:4/5){#entrySplash .splash-background{object-fit:cover;}#entrySplash .splash-shade:after{left:24%;width:0;}#entrySplash.loading .splash-shade:after{width:52%;}}
 
 </style>
-<link rel="stylesheet" href="./dashboard.css?v=21">
+<link rel="stylesheet" href="./dashboard.css?v=22">
 </head>
 
 <body class="dashboard-home">
@@ -4343,7 +4343,18 @@ if(id==="promo"){
  important(pageView,{display:"flex",flex:"1 1 0",flexDirection:"column",width:"100%",height:"auto",maxWidth:"none",minWidth:"0",minHeight:"0",margin:"0",padding:"0",overflow:"hidden"});
  important(target,{display:"block",position:"relative",flex:"1 1 0",width:"100%",height:"100%",maxWidth:"none",minWidth:"0",minHeight:"0",margin:"0",padding:"0",overflow:"hidden",border:"0",borderRadius:"0",background:"#10071c"});
  important(panel,{position:"absolute",inset:"0",display:"block",width:"100%",height:"100%",minHeight:"0",margin:"0",padding:"0",overflow:"hidden",border:"0",borderRadius:"0",background:"#10071c"});
- important(art,{position:"absolute",inset:"0",display:"block",width:"100%",height:"100%",maxWidth:"none",maxHeight:"none",margin:"0",padding:"0",objectFit:"fill",objectPosition:"center"});
+ important(art,{position:"absolute",inset:"0",display:"block",visibility:"visible",opacity:"1",width:"100%",height:"100%",maxWidth:"none",maxHeight:"none",margin:"0",padding:"0",objectFit:"fill",objectPosition:"center",zIndex:"1"});
+ art.loading="eager";
+ art.fetchPriority="high";
+ art.decoding="async";
+ const promoImage="./assets/games/assets/games/%D0%9F%D1%80%D0%BE%D0%BC%D0%BE%D0%BA%D0%BE%D0%B4%D1%8B%20%D0%B8%20%D0%B7%D0%BE%D0%BB%D0%BE%D1%82%D1%8B%D0%B5%20%D0%BD%D0%B0%D0%B3%D1%80%D0%B0%D0%B4%D1%8B.png";
+ if(art.getAttribute("src")!==promoImage||!art.complete||art.naturalWidth===0){
+  art.dataset.originalSrc=promoImage;
+  art.dataset.imageRetry="0";
+  art.classList.remove("image-load-failed");
+  art.style.setProperty("visibility","visible","important");
+  art.src=promoImage+"?v=promo-20261103";
+ }
  important(controls,{position:"absolute",inset:"0",width:"100%",height:"100%",zIndex:"10",pointerEvents:"auto"});
 }else{
  const clear=(el,props)=>{if(el)props.forEach(k=>el.style.removeProperty(k));};
