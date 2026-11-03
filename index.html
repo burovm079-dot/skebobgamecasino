@@ -5115,13 +5115,7 @@ storageGet(
 }
 
 function canOpenDailyCase(){
-
-return
-Date.now()-
-getDailyLastOpen()
->=
-DAILY_CASE_COOLDOWN;
-
+ return dailyAvailable();
 }
 
 /*
@@ -5212,20 +5206,30 @@ if(timer)timer.textContent="Следующий через "+String(h).padStart(2
 }
 
 function openDailyCase(){
- if(dailyOpening||!dailyAvailable())return;
  const button=document.getElementById("dailyCaseButton");
  const result=document.getElementById("dailyResult");
- if(!button||!result)return;
+ if(dailyOpening)return;
+ if(!button||!result){console.error("Daily case UI is missing.");return;}
+ if(!dailyAvailable()){
+  updateDailyCase();
+  if(result)result.textContent="Кейс уже открыт. Дождись окончания таймера.";
+  return;
+ }
  const prize=pickDailyPrize();
+ if(!prize||!["coins","item"].includes(prize.type)){
+  console.error("Invalid daily prize:",prize);
+  result.textContent="Не удалось выбрать награду. Попробуй обновить страницу.";
+  return;
+ }
  const openedAt=Date.now();
  const previousStamp=storageGet("skebobDailyLastOpen");
- // Reserve the daily opening before showing the animation, so a refresh or
- // a second tab cannot immediately grant another reward.
+ // Reserve the opening before granting the reward to prevent double claims.
  if(!storageSet("skebobDailyLastOpen",String(openedAt))){
   alert("Не удалось сохранить открытие кейса. Проверь настройки хранилища браузера и попробуй снова.");
   return;
  }
  dailyOpening=true;
+ button.disabled=true;
  updateDailyCase();
  try{
   if(prize.type==="coins"){
@@ -8324,7 +8328,7 @@ async function bjOnlineJoin(){
  bjOnlineHost=false;bjOnlineMembers=[];bjOnlineRound=null;bjOnlineMyHand=[];bjOnlineSeconds=60;
  const channelName="bj-room-"+bjOnlineRoom;
  bjOnlineChannel=bjOnlineClient.channel(channelName,{config:{presence:{key:bjOnlineId},broadcast:{self:true}}});
- bjOnlineChannel.on("presence",{event:"sync"},()=>{const state=bjOnlineChannel.presenceState();const all=Object.values(state).flat().map(x=>({id:x.id,name:x.name,done:!!x.done,joinedAt:x.joinedAt||0,phase:x.phase||"waiting",bet:Number(x.bet)||0,badgeColor:x.badgeColor||storageGet(BJ_OFFICIAL_BADGE_KEY)||"black"})).sort((a,b)=>a.joinedAt-b.joinedAt);if(all.some(p=>p.phase==="playing")&&!bjOnlineRound){bjOnlineStatus("Раунд уже идёт. Подожди следующего набора.");bjOnlineLeave();return}if(all.length>4&&!all.slice(0,4).some(p=>p.id===bjOnlineId)){bjOnlineStatus("Комната уже заполнена (4 игрока).");bjOnlineLeave();return}bjOnlineMembers=all.slice(0,4).map(p=>{const old=bjOnlineMembers.find(x=>x.id===p.id);return {...p,hand:Array.isArray(p.hand)?p.hand:(old?.hand||[]),turn:p.turn||old?.turn||"Ожидает хода",done:!!p.done||!!old?.done};});bjOnlineHost=bjOnlineMembers[0]?.id===bjOnlineId;bjOnlineRender();if(bjOnlineRound&&!bjOnlineRound.finished){setTimeout(bjOnlinePublishState,250);if(bjOnlineHost)setTimeout(bjOnlineFinishDealer,300)}});
+ bjOnlineChannel.on("presence",{event:"sync"},()=>{const state=bjOnlineChannel.presenceState();const all=Object.values(state).flat().map(x=>({id:x.id,name:x.name,done:!!x.done,hand:Array.isArray(x.hand)?x.hand:[],turn:x.turn||"Ожидает хода",joinedAt:x.joinedAt||0,phase:x.phase||"waiting",bet:Number(x.bet)||0,badgeColor:x.badgeColor||storageGet(BJ_OFFICIAL_BADGE_KEY)||"black"})).sort((a,b)=>a.joinedAt-b.joinedAt);if(all.some(p=>p.phase==="playing")&&!bjOnlineRound){bjOnlineStatus("Раунд уже идёт. Подожди следующего набора.");bjOnlineLeave();return}if(all.length>4&&!all.slice(0,4).some(p=>p.id===bjOnlineId)){bjOnlineStatus("Комната уже заполнена (4 игрока).");bjOnlineLeave();return}bjOnlineMembers=all.slice(0,4).map(p=>{const old=bjOnlineMembers.find(x=>x.id===p.id);return {...p,hand:p.hand.length?p.hand:(old?.hand||[]),turn:p.turn||old?.turn||"Ожидает хода",done:!!p.done};});bjOnlineHost=bjOnlineMembers[0]?.id===bjOnlineId;bjOnlineRender();if(bjOnlineRound&&!bjOnlineRound.finished){setTimeout(bjOnlinePublishState,250);if(bjOnlineHost)setTimeout(bjOnlineFinishDealer,300)}});
  bjOnlineChannel.on("broadcast",{event:"round"},({payload})=>{if(!payload||!payload.id||!payload.host||!Array.isArray(payload.dealer)||payload.dealer.length!==2||bjOnlineRound?.id===payload.id)return;const live=Object.values(bjOnlineChannel.presenceState()).flat();const host=live.find(p=>p.id===payload.host);if(!host){bjOnlineStatus("Получен старт раунда, синхронизируем игроков…");return;}const roster=live.map(x=>({id:x.id,name:x.name,done:!!x.done,joinedAt:x.joinedAt||0,phase:x.phase||"waiting",bet:Number(x.bet)||0,badgeColor:x.badgeColor||storageGet(BJ_OFFICIAL_BADGE_KEY)||"black"})).sort((a,b)=>a.joinedAt-b.joinedAt);if(roster[0]?.id!==payload.host)return;bjOnlineMembers=roster.slice(0,4);bjOnlineBeginRound(payload)});
  bjOnlineChannel.on("broadcast",{event:"bot-step"},({payload})=>{if(!payload||!bjOnlineRound||payload.round!==bjOnlineRound.id||!Array.isArray(payload.cards)||!payload.cards.every(c=>c&&BJ_RANKS.includes(c.rank)&&BJ_SUITS.includes(c.suit)))return;bjOnlineBotHand=payload.cards;bjOnlineBotTurn=payload.turn||"Ходит";bjOnlineRender()});
  bjOnlineChannel.on("broadcast",{event:"dealer-step"},({payload})=>{if(!payload||!bjOnlineRound||payload.round!==bjOnlineRound.id||!Array.isArray(payload.cards)||!payload.cards.every(c=>c&&BJ_RANKS.includes(c.rank)&&BJ_SUITS.includes(c.suit)))return;bjOnlineDealer={cards:payload.cards,revealed:false};bjOnlineRender()});
