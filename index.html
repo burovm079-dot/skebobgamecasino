@@ -2247,6 +2247,23 @@ body.tasks-page #skebobDashboard #tasks #dailyTasksList .daily-art-task.is-claim
  font-size:clamp(9px,1.3vw,14px)!important;box-shadow:0 0 10px #35ff9166!important;
 }
 body.tasks-page #skebobDashboard #tasks #dailyTasksList .daily-art-task.is-claimed small{display:block!important;font-size:.65em!important}
+
+/* Fully opaque state panels: prevent the artwork's printed button lettering
+   from ghosting through the live status label. */
+body.tasks-page #skebobDashboard #tasks #dailyTasksList .daily-art-task.is-ready,
+body.tasks-page #skebobDashboard #tasks #dailyTasksList .daily-art-task.is-claimed{
+ opacity:1!important;
+ background-clip:padding-box!important;
+ isolation:isolate!important;
+ -webkit-text-fill-color:currentColor!important;
+}
+body.tasks-page #skebobDashboard #tasks #dailyTasksList .daily-art-task.is-claimed{
+ background:linear-gradient(180deg,#477b64 0%,#285f48 52%,#174b36 100%)!important;
+}
+body.tasks-page #skebobDashboard #tasks #dailyTasksList .daily-art-task.is-ready{
+ background:linear-gradient(180deg,#caffaa 0%,#65e99a 52%,#22a967 100%)!important;
+}
+
 /* Mask the artwork's printed "24 часа" cleanly, then render one live countdown in its place. */
 body.tasks-page #skebobDashboard #tasks #tasksTimer{
  position:absolute!important;left:56.6%!important;top:30.65%!important;width:19.4%!important;height:3.25%!important;
