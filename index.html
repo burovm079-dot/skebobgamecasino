@@ -4737,7 +4737,7 @@ function activatePromo(){
  const button=document.getElementById("promoActivate");
  if(!input||!status||!button)return false;
  if(window.__promoSubmitting)return false;
- const code=String(input.value||"").replace(/\\s+/g,"").toUpperCase();
+ const code=String(input.value||"").replace(/\s+/g,"").toUpperCase();
  const show=(message,ok)=>{
   status.style.color=ok?"#72f0a5":"#ff8585";
   status.textContent=message;
