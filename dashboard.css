@@ -523,3 +523,36 @@ body.legacy-page-active #skebobDashboard .sk-work.promo-workspace #promo .promo-
 #skebobDashboard .sk-game{touch-action:manipulation;transition:none}
 #skebobDashboard .sk-menu-item{touch-action:manipulation}
 @media(prefers-reduced-motion:reduce){#skebobDashboard *{scroll-behavior:auto!important;animation:none!important;transition:none!important}}
+
+
+/* PROMO PAGE: keep the promo artwork inside the right dashboard workspace. */
+body.promo-page #skebobDashboard .sk-work.promo-workspace{
+ position:relative!important;display:flex!important;flex-direction:column!important;
+ width:100%!important;height:100dvh!important;min-height:100dvh!important;
+ min-width:0!important;padding:0!important;overflow:hidden!important;
+}
+body.promo-page #skebobDashboard .sk-work.promo-workspace .sk-top{display:none!important}
+body.promo-page #skebobDashboard .sk-work.promo-workspace .sk-games{display:none!important}
+body.promo-page #skebobDashboard .sk-work.promo-workspace #sk-page-view{
+ position:relative!important;display:flex!important;flex:1 1 auto!important;
+ flex-direction:column!important;width:100%!important;max-width:none!important;
+ min-width:0!important;min-height:0!important;height:100%!important;
+ margin:0!important;padding:0!important;overflow:hidden!important;
+}
+body.promo-page #skebobDashboard .sk-work.promo-workspace #sk-page-view>section#promo:not(.hidden){
+ position:relative!important;display:block!important;flex:1 1 auto!important;
+ width:100%!important;max-width:none!important;height:100%!important;min-height:0!important;
+ margin:0!important;padding:0!important;overflow:hidden!important;
+ border:0!important;border-radius:0!important;background:#10071c!important;box-shadow:none!important;
+}
+body.promo-page #skebobDashboard .sk-work.promo-workspace #promo .promo-panel{
+ position:absolute!important;inset:0!important;width:100%!important;height:100%!important;
+ min-height:0!important;margin:0!important;padding:0!important;overflow:hidden!important;
+ border:0!important;border-radius:0!important;background:#10071c!important;box-shadow:none!important;
+}
+body.promo-page #skebobDashboard .sk-work.promo-workspace #promo .promo-art{
+ position:absolute!important;inset:0!important;display:block!important;
+ width:100%!important;height:100%!important;max-width:none!important;max-height:none!important;
+ margin:0!important;padding:0!important;object-fit:fill!important;object-position:center!important;
+}
+body.promo-page #skebobDashboard .sk-work.promo-workspace #promo{position:relative!important;inset:auto!important;z-index:auto!important}
