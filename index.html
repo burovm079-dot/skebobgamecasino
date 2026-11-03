@@ -1082,6 +1082,15 @@ body.promo-page>header,body.promo-page>.balance,body.promo-page>main>.nav{visibi
 @supports(height:100dvh){#promo{height:100dvh}}
 @supports(height:100svh){#promo{height:100svh}}
 @media(max-width:600px){#promo{inset:0!important;width:100vw!important;height:100vh!important;height:100dvh!important}#promo .promo-panel{padding:0;width:100%;height:100%}#promo .promo-art{width:100vw!important;height:100%!important}}
+#promo .promo-controls{position:absolute;z-index:5;left:50%;bottom:calc(18px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);display:flex;flex-direction:column;align-items:stretch;gap:10px;width:min(88%,390px);box-sizing:border-box;padding:16px;border:1px solid rgba(226,184,91,.8);border-radius:18px;background:rgba(16,7,28,.94);box-shadow:0 8px 30px rgba(0,0,0,.55);pointer-events:auto}
+#promo .promo-label{color:#ffe5a1;font-size:13px;font-weight:900;letter-spacing:1.2px;text-align:center}
+#promo #promoInput{display:block;width:100%;min-width:0;min-height:50px;box-sizing:border-box;padding:12px 14px;border:2px solid #a77b38;border-radius:12px;outline:none;background:#fff;color:#1b1024;font:700 16px/1.2 system-ui,sans-serif;text-align:center;text-transform:uppercase;pointer-events:auto;touch-action:manipulation}
+#promo #promoInput:focus{border-color:#ffd36e;box-shadow:0 0 0 3px rgba(255,211,110,.2)}
+#promo .promo-activate{display:block;width:100%;min-height:50px;padding:12px 16px;border:0;border-radius:12px;background:linear-gradient(180deg,#ffd66e,#bd8125);color:#281504;font-size:16px;font-weight:1000;letter-spacing:.8px;cursor:pointer;touch-action:manipulation}
+#promo .promo-activate:disabled{opacity:.65;cursor:wait}
+#promo .promo-status{min-height:20px;color:#fff;text-align:center;font-size:13px;font-weight:700;overflow-wrap:anywhere}
+@media(max-width:600px){#promo .promo-controls{width:calc(100% - 28px);bottom:calc(12px + env(safe-area-inset-bottom,0px));padding:13px;gap:8px}#promo #promoInput,#promo .promo-activate{min-height:48px;font-size:16px}}
+@media(max-height:560px){#promo .promo-controls{bottom:calc(6px + env(safe-area-inset-bottom,0px));padding:8px;gap:5px;width:min(92%,420px)}#promo .promo-label{font-size:11px}#promo #promoInput,#promo .promo-activate{min-height:40px;padding:8px}}
 
  
 /* SETTINGS */
@@ -3358,6 +3367,12 @@ id="profileBalance"
 <section id="promo" class="hidden">
   <div class="promo-panel">
     <img class="promo-art" src="./assets/games/assets/games/Промокоды и золотые награды.png" alt="Промокоды и золотые награды" loading="eager" fetchpriority="high">
+    <form class="promo-controls" id="promoForm" onsubmit="event.preventDefault();activatePromo();">
+      <label class="promo-label" for="promoInput">ВВЕДИТЕ ПРОМОКОД</label>
+      <input id="promoInput" name="promo" type="text" inputmode="text" autocomplete="off" autocapitalize="characters" spellcheck="false" maxlength="32" placeholder="Введите промокод" aria-label="Введите промокод">
+      <button id="promoActivate" class="promo-activate" type="submit">АКТИВИРОВАТЬ</button>
+      <div id="promoStatus" class="promo-status" role="status" aria-live="polite"></div>
+    </form>
   </div>
 </section>
 
@@ -4687,28 +4702,11 @@ state.admin.infiniteBalance?"∞":Math.floor(state.balance).toLocaleString("ru-R
 ========================= */
 
 function openPromoPage(){
-
-showPage("promo");
-
-const input=
-document.getElementById(
-"promoInput"
-);
-
-const status=
-document.getElementById(
-"promoStatus"
-);
-
-input.value="";
-
-status.textContent="";
-
-setTimeout(
-()=>input.focus(),
-100
-);
-
+ showPage("promo");
+ const input=document.getElementById("promoInput");
+ const status=document.getElementById("promoStatus");
+ if(input) input.value="";
+ if(status){status.textContent="";status.style.color="#fff";}
 }
 
 function getUsedPromocodes(){
@@ -4735,85 +4733,58 @@ return[];
 }
 
 function activatePromo(){
-
-const input=
-document.getElementById(
-"promoInput"
-);
-
-const status=
-document.getElementById(
-"promoStatus"
-);
-
-const code=
-input.value
-.trim()
-.toUpperCase();
-
-if(!PROMOCODES[code]){
-
-status.style.color=
-"#e34b55";
-
-status.textContent=
-"❌ Неверный промокод.";
-
-return;
-
+ const input=document.getElementById("promoInput");
+ const status=document.getElementById("promoStatus");
+ const button=document.getElementById("promoActivate");
+ if(!input||!status||!button)return;
+ if(window.__promoSubmitting)return;
+ const code=String(input.value||"").trim().replace(/\\s+/g,"").toUpperCase();
+ if(!code){
+  status.style.color="#ff8585";
+  status.textContent="Введите промокод.";
+  return;
+ }
+ if(!Object.prototype.hasOwnProperty.call(PROMOCODES,code)){
+  status.style.color="#ff8585";
+  status.textContent="Неверный промокод.";
+  return;
+ }
+ const used=getUsedPromocodes();
+ if(code==="SKEBOB" && (!Number(state.createdAt)||Date.now()-Number(state.createdAt)>=24*60*60*1000)){
+  status.style.color="#ff8585";
+  status.textContent="Промокод SKEBOB доступен только в первые 24 часа после первого входа.";
+  return;
+ }
+ if(used.includes(code)){
+  status.style.color="#ff8585";
+  status.textContent="Ты уже активировал этот промокод.";
+  return;
+ }
+ window.__promoSubmitting=true;
+ button.disabled=true;
+ button.textContent="АКТИВАЦИЯ…";
+ try{
+  used.push(code);
+  if(!storageSet("skebobUsedPromocodes",JSON.stringify(used))){
+   status.style.color="#ff8585";
+   status.textContent="Не удалось сохранить активацию. Проверь хранилище браузера и попробуй ещё раз.";
+   return;
+  }
+  state.balance=Number(state.balance||0)+Number(PROMOCODES[code].reward||0);
+  save();
+  status.style.color="#72f0a5";
+  status.textContent="Получено +"+formatMoney(PROMOCODES[code].reward);
+  input.value="";
+ }catch(error){
+  console.error("Ошибка активации промокода:",error);
+  status.style.color="#ff8585";
+  status.textContent="Не удалось активировать промокод. Попробуй ещё раз.";
+ }finally{
+  window.__promoSubmitting=false;
+  button.disabled=false;
+  button.textContent="АКТИВИРОВАТЬ";
+ }
 }
-
-const used=
-getUsedPromocodes();
-
-if(code==="SKEBOB" && Date.now()-Number(state.createdAt||0)>=24*60*60*1000){
- status.style.color="#e34b55";
- status.textContent="❌ Промокод SKEBOB доступен только в первые 24 часа после первого входа.";
- return;
-}
-
-if(
-used.includes(code)
-){
-
-status.style.color=
-"#e34b55";
-
-status.textContent=
-"Ошибка вы уже вводили данный промокод";
-
-alert(
-"Ошибка вы уже вводили данный промокод"
-);
-
-return;
-
-}
-
-used.push(code);
-
-storageSet(
-"skebobUsedPromocodes",
-JSON.stringify(used)
-);
-
-state.balance+=
-PROMOCODES[code].reward;
-
-save();
-
-status.style.color=
-"#24cf78";
-
-status.textContent="✅ Получено +"+formatMoney(PROMOCODES[code].reward);
-
-input.value="";
-
-}
-
-/* =========================
-   DAILY CASE
-========================= */
 
 function getDailyLastOpen(){
 
