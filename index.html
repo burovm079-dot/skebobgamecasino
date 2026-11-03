@@ -1964,6 +1964,66 @@ body.legacy-page-active .nav,body.legacy-page-active .balance,body.legacy-page-a
 #entrySplash.loading .splash-shade:after{width:46%;transition:width var(--splash-duration) linear;}
 @media(max-aspect-ratio:4/5){#entrySplash .splash-background{object-fit:cover;}#entrySplash .splash-shade:after{left:24%;width:0;}#entrySplash.loading .splash-shade:after{width:52%;}}
 
+
+/* SKEBOB SETTINGS — purple/gold autumn fantasy skin */
+#settings .settings-neon{max-width:760px;padding:8px 10px 24px}
+#settings>h2{color:#ffd45e;text-align:center;text-shadow:0 0 12px #ff9d00aa,0 0 28px #9d24ff88}
+#settings .settings-neon-heading{
+  padding:24px 16px 28px;border:2px solid #ffbd35;border-radius:24px;
+  background:radial-gradient(ellipse at 50% 0%,#7e20c7dd 0%,#33045dcc 58%,#170326ee 100%);
+  box-shadow:0 0 8px #ffbd35,0 0 24px #a000ff99,inset 0 0 24px #ffb52b22;
+  margin:0 0 18px
+}
+#settings .settings-neon-kicker{color:#ffe18a;text-shadow:0 0 12px #ffb000}
+#settings .settings-neon-heading strong{color:#fff1a8;font-size:clamp(20px,4vw,27px);text-shadow:0 2px 0 #8b3a00,0 0 14px #ffb000}
+#settings .settings-neon-caption{color:#e6c4ff}
+#settings .settings-neon-card{
+  padding:7px 17px;border:2px solid #ffb52d;border-radius:23px;
+  background:linear-gradient(120deg,rgba(83,13,139,.97),rgba(38,5,76,.98) 65%,rgba(76,11,118,.97));
+  box-shadow:0 0 7px #ffae22,0 0 18px #9e00ff88,inset 0 0 18px #ffb52b18
+}
+#settings .settings-neon-row{min-height:86px;border-bottom:1px solid #f5bbff55}
+#settings .settings-neon-copy b{color:#fff;font-size:14px;text-shadow:0 1px 5px #e0a4ff88}
+#settings .settings-neon-copy .small{color:#e2c0ff}
+#settings .settings-neon-icon{
+  width:54px;height:54px;flex-basis:54px;border-radius:50%;
+  color:#fff0a0;font-size:27px;background:radial-gradient(circle at 35% 25%,#8d36dd,#30005f 72%);
+  border:2px solid #ffca42;box-shadow:0 0 7px #ffb52d,0 0 15px #9d00ff88,inset 0 0 9px #ffd36a44
+}
+#settings .settings-neon .switch{width:68px;height:38px;flex-basis:68px}
+#settings .settings-neon .switch-slider{border:2px solid #ffbf3e;background:#300b54;box-shadow:inset 0 0 8px #0008,0 0 8px #ffb52d66}
+#settings .settings-neon .switch-slider:before{width:28px;height:28px;left:3px;top:3px;background:linear-gradient(#fff,#e8d9ff);box-shadow:0 1px 5px #0008}
+#settings .settings-neon .switch input:checked+.switch-slider{background:linear-gradient(90deg,#6c00c9,#c000ff);box-shadow:0 0 10px #d000ff,0 0 7px #ffbf3e}
+#settings .settings-neon .switch input:checked+.switch-slider:before{transform:translateX(30px)}
+#settings .settings-neon #currencySelect{
+  width:auto;min-width:118px;min-height:46px;padding:0 13px;border:2px solid #ffbf3e;border-radius:15px;
+  color:#fff;background:linear-gradient(135deg,#8700e8,#410078);box-shadow:0 0 9px #b400ff88,0 0 6px #ffbf3e66
+}
+#settings .settings-neon-subtitle{color:#ffe18a;text-align:center;text-shadow:0 0 10px #ff9d00;letter-spacing:2.2px}
+#settings .settings-neon-button,#settings .settings-neon-reset{
+  min-height:46px;padding:0 16px;border:2px solid #ffbf3e;border-radius:15px;color:#fff;
+  background:linear-gradient(135deg,#9b00ed,#4a007f);box-shadow:0 0 8px #c000ff99,0 0 7px #ffbf3e55;
+  text-shadow:0 1px 4px #24003e;transition:transform .16s,filter .16s,box-shadow .16s
+}
+#settings .settings-neon-danger{
+  border:2px solid #ff765c;border-radius:22px;background:linear-gradient(120deg,#65132c,#33072e);
+  box-shadow:0 0 10px #ff4d5f88,0 0 18px #a000ff66
+}
+#settings .settings-neon-reset{background:linear-gradient(135deg,#ff4c45,#a90042);border-color:#ff9a5d}
+#settings .settings-neon-button:hover,#settings .settings-neon-reset:hover{filter:brightness(1.18);box-shadow:0 0 13px #d000ff,0 0 10px #ffbf3e}
+#settings .settings-neon-button:active,#settings .settings-neon-reset:active{transform:scale(.96)}
+#settings .settings-neon button:focus-visible,#settings .settings-neon select:focus-visible,#settings .settings-neon input:focus-visible+.switch-slider{outline:3px solid #fff1a8;outline-offset:3px}
+body.light #settings .settings-neon-card{background:linear-gradient(120deg,#7720ad,#45116e);color:#fff}
+body.light #settings .settings-neon-copy .small{color:#f0d9ff}
+@media(max-width:430px){
+ #settings .settings-neon{padding-left:0;padding-right:0}
+ #settings .settings-neon-card{padding-left:11px;padding-right:11px}
+ #settings .settings-neon-icon{width:46px;height:46px;flex-basis:46px;font-size:23px}
+ #settings .settings-neon-row{gap:8px}
+ #settings .settings-neon-button{min-width:84px;padding:0 10px;font-size:12px}
+ #settings .settings-neon #currencySelect{min-width:102px;padding:0 7px;font-size:12px}
+}
+
 </style>
 <link rel="stylesheet" href="./dashboard.css?v=25">
 </head>
