@@ -1022,52 +1022,20 @@ text-align:center;
 
 .promo-icon{font-size:58px}
 
-#promo{padding-top:4px}
-#promo .promo-panel{
- position:relative;overflow:hidden;
- padding:24px 18px 18px;
- border:1px solid rgba(193,119,255,.72);
- border-radius:22px;
- background:linear-gradient(150deg,rgba(35,13,58,.94),rgba(15,9,29,.96) 62%,rgba(34,12,51,.96));
- box-shadow:0 14px 38px rgba(0,0,0,.32),0 0 28px rgba(158,73,224,.18),inset 0 1px rgba(255,255,255,.08);
-}
-#promo .promo-panel:before{
- content:"";position:absolute;inset:0;pointer-events:none;
- background:radial-gradient(ellipse at 50% 0%,rgba(183,105,255,.2),transparent 58%);
-}
-#promo .promo-panel>*{position:relative;z-index:1}
-#promo .promo-heading{
- margin:0 0 8px;color:#f4e7ff;font-size:25px;font-weight:900;
- letter-spacing:.5px;text-shadow:0 0 18px rgba(193,119,255,.55)
-}
-#promo .promo-copy{max-width:430px;margin:0 auto 18px;color:#cbb8dd;font-size:13px;line-height:1.55}
-#promo .promo-entry{max-width:470px;margin:0 auto}
-#promo #promoInput{
- min-height:50px;margin:0 0 9px;padding:14px 16px;
- border:1px solid rgba(190,132,255,.55);border-radius:13px;
- background:rgba(12,7,24,.82);color:#fff;text-align:center;
- box-shadow:inset 0 2px 10px rgba(0,0,0,.25),0 0 15px rgba(153,76,214,.1)
-}
-#promo #promoInput::placeholder{color:#9d8aaf}
-#promo .goldbtn{
- margin:0;min-height:49px;border:1px solid rgba(235,200,255,.55);
- border-radius:13px;color:#fff;font-weight:900;letter-spacing:.5px;
- background:linear-gradient(110deg,#8738c5,#bd65ef 52%,#8738c5);
- box-shadow:0 6px 0 #4d1d73,0 10px 22px rgba(137,56,197,.28),inset 0 1px rgba(255,255,255,.3);
- text-shadow:0 1px 4px rgba(0,0,0,.4)
-}
+#promo{padding:0;width:100%;min-height:calc(100vh - 90px)}
+#promo .promo-panel{position:relative;isolation:isolate;overflow:hidden;display:flex;flex-direction:column;align-items:center;box-sizing:border-box;width:100%;min-height:calc(100vh - 90px);padding:clamp(22px,4vh,42px) clamp(14px,4vw,36px) 30px;border:1px solid rgba(193,119,255,.72);border-radius:22px;background:#160b25;box-shadow:0 14px 38px rgba(0,0,0,.32),0 0 28px rgba(158,73,224,.18)}
+#promo .promo-art{position:absolute;z-index:-2;inset:0;display:block;width:100%;height:100%;max-width:none;margin:0;border-radius:0;object-fit:cover;object-position:center;filter:none}
+#promo .promo-panel:before{content:"";position:absolute;z-index:-1;inset:0;pointer-events:none;background:linear-gradient(180deg,rgba(13,5,25,.78),rgba(17,6,29,.52) 38%,rgba(12,5,22,.2) 68%,rgba(10,4,18,.5))}
+#promo .promo-panel>*:not(.promo-art){position:relative;z-index:1}
+#promo .promo-heading{margin:0 0 8px;color:#fff3ff;font-size:clamp(25px,3vw,34px);font-weight:900;letter-spacing:.7px;text-shadow:0 2px 12px #17051f,0 0 22px rgba(193,119,255,.8)}
+#promo .promo-copy{max-width:520px;margin:0 auto 20px;color:#fff;font-size:14px;line-height:1.55;text-shadow:0 2px 8px rgba(0,0,0,.95)}
+#promo .promo-entry{width:min(100%,470px);margin:0 auto}
+#promo #promoInput{box-sizing:border-box;width:100%;min-height:50px;margin:0 0 10px;padding:14px 16px;border:1px solid rgba(220,174,255,.8);border-radius:13px;background:rgba(12,7,24,.88);color:#fff;text-align:center;box-shadow:inset 0 2px 10px rgba(0,0,0,.25),0 0 18px rgba(153,76,214,.25)}
+#promo #promoInput::placeholder{color:#c4b1d2}
+#promo .goldbtn{width:100%;margin:0;min-height:49px;border:1px solid rgba(235,200,255,.7);border-radius:13px;color:#fff;font-weight:900;letter-spacing:.5px;background:linear-gradient(110deg,#8738c5,#bd65ef 52%,#8738c5);box-shadow:0 6px 0 #4d1d73,0 10px 22px rgba(137,56,197,.35),inset 0 1px rgba(255,255,255,.3);text-shadow:0 1px 4px rgba(0,0,0,.4)}
 #promo .goldbtn:active{transform:translateY(3px);box-shadow:0 3px 0 #4d1d73,0 6px 14px rgba(137,56,197,.24)}
-#promo .promo-art{
- display:block;width:100%;max-width:560px;height:auto;object-fit:contain;
- margin:20px auto 0;border-radius:16px;
- filter:drop-shadow(0 12px 22px rgba(0,0,0,.28));
-}
-#promo #promoStatus{margin-top:10px}
-@media(max-width:480px){
- #promo .promo-panel{padding:20px 13px 14px}
- #promo .promo-heading{font-size:22px}
- #promo .promo-art{margin-top:16px;border-radius:12px}
-}
+#promo #promoStatus{margin-top:10px;color:#fff;text-shadow:0 1px 8px #000}
+@media(max-width:600px){#promo{min-height:calc(100vh - 70px)}#promo .promo-panel{min-height:calc(100vh - 70px);padding:24px 14px}#promo .promo-copy{font-size:13px}}
 
 /* SETTINGS */
 
