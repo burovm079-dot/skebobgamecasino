@@ -5,6 +5,55 @@
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no"><meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate"><meta http-equiv="Pragma" content="no-cache"><meta http-equiv="Expires" content="0">
 <title>SKEBOB CASINO</title>
 <script src="https://telegram.org/js/telegram-web-app.js?62"></script>
+<script>
+/* Reliable image loading for Telegram WebView and slow/mobile connections. */
+(function(){
+ if(window.__skebobImageRecoveryInstalled)return;
+ window.__skebobImageRecoveryInstalled=true;
+ function recoverImage(img){
+  if(!img||!img.tagName||img.tagName.toLowerCase()!=="img")return;
+  const src=img.dataset.originalSrc||img.getAttribute("src")||"";
+  if(!src||/^(data:|blob:)/i.test(src))return;
+  img.dataset.originalSrc=src;
+  const tries=Number(img.dataset.imageRetry||0);
+  if(tries<2){
+   img.dataset.imageRetry=String(tries+1);
+   const clean=src.replace(/([?&])__img_retry=\d+/g,"").replace(/[?&]$/,"");
+   img.src=clean+(clean.includes("?")?"&":"?")+"__img_retry="+Date.now()+"_"+tries;
+   return true;
+  }
+  img.classList.add("image-load-failed");
+  img.style.visibility="hidden";
+  if(img.parentElement){
+   img.parentElement.classList.add("image-fallback-surface");
+   img.parentElement.style.background="linear-gradient(135deg,rgba(35,20,58,.98),rgba(9,7,20,.98))";
+  }
+  return false;
+ }
+ window.addEventListener("error",function(event){
+  const target=event.target;
+  if(target&&target.tagName&&target.tagName.toLowerCase()==="img"){
+   const retrying=recoverImage(target);
+   if(retrying)event.stopImmediatePropagation();
+  }
+ },true);
+ function retryFailedImages(){
+  if(navigator.onLine===false)return;
+  document.querySelectorAll("img.image-load-failed").forEach(function(img){
+   const src=img.dataset.originalSrc;
+   if(!src)return;
+   img.classList.remove("image-load-failed");
+   img.style.visibility="";
+   img.dataset.imageRetry="0";
+   img.src=src+(src.includes("?")?"&":"?")+"__img_retry="+Date.now();
+  });
+ }
+ window.addEventListener("online",retryFailedImages);
+ document.addEventListener("visibilitychange",function(){
+  if(document.visibilityState==="visible")retryFailedImages();
+ });
+})();
+</script>
 
 <style>
 *{box-sizing:border-box}
@@ -1935,19 +1984,19 @@ window.prompt=(message,value)=>{void skebobDialog("prompt",message,value);return
 </div>
 <div class="sk-games">
 <button class="sk-game" onclick="showPage('plane')"><span class="sk-art"><img src="assets/games/assets/games/plane.webp" alt="Самолёт" loading="eager"></span><span class="sk-game-name">Самолёт</span><span class="sk-play">Играть →</span></button>
-<button class="sk-game" onclick="showPage('slots')"><span class="sk-art"><img src="assets/games/assets/games/slots.webp" alt="Слоты" loading="lazy"></span><span class="sk-game-name">Слоты</span><span class="sk-play">Играть →</span></button>
-<button class="sk-game" onclick="showPage('upgrade')"><span class="sk-art"><img src="assets/games/assets/games/upgrade.webp" alt="Апгрейд" loading="lazy"></span><span class="sk-game-name">Апгрейд</span><span class="sk-play">Играть →</span></button>
-<button class="sk-game" onclick="showPage('mines')"><span class="sk-art"><img src="assets/games/assets/games/mines.webp" alt="Мины" loading="lazy"></span><span class="sk-game-name">Mines</span><span class="sk-play">Играть →</span></button>
-<button class="sk-game" onclick="showPage('plinko')"><span class="sk-art"><img src="assets/games/assets/games/plinko.webp" alt="Плинко" loading="lazy"></span><span class="sk-game-name">Plinko</span><span class="sk-play">Играть →</span></button>
-<button class="sk-game" onclick="showPage('race')"><span class="sk-art"><img src="assets/games/assets/games/race.webp" alt="Гонки" loading="lazy"></span><span class="sk-game-name">Race</span><span class="sk-play">Играть →</span></button>
-<button class="sk-game" onclick="showPage('pickaxe')"><span class="sk-art"><img src="assets/games/assets/games/pickaxe.webp" alt="Кирка" loading="lazy"></span><span class="sk-game-name">Кирка</span><span class="sk-play">Играть →</span></button>
-<button class="sk-game" onclick="showPage('battles')"><span class="sk-art"><img src="assets/games/assets/games/battles.webp" alt="Битвы" loading="lazy"></span><span class="sk-game-name">Батлы</span><span class="sk-play">Играть →</span></button>
-<button class="sk-game" onclick="showPage('blackjack')"><span class="sk-art"><img src="assets/games/assets/games/blackjack.webp" alt="Блэкджек" loading="lazy"></span><span class="sk-game-name">Blackjack</span><span class="sk-play">Играть →</span></button>
-<button class="sk-game" onclick="showPage('dice')"><span class="sk-art"><img src="assets/games/assets/games/dice.webp" alt="Кости" loading="lazy"></span><span class="sk-game-name">Кости</span><span class="sk-play">Играть →</span></button>
-<button class="sk-game" onclick="showPage('tictactoe')"><span class="sk-art"><img src="assets/games/assets/games/tictactoe.webp" alt="Крестики-нолики" loading="lazy"></span><span class="sk-game-name">Крестики-нолики</span><span class="sk-play">Играть →</span></button>
-<button class="sk-game" onclick="showPage('billiards')"><span class="sk-art"><img src="assets/games/assets/games/billiards.webp" alt="Бильярд" loading="lazy"></span><span class="sk-game-name">Бильярд</span><span class="sk-play">Играть →</span></button>
-<button class="sk-game" onclick="showPage('chickenroad')"><span class="sk-art"><img src="assets/games/assets/games/chicken-road.webp" alt="Chicken Road" loading="lazy"></span><span class="sk-game-name">Chicken Road</span><span class="sk-play">Играть →</span></button>
-<button class="sk-game" onclick="showPage('skebobTap')"><span class="sk-art"><img src="assets/games/assets/games/skebob-tap.webp" alt="Skebob Tap" loading="lazy"></span><span class="sk-game-name">Skebob Tap</span><span class="sk-play">Играть →</span></button>
+<button class="sk-game" onclick="showPage('slots')"><span class="sk-art"><img src="assets/games/assets/games/slots.webp" alt="Слоты" loading="eager"></span><span class="sk-game-name">Слоты</span><span class="sk-play">Играть →</span></button>
+<button class="sk-game" onclick="showPage('upgrade')"><span class="sk-art"><img src="assets/games/assets/games/upgrade.webp" alt="Апгрейд" loading="eager"></span><span class="sk-game-name">Апгрейд</span><span class="sk-play">Играть →</span></button>
+<button class="sk-game" onclick="showPage('mines')"><span class="sk-art"><img src="assets/games/assets/games/mines.webp" alt="Мины" loading="eager"></span><span class="sk-game-name">Mines</span><span class="sk-play">Играть →</span></button>
+<button class="sk-game" onclick="showPage('plinko')"><span class="sk-art"><img src="assets/games/assets/games/plinko.webp" alt="Плинко" loading="eager"></span><span class="sk-game-name">Plinko</span><span class="sk-play">Играть →</span></button>
+<button class="sk-game" onclick="showPage('race')"><span class="sk-art"><img src="assets/games/assets/games/race.webp" alt="Гонки" loading="eager"></span><span class="sk-game-name">Race</span><span class="sk-play">Играть →</span></button>
+<button class="sk-game" onclick="showPage('pickaxe')"><span class="sk-art"><img src="assets/games/assets/games/pickaxe.webp" alt="Кирка" loading="eager"></span><span class="sk-game-name">Кирка</span><span class="sk-play">Играть →</span></button>
+<button class="sk-game" onclick="showPage('battles')"><span class="sk-art"><img src="assets/games/assets/games/battles.webp" alt="Битвы" loading="eager"></span><span class="sk-game-name">Батлы</span><span class="sk-play">Играть →</span></button>
+<button class="sk-game" onclick="showPage('blackjack')"><span class="sk-art"><img src="assets/games/assets/games/blackjack.webp" alt="Блэкджек" loading="eager"></span><span class="sk-game-name">Blackjack</span><span class="sk-play">Играть →</span></button>
+<button class="sk-game" onclick="showPage('dice')"><span class="sk-art"><img src="assets/games/assets/games/dice.webp" alt="Кости" loading="eager"></span><span class="sk-game-name">Кости</span><span class="sk-play">Играть →</span></button>
+<button class="sk-game" onclick="showPage('tictactoe')"><span class="sk-art"><img src="assets/games/assets/games/tictactoe.webp" alt="Крестики-нолики" loading="eager"></span><span class="sk-game-name">Крестики-нолики</span><span class="sk-play">Играть →</span></button>
+<button class="sk-game" onclick="showPage('billiards')"><span class="sk-art"><img src="assets/games/assets/games/billiards.webp" alt="Бильярд" loading="eager"></span><span class="sk-game-name">Бильярд</span><span class="sk-play">Играть →</span></button>
+<button class="sk-game" onclick="showPage('chickenroad')"><span class="sk-art"><img src="assets/games/assets/games/chicken-road.webp" alt="Chicken Road" loading="eager"></span><span class="sk-game-name">Chicken Road</span><span class="sk-play">Играть →</span></button>
+<button class="sk-game" onclick="showPage('skebobTap')"><span class="sk-art"><img src="assets/games/assets/games/skebob-tap.webp" alt="Skebob Tap" loading="eager"></span><span class="sk-game-name">Skebob Tap</span><span class="sk-play">Играть →</span></button>
 </div></div></div>
 
 <header>
