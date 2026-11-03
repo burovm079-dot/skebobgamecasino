@@ -1105,6 +1105,15 @@ body.promo-page>header,body.promo-page>.balance,body.promo-page>main>.nav{visibi
 #promo.hidden{display:none!important}
 #promo .promo-panel{position:absolute;inset:0;overflow:hidden;display:block;box-sizing:border-box;width:100%;height:100%;min-height:0;margin:0;padding:0;border:0;border-radius:0;background:#10071c;box-shadow:none}
 #promo .promo-art{position:absolute;z-index:1;display:block;width:auto!important;height:auto!important;max-width:100%!important;max-height:100%!important;left:50%;top:50%;right:auto;bottom:auto;transform:translate(-50%,-50%);margin:0;padding:0;border:0;border-radius:0;object-fit:contain;object-position:center;background:transparent}
+#promo .promo-controls{position:absolute;inset:0;z-index:3;pointer-events:none}
+#promo .promo-input{position:absolute;left:40.5%;top:31.5%;width:40.5%;height:9.5%;box-sizing:border-box;padding:0 2.5%;border:2px solid #b94cff;border-radius:18px;background:rgba(25,4,49,.92);box-shadow:0 0 14px #a52cff;color:#fff;font:600 clamp(12px,2.1vw,22px) Arial,sans-serif;outline:none;pointer-events:auto}
+#promo .promo-input::placeholder{color:#c8b5df;opacity:1}
+#promo .promo-input:focus{border-color:#f0c2ff;box-shadow:0 0 0 3px rgba(203,95,255,.25),0 0 20px #a52cff}
+#promo .promo-activate{position:absolute;left:46%;top:43.2%;width:29.2%;height:11.5%;padding:0 4px;border:2px solid #aaff36;border-radius:22px;background:linear-gradient(180deg,#8bff16,#16b900);box-shadow:0 0 16px rgba(110,255,0,.6);color:#fff;text-shadow:0 2px 3px #285000;font:900 clamp(13px,2.3vw,24px) Arial,sans-serif;cursor:pointer;pointer-events:auto}
+#promo .promo-activate:active{transform:scale(.97)}
+#promo .promo-status{position:absolute;left:34%;top:55.5%;width:52%;margin:0;color:#fff;text-align:center;font:700 clamp(11px,1.8vw,18px) Arial,sans-serif;text-shadow:0 1px 4px #000;pointer-events:none}
+#promo .visually-hidden{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
+@media(max-width:600px){#promo .promo-input{border-radius:14px;border-width:1px}#promo .promo-activate{border-radius:16px;border-width:1px}}
 @supports(height:100dvh){#promo{height:100dvh}}
 @supports(height:100svh){#promo{height:100svh}}
 @media(max-width:600px){#promo .promo-panel{padding:0}}
@@ -3644,6 +3653,12 @@ id="profileBalance"
 <section id="promo" class="hidden">
   <div class="promo-panel">
     <img class="promo-art" src="/skebobgamecasino/assets/games/assets/games/Промокоды и золотые награды.png" alt="Промокоды и золотые награды" loading="eager" fetchpriority="high">
+    <div class="promo-controls">
+      <label class="visually-hidden" for="promoInput">Промокод</label>
+      <input id="promoInput" class="promo-input" type="text" maxlength="32" autocomplete="off" autocapitalize="characters" placeholder="Введите промокод..." aria-label="Введите промокод">
+      <button id="promoActivate" class="promo-activate" type="button" onclick="activatePromo()">🎁 Активировать</button>
+      <p id="promoStatus" class="promo-status" role="status" aria-live="polite"></p>
+    </div>
   </div>
 </section>
 
@@ -4725,144 +4740,44 @@ const setText=(id,value)=>{
 const e=
 document.getElementById(id);
 
-if(e)e.textContent=value;
+i/* =========================
+   PROMO — input is active; promo rewards are disabled
+========================= */
 
-};
+function openPromoPage(){
 
-setText(
-"profileLevelIcon",
-info.icon
-);
+showPage("promo");
 
-setText(
-"profileLevelName",
-info.name
-);
+const input=document.getElementById("promoInput");
+const status=document.getElementById("promoStatus");
 
-setText(
-"profileLevelDescription",
-info.description+
+if(input)input.value="";
+if(status)status.textContent="";
+
+setTimeout(()=>{
+if(input)input.focus();
+},100);
+
+}
+
+function activatePromo(){
+
+const input=document.getElementById("promoInput");
+const status=document.getElementById("promoStatus");
+
+if(!input||!status)return;
+
+const code=input.value.trim();
+
+status.style.color="#ffd86b";
+
+status.textContent=code
+?"ℹ️ Промокоды сейчас отключены."
+:"ℹ️ Сначала введите текст промокода.";
+
+}
+
 (
-state.admin.manualLevel
-?" • установлен администратором"
-:""
-)
-);
-
-const total=
-Math.floor(
-state.stats.totalWon
-);
-
-let progress=0;
-
-let progressText="";
-
-if(info.id==="newbie"){
-
-progress=
-Math.min(
-100,
-total/10000*100
-);
-
-progressText=
-total.toLocaleString("ru-RU")+
-" / 10 000 🪙 до уровня ИГРОК";
-
-}
-
-else if(info.id==="player"){
-
-progress=
-Math.min(
-100,
-(total-10000)/90000*100
-);
-
-progressText=
-total.toLocaleString("ru-RU")+
-" / 100 000 🪙 до VIP";
-
-}
-
-else{
-
-progress=100;
-
-progressText=
-"👑 Высший уровень — лимиты сняты";
-
-}
-
-const progressBar=
-document.getElementById(
-"profileLevelProgress"
-);
-
-if(progressBar){
-
-progressBar.style.width=
-progress+"%";
-
-}
-
-setText(
-"profileLevelProgressText",
-progressText
-);
-
-setText(
-"statTotalWon",
-Math.floor(
-state.stats.totalWon
-).toLocaleString("ru-RU")+
-" 🪙"
-);
-
-setText(
-"statBestWin",
-Math.floor(
-state.stats.bestWin
-).toLocaleString("ru-RU")+
-" 🪙"
-);
-
-setText(
-"statItemsSold",
-state.stats.itemsSold
-);
-
-setText(
-"statSoldValue",
-Math.floor(
-state.stats.soldValue
-).toLocaleString("ru-RU")+
-" 🪙"
-);
-
-setText(
-"statUpgrades",
-state.stats.upgrades
-);
-
-setText(
-"statUpgradeWins",
-"побед "+
-state.stats.upgradeWins
-);
-
-setText(
-"statCases",
-state.stats.casesOpened
-);
-
-setText(
-"statMinesGames",
-state.stats.minesGames
-);
-
-setText(
 "statMinesWins",
 "побед "+
 state.stats.minesWins
