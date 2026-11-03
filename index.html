@@ -1992,7 +1992,17 @@ body.legacy-page-active .nav,body.legacy-page-active .balance,body.legacy-page-a
 @media(max-aspect-ratio:4/5){#entrySplash .splash-background{object-fit:cover;}#entrySplash .splash-shade:after{left:24%;width:0;}#entrySplash.loading .splash-shade:after{width:52%;}}
 
 </style>
-<link rel="stylesheet" href="./dashboard.css?v=23">
+<style id="skebob-startup-safety">
+/* Critical Mini App shell: keep the actual game visible even if the external stylesheet is delayed. */
+body.dashboard-home #entrySplash{display:none!important;visibility:hidden!important;pointer-events:none!important}
+body.dashboard-home #skebobDashboard{display:grid!important;grid-template-columns:188px minmax(0,1fr)!important;min-height:100vh!important;width:100%!important;visibility:visible!important;opacity:1!important}
+body.dashboard-home #skebobDashboard .sk-side{display:flex!important}
+body.dashboard-home #skebobDashboard .sk-work{display:block!important;min-width:0!important}
+body.dashboard-home #skebobDashboard .sk-games{display:grid!important;grid-template-columns:repeat(4,minmax(0,1fr))}
+body.dashboard-home>header,body.dashboard-home>.balance,body.dashboard-home>main{display:none!important}
+@media(max-width:760px){body.dashboard-home #skebobDashboard{display:flex!important;flex-direction:column!important;min-height:100svh!important}body.dashboard-home #skebobDashboard .sk-games{grid-template-columns:repeat(2,minmax(0,1fr))!important}}
+</style>
+<link rel="stylesheet" href="./dashboard.css?v=24">
 </head>
 
 <body class="dashboard-home">
