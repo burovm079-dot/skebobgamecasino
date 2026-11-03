@@ -2149,18 +2149,22 @@ body.settings-page #skebobDashboard #settings .settings-picture-hit.settings-buy
 }
 
 
-/* DAILY TASKS — purple and gold quest board */
-#tasks.daily-tasks-page{max-width:980px;margin:0 auto;padding:22px 18px 42px;color:#fff2d2;background:radial-gradient(ellipse at 50% 0%,#6b2aa955,transparent 48%),linear-gradient(155deg,#211039,#10091f 72%,#2b1241);border:1px solid #b87935;border-radius:24px;box-shadow:0 16px 45px #0008,inset 0 0 35px #8b43b522;overflow:hidden;position:relative}
-#tasks.daily-tasks-page:before,#tasks.daily-tasks-page:after{content:"✦  🪙  ✧  ♠  ✦";position:absolute;color:#e8b85d;opacity:.22;font-size:22px;letter-spacing:10px;pointer-events:none}
-#tasks.daily-tasks-page:before{top:12px;left:10px}#tasks.daily-tasks-page:after{right:8px;bottom:8px}
-.daily-tasks-heading{text-align:center;position:relative;padding:8px 8px 14px;border-bottom:1px solid #d49a4c66}
-.daily-crown{font-size:38px;color:#ffd46b;text-shadow:0 0 18px #ffbd42aa;line-height:1.1}
-.daily-tasks-heading h2{margin:4px 0;color:#ffe29a;font-size:clamp(20px,4vw,30px);font-weight:1000;letter-spacing:1.4px;text-shadow:0 3px 0 #6d3a14,0 0 18px #f7ad3b77}
-.daily-heading-decor{color:#d99b4b;letter-spacing:14px;font-size:18px}
-.daily-reset-line{display:flex;align-items:center;justify-content:center;gap:8px;margin:16px auto 12px;padding:10px 14px;max-width:330px;border:1px solid #9d6a3c;border-radius:30px;background:#170d29;color:#e9d6b4;font-size:13px}.daily-reset-line>span{font-size:20px;color:#ffd46b}.daily-reset-line strong{color:#ffe08a;font-variant-numeric:tabular-nums}
-.daily-tasks-summary{display:flex;justify-content:center;align-items:center;gap:12px;flex-wrap:wrap;margin:12px 0 16px;color:#cbb5e0;font-size:11px;letter-spacing:1px}.daily-tasks-summary>strong{color:#ffe08a;font-size:17px}.daily-summary-reward{padding-left:12px;border-left:1px solid #8b659c}.daily-summary-reward b{color:#ffe08a}
-.daily-tasks-list{display:grid;gap:12px}.daily-task-card{display:grid;grid-template-columns:64px minmax(0,1fr) minmax(150px,190px);align-items:center;gap:14px;padding:15px;background:linear-gradient(110deg,#3a1b56,#211033 68%,#32153e);border:1px solid #9c6b45;border-radius:17px;box-shadow:0 7px 18px #0005,inset 0 1px #ffffff17}.daily-task-icon{display:grid;place-items:center;width:58px;height:58px;border-radius:15px;background:radial-gradient(circle,#75439a,#32194c);border:1px solid #bd8b54;font-size:34px;filter:drop-shadow(0 4px 5px #0007)}.daily-task-main{min-width:0;display:flex;flex-direction:column;gap:5px}.daily-task-title{color:#ffdf98;font-size:15px;line-height:1.3}.daily-task-description{color:#c8b6d6;font-size:12px}.daily-task-progress{height:7px;background:#10091d;border-radius:8px;overflow:hidden;margin-top:5px;border:1px solid #69457c}.daily-task-progress span{display:block;height:100%;background:linear-gradient(90deg,#21b96b,#a8ec78);border-radius:8px;transition:width .25s}.daily-task-meta{display:flex;justify-content:space-between;gap:8px;color:#cdbbdc;font-size:11px}.daily-task-meta b{color:#ffdc88}.daily-task-button{min-height:43px;padding:9px 12px;border-radius:11px;font-size:11px;font-weight:900;letter-spacing:.35px;border:1px solid;cursor:pointer;transition:filter .15s,transform .15s}.daily-task-button:hover:not(:disabled){filter:brightness(1.12);transform:translateY(-1px)}.daily-task-pending{color:#d0cbd5;background:linear-gradient(110deg,#77717e,#514b59);border-color:#aaa1ad;box-shadow:0 4px 12px #0005}.daily-task-ready{color:#062817;background:linear-gradient(110deg,#35e58c,#9bea72);border-color:#c6ffb0;box-shadow:0 0 16px #32d77b55}.daily-task-claimed{color:#d9fbe5;background:#185b3b;border-color:#4fbb7e;cursor:default}.daily-task-button:disabled{opacity:.9}.daily-tasks-foot{text-align:center;margin:16px 0 0;color:#bca7cb;font-size:11px}
-@media(max-width:640px){#tasks.daily-tasks-page{padding:16px 10px 28px;border-radius:17px}.daily-task-card{grid-template-columns:48px minmax(0,1fr);gap:10px;padding:11px}.daily-task-icon{width:46px;height:46px;font-size:27px;border-radius:12px}.daily-task-title{font-size:13px}.daily-task-description{font-size:11px}.daily-task-button{grid-column:1/-1;width:100%;min-height:40px}.daily-tasks-summary{gap:8px}.daily-summary-reward{padding-left:8px}}
+/* DAILY TASKS — user's casino artwork with live, working reward buttons */
+#tasks.daily-tasks-page{width:100%;max-width:900px;margin:0 auto;padding:10px 0 28px;background:transparent;border:0;box-shadow:none;overflow:visible}
+.daily-artboard{position:relative;width:min(100%,760px);margin:0 auto;line-height:0;border-radius:20px;overflow:hidden;box-shadow:0 18px 50px #0009,0 0 24px #a33cff55;background:#170b29}
+.daily-artwork{display:block;width:100%;height:auto;user-select:none;-webkit-user-drag:none}
+.daily-art-timer{position:absolute;left:57%;top:25.0%;width:27%;height:3.7%;display:flex;align-items:center;justify-content:center;color:#ffe05b;font-size:clamp(10px,2.1vw,19px);font-weight:1000;line-height:1;text-shadow:0 2px 3px #2c092b,0 0 8px #ffb300;white-space:nowrap;font-variant-numeric:tabular-nums;pointer-events:none}
+.daily-art-count{position:absolute;left:4%;top:29.2%;padding:3px 9px;border:1px solid #ffd66c;border-radius:30px;background:#210b3bdc;color:#ffe28a;font-size:clamp(9px,1.4vw,13px);font-weight:900;line-height:1.2;box-shadow:0 2px 8px #0008;pointer-events:none}
+.daily-art-hotspots{position:absolute;inset:0;pointer-events:none}
+.daily-art-task{position:absolute;left:69.7%;width:25.8%;height:8.5%;padding:0 5px;border-radius:18px;border:2px solid #e6d5ef;background:linear-gradient(180deg,#c8c0d0,#777080 48%,#4b405b);box-shadow:0 3px 10px #0009,inset 0 2px 4px #fff9;color:#fff;font-size:clamp(9px,1.65vw,17px);font-weight:1000;line-height:1.08;text-align:center;text-shadow:0 2px 2px #45334f;cursor:pointer;pointer-events:auto;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:3px}
+.daily-art-task:nth-child(1){top:34.2%}.daily-art-task:nth-child(2){top:49.4%}.daily-art-task:nth-child(3){top:64.5%}
+.daily-art-task small{font-size:.65em;font-weight:800;letter-spacing:.15px}
+.daily-art-task.is-ready{background:linear-gradient(180deg,#c5ff9b,#42dc83 48%,#159c58);border-color:#e0ffc9;color:#073c22;text-shadow:0 1px 1px #d7ffd4;box-shadow:0 0 16px #35ff91aa,inset 0 2px 4px #fff9}
+.daily-art-task.is-claimed{background:linear-gradient(180deg,#497b65,#1c573e);border-color:#a2e8bb;color:#e7ffed;cursor:default;opacity:.98}
+.daily-art-task:active:not(:disabled){transform:scale(.97)}
+.daily-art-task:focus-visible{outline:3px solid #fff;outline-offset:3px}
+.daily-art-caption{max-width:760px;margin:12px auto 0;padding:0 12px;text-align:center;color:#d5c2e7;font-size:12px;line-height:1.5}
+@media(max-width:480px){#tasks.daily-tasks-page{padding-top:4px}.daily-artboard{border-radius:12px}.daily-art-task{border-width:1px;border-radius:10px;padding:0 2px;gap:1px}.daily-art-task small{font-size:.58em}.daily-art-count{padding:2px 6px}}
 </style>
 <link rel="stylesheet" href="./dashboard.css?v=26">
 </head>
@@ -3496,11 +3500,13 @@ id="profileBalance"
 
 <!-- DAILY TASKS -->
 <section id="tasks" class="hidden daily-tasks-page">
- <div class="daily-tasks-heading"><div class="daily-crown">♛</div><h2>ЕЖЕДНЕВНЫЕ ЗАДАНИЯ</h2><div class="daily-heading-decor">✦ ♠ ✦</div></div>
- <div class="daily-reset-line"><span>◷</span> Рестарт через <strong id="tasksTimer">00:00:00</strong></div>
- <div class="daily-tasks-summary"><span>ВЫПОЛНЕНО</span><strong id="tasksDone">0/3</strong><span class="daily-summary-reward">НАГРАДА ЗА КАЖДОЕ: <b>50 🪙</b></span></div>
- <div id="dailyTasksList" class="daily-tasks-list"></div>
- <div class="daily-tasks-foot">Выполняй задания в игре и забирай монеты. Прогресс обновляется автоматически.</div>
+ <div class="daily-artboard" id="dailyArtboard">
+  <img class="daily-artwork" src="https://raw.githubusercontent.com/burovm079-dot/skebobgamecasino/main/assets/games/assets/games/%D0%95%D0%B6%D0%B5%D0%B4%D0%BD%D0%B5%D0%B2%D0%BD%D1%8B%D0%B5%20%D0%B7%D0%B0%D0%B4%D0%B0%D0%BD%D0%B8%D1%8F%20%D0%B2%20%D0%BA%D0%B0%D0%B7%D0%B8%D0%BD%D0%BE.jpg" alt="Ежедневные задания SKEBOB — три задания с наградой 50 монет" />
+  <div class="daily-art-timer" id="tasksTimer">00:00:00</div>
+  <div class="daily-art-count" id="tasksDone">0/3</div>
+  <div id="dailyTasksList" class="daily-art-hotspots" aria-label="Кнопки получения наград"></div>
+ </div>
+ <p class="daily-art-caption">Выполняй задания в игре — прогресс обновится автоматически. Нажми на кнопку задания, чтобы забрать 50 монет.</p>
 </section>
 
 <!-- SETTINGS -->
@@ -4278,12 +4284,12 @@ function renderDailyTasks(){
  updateDailyTasks();
  const list=document.getElementById("dailyTasksList");
  if(!list)return;
- list.innerHTML=DAILY_TASKS_FIXED.map(t=>{
+ list.innerHTML=DAILY_TASKS_FIXED.map((t,index)=>{
   const progress=Math.min(t.target,Math.max(0,Number(state.dailyTasks.progress[t.id])||0));
   const done=progress>=t.target,claimed=state.dailyTasks.claimed.includes(t.id);
-  const buttonClass=claimed?"daily-task-claimed":done?"daily-task-ready":"daily-task-pending";
-  const buttonText=claimed?"✓ НАГРАДА ПОЛУЧЕНА":done?"ПОЛУЧИТЬ НАГРАДУ":"ПОЛУЧИТЬ НАГРАДУ";
-  return '<article class="daily-task-card"><div class="daily-task-icon">'+t.icon+'</div><div class="daily-task-main"><b class="daily-task-title">'+t.title+'</b><span class="daily-task-description">'+t.description+'</span><div class="daily-task-progress"><span style="width:'+(progress/t.target*100)+'%"></span></div><div class="daily-task-meta"><span>'+progress+'/'+t.target+'</span><b>Награда: 50 🪙</b></div></div><button type="button" class="daily-task-button '+buttonClass+'" '+(claimed?'disabled':'')+' onclick="claimDailyTask(\''+t.id+'\')">'+buttonText+'</button></article>';
+  const cls=claimed?"is-claimed":done?"is-ready":"";
+  const label=claimed?"✓ ПОЛУЧЕНО":done?"ЗАБРАТЬ НАГРАДУ":"ПОЛУЧИТЬ НАГРАДУ";
+  return '<button type="button" class="daily-art-task '+cls+'" data-task-id="'+t.id+'" aria-label="'+t.title+'. Прогресс '+progress+' из '+t.target+'. '+(claimed?"Награда получена":done?"Забрать награду":"Задание не выполнено")+'" '+(claimed?'disabled':'')+' onclick="claimDailyTask(\''+t.id+'\')">'+label+'<small>'+progress+'/'+t.target+(claimed?" · +50 🪙":" · 50 🪙")+'</small></button>';
  }).join("");
  const left=Math.max(0,getNextDailyTaskReset()-Date.now());
  const h=Math.floor(left/3600000),m=Math.floor(left%3600000/60000),sec=Math.floor(left%60000/1000);
