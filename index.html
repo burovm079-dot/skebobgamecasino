@@ -6,6 +6,18 @@
 <title>SKEBOB CASINO</title>
 <script src="https://telegram.org/js/telegram-web-app.js?62"></script>
 <script>
+const BJ_SPECIAL_ACCOUNTS={
+ "duck":{kind:"media",hash:"871f561409d7b1bc319bb3a421e321d6339eecfd3fdaba67c36414d30a382512"},
+ "mario":{kind:"media",hash:"2292e9be49eed67272dab1d6be1927f4902feee08740c57f9b2836b5abb9b8cf"},
+ "garik":{kind:"media",hash:"d714944e6d70244ab614ccdad1ec9e9ddea1e327b8bc45beb82ec79968f6fabe"},
+ "cat":{kind:"media",hash:"536ce0edc43908722e442b418253153ca0d1f044a9f16cc4695dab282129073f"},
+ "vip1":{kind:"vip",hash:"a8f15f67870a1aa86ab03b3d101a5c62fe794b68142fe55ca2b97bddb8631601"},
+ "vip2":{kind:"vip",hash:"8c74bd592448c217c5725fa57be526d9c49ef7a8f7edb95f73b050dd97bbe3ab"},
+ "vip3":{kind:"vip",hash:"1407d612bac871fff1b8aa1c3f50879a98abe48932047eaab1dd540ddb7c2560"},
+ "vip4":{kind:"vip",hash:"05d340e5e109b4159425f8088c33783dd6044afed9d64afd395b4442f3c219b4"},
+ "vip5":{kind:"vip",hash:"70d5bbd12828fd13f9ea1fe021e7ba7be44ab43fb2197c9ede7d11465202ce20"}
+};
+
 // Blackjack globals are initialized in the first inline script to avoid cross-script TDZ errors.
 var bjOnlineClient=null,bjOnlineChannel=null,bjOnlineRoom="",bjOnlineId="",bjOnlineHost=false;
 var bjOnlineMembers=[],bjOnlineTimer=null,bjOnlineSeconds=60,bjOnlineRound=null,bjOnlineMyHand=[],bjOnlineDealer=null,bjOnlineMyTurn=false,bjOnlineJoinedAt=0;
@@ -8026,17 +8038,7 @@ async function bjRequestOfficialCode(){
  if(String(entered??"").trim()!=="ha7Foa_7"){alert("Неверный код. Вход в официальный аккаунт запрещён.");return false;}
  return true;
 }
-const BJ_SPECIAL_ACCOUNTS={
- "duck":{kind:"media",hash:"871f561409d7b1bc319bb3a421e321d6339eecfd3fdaba67c36414d30a382512"},
- "mario":{kind:"media",hash:"2292e9be49eed67272dab1d6be1927f4902feee08740c57f9b2836b5abb9b8cf"},
- "garik":{kind:"media",hash:"d714944e6d70244ab614ccdad1ec9e9ddea1e327b8bc45beb82ec79968f6fabe"},
- "cat":{kind:"media",hash:"536ce0edc43908722e442b418253153ca0d1f044a9f16cc4695dab282129073f"},
- "vip1":{kind:"vip",hash:"a8f15f67870a1aa86ab03b3d101a5c62fe794b68142fe55ca2b97bddb8631601"},
- "vip2":{kind:"vip",hash:"8c74bd592448c217c5725fa57be526d9c49ef7a8f7edb95f73b050dd97bbe3ab"},
- "vip3":{kind:"vip",hash:"1407d612bac871fff1b8aa1c3f50879a98abe48932047eaab1dd540ddb7c2560"},
- "vip4":{kind:"vip",hash:"05d340e5e109b4159425f8088c33783dd6044afed9d64afd395b4442f3c219b4"},
- "vip5":{kind:"vip",hash:"70d5bbd12828fd13f9ea1fe021e7ba7be44ab43fb2197c9ede7d11465202ce20"}
-};
+
 function bjSpecialAccountInfo(value){return BJ_SPECIAL_ACCOUNTS[String(value||"").trim().replace(/\s+/g," ").toLocaleLowerCase("ru")]||null;}
 async function bjSpecialPasswordMatches(nick,password){
  const info=bjSpecialAccountInfo(nick);
