@@ -6,7 +6,12 @@
 <title>SKEBOB CASINO</title>
 <script src="https://telegram.org/js/telegram-web-app.js?62"></script>
 <script>
-/* Persistent image loader: sidebar + game cards only. Promo artwork and promo animation are excluded. */
+/* Persistent image loader:
+// Blackjack globals are initialized in the first inline script to avoid cross-script TDZ errors.
+var bjOnlineClient=null,bjOnlineChannel=null,bjOnlineRoom="",bjOnlineId="",bjOnlineHost=false;
+var bjOnlineMembers=[],bjOnlineTimer=null,bjOnlineSeconds=60,bjOnlineRound=null,bjOnlineMyHand=[],bjOnlineDealer=null,bjOnlineMyTurn=false,bjOnlineJoinedAt=0;
+var bjOnlineRoundLocked=false,bjOnlineTurnTimer=null,bjOnlineTurnSeconds=15;
+ sidebar + game cards only. Promo artwork and promo animation are excluded. */
 (function(){
  if(window.__skebobNavGameImagesV3)return;
  window.__skebobNavGameImagesV3=true;
@@ -3926,10 +3931,7 @@ onclick="adminGive()"
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
 <script>
-// Initialize blackjack state before any startup/render callbacks can reference it.
-var bjOnlineClient=null,bjOnlineChannel=null,bjOnlineRoom="",bjOnlineId="",bjOnlineHost=false;
-let bjOnlineMembers=[],bjOnlineTimer=null,bjOnlineSeconds=60,bjOnlineRound=null,bjOnlineMyHand=[],bjOnlineDealer=null,bjOnlineMyTurn=false,bjOnlineJoinedAt=0;
-let bjOnlineRoundLocked=false,bjOnlineTurnTimer=null,bjOnlineTurnSeconds=15;
+
 
 /* BLACKJACK ONLINE — Supabase Realtime, no wagers or payouts */
 
