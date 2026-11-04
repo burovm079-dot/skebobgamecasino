@@ -2601,6 +2601,25 @@ body.tasks-page #skebobDashboard #tasks #dailyTasksList .daily-art-task.is-ready
 body.tasks-page #skebobDashboard #tasks #dailyTasksList .daily-art-task.is-claimed{
  border-radius:20% / 19%!important;
 }
+
+
+/* SKEBOB TAP: force the game section to occupy the right workspace instead of leaving an empty pane. */
+body.tap-page #skebobDashboard{display:grid!important;grid-template-columns:188px minmax(0,1fr)!important;min-height:100dvh!important;height:100dvh!important;overflow:hidden!important}
+body.tap-page #skebobDashboard>.sk-work{display:flex!important;flex-direction:column!important;grid-column:2!important;min-width:0!important;min-height:0!important;height:100dvh!important;overflow:auto!important}
+body.tap-page #skebobDashboard>.sk-work>.sk-top,
+body.tap-page #skebobDashboard>.sk-work>.sk-games{display:none!important}
+body.tap-page #skebobDashboard>.sk-work>#sk-page-view{display:flex!important;flex:1 1 auto!important;flex-direction:column!important;align-items:stretch!important;justify-content:flex-start!important;width:100%!important;min-width:0!important;min-height:0!important;max-width:none!important;margin:0!important;padding:12px!important;overflow:visible!important}
+body.tap-page #skebobDashboard #sk-page-view>section#skebobTap:not(.hidden){display:flex!important;flex:1 1 auto!important;flex-direction:column!important;align-items:stretch!important;justify-content:flex-start!important;width:100%!important;min-width:0!important;min-height:calc(100dvh - 24px)!important;max-width:none!important;margin:0!important;padding:18px!important;visibility:visible!important;opacity:1!important}
+body.tap-page #skebobDashboard #skebobTap .tap-panel{width:100%!important;min-height:320px!important;flex:1 1 auto!important;text-align:center!important}
+body.tap-page #skebobDashboard #skebobTap .tap-main{display:block!important;margin:18px auto!important;pointer-events:auto!important;touch-action:manipulation!important}
+@media(max-width:760px){
+ body.tap-page #skebobDashboard{grid-template-columns:82px minmax(0,1fr)!important}
+ body.tap-page #skebobDashboard>.sk-side{position:fixed!important;left:0!important;top:0!important;bottom:0!important;width:82px!important;height:100dvh!important;z-index:30!important}
+ body.tap-page #skebobDashboard>.sk-work{grid-column:2!important;padding:8px 6px 18px!important}
+ body.tap-page #skebobDashboard>.sk-work>#sk-page-view{padding:6px!important}
+ body.tap-page #skebobDashboard #sk-page-view>section#skebobTap:not(.hidden){padding:10px!important;min-height:calc(100dvh - 12px)!important}
+}
+@media(max-width:380px){body.tap-page #skebobDashboard{grid-template-columns:76px minmax(0,1fr)!important}body.tap-page #skebobDashboard>.sk-side{width:76px!important}}
 </style>
 <!-- CASES -->
 
@@ -4507,6 +4526,7 @@ renderAdminSettings();
 
 function showPage(id,button){
 const isDashboard=id==="dashboard";
+document.body.classList.toggle("tap-page",id==="skebobTap");
 document.body.classList.toggle("dashboard-home",isDashboard);
 document.body.classList.toggle("legacy-page-active",!isDashboard);
 document.body.classList.toggle("promo-page",id==="promo");
@@ -4530,7 +4550,6 @@ if(pageView){Array.from(pageView.children).forEach(section=>{if(section&&section
 window.scrollTo({top:0,behavior:"auto"});
 return;
 }
-if(id==="skebobTap")renderSkebobTap();
 if(id==="tasks")renderDailyTasks();
 if(id==="collection")renderCollection();
 document.querySelectorAll("section[id]").forEach(section=>section.classList.add("hidden"));
@@ -4539,6 +4558,13 @@ if(target){
 if(pageView&&target.parentElement!==pageView)pageView.appendChild(target);
 target.classList.remove("hidden");
 target.style.display="block";target.style.visibility="visible";target.style.opacity="1";target.style.width="100%";target.style.maxWidth="100%";target.style.boxSizing="border-box";
+if(id==="skebobTap"){
+ target.style.setProperty("display","flex","important");
+ target.style.setProperty("flex-direction","column","important");
+ target.style.setProperty("visibility","visible","important");
+ target.style.setProperty("opacity","1","important");
+ renderSkebobTap();
+}
 const gamePages=new Set(["skebobTap","tictactoe","billiards","chickenroad","cases","secretDrop","battles","upgrade","mines","plane","plinko","race","slots","blackjack","poker","dice"]);
 if(gamePages.has(id)){
 let back=target.querySelector(":scope > .game-list-back");
