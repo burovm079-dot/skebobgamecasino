@@ -4546,6 +4546,17 @@ const games=work&&work.querySelector(".sk-games");
 let pageView=work&&work.querySelector("#sk-page-view");
 if(work&&!pageView){pageView=document.createElement("div");pageView.id="sk-page-view";pageView.className="sk-page-view";if(games)games.insertAdjacentElement("afterend",pageView);else work.appendChild(pageView);}
 if(pageView){pageView.style.display=isDashboard?"none":"block";pageView.style.visibility="visible";pageView.style.opacity="1";pageView.style.width="100%";pageView.style.minWidth="0";pageView.style.minHeight="0";pageView.style.boxSizing="border-box";}
+const topBar=work&&work.querySelector(".sk-top");
+if(id==="skebobTap"){
+ if(shell)shell.classList.add("tap-workspace-active");
+ if(work){work.style.setProperty("display","flex","important");work.style.setProperty("flex-direction","column","important");work.style.setProperty("grid-column","2","important");work.style.setProperty("min-width","0","important");work.style.setProperty("min-height","0","important");work.style.setProperty("height","100dvh","important");work.style.setProperty("overflow-y","auto","important");}
+ if(topBar)topBar.style.setProperty("display","none","important");
+ if(games)games.style.setProperty("display","none","important");
+ if(pageView){pageView.style.setProperty("display","flex","important");pageView.style.setProperty("flex","1 1 auto","important");pageView.style.setProperty("flex-direction","column","important");pageView.style.setProperty("align-items","stretch","important");pageView.style.setProperty("justify-content","flex-start","important");pageView.style.setProperty("width","100%","important");pageView.style.setProperty("min-width","0","important");pageView.style.setProperty("min-height","0","important");pageView.style.setProperty("margin","0","important");pageView.style.setProperty("padding","12px","important");pageView.style.setProperty("overflow","visible","important");}
+}else{
+ if(shell)shell.classList.remove("tap-workspace-active");
+ [work,topBar,games,pageView].forEach(el=>{if(!el)return;["display","flex-direction","grid-column","min-width","min-height","height","overflow-y","flex","align-items","justify-content","width","margin","padding","overflow"].forEach(prop=>el.style.removeProperty(prop));});
+}
 if(games)games.classList.toggle("hidden",!isDashboard);
 if(isDashboard){
 document.querySelectorAll("section[id]").forEach(section=>section.classList.add("hidden"));
