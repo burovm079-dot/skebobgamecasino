@@ -4222,7 +4222,7 @@ if(typeof state.profileStyle.collapsed!=="boolean")state.profileStyle.collapsed=
 if(!Number.isFinite(Number(state.createdAt))||Number(state.createdAt)<=0)state.createdAt=Date.now();
 
 // Восстанавливаем корректную структуру сохранения, если старый файл повреждён.
-state.balance=Number.isFinite(Number(state.balance))?Math.max(0,Math.min(Number.MAX_SAFE_INTEGER,Math.floor(Number(state.balance)))):20;
+state.balance=Number.isFinite(Number(state.balance))?Math.max(0,Math.min(Number.MAX_SAFE_INTEGER,Number(state.balance))):20;
 
 if(!Array.isArray(state.inventory))state.inventory=[];
 state.inventory=state.inventory.filter(item=>item&&typeof item==="object").map((item,i)=>({...item,id:item.id??(Date.now()+i),value:Number.isFinite(Number(item.value))?Math.max(0,Number(item.value)):0,name:String(item.name||"Предмет")}));
@@ -4286,7 +4286,7 @@ function getCurrency(){return storageGet("skebobCurrency")==="USD"?"USD":"RUB";}
 function formatMoney(amount){
  if(state.admin&&state.admin.infiniteBalance)return "∞";
  const n=Number(amount)||0;
- return getCurrency()==="USD"?"$"+(n/80).toLocaleString("en-US",{minimumFractionDigits:2,maximumFractionDigits:2}):Math.floor(n).toLocaleString("ru-RU")+" ₽";
+ return getCurrency()==="USD"?"$"+(n/80).toLocaleString("en-US",{minimumFractionDigits:2,maximumFractionDigits:2}):n.toLocaleString("ru-RU",{minimumFractionDigits:2,maximumFractionDigits:2})+" ₽";
 }
 function updateSettingsCurrencyVisual(){const currency=getCurrency();const rub=document.querySelector("#settings .settings-currency-rub");const usd=document.querySelector("#settings .settings-currency-usd");if(rub){rub.classList.toggle("is-selected",currency==="RUB");rub.setAttribute("aria-pressed",currency==="RUB"?"true":"false");}if(usd){usd.classList.toggle("is-selected",currency==="USD");usd.setAttribute("aria-pressed",currency==="USD"?"true":"false");}}
 function setCurrency(value){
@@ -4972,7 +4972,7 @@ state.stats.turnover
 
 setText(
 "profileBalance",
-state.admin.infiniteBalance?"∞":Math.floor(state.balance).toLocaleString("ru-RU")+" 🪙"
+state.admin.infiniteBalance?"∞":Number(state.balance).toLocaleString("ru-RU",{minimumFractionDigits:2,maximumFractionDigits:2})+" 🪙"
 );
 
 }
@@ -8496,8 +8496,9 @@ function handleSkebobTap(){
   if(t.earnedCents>=SKEBOB_TAP_LIMIT){t.cooldownUntil=now+SKEBOB_TAP_WINDOW;save();renderSkebobTap();return;}
   if(!t.hourStartedAt)t.hourStartedAt=now;
   t.earnedCents=Math.min(SKEBOB_TAP_LIMIT,t.earnedCents+1);
-  t.pendingCents=Math.max(0,Math.floor(Number(t.pendingCents)||0))+1;
-  if(t.pendingCents>=100){const whole=Math.floor(t.pendingCents/100);state.balance=Math.min(Number.MAX_SAFE_INTEGER,state.balance+whole);t.pendingCents-=whole*100;}
+  const previouslyPending=Math.max(0,Math.min(99,Math.floor(Number(t.pendingCents)||0)));
+   state.balance=Math.min(Number.MAX_SAFE_INTEGER,Number(state.balance||0)+(previouslyPending+1)/100);
+   t.pendingCents=0;
   if(t.earnedCents>=SKEBOB_TAP_LIMIT)t.cooldownUntil=now+SKEBOB_TAP_WINDOW;
   save();
   renderSkebobTap();
