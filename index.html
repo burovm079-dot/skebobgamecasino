@@ -8362,10 +8362,14 @@ async function bjOnlineJoin(){
    connectionSettled=true;clearTimeout(connectionTimeout);
    const duplicate=bjNickTaken(bjOnlineName());
    if(duplicate){bjOnlineStatus("Этот nickname уже занят. Измени его в профиле и попробуй снова.");await bjOnlineClient.removeChannel(bjOnlineChannel);bjOnlineChannel=null;document.getElementById("bjOnlineJoin").disabled=false;document.getElementById("bjOnlineLeave").disabled=true;return;}
-   bjOnlineJoinedAt=Date.now();await bjOnlineChannel.track({id:bjOnlineId,name:bjOnlineName(),done:false,joinedAt:bjOnlineJoinedAt,phase:"waiting",badgeColor:storageGet(BJ_OFFICIAL_BADGE_KEY)||"black"});
+   bjOnlineJoinedAt=Date.now();
    document.getElementById("bjOnlineJoin").disabled=true;document.getElementById("bjOnlineLeave").disabled=false;
    document.getElementById("bjOnlineRoomLabel").textContent="Комната: "+bjOnlineRoom;
-   bjOnlineStatus("Ищем игроков. Ставка за раунд: "+bjOnlineGetBet().toLocaleString("ru-RU")+" 🪙. Ожидание — до 60 секунд.");
+   bjOnlineStatus("Подключено. Ищем игроков. Ставка за раунд: "+bjOnlineGetBet().toLocaleString("ru-RU")+" 🪙. Ожидание — до 60 секунд.");
+   // Presence tracking runs separately so it cannot leave the join UI hanging.
+   try{
+    Promise.resolve(bjOnlineChannel.track({id:bjOnlineId,name:bjOnlineName(),done:false,joinedAt:bjOnlineJoinedAt,phase:"waiting",badgeColor:storageGet(BJ_OFFICIAL_BADGE_KEY)||"black"})).then(result=>{if(result&&result!=="ok")console.warn("Blackjack presence track status:",result);}).catch(error=>{console.error("Blackjack presence tracking failed:",error);bjOnlineStatus("Подключено, но синхронизация игроков не удалась. Проверь Realtime в Supabase.");});
+   }catch(trackError){console.error("Blackjack presence tracking failed:",trackError);bjOnlineStatus("Подключено, но синхронизация игроков не удалась. Проверь Realtime в Supabase.");}
    if(bjOnlineTimer)clearInterval(bjOnlineTimer);
    bjOnlineTimer=setInterval(()=>{const first=bjOnlineMembers[0];const remaining=Math.max(0,60-Math.floor((Date.now()-(first?.joinedAt||bjOnlineJoinedAt))/1000));bjOnlineSeconds=remaining;const c=document.getElementById("bjOnlineCountdown");if(c)c.textContent="До автоматического старта: "+remaining+" сек.";if(remaining<=0){clearInterval(bjOnlineTimer);if(bjOnlineHost){bjOnlineStatus("⏱ 60 секунд прошло. Игра начинается автоматически!");bjOnlineStart();}else{bjOnlineStatus("⏱ Набор завершён. Ждём автоматического старта ведущим.");}}},500);
   }else if(st==="CHANNEL_ERROR"||st==="TIMED_OUT"||st==="CLOSED"){
