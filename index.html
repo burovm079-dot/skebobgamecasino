@@ -2537,7 +2537,7 @@ rel="noopener noreferrer"
  <div class="panel tap-panel">
   <p class="small">Тапай и получай виртуальные рубли. За один тап — 0,01 ₽. Часовой лимит — 5 ₽.</p>
   <div class="tap-stats"><div><span>Заработано за час</span><strong id="tapEarned">0,00 ₽</strong></div><div><span>Осталось до лимита</span><strong id="tapRemaining">5,00 ₽</strong></div></div>
-  <button id="tapButton" class="tap-main" type="button">👆 ТАП!</button>
+  <button id="tapButton" class="tap-main" type="button" onclick="return handleSkebobTap();">👆 ТАП!</button>
   <div id="tapStatus" class="tap-status" aria-live="polite">Каждый тап приносит 0,01 виртуального рубля.</div>
   <div class="small" id="tapTimer"></div>
  </div>
@@ -8519,17 +8519,7 @@ function handleSkebobTap(){
  }
 }
 window.handleSkebobTap=handleSkebobTap;
-/* Делегированный обработчик: работает даже если экран игры перемещается в dashboard после загрузки. */
-if(!document.documentElement.dataset.skebobTapDelegated){
- document.documentElement.dataset.skebobTapDelegated="1";
- document.addEventListener("click",function(event){
-  const button=event.target&&event.target.closest?event.target.closest("#tapButton"):null;
-  if(!button)return;
-  event.preventDefault();
-  event.stopPropagation();
-  handleSkebobTap();
- },true);
-}
+/* Кнопка вызывает handleSkebobTap напрямую через onclick. */
 setInterval(()=>{const page=document.getElementById("skebobTap");if(page&&!page.classList.contains("hidden"))renderSkebobTap();},1000);
 
 
