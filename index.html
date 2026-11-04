@@ -8219,7 +8219,7 @@ async function changeNickname(){
 
 function bjNormalizeNick(value){return String(value||"").trim().replace(/\s+/g," ").toLocaleLowerCase("ru");}
 function bjNickTaken(value,excludeId=""){const wanted=bjNormalizeNick(value);if(!wanted||!bjOnlineChannel)return false;const state=bjOnlineChannel.presenceState();return Object.values(state).flat().some(p=>p.id!==excludeId&&bjNormalizeNick(p.name)===wanted);}
-const bjOnlineName=()=>getNickname();
+function bjOnlineName(){return getNickname();}
 const bjOnlineCard=()=>({rank:["A","2","3","4","5","6","7","8","9","10","J","Q","K"][Math.floor(Math.random()*13)],suit:["♠","♥","♦","♣"][Math.floor(Math.random()*4)]});
 let bjOnlineCurrentBet=100,bjOnlinePaidRound="";
 function bjOnlineGetBet(){const e=document.getElementById("bjOnlineBet");const raw=String(e?.value??"").replace(/[^0-9]/g,"");return raw===""?0:Math.floor(Number(raw))}
