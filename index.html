@@ -8033,7 +8033,7 @@ function bjSetOfficialBadgeColor(color){
  if(typeof renderBjOnlineTable==="function")renderBjOnlineTable();
 }
 function bjShowOfficialBadge(){alert("Официальный аккаунт SKEBOB OFFICIAL");}
-async async function bjRequestOfficialCode(){
+async function bjRequestOfficialCode(){
  const entered=await skebobDialog("prompt","SKEBOB OFFICIAL — введи код доступа:");
  if(String(entered??"").trim()!=="ha7Foa_7"){alert("Неверный код. Вход в официальный аккаунт запрещён.");return false;}
  return true;
@@ -8048,7 +8048,7 @@ async function bjSpecialPasswordMatches(nick,password){
  const actual=Array.from(new Uint8Array(digest),b=>b.toString(16).padStart(2,"0")).join("");
  return actual===info.hash;
 }
-async async function bjRequestSpecialAccountPassword(nick){
+async function bjRequestSpecialAccountPassword(nick){
  if(!bjSpecialAccountInfo(nick))return true;
  const entered=await skebobDialog("prompt","Аккаунт "+nick+" защищён паролем. Введи пароль для входа:");
  if(entered===null)return false;
