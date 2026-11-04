@@ -2537,7 +2537,7 @@ rel="noopener noreferrer"
  <div class="panel tap-panel">
   <p class="small">Тапай и получай виртуальные рубли. За один тап — 0,01 ₽. Часовой лимит — 5 ₽.</p>
   <div class="tap-stats"><div><span>Заработано за час</span><strong id="tapEarned">0,00 ₽</strong></div><div><span>Осталось до лимита</span><strong id="tapRemaining">5,00 ₽</strong></div></div>
-  <button id="tapButton" class="tap-main" type="button" onclick="handleSkebobTap()">👆 ТАП!</button>
+  <button id="tapButton" class="tap-main" type="button">👆 ТАП!</button>
   <div id="tapStatus" class="tap-status" aria-live="polite">Каждый тап приносит 0,01 виртуального рубля.</div>
   <div class="small" id="tapTimer"></div>
  </div>
@@ -8489,22 +8489,44 @@ function formatTapCountdown(ms){const s=Math.max(0,Math.ceil(ms/1000));return Ma
 function renderSkebobTap(){skebobTapResetIfReady();const t=state.tapGame,earned=document.getElementById("tapEarned"),remaining=document.getElementById("tapRemaining"),status=document.getElementById("tapStatus"),timer=document.getElementById("tapTimer"),button=document.getElementById("tapButton"),usd=getCurrency()==="USD",unit=usd?"$":"₽",rate=usd?"0.000125":"0,01",earnedValue=t.earnedCents/100,remainingValue=(SKEBOB_TAP_LIMIT-t.earnedCents)/100,formatTapValue=value=>usd?"$"+(value/80).toFixed(6):value.toFixed(2).replace(".",",")+" ₽";if(earned)earned.textContent=formatTapValue(earnedValue);if(remaining)remaining.textContent=formatTapValue(remainingValue);const locked=!!t.cooldownUntil&&Date.now()<t.cooldownUntil;if(button)button.disabled=locked;if(status)status.textContent=locked?"⏳ Часовой лимит достигнут! Возвращайся после окончания таймера.":"Каждый тап приносит "+rate+" "+(usd?"виртуального доллара.":"виртуального рубля.");if(timer)timer.textContent=locked?"До обновления лимита: "+formatTapCountdown(t.cooldownUntil-Date.now()):"Часовой лимит: "+(usd?"$0.062500":"5,00 ₽")+". Обновляется через час после первого тапа.";}
 function handleSkebobTap(){
  try{
-  if(!state||!state.tapGame){console.error("SKEBOB TAP: состояние игры не загружено");return;}
-  skebobTapResetIfReady();
+  if(!state||typeof state!=="object")throw new Error("Состояние игры не загружено");
+  if(!state.tapGame||typeof state.tapGame!=="object")state.tapGame={hourStartedAt:0,earnedCents:0,pendingCents:0,cooldownUntil:0};
   const t=state.tapGame,now=Date.now();
+  skebobTapResetIfReady();
   if(t.cooldownUntil&&now<t.cooldownUntil){renderSkebobTap();return;}
-  if(t.earnedCents>=SKEBOB_TAP_LIMIT){t.cooldownUntil=now+SKEBOB_TAP_WINDOW;save();renderSkebobTap();return;}
+  if(t.earnedCents>=SKEBOB_TAP_LIMIT){
+   t.cooldownUntil=now+SKEBOB_TAP_WINDOW;
+   storageSet("skebobSave",JSON.stringify(state));
+   renderSkebobTap();
+   return;
+  }
   if(!t.hourStartedAt)t.hourStartedAt=now;
-  t.earnedCents=Math.min(SKEBOB_TAP_LIMIT,t.earnedCents+1);
-  const previouslyPending=Math.max(0,Math.min(99,Math.floor(Number(t.pendingCents)||0)));
-   state.balance=Math.min(Number.MAX_SAFE_INTEGER,Number(state.balance||0)+(previouslyPending+1)/100);
-   t.pendingCents=0;
+  t.earnedCents=Math.min(SKEBOB_TAP_LIMIT,Math.max(0,Number(t.earnedCents)||0)+1);
+  const bonus=Math.max(0,Math.min(99,Math.floor(Number(t.pendingCents)||0)));
+  state.balance=Math.max(0,Number(state.balance)||0)+(bonus+1)/100;
+  t.pendingCents=0;
   if(t.earnedCents>=SKEBOB_TAP_LIMIT)t.cooldownUntil=now+SKEBOB_TAP_WINDOW;
-  save();
+  const persisted=storageSet("skebobSave",JSON.stringify(state));
+  const balanceText=formatMoney(state.balance);
+  ["balance","dashboardBalance","adminBalance"].forEach(id=>{const el=document.getElementById(id);if(el)el.textContent=balanceText;});
   renderSkebobTap();
-  if(t.cooldownUntil){const status=document.getElementById("tapStatus");if(status)status.textContent="⏳ Часовой лимит тапалки достигнут! Возвращайся через час.";}
- }catch(error){console.error("SKEBOB TAP click failed:",error);const status=document.getElementById("tapStatus");if(status)status.textContent="Не удалось обработать тап. Обнови игру и попробуй снова."}
+  const status=document.getElementById("tapStatus");
+  if(status&&!persisted)status.textContent="Тап засчитан, но браузер не разрешил сохранить прогресс.";
+ }catch(error){
+  console.error("SKEBOB TAP click failed:",error);
+  const status=document.getElementById("tapStatus");
+  if(status)status.textContent="Ошибка тапалки: "+(error&&error.message?error.message:"неизвестная ошибка");
+ }
 }
+window.handleSkebobTap=handleSkebobTap;
+(function bindSkebobTapButton(){
+ const button=document.getElementById("tapButton");
+ if(button&&!button.dataset.tapHandlerBound){
+  button.dataset.tapHandlerBound="1";
+  button.addEventListener("click",handleSkebobTap,{passive:true});
+  button.addEventListener("keydown",event=>{if(event.key==="Enter"||event.key===" "){event.preventDefault();handleSkebobTap();}});
+ }
+})();
 setInterval(()=>{const page=document.getElementById("skebobTap");if(page&&!page.classList.contains("hidden"))renderSkebobTap();},1000);
 
 
