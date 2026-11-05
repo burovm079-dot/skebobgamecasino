@@ -21,7 +21,7 @@ function saveCasinoBalance(n){try{const s=JSON.parse(localStorage.getItem('skebo
 const roundName=['Префлоп','Флоп','Терн','Ривер','Шоудаун'];
 function shuffle(a){for(let i=a.length-1;i>0;i--){let j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a}
 function card(){return deck.pop()}
-function money(p,n){n=Math.max(0,Math.min(Math.floor(n),p.stack));p.stack-=n;p.put+=n;pot+=n;return n}
+function money(p,n){n=Math.max(0,Math.min(Math.floor(n),p.stack));p.stack-=n;p.put+=n;p.totalPut=(p.totalPut||0)+n;pot+=n;if(p.stack===0)p.allin=true;return n}
 function makeDeck(){deck=shuffle(suits.flatMap(s=>ranks.map(r=>({r,s}))))}
 function score(cards){
  const c=cards.map(x=>({v:rv[x.r],s:x.s})),counts={};c.forEach(x=>counts[x.v]=(counts[x.v]||0)+1);
