@@ -6988,9 +6988,8 @@ function renderSpecialAccountControls(){
  if(!host)return;
  const nick=getNickname();
  const isOfficial=bjIsOfficialNickname(nick);
- const isSpecial=bjIsSpecialAccount(nick);
- if(!isSpecial&&!isOfficial){host.innerHTML="";return;}
- let html='<div class="special-account-controls"><b>⭐ Управление аккаунтом</b>';
+ if(!isOfficial){host.innerHTML="";return;}
+ let html='<div class="special-account-controls"><b>⭐ Настройка галочки</b>';
 
 
 
