@@ -3151,10 +3151,6 @@ id="profileBalance"
    <button type="button" class="profile-currency-btn profile-currency-usd" aria-label="Выбрать доллары" aria-pressed="false" onclick="setCurrency('USD')">$ Доллары</button>
   </div>
  </div>
- <div class="profile-account-row">
-  <div><b>Фоновая музыка</b><div class="small" id="profileMusicStatus">Музыка включена</div></div>
-  <button type="button" class="profile-account-action" id="profileMusicButton" aria-pressed="true" onclick="toggleSettingsMusic()">Выключить</button>
- </div>
  <div class="profile-account-row profile-reset-row">
   <div><b>Сброс игрового прогресса</b><div class="small">Удалит баланс, предметы и статистику</div></div>
   <button type="button" class="profile-reset-button" onclick="resetGame()">Сбросить</button>
@@ -3805,7 +3801,7 @@ document.body.classList.toggle("dashboard-home",isDashboard);
 document.body.classList.toggle("legacy-page-active",!isDashboard);
 document.body.classList.toggle("promo-page",id==="promo");
 document.body.classList.toggle("tasks-page",id==="tasks");
-if(id==="profile"){if(typeof updateProfileMusicVisual==="function")updateProfileMusicVisual();if(typeof updateProfileCurrencyVisual==="function")updateProfileCurrencyVisual();}
+if(id==="profile"){if(typeof updateProfileCurrencyVisual==="function")updateProfileCurrencyVisual();}
 
 const shell=document.getElementById("skebobDashboard");
 const work=shell&&shell.querySelector(".sk-work");
@@ -6334,120 +6330,6 @@ async function spinSlots(){
 }
  
 /* =========================
-   CASINO JAZZ MUSIC
-   Original sax-style jazz loop via Web Audio
-========================= */
-let casinoAudio=null,casinoMusicTimer=null,casinoMusicStep=0,casinoMusicStarted=false;
-const jazzChords=[
- [130.81,155.56,196.00,233.08],
- [110.00,130.81,164.81,196.00],
- [116.54,138.59,174.61,207.65],
- [98.00,116.54,146.83,174.61]
-];
-const jazzMelody=[
- [523.25,587.33,659.25,783.99,698.46,659.25,587.33,523.25,466.16,523.25,587.33,659.25,587.33,523.25,466.16,440.00],
- [493.88,587.33,659.25,739.99,659.25,587.33,523.25,493.88,440.00,493.88,523.25,587.33,523.25,493.88,440.00,392.00],
- [466.16,523.25,587.33,698.46,659.25,587.33,523.25,466.16,415.30,466.16,523.25,587.33,523.25,466.16,415.30,392.00],
- [440.00,523.25,587.33,659.25,587.33,523.25,493.88,440.00,392.00,440.00,493.88,523.25,493.88,440.00,392.00,349.23]
-];
-function casinoNote(freq,when,duration,volume,type){
- if(!casinoAudio)return;
- const osc=casinoAudio.createOscillator(),gain=casinoAudio.createGain(),filter=casinoAudio.createBiquadFilter();
- osc.type=type||"sine";osc.frequency.setValueAtTime(freq,when);
- if(type==="sawtooth"){
-  osc.detune.setValueAtTime(-5,when);osc.detune.linearRampToValueAtTime(5,when+duration*.5);osc.detune.linearRampToValueAtTime(-3,when+duration);
-  filter.type="lowpass";filter.frequency.setValueAtTime(1500,when);filter.Q.value=.7;
-  osc.connect(filter);filter.connect(gain);
- }else{osc.connect(gain)}
- gain.gain.setValueAtTime(.0001,when);
- gain.gain.exponentialRampToValueAtTime(Math.max(.0002,volume),when+.045);
- gain.gain.setTargetAtTime(.0001,when+duration*.72,.09);
- gain.connect(casinoAudio.destination);
- osc.start(when);osc.stop(when+duration+.08);
-}
-function casinoMusicTick(){
- if(!casinoAudio)return;
- const step=casinoMusicStep%64,bar=Math.floor(step/16)%4,beat=step%16,chord=jazzChords[bar],t=casinoAudio.currentTime+.025;
- if(beat===0){
-  chord.forEach((f,i)=>casinoNote(f*2,t,1.8,.006,"triangle"));
-  casinoNote(chord[0],t,.32,.035,"triangle");
- }
- // Soft walking bass and brushed-jazz pulse
- if(beat%4===0)casinoNote(chord[0]*(beat===8?1.5:1),t,.28,.045,"sine");
- if(beat===4||beat===12)casinoNote(chord[2],t,.16,.012,"sine");
- // Sax-like lead, with small rests and syncopation
- if(![7,15].includes(beat)){
-  const f=jazzMelody[bar][beat];
-  casinoNote(f,t,.31,.026,"sawtooth");
-  if(beat===3||beat===11)casinoNote(f*2,t,.12,.004,"sine");
- }
- casinoMusicStep++;
-}
-async function startCasinoMusic(){
- if(casinoMusicTimer)return;
- const AudioCtx=window.AudioContext||window.webkitAudioContext;
- if(!AudioCtx)return;
- try{
-  casinoAudio=new AudioCtx();
-  if(casinoAudio.state==="suspended")await casinoAudio.resume();
-  casinoMusicStep=0;casinoMusicTick();
-  casinoMusicTimer=setInterval(casinoMusicTick,250);
-  casinoMusicStarted=true;
- }catch(e){casinoAudio=null;casinoMusicTimer=null;}
-}
-function updateCasinoMusicText(){
- const title=document.getElementById("musicSettingTitle");
- if(title)title.textContent=storageGet("skebobCasinoMusic")==="on"?"🎵 Музыка включена":"🔇 Музыка выключена";
-}
-
-function updateProfileMusicVisual(){
- const button=document.getElementById("profileMusicButton");
- const status=document.getElementById("profileMusicStatus");
- if(!button)return;
- const enabled=storageGet("skebobCasinoMusic")==="on";
- button.textContent=enabled?"Выключить":"Включить";
- button.setAttribute("aria-pressed",enabled?"true":"false");
- if(status)status.textContent=enabled?"Музыка включена":"Музыка выключена";
-}
-async function toggleSettingsMusic(){
- const enabled=storageGet("skebobCasinoMusic")!=="on";
- storageSet("skebobCasinoMusic",enabled?"on":"off");
- updateProfileMusicVisual();
- updateCasinoMusicText();
- if(!enabled){
-  if(casinoMusicTimer){clearInterval(casinoMusicTimer);casinoMusicTimer=null;}
-  if(casinoAudio){await casinoAudio.close();casinoAudio=null;}
-  casinoMusicStarted=false;
-  return;
- }
- await startCasinoMusic();
-}
-
-async function toggleCasinoMusic(){
- const toggle=document.getElementById("casinoMusicToggle");
- const enabled=!!(toggle&&toggle.checked);
- storageSet("skebobCasinoMusic",enabled?"on":"off");
- updateCasinoMusicText();
- if(!enabled){
-  if(casinoMusicTimer){clearInterval(casinoMusicTimer);casinoMusicTimer=null;}
-  if(casinoAudio){await casinoAudio.close();casinoAudio=null;}
-  casinoMusicStarted=false;return;
- }
- await startCasinoMusic();
-}
-function loadCasinoMusicSetting(){
- const toggle=document.getElementById("casinoMusicToggle");
- // Music is enabled by default; browsers require a user gesture before audio can play.
- if(storageGet("skebobCasinoMusic")===null)storageSet("skebobCasinoMusic","on");
- const enabled=storageGet("skebobCasinoMusic")==="on";
- if(toggle)toggle.checked=enabled;
- updateCasinoMusicText();
- if(enabled){
-  const unlock=()=>{if(storageGet("skebobCasinoMusic")==="on")startCasinoMusic();};
-  ["pointerdown","touchstart","keydown"].forEach(ev=>document.addEventListener(ev,unlock,{once:true,passive:true}));
- }
-}
-/* =========================
    RESET
 ========================= */
 
@@ -6907,7 +6789,7 @@ updateDailyTasks();
 renderArcadeRealism();
 loadTheme();
 loadCurrency();
-loadCasinoMusicSetting();
+/* Background music removed permanently. */
 
 
 render();
