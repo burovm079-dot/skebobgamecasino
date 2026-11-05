@@ -216,6 +216,18 @@ window.initSupabaseAuth=async function(){
 };
 window.getNickname=function(){return currentNickname||"Player";};
 window.persistNickname=function(){return false;};
+window.skebobGrantMoney=async function(nickname,amount){
+ const nick=String(nickname||"").trim();
+ const value=Number(amount);
+ if(!nick)throw new Error("Введи никнейм игрока.");
+ if(!Number.isFinite(value)||value<=0||value>1000000000||Math.round(value*100)!==value*100)throw new Error("Введи корректную сумму в рублях.");
+ const rows=await rest("rpc/admin_grant_player_money",{
+  method:"POST",
+  body:JSON.stringify({p_nickname:nick,p_amount:value})
+ });
+ if(!Array.isArray(rows)||!rows.length)throw new Error("Сервер не подтвердил выдачу денег.");
+ return rows[0];
+};
 window.skebobChangeNickname=changeAccountNickname;
 window.skebobChangePassword=async function(currentPassword,newPassword){
  if(!session||!session.user||!session.user.email)throw new Error("Сессия не найдена. Войди в аккаунт ещё раз.");
