@@ -114,6 +114,8 @@ function normalizeLoadedState(remote){
  if(!state.tapGame||typeof state.tapGame!=="object")state.tapGame={hourStartedAt:0,earnedCents:0,pendingCents:0,cooldownUntil:0};
 }
 async function loadPlayerData(){
+ // Не даём отложенному сохранению предыдущего аккаунта попасть в новый.
+ if(saveTimer){clearTimeout(saveTimer);saveTimer=null;}
  const uid=session.user.id;
  let profileRows=await rest("player_profiles?select=nickname&user_id=eq."+encodeURIComponent(uid)+"&limit=1");
  if(!Array.isArray(profileRows)||!profileRows.length)throw new Error("Профиль не найден. Проверь SQL-триггер в Supabase.");
@@ -123,14 +125,19 @@ async function loadPlayerData(){
  if(remote&&typeof remote==="object"&&!Array.isArray(remote)&&Object.keys(remote).length){
   normalizeLoadedState(remote);
  }else{
-  // При первой регистрации переносим локальное сохранение этого устройства в аккаунт.
-  if(typeof hasExistingSave!=="undefined"&&hasExistingSave){
-   await writePlayerSave();
-  }else{
-   await writePlayerSave();
-  }
+  // Новый аккаунт получает чистое начальное сохранение, а не баланс прошлого аккаунта с устройства.
+  state={
+   balance:20,
+   tapGame:{hourStartedAt:0,earnedCents:0,pendingCents:0,cooldownUntil:0},
+   inventory:[],
+   stats:{...(typeof defaultStats!=="undefined"?defaultStats:{})},
+   createdAt:Date.now(),
+   profileStyle:{frame:"classic",background:"default",accent:"gold",collapsed:false}
+  };
  }
+ try{localStorage.setItem("skebobSave",JSON.stringify(state));}catch(_){}
  try{localStorage.setItem("skebobNickname",currentNickname);}catch(_){}
+ await writePlayerSave();
  if(typeof render==="function")render();
  if(typeof updateUpgradeInfo==="function")updateUpgradeInfo();
  if(typeof updateNicknameUI==="function")updateNicknameUI();
@@ -220,6 +227,7 @@ window.skebobChangePassword=async function(currentPassword,newPassword){
  return true;
 };
 window.skebobLogout=async function(){
+ if(saveTimer){clearTimeout(saveTimer);saveTimer=null;}
  try{if(session&&session.access_token)await fetch(SB_URL+"/auth/v1/logout",{method:"POST",headers:{"apikey":SB_KEY,"Authorization":"Bearer "+session.access_token}});}catch(_){}
  saveSession(null);currentNickname="";showAuth();
 };
