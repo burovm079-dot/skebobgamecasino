@@ -7043,7 +7043,7 @@ window.toggleLeaderboard=function(){
  panel.classList.toggle("open",opening);
  button.setAttribute("aria-expanded",String(opening));
  if(arrow)arrow.textContent=opening?"▲":"▼";
- if(opening)window.refreshLeaderboard();
+
 };
 window.refreshLeaderboard=async function(){
  const rowsBox=document.getElementById("leaderboardRows");
