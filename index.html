@@ -7534,7 +7534,7 @@ async function changeNickname(){
 
    if(bjIsSpecialAccount(nick)&&!(await bjRequestSpecialAccountPassword(nick)))return;
    if(bjIsOfficialNickname(nick)&&!(await bjRequestOfficialCode()))return;
-   if(!persistNickname(nick)){status.textContent="Не удалось сохранить nickname. Проверь память браузера и попробуй снова.";return;}
+   await window.skebobChangeNickname(nick);
    status.textContent="Ник сохранён!";
    if(state.admin.infiniteBalance&&!bjIsSpecialAccount(nick)){
     const restore=Number(state.admin.balanceBeforeInfinite);
