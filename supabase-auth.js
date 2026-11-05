@@ -4,7 +4,7 @@
 const SB_URL="https://pvlkcgdayxvxzvbnbuih.supabase.co";
 const SB_KEY="sb_publishable_abz-qQOtxrQ8pLJh5lo0LQ_ylXsjiFh";
 const SESSION_KEY="skebobSupabaseSession";
-let session=null, authMode="login", currentNickname="";
+let session=null, authMode="login", currentNickname="",presenceTimer=null;
 
 function emailForNickname(nickname){
  const bytes=new TextEncoder().encode(String(nickname).trim().toLocaleLowerCase("ru"));
@@ -138,6 +138,7 @@ async function loadPlayerData(){
  try{localStorage.setItem("skebobSave",JSON.stringify(state));}catch(_){}
  try{localStorage.setItem("skebobNickname",currentNickname);}catch(_){}
  await writePlayerSave();
+ startPlayerPresence();
  if(typeof render==="function")render();
  if(typeof updateUpgradeInfo==="function")updateUpgradeInfo();
  if(typeof updateNicknameUI==="function")updateNicknameUI();
@@ -150,6 +151,9 @@ async function writePlayerSave(){
  if(!response.ok){let msg="Не удалось сохранить прогресс";try{const d=await response.json();msg=d.message||d.details||msg;}catch(_){}throw new Error(msg);}
 }
 let saveTimer=null;
+async function pingPlayerPresence(){if(!session||!session.user)return;try{await rest("rpc/player_presence_ping",{method:"POST",body:"{}"});}catch(e){console.warn("Presence ping:",e);}}
+function startPlayerPresence(){stopPlayerPresence();pingPlayerPresence();presenceTimer=setInterval(pingPlayerPresence,30000);document.addEventListener("visibilitychange",()=>{if(!document.hidden)pingPlayerPresence();},{passive:true});}
+function stopPlayerPresence(){if(presenceTimer){clearInterval(presenceTimer);presenceTimer=null;}}
 window.skebobQueueSave=function(){
  if(!session||!session.user)return;
  clearTimeout(saveTimer);
@@ -228,6 +232,13 @@ window.skebobGrantMoney=async function(nickname,amount){
  if(!Array.isArray(rows)||!rows.length)throw new Error("Сервер не подтвердил выдачу денег.");
  return rows[0];
 };
+window.skebobLookupPlayer=async function(nickname){
+ const nick=String(nickname||"").trim();
+ if(nick.length<2)throw new Error("Введи nickname игрока.");
+ const rows=await rest("rpc/admin_lookup_player",{method:"POST",body:JSON.stringify({p_nickname:nick})});
+ if(!Array.isArray(rows)||!rows.length)throw new Error("Игрок не найден.");
+ return rows[0];
+};
 window.skebobChangeNickname=changeAccountNickname;
 window.skebobChangePassword=async function(currentPassword,newPassword){
  if(!session||!session.user||!session.user.email)throw new Error("Сессия не найдена. Войди в аккаунт ещё раз.");
@@ -239,6 +250,7 @@ window.skebobChangePassword=async function(currentPassword,newPassword){
  return true;
 };
 window.skebobLogout=async function(){
+ stopPlayerPresence();
  if(saveTimer){clearTimeout(saveTimer);saveTimer=null;}
  try{if(session&&session.access_token)await fetch(SB_URL+"/auth/v1/logout",{method:"POST",headers:{"apikey":SB_KEY,"Authorization":"Bearer "+session.access_token}});}catch(_){}
  saveSession(null);currentNickname="";showAuth();
