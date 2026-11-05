@@ -2208,6 +2208,48 @@ a:focus:not(:focus-visible),
 
 /* TEXAS HOLD'EM */
 .poker-panel{background:linear-gradient(145deg,#123d32,#09251f);border-color:#b48a42}.poker-top{display:flex;justify-content:space-between;color:#f7d47a;font-weight:900}.poker-community{display:flex;justify-content:center;gap:7px;flex-wrap:wrap;margin:14px 0}.poker-card{width:52px;height:74px;display:grid;place-items:center;border-radius:8px;background:#fff;color:#171717;font-size:22px;font-weight:900;border:2px solid #eee}.poker-card.red{color:#d52d42}.poker-card.back{background:repeating-linear-gradient(45deg,#193d83,#193d83 5px,#e8d08b 6px,#193d83 8px);color:white}.poker-seats{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;margin:12px 0}.poker-seat{background:#071b18;border:1px solid #7a7549;border-radius:12px;padding:10px;text-align:center}.poker-seat strong{display:block;color:#f5d47c}.poker-seat span{font-size:12px;color:#d4e4d9}.poker-seat.folded{opacity:.45}.poker-you{text-align:center;border-top:1px solid #8b7947;padding-top:12px}.poker-actions{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:7px;margin:10px 0}.poker-actions button{min-height:44px}
+
+/* FIX: keep the artwork decorative and make the real admin login controls clickable. */
+#adminLogin .admin-login-controls{
+ pointer-events:auto!important;
+}
+#adminLogin .admin-login-controls::before{
+ content:"";
+ position:absolute;
+ left:31.4%;
+ top:49.2%;
+ width:51.2%;
+ height:10.4%;
+ border-radius:10px;
+ background:rgba(24,4,35,.98);
+ z-index:1;
+ pointer-events:none;
+}
+#adminLogin #adminPassword{
+ z-index:2!important;
+ pointer-events:auto!important;
+ left:30.2%!important;
+ top:47.4%!important;
+ width:53.7%!important;
+ height:13.5%!important;
+ background:transparent!important;
+}
+#adminLogin .admin-login-controls>button[type=submit]{
+ z-index:2!important;
+ pointer-events:auto!important;
+ left:30.5%!important;
+ top:64.5%!important;
+ width:39%!important;
+ height:16%!important;
+ cursor:pointer!important;
+ touch-action:manipulation!important;
+}
+#adminLogin .admin-login-back{
+ pointer-events:auto!important;
+ touch-action:manipulation!important;
+}
+#adminLogin .admin-login-error{z-index:3!important;pointer-events:none!important}
+
 </style>
 <link rel="stylesheet" href="./dashboard.css?v=28">
 </head>
