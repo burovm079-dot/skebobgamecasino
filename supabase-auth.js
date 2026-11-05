@@ -173,8 +173,7 @@ window.initSupabaseAuth=async function(){
 window.getNickname=function(){return currentNickname||"Player";};
 window.persistNickname=function(){return false;};
 window.changeNickname=function(){
- showMessage("Изменение ника временно отключено. Сначала завершим настройку аккаунтов.");
- const modal=document.getElementById("skebobAuthModal");if(modal)modal.style.display="flex";
+ alert("Изменение ника временно отключено на время переноса аккаунтов. Сначала завершим настройку регистрации и сохранений.");
 };
 window.skebobLogout=async function(){
  try{if(session&&session.access_token)await fetch(SB_URL+"/auth/v1/logout",{method:"POST",headers:{"apikey":SB_KEY,"Authorization":"Bearer "+session.access_token}});}catch(_){}
