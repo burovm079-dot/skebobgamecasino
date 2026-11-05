@@ -142,6 +142,7 @@ async function loadPlayerData(){
  if(typeof render==="function")render();
  if(typeof updateUpgradeInfo==="function")updateUpgradeInfo();
  if(typeof updateNicknameUI==="function")updateNicknameUI();
+ window.dispatchEvent(new Event("skebob-auth-ready"));
  const modal=document.getElementById("skebobAuthModal");if(modal)modal.style.display="none";
 }
 async function writePlayerSave(){
@@ -243,6 +244,18 @@ window.skebobGetLeaderboard=async function(){
  const rows=await rest("rpc/get_player_leaderboard",{method:"POST",body:"{}"});
  if(!Array.isArray(rows))throw new Error("Не удалось загрузить рейтинг игроков.");
  return rows;
+};
+window.skebobSetPlayerBadge=async function(nickname,badge){
+ const nick=String(nickname||"").trim();
+ if(!nick)throw new Error("Введи nickname игрока.");
+ if(!["green","blue","gold"].includes(badge))throw new Error("Выбери цвет галочки.");
+ const rows=await rest("rpc/admin_set_player_badge",{method:"POST",body:JSON.stringify({p_nickname:nick,p_badge:badge})});
+ if(!Array.isArray(rows)||!rows.length)throw new Error("Сервер не подтвердил выдачу галочки.");
+ return rows[0];
+};
+window.skebobGetMyBadge=async function(){
+ const value=await rest("rpc/get_my_player_badge",{method:"POST",body:"{}"});
+ return typeof value==="string"?value:null;
 };
 window.skebobChangeNickname=changeAccountNickname;
 window.skebobChangePassword=async function(currentPassword,newPassword){
