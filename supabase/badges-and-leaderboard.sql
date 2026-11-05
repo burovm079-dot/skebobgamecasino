@@ -64,4 +64,25 @@ grant execute on function public.get_player_leaderboard() to authenticated;
 grant execute on function public.get_my_player_badge() to authenticated;
 grant execute on function public.admin_set_player_badge(text,text) to authenticated;
 
+create or replace function public.admin_remove_player_badge(p_nickname text)
+returns text
+language plpgsql security definer set search_path = ''
+as $
+declare target_id uuid; target_nickname text;
+begin
+  if not exists(select 1 from public.game_admins a where a.user_id=auth.uid()) then
+    raise exception 'Недостаточно прав.';
+  end if;
+  select p.user_id,p.nickname into target_id,target_nickname
+  from public.player_profiles p
+  where lower(trim(p.nickname))=lower(trim(p_nickname));
+  if target_id is null then raise exception 'Игрок с таким nickname не найден.'; end if;
+  delete from public.player_badges where user_id=target_id;
+  return target_nickname;
+end;
+$;
+
+revoke all on function public.admin_remove_player_badge(text) from public, anon;
+grant execute on function public.admin_remove_player_badge(text) to authenticated;
+
 notify pgrst, 'reload schema';
