@@ -3501,6 +3501,10 @@ state.balance=Number.isFinite(Number(state.balance))?Math.max(0,Math.min(Number.
 if(!Array.isArray(state.inventory))state.inventory=[];
 state.inventory=state.inventory.filter(item=>item&&typeof item==="object").map((item,i)=>({...item,id:item.id??(Date.now()+i),value:Number.isFinite(Number(item.value))?Math.max(0,Number(item.value)):0,name:String(item.name||"Предмет")}));
 for(const key of Object.keys(defaultStats)){const value=Number(state.stats[key]);state.stats[key]=Number.isFinite(value)?Math.max(0,value):0;}
+if(state.admin&&state.admin.infiniteBalance){
+ const previous=Number(state.admin.balanceBeforeInfinite);
+ state.balance=Number.isFinite(previous)&&previous>=0?previous:20;
+}
 delete state.admin;
  if(state.dailyTasks&&typeof state.dailyTasks==="object"){
  if(!state.dailyTasks.progress||typeof state.dailyTasks.progress!=="object"||Array.isArray(state.dailyTasks.progress))state.dailyTasks.progress={};
