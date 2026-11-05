@@ -1518,13 +1518,15 @@ header button:hover,.secondary:hover{transform:translateY(-2px);border-color:#ff
 .leaderboard-nickname{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:#fff}
 .leaderboard-amount{color:#ffdf86;font-weight:900;white-space:nowrap;font-variant-numeric:tabular-nums}
 .leaderboard-note{padding:9px 3px;color:#cbbbd9;text-align:center;font-size:11px}
-/* Лидерборд в верхней панели главной страницы, рядом с балансом. */
-body.dashboard-home #leaderboardWidget{position:relative;display:flex;flex:0 0 auto;align-items:center;margin-left:auto;min-width:0}
-body.dashboard-home #leaderboardToggle{display:inline-flex;align-items:center;justify-content:center;gap:5px;width:auto;height:auto;min-height:36px;padding:8px 10px;border:1px solid #ffd66b;border-radius:10px;background:linear-gradient(135deg,#69400c,#32134e);color:#ffe7a5;font-size:11px;font-weight:900;white-space:nowrap;cursor:pointer}
-body.dashboard-home #leaderboardPanel{position:absolute;display:none;top:calc(100% + 8px);right:0;left:auto;z-index:1000;width:min(340px,calc(100vw - 28px));max-height:55vh;overflow:auto;box-sizing:border-box;padding:9px;background:linear-gradient(145deg,#170c27,#28113b);border:1px solid #a66be0;border-radius:12px;box-shadow:0 10px 26px #0009}
+/* Лидерборд раскрывается в потоке страницы и сдвигает игровые карточки вниз. */
+body.dashboard-home #skebobDashboard .sk-coins{flex-wrap:wrap}
+body.dashboard-home #leaderboardWidget{display:contents}
+body.dashboard-home #leaderboardToggle{display:inline-flex;align-items:center;justify-content:center;gap:4px;width:auto;height:auto;min-height:30px;padding:6px 8px;border:1px solid #ffd66b;border-radius:9px;background:linear-gradient(135deg,#69400c,#32134e);color:#ffe7a5;font-size:9px;font-weight:900;letter-spacing:0;white-space:nowrap;cursor:pointer}
+body.dashboard-home #leaderboardToggle span{font-size:8px}
+body.dashboard-home #leaderboardPanel{position:static;display:none;flex:1 0 100%;width:100%;max-width:100%;max-height:270px;overflow:auto;box-sizing:border-box;margin-top:5px;padding:9px;background:linear-gradient(145deg,#170c27,#28113b);border:1px solid #a66be0;border-radius:12px;box-shadow:0 10px 26px #0009}
 body.dashboard-home #leaderboardPanel.open{display:block}
 body.legacy-page-active #leaderboardWidget{display:none!important}
-@media(max-width:420px){body.dashboard-home #leaderboardToggle{font-size:10px;padding:7px 7px;min-height:32px}}
+@media(max-width:420px){body.dashboard-home #leaderboardToggle{font-size:8px;padding:5px 6px;min-height:28px}}
 
 @media(max-width:620px){.leaderboard-widget{width:100%;align-items:stretch;margin-left:0}.leaderboard-toggle{align-self:flex-end}.leaderboard-panel{width:100%;max-height:230px;box-sizing:border-box}}
 main{max-width:1120px;padding:12px 18px 55px}
