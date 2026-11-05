@@ -2215,7 +2215,7 @@ a:focus:not(:focus-visible),
 <body class="dashboard-home">
 
 <div id="entrySplash" aria-label="Заставка SKEBOB CASINO">
- <img class="splash-background" src="/skebobgamecasino/assets/games/assets/games/%D0%9E%D1%81%D0%B5%D0%BD%D0%BD%D0%B8%D0%B9%20%D0%B3%D0%BE%D1%80%D0%BE%D0%B4%D1%81%D0%BA%D0%BE%D0%B9%20%D0%B7%D0%B0%D0%BA%D0%B0%D1%82_%20SKEBOB%20GAME.png" alt="">
+ <img class="splash-background" src="/skebobgamecasino/assets/games/assets/games/IMG_20261105_121746_442.jpg" alt="">
  <div class="splash-shade"></div>
  <div class="splash-progress-track" aria-hidden="true"><span class="splash-progress-fill"></span></div>
 
@@ -2525,29 +2525,21 @@ body.tap-page #skebobDashboard #skebobTap .tap-main{display:block!important;marg
  #adminLogin .admin-login-back{left:8px;top:8px;padding:7px 10px}
 }
 
-/* Autumn loading artwork fills the entire right pane; controls remain real and clickable above it. */
+/* ADMIN LOGIN: use the uploaded golden Admin Panel artwork across the entire right pane. */
 #sk-page-view #adminLogin.admin-login-screen{isolation:isolate}
-#adminLogin .admin-login-art{object-fit:cover!important;object-position:center center!important}
-#adminLogin .admin-login-back{left:14px!important;top:14px!important}
+#adminLogin .admin-login-art{object-fit:fill!important;object-position:center center!important}
+#adminLogin .admin-login-back{left:12px!important;top:12px!important;z-index:5!important}
 #adminLogin .admin-login-controls{pointer-events:none}
-#adminLogin #adminPassword{left:8%!important;top:59%!important;width:84%!important;height:10%!important;min-height:54px;border:2px solid rgba(255,190,60,.95)!important;border-radius:16px!important;background:rgba(25,5,35,.88)!important;color:#fff!important;padding:0 18px!important;font-size:clamp(17px,3.2vw,28px)!important;box-shadow:0 4px 22px rgba(0,0,0,.55)!important;pointer-events:auto}
+#adminLogin #adminPassword{left:30.2%!important;top:47.4%!important;width:53.7%!important;height:13.5%!important;min-height:0!important;box-sizing:border-box!important;border:0!important;border-radius:16px!important;background:transparent!important;color:#fff!important;padding:0 4.2%!important;font-size:clamp(15px,4vw,34px)!important;box-shadow:none!important;pointer-events:auto!important}
 #adminLogin #adminPassword::placeholder{color:rgba(255,255,255,.82)}
-#adminLogin .admin-login-controls>button[type=submit]{left:18%!important;top:72%!important;width:64%!important;height:12%!important;min-height:58px;border:2px solid #ffcf55!important;border-radius:50px!important;background:linear-gradient(180deg,#ffe36a,#ff9b00)!important;color:#4a1700!important;font-size:clamp(19px,3.5vw,30px)!important;font-weight:1000!important;box-shadow:0 5px 22px rgba(255,155,0,.45)!important;pointer-events:auto}
-#adminLogin .admin-login-controls>button[type=submit]:active{filter:brightness(1.12);transform:scale(.99)}
-#adminLogin .admin-login-error{left:8%!important;top:85%!important;width:84%!important;color:#fff!important;background:rgba(70,0,0,.65);border-radius:8px;padding:4px;box-sizing:border-box}
-@media(max-width:760px){
- #sk-page-view #adminLogin.admin-login-screen{height:calc(100dvh - 18px)!important;min-height:440px!important}
- #adminLogin #adminPassword{top:59%!important;height:9%!important}
- #adminLogin .admin-login-controls>button[type=submit]{top:71%!important;height:11%!important}
-}
-/* ADMIN LOGIN: occupy the complete right workspace, including the former balance strip. */
-#skebobDashboard>.sk-work:has(>#sk-page-view #adminLogin:not(.hidden)){display:flex!important;flex-direction:column!important;height:100dvh!important;min-height:0!important;overflow:hidden!important}
-#skebobDashboard>.sk-work:has(>#sk-page-view #adminLogin:not(.hidden))>.sk-top,
-#skebobDashboard>.sk-work:has(>#sk-page-view #adminLogin:not(.hidden))>.sk-games{display:none!important}
-#skebobDashboard>.sk-work:has(>#sk-page-view #adminLogin:not(.hidden))>#sk-page-view{display:flex!important;flex:1 1 auto!important;width:100%!important;height:100%!important;min-height:0!important;margin:0!important;padding:0!important;overflow:hidden!important}
-#sk-page-view #adminLogin.admin-login-screen{height:100%!important;min-height:0!important;max-height:none!important;width:100%!important;max-width:none!important;margin:0!important;padding:0!important;border:0!important;border-radius:0!important;overflow:hidden!important;flex:1 1 auto!important}
-#adminLogin .admin-login-art{position:absolute!important;inset:0!important;width:100%!important;height:100%!important;object-fit:cover!important;object-position:center center!important}
+#adminLogin .admin-login-controls>button[type=submit]{left:31.3%!important;top:64.5%!important;width:37%!important;height:14.5%!important;min-height:0!important;border:0!important;border-radius:60px!important;background:transparent!important;color:transparent!important;font-size:0!important;box-shadow:none!important;pointer-events:auto!important}
+#adminLogin .admin-login-controls>button[type=submit]:active{background:rgba(255,255,255,.12)!important}
+#adminLogin .admin-login-error{left:28%!important;top:80%!important;width:58%!important;margin:0!important;color:#fff!important;background:rgba(70,0,0,.68);border-radius:8px;padding:4px;box-sizing:border-box;text-align:center}
 #adminLogin .admin-login-fallback-title{display:none!important}
+@media(max-width:760px){
+ #sk-page-view #adminLogin.admin-login-screen{height:100%!important;min-height:0!important}
+ #adminLogin .admin-login-back{left:8px!important;top:8px!important;padding:7px 10px!important}
+}
 </style>
 <!-- CASES -->
 
