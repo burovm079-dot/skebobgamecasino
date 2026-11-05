@@ -147,7 +147,7 @@ async function loadPlayerData(){
    stats:{...(typeof defaultStats!=="undefined"?defaultStats:{})},
    createdAt:Date.now(),
    profileStyle:{frame:"classic",background:"default",accent:"gold",collapsed:false}
-  };
+   });
  }
  try{localStorage.setItem("skebobSave",JSON.stringify(window.skebobGetGameState()));}catch(_){}
  try{localStorage.setItem("skebobNickname",currentNickname);}catch(_){}
