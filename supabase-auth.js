@@ -102,6 +102,10 @@ function nicknameError(nick){
 }
 function normalizeLoadedState(remote){
  if(!remote||typeof remote!=="object"||Array.isArray(remote))return;
+ if(remote.admin&&remote.admin.infiniteBalance){
+  const previous=Number(remote.admin.balanceBeforeInfinite);
+  remote.balance=Number.isFinite(previous)&&previous>=0?previous:20;
+ }
  delete remote.admin;
  state={...state,...remote,
   stats:{...(typeof defaultStats!=="undefined"?defaultStats:{}),...(remote.stats||{})},
