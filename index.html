@@ -1521,13 +1521,13 @@ header button:hover,.secondary:hover{transform:translateY(-2px);border-color:#ff
 /* Баланс и лидерборд — два самостоятельных элемента в верхней панели. */
 body.dashboard-home #skebobDashboard .sk-top{display:flex;flex-wrap:wrap;align-items:center;gap:8px}
 body.dashboard-home #skebobDashboard .sk-coins{display:inline-flex;align-items:center;flex:0 0 auto;padding:7px 10px;border:1px solid #8c63b6;border-radius:10px;background:linear-gradient(135deg,#251039,#160b24)}
-body.dashboard-home #leaderboardWidget{display:flex;flex:0 0 auto;flex-direction:column;align-items:flex-start;gap:5px;margin:0;min-width:0}
+body.dashboard-home #topupWithdrawButton{display:inline-flex;align-items:center;justify-content:center;flex:0 0 auto;min-height:30px;padding:6px 9px;border:1px solid #65d6a1;border-radius:9px;background:linear-gradient(135deg,#12583f,#123328);color:#caffdf;font-size:8px;font-weight:900;letter-spacing:0;line-height:1.2;text-decoration:none;white-space:nowrap;box-shadow:0 3px 10px #0005}\nbody.dashboard-home #leaderboardWidget{display:flex;flex:1 0 100%;flex-direction:column;align-items:flex-start;gap:5px;margin:0;min-width:0}
 body.dashboard-home #leaderboardWidget:has(#leaderboardPanel.open){flex:1 0 100%;width:100%}
 body.dashboard-home #leaderboardToggle{display:inline-flex;align-items:center;justify-content:center;gap:3px;width:auto;height:auto;min-height:24px;padding:4px 6px;border:1px solid #ffd66b;border-radius:8px;background:linear-gradient(135deg,#69400c,#32134e);color:#ffe7a5;font-size:7px;font-weight:900;letter-spacing:0;white-space:nowrap;cursor:pointer}
 body.dashboard-home #leaderboardToggle span{font-size:7px}
 body.dashboard-home #leaderboardPanel{position:static;display:none;width:100%;max-width:100%;max-height:270px;overflow:auto;box-sizing:border-box;margin-top:2px;padding:9px;background:linear-gradient(145deg,#170c27,#28113b);border:1px solid #a66be0;border-radius:12px;box-shadow:0 10px 26px #0009}
 body.dashboard-home #leaderboardPanel.open{display:block}
-body.legacy-page-active #leaderboardWidget{display:none!important}
+body.legacy-page-active #leaderboardWidget,body.legacy-page-active #topupWithdrawButton{display:none!important}
 @media(max-width:420px){body.dashboard-home #leaderboardToggle{font-size:6px;padding:4px 5px;min-height:22px}}
 
 
@@ -2270,7 +2270,7 @@ window.prompt=(message,value)=>{void skebobDialog("prompt",message,value);return
 <div class="sk-work">
 <div class="sk-top">
 
-<div class="sk-coins"><span class="sk-coin">🪙</span><span id="dashboardBalance">1,000</span></div><div id="leaderboardWidget" class="leaderboard-widget"><button id="leaderboardToggle" class="leaderboard-toggle" type="button" aria-expanded="false">🏆 ЛИДЕРБОРД <span id="leaderboardArrow">▼</span></button><div id="leaderboardPanel" class="leaderboard-panel" aria-label="Топ 20 игроков"><div class="leaderboard-head"><span>ТОП-20 ПО БАЛАНСУ</span></div><div id="leaderboardRows" class="leaderboard-note">Загружаем рейтинг…</div></div></div>
+<div class="sk-coins"><span class="sk-coin">🪙</span><span id="dashboardBalance">1,000</span></div><a id="topupWithdrawButton" class="topup-withdraw-button" href="https://t.me/ggggg06767" target="_blank" rel="noopener noreferrer">💸 ПОПОЛНЕНИЕ / ВЫВОД</a><div id="leaderboardWidget" class="leaderboard-widget"><button id="leaderboardToggle" class="leaderboard-toggle" type="button" aria-expanded="false">🏆 ЛИДЕРБОРД <span id="leaderboardArrow">▼</span></button><div id="leaderboardPanel" class="leaderboard-panel" aria-label="Топ 20 игроков"><div class="leaderboard-head"><span>ТОП-20 ПО БАЛАНСУ</span></div><div id="leaderboardRows" class="leaderboard-note">Загружаем рейтинг…</div></div></div>
 
 
 </div>
