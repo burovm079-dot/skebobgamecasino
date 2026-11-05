@@ -6963,12 +6963,19 @@ function updateNicknameUI(){
 }
 window.refreshMyPlayerBadge=async function(){
  try{
-  const type=await window.skebobGetMyBadge();
+  const raw=await window.skebobGetMyBadge();
+  const type=typeof raw==="string"?raw:(raw&&typeof raw==="object"?(raw.badge_type||raw.get_my_player_badge||null):null);
   const labels={green:"media-partner",blue:"официальный аккаунт",gold:"vip"};
-  window.currentPlayerBadgeHtml=type&&labels[type]?' <button type="button" class="skebob-verified verified-'+type+'" title="'+labels[type]+'" aria-label="'+labels[type]+'" onclick="alert(\''+labels[type]+'\')">✓</button>':"";
+  window.currentPlayerBadgeHtml=type&&labels[type]?' <button type="button" class="skebob-verified verified-'+type+'" title="'+labels[type]+'" aria-label="'+labels[type]+'" onclick="alert(\\''+labels[type]+'\\')">✓</button>':"";
+  window.currentPlayerBadgeError="";
   const p=document.getElementById("profileNickname");
-  if(p)p.innerHTML=bjEscape(getNickname())+bjOfficialBadge(getNickname())+bjSpecialAccountBadge(getNickname())+(window.currentPlayerBadgeHtml||"");
- }catch(error){console.warn("Player badge load:",error);}
+  if(p){p.title="";p.innerHTML=bjEscape(getNickname())+bjOfficialBadge(getNickname())+bjSpecialAccountBadge(getNickname())+(window.currentPlayerBadgeHtml||"");}
+ }catch(error){
+  window.currentPlayerBadgeError=error&&error.message?error.message:"Не удалось загрузить галочку.";
+  console.warn("Player badge load:",error);
+  const p=document.getElementById("profileNickname");
+  if(p)p.title="Не удалось загрузить галочку: "+window.currentPlayerBadgeError;
+ }
 };
 async function initNickname(){
  let nick=storageGet(NICKNAME_KEY);
@@ -7139,7 +7146,7 @@ window.refreshLeaderboard=async function(){
 </div>
 
 <div id="skebobDialog" role="dialog" aria-modal="true" style="display:none;position:fixed;inset:0;z-index:30000;background:rgba(0,0,0,.78);align-items:center;justify-content:center;padding:20px"><div style="width:100%;max-width:430px;background:var(--panel);color:var(--text);border:1px solid var(--gold);border-radius:22px;padding:24px;box-shadow:0 18px 60px #000b"><h2 data-dialog-title style="margin:0 0 16px;color:var(--gold)">Уведомление</h2><div data-dialog-message style="font-size:16px;line-height:1.55;white-space:pre-wrap;overflow-wrap:anywhere"></div><input data-dialog-input type="text" style="display:none;margin-top:16px"><div style="display:flex;gap:10px;justify-content:flex-end;margin-top:22px"><button data-dialog-cancel type="button" class="secondary">Отмена</button><button data-dialog-ok type="button" class="goldbtn" style="width:auto;min-width:110px;margin:0;padding:12px 20px">ОК</button></div></div></div>
-<script src="./supabase-auth.js?v=12" onload="if(typeof initSupabaseAuth==='function')initSupabaseAuth();"></script>
+<script src="./supabase-auth.js?v=13" onload="if(typeof initSupabaseAuth==='function')initSupabaseAuth();"></script>
 <script>window.addEventListener("load",()=>{if(typeof initNickname==="function")initNickname();});</script>
 
 <script>
