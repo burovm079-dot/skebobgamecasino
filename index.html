@@ -2270,7 +2270,7 @@ window.prompt=(message,value)=>{void skebobDialog("prompt",message,value);return
 <div class="sk-work">
 <div class="sk-top">
 
-<div class="sk-coins"><span class="sk-coin">🪙</span><span id="dashboardBalance">1,000</span></div><div id="leaderboardWidget" class="leaderboard-widget"><button id="leaderboardToggle" class="leaderboard-toggle" type="button" aria-expanded="false">🏆 ЛИДЕРБОРД <span id="leaderboardArrow">▼</span></button><div id="leaderboardPanel" class="leaderboard-panel" aria-label="Топ 20 игроков"><div class="leaderboard-head"><span>ТОП-20 ПО БАЛАНСУ</span><button id="leaderboardRefresh" class="secondary leaderboard-refresh" type="button">↻</button></div><div id="leaderboardRows" class="leaderboard-note">Нажми, чтобы загрузить рейтинг.</div></div></div>
+<div class="sk-coins"><span class="sk-coin">🪙</span><span id="dashboardBalance">1,000</span></div><div id="leaderboardWidget" class="leaderboard-widget"><button id="leaderboardToggle" class="leaderboard-toggle" type="button" aria-expanded="false">🏆 ЛИДЕРБОРД <span id="leaderboardArrow">▼</span></button><div id="leaderboardPanel" class="leaderboard-panel" aria-label="Топ 20 игроков"><div class="leaderboard-head"><span>ТОП-20 ПО БАЛАНСУ</span></div><div id="leaderboardRows" class="leaderboard-note">Загружаем рейтинг…</div></div></div>
 
 
 </div>
@@ -7104,7 +7104,6 @@ window.refreshLeaderboard=async function(){
 (function(){
  const button=document.getElementById("leaderboardToggle");
  const panel=document.getElementById("leaderboardPanel");
- const refresh=document.getElementById("leaderboardRefresh");
  if(!button||!panel)return;
  button.addEventListener("click",function(){
   const opening=!panel.classList.contains("open");
@@ -7112,10 +7111,18 @@ window.refreshLeaderboard=async function(){
   button.setAttribute("aria-expanded",String(opening));
   const arrow=document.getElementById("leaderboardArrow");
   if(arrow)arrow.textContent=opening?"▲":"▼";
-  if(opening)window.refreshLeaderboard();
  });
- if(refresh)refresh.addEventListener("click",function(){window.refreshLeaderboard();});
-})();
+ let lastLeaderboardUpdate=0;
+ const updateLeaderboardAutomatically=()=>{
+  const now=Date.now();
+  if(now-lastLeaderboardUpdate<3600000)return;
+  lastLeaderboardUpdate=now;
+  if(typeof window.refreshLeaderboard==="function")window.refreshLeaderboard();
+ };
+ window.addEventListener("load",()=>setTimeout(updateLeaderboardAutomatically,1200),{once:true});
+ window.setInterval(updateLeaderboardAutomatically,60000);
+ document.addEventListener("visibilitychange",()=>{if(!document.hidden)updateLeaderboardAutomatically();});
+})();;
 </script>
 </body>
     </html>
