@@ -1521,7 +1521,8 @@ header button:hover,.secondary:hover{transform:translateY(-2px);border-color:#ff
 /* Баланс и лидерборд — два самостоятельных элемента в верхней панели. */
 body.dashboard-home #skebobDashboard .sk-top{display:flex;flex-wrap:wrap;align-items:center;gap:8px}
 body.dashboard-home #skebobDashboard .sk-coins{display:inline-flex;align-items:center;flex:0 0 auto;padding:7px 10px;border:1px solid #8c63b6;border-radius:10px;background:linear-gradient(135deg,#251039,#160b24)}
-body.dashboard-home #topupWithdrawButton{display:inline-flex;align-items:center;justify-content:center;flex:0 0 auto;min-height:30px;padding:6px 9px;border:1px solid #65d6a1;border-radius:9px;background:linear-gradient(135deg,#12583f,#123328);color:#caffdf;font-size:8px;font-weight:900;letter-spacing:0;line-height:1.2;text-decoration:none;white-space:nowrap;box-shadow:0 3px 10px #0005}\nbody.dashboard-home #leaderboardWidget{display:flex;flex:1 0 100%;flex-direction:column;align-items:flex-start;gap:5px;margin:0;min-width:0}
+body.dashboard-home #topupWithdrawButton{display:inline-flex;align-items:center;justify-content:center;flex:0 0 auto;min-height:30px;padding:6px 9px;border:1px solid #65d6a1;border-radius:9px;background:linear-gradient(135deg,#12583f,#123328);color:#caffdf;font-size:8px;font-weight:900;letter-spacing:0;line-height:1.2;text-decoration:none;white-space:nowrap;box-shadow:0 3px 10px #0005}
+body.dashboard-home #leaderboardWidget{display:flex;flex:1 0 100%;flex-direction:column;align-items:flex-start;gap:5px;margin:0;min-width:0}
 body.dashboard-home #leaderboardWidget:has(#leaderboardPanel.open){flex:1 0 100%;width:100%}
 body.dashboard-home #leaderboardToggle{display:inline-flex;align-items:center;justify-content:center;gap:3px;width:auto;height:auto;min-height:24px;padding:4px 6px;border:1px solid #ffd66b;border-radius:8px;background:linear-gradient(135deg,#69400c,#32134e);color:#ffe7a5;font-size:7px;font-weight:900;letter-spacing:0;white-space:nowrap;cursor:pointer}
 body.dashboard-home #leaderboardToggle span{font-size:7px}
@@ -6846,9 +6847,32 @@ function renderSpecialAccountControls(){
   
  }
  if(String(nick).trim().toLowerCase()==="skebob"){
-  html+='<div style="display:grid;grid-template-columns:1fr;gap:9px;margin-top:14px"><button type="button" class="goldbtn" style="width:100%" onclick="openMoneyGrantModal()">💰 ВЫДАТЬ ДЕНЬГИ</button><button type="button" class="goldbtn" style="width:100%;background:linear-gradient(135deg,#6335bd,#35116e)" onclick="openProfileLookupModal()">🔎 ПРОВЕРИТЬ ПРОФИЛЬ</button></div>';
+  html+='<div style="display:grid;grid-template-columns:1fr;gap:9px;margin-top:14px"><button type="button" class="goldbtn" style="width:100%" onclick="openMoneyGrantModal()">💰 ВЫДАТЬ ДЕНЬГИ</button><button type="button" class="goldbtn" style="width:100%;background:linear-gradient(135deg,#6335bd,#35116e)" onclick="openProfileLookupModal()">🔎 ПРОВЕРИТЬ ПРОФИЛЬ</button><button type="button" class="goldbtn" style="width:100%;background:linear-gradient(135deg,#168b57,#075b42)" onclick="openPlayerBadgeModal()">✓ ВЫДАТЬ ГАЛОЧКУ</button></div>';
  }
  host.innerHTML=html+'</div>';
+}
+function openPlayerBadgeModal(){
+ const old=document.getElementById("playerBadgeModal");if(old)old.remove();
+ const overlay=document.createElement("div");overlay.id="playerBadgeModal";
+ overlay.style.cssText="position:fixed;inset:0;z-index:32002;background:rgba(0,0,0,.84);display:flex;align-items:center;justify-content:center;padding:18px";
+ const panel=document.createElement("div");panel.style.cssText="width:100%;max-width:390px;background:var(--panel);color:var(--text);border:1px solid var(--gold);border-radius:18px;padding:20px;box-shadow:0 15px 50px #000b";
+ panel.innerHTML='<h3 style="margin:0 0 15px;color:var(--gold)">✓ ВЫДАТЬ ГАЛОЧКУ</h3><label for="playerBadgeNickname" style="display:block;margin:0 0 6px;font-size:13px">Nickname игрока</label><input id="playerBadgeNickname" type="text" maxlength="18" autocomplete="off" placeholder="Введи nickname" style="width:100%;box-sizing:border-box;margin-bottom:13px"><div style="font-size:13px;margin-bottom:8px">Выбери галочку</div><div class="verified-choice-row"><button type="button" class="secondary verified-choice" data-badge="green">🟢 Зелёная</button><button type="button" class="secondary verified-choice" data-badge="blue">🔵 Синяя</button><button type="button" class="secondary verified-choice" data-badge="gold">🟡 Золотая</button></div><div style="display:flex;gap:9px;margin-top:14px"><button type="button" class="secondary" id="playerBadgeCancel" style="flex:1">ОТМЕНА</button><button type="button" class="goldbtn" id="playerBadgeSubmit" style="flex:1">ВЫДАТЬ ГАЛОЧКУ</button></div><p id="playerBadgeStatus" role="status" style="min-height:18px;margin:12px 0 0;font-size:13px"></p>';
+ overlay.appendChild(panel);document.body.appendChild(overlay);
+ let selected="";const close=()=>overlay.remove();
+ panel.querySelector("#playerBadgeCancel").addEventListener("click",close);
+ overlay.addEventListener("click",e=>{if(e.target===overlay)close();});
+ const status=panel.querySelector("#playerBadgeStatus"),submit=panel.querySelector("#playerBadgeSubmit");
+ panel.querySelectorAll("[data-badge]").forEach(btn=>btn.addEventListener("click",()=>{selected=btn.dataset.badge;panel.querySelectorAll("[data-badge]").forEach(x=>x.classList.toggle("active",x===btn));}));
+ submit.addEventListener("click",async()=>{
+  const nickname=panel.querySelector("#playerBadgeNickname").value.trim();
+  if(!nickname){status.style.color="#ff8585";status.textContent="Введи nickname игрока.";return;}
+  if(!selected){status.style.color="#ff8585";status.textContent="Выбери цвет галочки.";return;}
+  submit.disabled=true;submit.textContent="ВЫДАЁМ…";
+  try{const result=await window.skebobSetPlayerBadge(nickname,selected);status.style.color="#65d995";status.textContent="✓ Галочка выдана игроку "+result.player_nickname+".";if(typeof window.refreshLeaderboard==="function")window.refreshLeaderboard();}
+  catch(error){status.style.color="#ff8585";status.textContent="Ошибка: "+(error?.message||"не удалось выдать галочку");}
+  finally{submit.disabled=false;submit.textContent="ВЫДАТЬ ГАЛОЧКУ";}
+ });
+ panel.querySelector("#playerBadgeNickname").focus();
 }
 function openMoneyGrantModal(){
  const old=document.getElementById("moneyGrantModal");if(old)old.remove();
@@ -6926,7 +6950,7 @@ function persistNickname(nick){
 function updateNicknameUI(){
  const nick=getNickname();
  const p=document.getElementById("profileNickname");
- if(p)p.innerHTML=bjEscape(nick)+bjOfficialBadge(nick)+bjSpecialAccountBadge(nick);
+ if(p)p.innerHTML=bjEscape(nick)+bjOfficialBadge(nick)+bjSpecialAccountBadge(nick)+(window.currentPlayerBadgeHtml||"");
  renderSpecialAccountControls();
 }
 async function initNickname(){
@@ -7058,7 +7082,7 @@ window.refreshLeaderboard=async function(){
    const row=document.createElement("div");row.className="leaderboard-row";
    const place=document.createElement("span");place.className="leaderboard-place";
    place.textContent=index===0?"🥇":index===1?"🥈":index===2?"🥉":String(index+1);
-   const nickname=document.createElement("span");nickname.className="leaderboard-nickname";nickname.textContent=player.player_nickname||"Игрок";
+   const nickname=document.createElement("span");nickname.className="leaderboard-nickname";nickname.textContent=player.player_nickname||"Игрок";if(player.player_badge){const badge=document.createElement("span");badge.className="skebob-verified verified-"+player.player_badge;badge.textContent="✓";badge.title=player.player_badge==="green"?"media-partner":player.player_badge==="blue"?"официальный аккаунт":"vip";badge.setAttribute("aria-label",badge.title);badge.addEventListener("click",()=>alert(badge.title));nickname.appendChild(badge);}
    const amount=document.createElement("span");amount.className="leaderboard-amount";
    const value=Number(player.player_balance)||0;
    amount.textContent=new Intl.NumberFormat("ru-RU",{maximumFractionDigits:2}).format(value)+" 🪙";
