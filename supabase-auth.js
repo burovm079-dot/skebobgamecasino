@@ -253,6 +253,13 @@ window.skebobSetPlayerBadge=async function(nickname,badge){
  if(!Array.isArray(rows)||!rows.length)throw new Error("Сервер не подтвердил выдачу галочки.");
  return rows[0];
 };
+window.skebobRemovePlayerBadge=async function(nickname){
+ const nick=String(nickname||"").trim();
+ if(!nick)throw new Error("Введи nickname игрока.");
+ const result=await rest("rpc/admin_remove_player_badge",{method:"POST",body:JSON.stringify({p_nickname:nick})});
+ if(typeof result!=="string"||!result)throw new Error("Сервер не подтвердил снятие галочки.");
+ return result;
+};
 window.skebobGetMyBadge=async function(){
  const value=await rest("rpc/get_my_player_badge",{method:"POST",body:"{}"});
  return typeof value==="string"?value:null;
