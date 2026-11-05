@@ -91,7 +91,7 @@ function start(){
 }
 function botAct(p){
  if(!active||p.id!==current)return;
- const need=Math.max(0,currentBet-p.put),strength=best([...p.hand,...board]),power=strength[0],random=Math.random();
+ const need=Math.max(0,currentBet-p.put),power=board.length>=3?best([...p.hand,...board])[0]:(p.hand[0].r===p.hand[1].r?1:0),random=Math.random();
  let action='call';
  if(need===0){
   if(power>=3&&random<.35&&p.stack>40)action='raise';
