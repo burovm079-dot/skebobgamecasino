@@ -6953,6 +6953,15 @@ function updateNicknameUI(){
  if(p)p.innerHTML=bjEscape(nick)+bjOfficialBadge(nick)+bjSpecialAccountBadge(nick)+(window.currentPlayerBadgeHtml||"");
  renderSpecialAccountControls();
 }
+window.refreshMyPlayerBadge=async function(){
+ try{
+  const type=await window.skebobGetMyBadge();
+  const labels={green:"media-partner",blue:"официальный аккаунт",gold:"vip"};
+  window.currentPlayerBadgeHtml=type&&labels[type]?' <button type="button" class="skebob-verified verified-'+type+'" title="'+labels[type]+'" aria-label="'+labels[type]+'" onclick="alert(\''+labels[type]+'\')">✓</button>':"";
+  const p=document.getElementById("profileNickname");
+  if(p)p.innerHTML=bjEscape(getNickname())+bjOfficialBadge(getNickname())+bjSpecialAccountBadge(getNickname())+(window.currentPlayerBadgeHtml||"");
+ }catch(error){console.warn("Player badge load:",error);}
+};
 async function initNickname(){
  let nick=storageGet(NICKNAME_KEY);
  if(!nick){
@@ -7088,8 +7097,10 @@ window.refreshLeaderboard=async function(){
    amount.textContent=new Intl.NumberFormat("ru-RU",{maximumFractionDigits:2}).format(value)+" 🪙";
    row.append(place,nickname,amount);rowsBox.appendChild(row);
   });
+  return true;
  }catch(error){
   rowsBox.textContent=error&&error.message?error.message:"Не удалось загрузить рейтинг.";
+  return false;
  }
 };
 /* Telegram Mini App viewport and fresh UI initialization */
@@ -7124,26 +7135,28 @@ window.refreshLeaderboard=async function(){
 <script>window.addEventListener("load",()=>{if(typeof initNickname==="function")initNickname();});</script>
 
 <script>
-/* Лидерборд доступен только на главной странице и расположен рядом с балансом. */
+/* Лидерборд: открытие не требует ручной загрузки; данные получает после авторизации и затем каждый час. */
 (function(){
  const button=document.getElementById("leaderboardToggle");
  const panel=document.getElementById("leaderboardPanel");
- if(!button||!panel)return;
- button.addEventListener("click",function(){
+ if(button&&panel)button.addEventListener("click",function(){
   const opening=!panel.classList.contains("open");
   panel.classList.toggle("open",opening);
   button.setAttribute("aria-expanded",String(opening));
-  const arrow=document.getElementById("leaderboardArrow");
-  if(arrow)arrow.textContent=opening?"▲":"▼";
+  const arrow=document.getElementById("leaderboardArrow");if(arrow)arrow.textContent=opening?"▲":"▼";
  });
- let lastLeaderboardUpdate=0;
- const updateLeaderboardAutomatically=()=>{
-  const now=Date.now();
-  if(now-lastLeaderboardUpdate<3600000)return;
-  lastLeaderboardUpdate=now;
-  if(typeof window.refreshLeaderboard==="function")window.refreshLeaderboard();
+ let lastLeaderboardUpdate=0,refreshing=false;
+ const updateLeaderboardAutomatically=async()=>{
+  if(refreshing||Date.now()-lastLeaderboardUpdate<3600000)return;
+  if(typeof window.refreshLeaderboard!=="function")return;
+  refreshing=true;
+  try{if(await window.refreshLeaderboard())lastLeaderboardUpdate=Date.now();}
+  finally{refreshing=false;}
  };
- window.addEventListener("load",()=>setTimeout(updateLeaderboardAutomatically,1200),{once:true});
+ window.addEventListener("skebob-auth-ready",()=>{
+  updateLeaderboardAutomatically();
+  if(typeof window.refreshMyPlayerBadge==="function")window.refreshMyPlayerBadge();
+ });
  window.setInterval(updateLeaderboardAutomatically,60000);
  document.addEventListener("visibilitychange",()=>{if(!document.hidden)updateLeaderboardAutomatically();});
 })();;
