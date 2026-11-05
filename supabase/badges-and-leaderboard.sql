@@ -67,7 +67,7 @@ grant execute on function public.admin_set_player_badge(text,text) to authentica
 create or replace function public.admin_remove_player_badge(p_nickname text)
 returns text
 language plpgsql security definer set search_path = ''
-as $
+as $$
 declare target_id uuid; target_nickname text;
 begin
   if not exists(select 1 from public.game_admins a where a.user_id=auth.uid()) then
@@ -80,7 +80,7 @@ begin
   delete from public.player_badges where user_id=target_id;
   return target_nickname;
 end;
-$;
+$$;
 
 revoke all on function public.admin_remove_player_badge(text) from public, anon;
 grant execute on function public.admin_remove_player_badge(text) to authenticated;
