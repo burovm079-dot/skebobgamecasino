@@ -63,3 +63,5 @@ revoke all on function public.admin_set_player_badge(text,text) from public, ano
 grant execute on function public.get_player_leaderboard() to authenticated;
 grant execute on function public.get_my_player_badge() to authenticated;
 grant execute on function public.admin_set_player_badge(text,text) to authenticated;
+
+notify pgrst, 'reload schema';
