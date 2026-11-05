@@ -239,6 +239,11 @@ window.skebobLookupPlayer=async function(nickname){
  if(!Array.isArray(rows)||!rows.length)throw new Error("Игрок не найден.");
  return rows[0];
 };
+window.skebobGetLeaderboard=async function(){
+ const rows=await rest("rpc/get_player_leaderboard",{method:"POST",body:"{}"});
+ if(!Array.isArray(rows))throw new Error("Не удалось загрузить рейтинг игроков.");
+ return rows;
+};
 window.skebobChangeNickname=changeAccountNickname;
 window.skebobChangePassword=async function(currentPassword,newPassword){
  if(!session||!session.user||!session.user.email)throw new Error("Сессия не найдена. Войди в аккаунт ещё раз.");
