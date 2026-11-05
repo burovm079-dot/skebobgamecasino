@@ -2540,6 +2540,14 @@ body.tap-page #skebobDashboard #skebobTap .tap-main{display:block!important;marg
  #adminLogin #adminPassword{top:59%!important;height:9%!important}
  #adminLogin .admin-login-controls>button[type=submit]{top:71%!important;height:11%!important}
 }
+/* ADMIN LOGIN: occupy the complete right workspace, including the former balance strip. */
+#skebobDashboard>.sk-work:has(>#sk-page-view #adminLogin:not(.hidden)){display:flex!important;flex-direction:column!important;height:100dvh!important;min-height:0!important;overflow:hidden!important}
+#skebobDashboard>.sk-work:has(>#sk-page-view #adminLogin:not(.hidden))>.sk-top,
+#skebobDashboard>.sk-work:has(>#sk-page-view #adminLogin:not(.hidden))>.sk-games{display:none!important}
+#skebobDashboard>.sk-work:has(>#sk-page-view #adminLogin:not(.hidden))>#sk-page-view{display:flex!important;flex:1 1 auto!important;width:100%!important;height:100%!important;min-height:0!important;margin:0!important;padding:0!important;overflow:hidden!important}
+#sk-page-view #adminLogin.admin-login-screen{height:100%!important;min-height:0!important;max-height:none!important;width:100%!important;max-width:none!important;margin:0!important;padding:0!important;border:0!important;border-radius:0!important;overflow:hidden!important;flex:1 1 auto!important}
+#adminLogin .admin-login-art{position:absolute!important;inset:0!important;width:100%!important;height:100%!important;object-fit:cover!important;object-position:center center!important}
+#adminLogin .admin-login-fallback-title{display:none!important}
 </style>
 <!-- CASES -->
 
@@ -4400,12 +4408,12 @@ let pageView=work&&work.querySelector("#sk-page-view");
 if(work&&!pageView){pageView=document.createElement("div");pageView.id="sk-page-view";pageView.className="sk-page-view";if(games)games.insertAdjacentElement("afterend",pageView);else work.appendChild(pageView);}
 if(pageView){pageView.style.display=isDashboard?"none":"block";pageView.style.visibility="visible";pageView.style.opacity="1";pageView.style.width="100%";pageView.style.minWidth="0";pageView.style.minHeight="0";pageView.style.boxSizing="border-box";}
 const topBar=work&&work.querySelector(".sk-top");
-if(id==="skebobTap"){
- if(shell)shell.classList.add("tap-workspace-active");
- if(work){work.style.setProperty("display","flex","important");work.style.setProperty("flex-direction","column","important");work.style.setProperty("grid-column","2","important");work.style.setProperty("min-width","0","important");work.style.setProperty("min-height","0","important");work.style.setProperty("height","100dvh","important");work.style.setProperty("overflow-y","auto","important");}
+if(id==="skebobTap"||id==="adminLogin"){
+ if(id==="skebobTap"&&shell)shell.classList.add("tap-workspace-active");
+ if(work){work.style.setProperty("display","flex","important");work.style.setProperty("flex-direction","column","important");work.style.setProperty("grid-column","2","important");work.style.setProperty("min-width","0","important");work.style.setProperty("min-height","0","important");work.style.setProperty("height","100dvh","important");work.style.setProperty("overflow-y",id==="adminLogin"?"hidden":"auto","important");}
  if(topBar)topBar.style.setProperty("display","none","important");
  if(games)games.style.setProperty("display","none","important");
- if(pageView){pageView.style.setProperty("display","flex","important");pageView.style.setProperty("flex","1 1 auto","important");pageView.style.setProperty("flex-direction","column","important");pageView.style.setProperty("align-items","stretch","important");pageView.style.setProperty("justify-content","flex-start","important");pageView.style.setProperty("width","100%","important");pageView.style.setProperty("min-width","0","important");pageView.style.setProperty("min-height","0","important");pageView.style.setProperty("margin","0","important");pageView.style.setProperty("padding","12px","important");pageView.style.setProperty("overflow","visible","important");}
+ if(pageView){pageView.style.setProperty("display","flex","important");pageView.style.setProperty("flex","1 1 auto","important");pageView.style.setProperty("flex-direction","column","important");pageView.style.setProperty("align-items","stretch","important");pageView.style.setProperty("justify-content","flex-start","important");pageView.style.setProperty("width","100%","important");pageView.style.setProperty("min-width","0","important");pageView.style.setProperty("min-height","0","important");pageView.style.setProperty("height","100%","important");pageView.style.setProperty("margin","0","important");pageView.style.setProperty("padding","0","important");pageView.style.setProperty("overflow",id==="adminLogin"?"hidden":"visible","important");}
 }else{
  if(shell)shell.classList.remove("tap-workspace-active");
  [work,topBar,games,pageView].forEach(el=>{if(!el)return;["display","flex-direction","grid-column","min-width","min-height","height","overflow-y","flex","align-items","justify-content","width","margin","padding","overflow"].forEach(prop=>el.style.removeProperty(prop));});
