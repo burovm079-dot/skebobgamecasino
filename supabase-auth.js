@@ -102,6 +102,7 @@ function nicknameError(nick){
 }
 function normalizeLoadedState(remote){
  if(!remote||typeof remote!=="object"||Array.isArray(remote))return;
+ delete remote.admin;
  state={...state,...remote,
   stats:{...(typeof defaultStats!=="undefined"?defaultStats:{}),...(remote.stats||{})},
  };
