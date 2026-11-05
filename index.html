@@ -1518,6 +1518,14 @@ header button:hover,.secondary:hover{transform:translateY(-2px);border-color:#ff
 .leaderboard-nickname{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:#fff}
 .leaderboard-amount{color:#ffdf86;font-weight:900;white-space:nowrap;font-variant-numeric:tabular-nums}
 .leaderboard-note{padding:9px 3px;color:#cbbbd9;text-align:center;font-size:11px}
+/* Лидерборд в верхней панели главной страницы, рядом с балансом. */
+body.dashboard-home #leaderboardWidget{position:relative;display:flex;flex:0 0 auto;align-items:center;margin-left:auto;min-width:0}
+body.dashboard-home #leaderboardToggle{display:inline-flex;align-items:center;justify-content:center;gap:5px;width:auto;height:auto;min-height:36px;padding:8px 10px;border:1px solid #ffd66b;border-radius:10px;background:linear-gradient(135deg,#69400c,#32134e);color:#ffe7a5;font-size:11px;font-weight:900;white-space:nowrap;cursor:pointer}
+body.dashboard-home #leaderboardPanel{position:absolute;display:none;top:calc(100% + 8px);right:0;left:auto;z-index:1000;width:min(340px,calc(100vw - 28px));max-height:55vh;overflow:auto;box-sizing:border-box;padding:9px;background:linear-gradient(145deg,#170c27,#28113b);border:1px solid #a66be0;border-radius:12px;box-shadow:0 10px 26px #0009}
+body.dashboard-home #leaderboardPanel.open{display:block}
+body.legacy-page-active #leaderboardWidget{display:none!important}
+@media(max-width:420px){body.dashboard-home #leaderboardToggle{font-size:10px;padding:7px 7px;min-height:32px}}
+
 @media(max-width:620px){.leaderboard-widget{width:100%;align-items:stretch;margin-left:0}.leaderboard-toggle{align-self:flex-end}.leaderboard-panel{width:100%;max-height:230px;box-sizing:border-box}}
 main{max-width:1120px;padding:12px 18px 55px}
 .nav{
@@ -2257,7 +2265,7 @@ window.prompt=(message,value)=>{void skebobDialog("prompt",message,value);return
 <div class="sk-work">
 <div class="sk-top">
 
-<div class="sk-coins"><span class="sk-coin">🪙</span><span id="dashboardBalance">1,000</span></div>
+<div class="sk-coins"><span class="sk-coin">🪙</span><span id="dashboardBalance">1,000</span><div id="leaderboardWidget" class="leaderboard-widget"><button id="leaderboardToggle" class="leaderboard-toggle" type="button" aria-expanded="false">🏆 ЛИДЕРБОРД <span id="leaderboardArrow">▼</span></button><div id="leaderboardPanel" class="leaderboard-panel" aria-label="Топ 20 игроков"><div class="leaderboard-head"><span>ТОП-20 ПО БАЛАНСУ</span><button id="leaderboardRefresh" class="secondary leaderboard-refresh" type="button">↻</button></div><div id="leaderboardRows" class="leaderboard-note">Нажми, чтобы загрузить рейтинг.</div></div></div></div>
 
 
 </div>
@@ -2307,11 +2315,6 @@ SKEBOB <span>CASINO</span>
 <div style="display:flex;flex-direction:column;align-items:flex-start;gap:8px;min-width:0">
 <div class="small">ТВОЙ БАЛАНС</div>
 <strong id="balance">1000</strong> 🪙
-<button id="leaderboardToggle" type="button" aria-expanded="false" onclick="toggleLeaderboard()" style="display:inline-flex!important;visibility:visible!important;opacity:1!important;align-items:center;justify-content:center;position:relative;z-index:50;border:1px solid #ffd66b;border-radius:10px;padding:10px 14px;background:linear-gradient(135deg,#69400c,#32134e);color:#ffe7a5;font-size:12px;font-weight:900;white-space:nowrap;cursor:pointer">🏆 ЛИДЕРБОРД <span id="leaderboardArrow" style="margin-left:6px">▼</span></button>
-<div id="leaderboardPanel" class="leaderboard-panel" aria-label="Топ 20 игроков" style="width:min(340px,calc(100vw - 70px));box-sizing:border-box">
-  <div class="leaderboard-head"><span>ТОП-20 ПО БАЛАНСУ</span><button class="secondary leaderboard-refresh" type="button" onclick="refreshLeaderboard()">↻</button></div>
-  <div id="leaderboardRows" class="leaderboard-note">Нажми, чтобы загрузить рейтинг.</div>
- </div>
 </div>
 
 <div class="small">
@@ -7092,19 +7095,21 @@ window.refreshLeaderboard=async function(){
 <script>window.addEventListener("load",()=>{if(typeof initNickname==="function")initNickname();});</script>
 
 <script>
-/* Надёжное размещение лидерборда поверх всех игровых блоков */
+/* Лидерборд доступен только на главной странице и расположен рядом с балансом. */
 (function(){
- const placeLeaderboard=()=>{
-  const button=document.getElementById("leaderboardToggle");
-  const panel=document.getElementById("leaderboardPanel");
-  if(!button||!panel)return;
-  document.body.appendChild(button);
-  document.body.appendChild(panel);
-  button.style.cssText += ";display:flex!important;visibility:visible!important;opacity:1!important;position:fixed!important;right:14px!important;bottom:16px!important;left:auto!important;top:auto!important;z-index:2147483000!important;padding:13px 17px!important;border:2px solid #ffd66b!important;border-radius:14px!important;background:linear-gradient(135deg,#80500d,#32134e)!important;color:#ffe7a5!important;font-size:13px!important;font-weight:900!important;box-shadow:0 5px 22px #000b!important;cursor:pointer!important";
-  panel.style.cssText += ";position:fixed!important;right:14px!important;bottom:70px!important;left:auto!important;top:auto!important;z-index:2147482999!important;width:min(340px,calc(100vw - 28px))!important;max-height:55vh!important;overflow:auto!important;box-sizing:border-box!important";
- };
- if(document.readyState==="loading")document.addEventListener("DOMContentLoaded",placeLeaderboard);
- else placeLeaderboard();
+ const button=document.getElementById("leaderboardToggle");
+ const panel=document.getElementById("leaderboardPanel");
+ const refresh=document.getElementById("leaderboardRefresh");
+ if(!button||!panel)return;
+ button.addEventListener("click",function(){
+  const opening=!panel.classList.contains("open");
+  panel.classList.toggle("open",opening);
+  button.setAttribute("aria-expanded",String(opening));
+  const arrow=document.getElementById("leaderboardArrow");
+  if(arrow)arrow.textContent=opening?"▲":"▼";
+  if(opening)window.refreshLeaderboard();
+ });
+ if(refresh)refresh.addEventListener("click",function(){window.refreshLeaderboard();});
 })();
 </script>
 </body>
