@@ -1501,6 +1501,24 @@ header button:hover,.secondary:hover{transform:translateY(-2px);border-color:#ff
  box-shadow:0 8px 28px #0007,0 0 22px #8d36d933,inset 0 1px #ffffff22;
 }
 .balance strong{color:#ffdc79;text-shadow:0 0 15px #ffb52c66}
+.balance{flex-wrap:wrap}
+.leaderboard-widget{display:flex;flex-direction:column;align-items:flex-end;gap:6px;margin-left:auto;min-width:0}
+.leaderboard-toggle{border:1px solid #d6a64c;border-radius:11px;padding:9px 13px;background:linear-gradient(135deg,#53300d,#28143e);color:#ffe7a5;font-size:12px;font-weight:900;letter-spacing:.3px;white-space:nowrap;box-shadow:0 3px 12px #0005}
+.leaderboard-toggle:active{transform:scale(.97)}
+.leaderboard-panel{display:none;width:min(340px,calc(100vw - 48px));max-height:270px;overflow:auto;padding:9px;background:linear-gradient(145deg,#170c27,#28113b);border:1px solid #a66be0;border-radius:12px;box-shadow:0 10px 26px #0009}
+.leaderboard-panel.open{display:block}
+.leaderboard-head{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:7px;color:#ffe19a;font-size:11px;font-weight:900}
+.leaderboard-refresh{padding:4px 8px!important;min-height:26px!important;border-radius:7px!important;font-size:11px!important}
+.leaderboard-row{display:grid;grid-template-columns:25px minmax(0,1fr) auto;align-items:center;gap:7px;padding:5px 3px;border-bottom:1px solid #ffffff13;font-size:12px;line-height:1.25}
+.leaderboard-row:last-child{border-bottom:0}
+.leaderboard-place{color:#d5b5ff;font-weight:900;text-align:center}
+.leaderboard-row:nth-child(2) .leaderboard-place{color:#ffd76a}
+.leaderboard-row:nth-child(3) .leaderboard-place{color:#dce3ee}
+.leaderboard-row:nth-child(4) .leaderboard-place{color:#d99b69}
+.leaderboard-nickname{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:#fff}
+.leaderboard-amount{color:#ffdf86;font-weight:900;white-space:nowrap;font-variant-numeric:tabular-nums}
+.leaderboard-note{padding:9px 3px;color:#cbbbd9;text-align:center;font-size:11px}
+@media(max-width:620px){.leaderboard-widget{width:100%;align-items:stretch;margin-left:0}.leaderboard-toggle{align-self:flex-end}.leaderboard-panel{width:100%;max-height:230px;box-sizing:border-box}}
 main{max-width:1120px;padding:12px 18px 55px}
 .nav{
  display:grid;grid-template-columns:repeat(auto-fit,minmax(105px,1fr));
@@ -2293,6 +2311,13 @@ SKEBOB <span>CASINO</span>
 
 <div class="small">
 Виртуальные монеты
+</div>
+<div class="leaderboard-widget">
+ <button id="leaderboardToggle" class="leaderboard-toggle" type="button" aria-expanded="false" onclick="toggleLeaderboard()">🏆 ЛИДЕРБОРД <span id="leaderboardArrow">▼</span></button>
+ <div id="leaderboardPanel" class="leaderboard-panel" aria-label="Топ 20 игроков">
+  <div class="leaderboard-head"><span>ТОП-20 ПО БАЛАНСУ</span><button class="secondary leaderboard-refresh" type="button" onclick="refreshLeaderboard()">↻</button></div>
+  <div id="leaderboardRows" class="leaderboard-note">Нажми, чтобы загрузить рейтинг.</div>
+ </div>
 </div>
 
 </div>
@@ -7002,6 +7027,41 @@ window.handleSkebobTap=handleSkebobTap;
 setInterval(()=>{const page=document.getElementById("skebobTap");if(page&&!page.classList.contains("hidden"))renderSkebobTap();},1000);
 
 
+/* SKEBOB GAME: общий компактный лидерборд */
+window.toggleLeaderboard=function(){
+ const panel=document.getElementById("leaderboardPanel");
+ const button=document.getElementById("leaderboardToggle");
+ const arrow=document.getElementById("leaderboardArrow");
+ if(!panel||!button)return;
+ const opening=!panel.classList.contains("open");
+ panel.classList.toggle("open",opening);
+ button.setAttribute("aria-expanded",String(opening));
+ if(arrow)arrow.textContent=opening?"▲":"▼";
+ if(opening)window.refreshLeaderboard();
+};
+window.refreshLeaderboard=async function(){
+ const rowsBox=document.getElementById("leaderboardRows");
+ if(!rowsBox)return;
+ rowsBox.textContent="Загружаем рейтинг…";
+ try{
+  if(typeof window.skebobGetLeaderboard!=="function")throw new Error("Войди в аккаунт, чтобы посмотреть рейтинг.");
+  const players=await window.skebobGetLeaderboard();
+  rowsBox.replaceChildren();
+  if(!players.length){rowsBox.textContent="Пока нет игроков.";return;}
+  players.forEach((player,index)=>{
+   const row=document.createElement("div");row.className="leaderboard-row";
+   const place=document.createElement("span");place.className="leaderboard-place";
+   place.textContent=index===0?"🥇":index===1?"🥈":index===2?"🥉":String(index+1);
+   const nickname=document.createElement("span");nickname.className="leaderboard-nickname";nickname.textContent=player.player_nickname||"Игрок";
+   const amount=document.createElement("span");amount.className="leaderboard-amount";
+   const value=Number(player.player_balance)||0;
+   amount.textContent=new Intl.NumberFormat("ru-RU",{maximumFractionDigits:2}).format(value)+" 🪙";
+   row.append(place,nickname,amount);rowsBox.appendChild(row);
+  });
+ }catch(error){
+  rowsBox.textContent=error&&error.message?error.message:"Не удалось загрузить рейтинг.";
+ }
+};
 /* Telegram Mini App viewport and fresh UI initialization */
 (function(){try{const tg=window.Telegram&&window.Telegram.WebApp;if(tg){tg.ready();tg.expand();}}catch(e){console.warn("Telegram WebApp init:",e)}})();
 // Запуск авторизации выполняется после загрузки supabase-auth.js внизу страницы.
@@ -7030,7 +7090,7 @@ setInterval(()=>{const page=document.getElementById("skebobTap");if(page&&!page.
 </div>
 
 <div id="skebobDialog" role="dialog" aria-modal="true" style="display:none;position:fixed;inset:0;z-index:30000;background:rgba(0,0,0,.78);align-items:center;justify-content:center;padding:20px"><div style="width:100%;max-width:430px;background:var(--panel);color:var(--text);border:1px solid var(--gold);border-radius:22px;padding:24px;box-shadow:0 18px 60px #000b"><h2 data-dialog-title style="margin:0 0 16px;color:var(--gold)">Уведомление</h2><div data-dialog-message style="font-size:16px;line-height:1.55;white-space:pre-wrap;overflow-wrap:anywhere"></div><input data-dialog-input type="text" style="display:none;margin-top:16px"><div style="display:flex;gap:10px;justify-content:flex-end;margin-top:22px"><button data-dialog-cancel type="button" class="secondary">Отмена</button><button data-dialog-ok type="button" class="goldbtn" style="width:auto;min-width:110px;margin:0;padding:12px 20px">ОК</button></div></div></div>
-<script src="./supabase-auth.js?v=7" onload="if(typeof initSupabaseAuth==='function')initSupabaseAuth();"></script>
+<script src="./supabase-auth.js?v=8" onload="if(typeof initSupabaseAuth==='function')initSupabaseAuth();"></script>
 <script>window.addEventListener("load",()=>{if(typeof initNickname==="function")initNickname();});</script>
 </body>
     </html>
