@@ -66,7 +66,10 @@ function saveSession(value){
 }
 async function rest(path,options={}){
  if(!session||!session.access_token)throw new Error("Сессия не найдена. Войди в аккаунт ещё раз.");
- const response=await fetch(SB_URL+"/rest/v1/"+path,{...options,headers:{"apikey":SB_KEY,"Authorization":"Bearer "+session.access_token,"Content-Type":"application/json","Accept":"application/json",...(options.headers||{})}});
+ const send=()=>fetch(SB_URL+"/rest/v1/"+path,{...options,headers:{"apikey":SB_KEY,"Authorization":"Bearer "+session.access_token,"Content-Type":"application/json","Accept":"application/json",...(options.headers||{})}});
+ let response=await send();
+ // Если access token истёк во время игры, обновляем сессию и повторяем запрос.
+ if(response.status===401&&await refreshSession())response=await send();
  return parseResponse(response);
 }
 async function refreshSession(){
