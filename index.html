@@ -219,20 +219,6 @@ gap:6px;
 .tap-status{font-weight:800;color:var(--gold);margin:18px 0 8px;line-height:1.5}
 .tap-main:disabled{opacity:.65;cursor:not-allowed}
 .header-media-partner{display:inline-flex;align-items:center;justify-content:center;padding:10px 12px!important;border-radius:10px!important;border:1px solid #9c4bd4!important;background:linear-gradient(145deg,#32144e,#1b0d2c)!important;color:#fff2ff!important;font-size:12px!important;font-weight:900!important;text-decoration:none;white-space:nowrap;min-height:40px}
-.header-buy-admin{
-display:inline-flex;
-align-items:center;
-justify-content:center;
-padding:10px 12px;
-border-radius:10px;
-border:1px solid #80652e;
-background:#493819;
-color:#ffda7c;
-font-size:12px;
-font-weight:900;
-text-decoration:none;
-white-space:nowrap;
-}
 
 header button,.secondary{
 background:var(--panel2);
@@ -1349,61 +1335,6 @@ margin-top:7px;
 font-size:13px;
 }
 
-/* ADMIN */
-
-.admin-actions{
-display:grid;
-grid-template-columns:1fr 1fr;
-gap:8px;
-}
-
-.admin-btn{
-border:0;
-border-radius:10px;
-padding:13px;
-color:white;
-}
-
-.green{background:#39964c}
-.red{background:#d84343}
-.blue{background:#168fd0}
-.purple{background:#9226a8}
-.gold-admin{background:#b57c13}
-.admin-full{grid-column:1/-1}
-
-.admin-toggle{
-background:var(--panel2);
-border:1px solid var(--border2);
-border-radius:14px;
-padding:15px;
-margin:14px 0;
-display:flex;
-align-items:center;
-justify-content:space-between;
-gap:15px;
-}
-
-.admin-levels{
-display:grid;
-grid-template-columns:repeat(3,1fr);
-gap:7px;
-}
-
-.admin-levels button{
-border:1px solid var(--border);
-background:var(--panel2);
-color:var(--text);
-border-radius:10px;
-padding:12px 4px;
-font-size:11px;
-}
-
-.admin-levels button.active{
-background:#493819;
-color:#ffd46a;
-border-color:#ffae19;
-}
-
 @media(max-width:480px){
 
 .logo{font-size:17px}
@@ -2002,8 +1933,7 @@ body.light #settings .reference-setting-row{background:linear-gradient(110deg,#6
  background:linear-gradient(#fff,#e9e1ff);box-shadow:0 1px 5px #321044;transition:left .18s
 }
 #settings .settings-music-hit.is-on::after{left:53%}
-#settings .settings-admin{left:5.5%!important;top:57.2%!important;width:89%!important;height:7.5%!important}
-#settings .settings-buy{left:5.5%!important;top:66%!important;width:89%!important;height:7.5%!important}
+#settings .settings-remove-extra-area{position:absolute;left:5.5%;top:57.2%;width:89%;height:16.3%;z-index:8;background:rgba(13,5,25,.97);border:1px solid rgba(170,92,255,.25);border-radius:12px;pointer-events:none}
 #settings .settings-reset{left:5.5%!important;top:74.2%!important;width:89%!important;height:7.5%!important}
 #settings .settings-picture-hit:active{filter:brightness(1.25)!important}
 @media(max-width:760px){
@@ -2034,9 +1964,6 @@ body.settings-page #skebobDashboard #settings .settings-picture-ui-image{
 body.settings-page #skebobDashboard #settings .settings-picture-hit{
  display:block!important;visibility:visible!important;opacity:1!important;
  z-index:50!important;pointer-events:auto!important;cursor:pointer!important;
-}
-body.settings-page #skebobDashboard #settings .settings-picture-hit.settings-buy{
- background:transparent!important;
 }
 
 
@@ -2209,47 +2136,6 @@ a:focus:not(:focus-visible),
 /* TEXAS HOLD'EM */
 .poker-panel{background:linear-gradient(145deg,#123d32,#09251f);border-color:#b48a42}.poker-top{display:flex;justify-content:space-between;color:#f7d47a;font-weight:900}.poker-community{display:flex;justify-content:center;gap:7px;flex-wrap:wrap;margin:14px 0}.poker-card{width:52px;height:74px;display:grid;place-items:center;border-radius:8px;background:#fff;color:#171717;font-size:22px;font-weight:900;border:2px solid #eee}.poker-card.red{color:#d52d42}.poker-card.back{background:repeating-linear-gradient(45deg,#193d83,#193d83 5px,#e8d08b 6px,#193d83 8px);color:white}.poker-seats{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;margin:12px 0}.poker-seat{background:#071b18;border:1px solid #7a7549;border-radius:12px;padding:10px;text-align:center}.poker-seat strong{display:block;color:#f5d47c}.poker-seat span{font-size:12px;color:#d4e4d9}.poker-seat.folded{opacity:.45}.poker-you{text-align:center;border-top:1px solid #8b7947;padding-top:12px}.poker-actions{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:7px;margin:10px 0}.poker-actions button{min-height:44px}
 
-/* FIX: keep the artwork decorative and make the real admin login controls clickable. */
-#adminLogin .admin-login-controls{
- pointer-events:auto!important;
-}
-#adminLogin .admin-login-controls::before{
- content:"";
- position:absolute;
- left:31.4%;
- top:49.2%;
- width:51.2%;
- height:10.4%;
- border-radius:10px;
- background:rgba(24,4,35,.98);
- z-index:1;
- pointer-events:none;
-}
-#adminLogin #adminPassword{
- z-index:2!important;
- pointer-events:auto!important;
- left:30.2%!important;
- top:47.4%!important;
- width:53.7%!important;
- height:13.5%!important;
- background:transparent!important;
-}
-#adminLogin .admin-login-controls>button[type=submit]{
- z-index:2!important;
- pointer-events:auto!important;
- left:30.5%!important;
- top:64.5%!important;
- width:39%!important;
- height:16%!important;
- cursor:pointer!important;
- touch-action:manipulation!important;
-}
-#adminLogin .admin-login-back{
- pointer-events:auto!important;
- touch-action:manipulation!important;
-}
-#adminLogin .admin-login-error{z-index:3!important;pointer-events:none!important}
-
 </style>
 <link rel="stylesheet" href="./dashboard.css?v=28">
 </head>
@@ -2335,7 +2221,6 @@ window.prompt=(message,value)=>{void skebobDialog("prompt",message,value);return
 <button class="sk-menu-item" onclick="showPage('profile')"><img src="/skebobgamecasino/assets/games/assets/games/menu/07-profile.png" alt=""><span>Профиль</span></button>
 <button class="sk-menu-item" onclick="window.open('https://t.me/skebobcasino/5','_blank','noopener,noreferrer')"><img src="/skebobgamecasino/assets/games/assets/games/menu/08-media-partner.png" alt=""><span>Медиа партнёр</span></button>
 <button class="sk-menu-item" onclick="showPage('settings')"><img src="/skebobgamecasino/assets/games/assets/games/menu/09-settings.png" alt=""><span>Настройки</span></button>
-<a class="header-buy-admin sk-side-admin sk-menu-item" href="https://t.me/ggggg06767" target="_blank" rel="noopener noreferrer"><img src="/skebobgamecasino/assets/games/assets/games/menu/10-buy-admin-panel.png" alt=""><span>Купить админ панель</span></a>
 <div class="sk-side-crown">♛</div>
 </aside>
 <div class="sk-work">
@@ -2384,14 +2269,7 @@ SKEBOB <span>CASINO</span>
 
 <button class="header-media-partner" type="button" onclick="window.open('https://t.me/skebobcasino/5','_blank','noopener,noreferrer')">📢 МЕДИА ПАРТНЁР</button>
 
-<a
-class="header-buy-admin"
-href="https://t.me/ggggg06767"
-target="_blank"
-rel="noopener noreferrer"
->
-🛒 КУПИТЬ АДМИН ПАНЕЛЬ
-</a>
+
 
 </div>
 
@@ -2539,41 +2417,6 @@ body.tap-page #skebobDashboard #skebobTap .tap-main{display:block!important;marg
  body.tap-page #skebobDashboard #sk-page-view>section#skebobTap:not(.hidden){padding:10px!important;min-height:calc(100dvh - 12px)!important}
 }
 @media(max-width:380px){body.tap-page #skebobDashboard{grid-template-columns:76px minmax(0,1fr)!important}body.tap-page #skebobDashboard>.sk-side{width:76px!important}}
-
-/* ADMIN LOGIN ARTWORK WITH REAL INTERACTIVE CONTROLS */
-#sk-page-view #adminLogin.admin-login-screen{
- position:relative!important;display:block!important;width:100%!important;max-width:100%!important;
- height:calc(100dvh - 24px)!important;min-height:520px!important;max-height:none!important;
- margin:0!important;padding:0!important;overflow:hidden!important;background:#100019!important;
-}
-#adminLogin .admin-login-art{position:absolute;inset:0;width:100%;height:100%;object-fit:fill;display:block;z-index:1;pointer-events:none}
-#adminLogin .admin-login-back{position:absolute;z-index:4;left:12px;top:12px;padding:9px 14px;border:1px solid rgba(255,204,75,.9);border-radius:12px;background:rgba(30,0,48,.88);color:#ffd66b;font-weight:800;font-size:clamp(12px,2.4vw,18px);cursor:pointer}
-#adminLogin .admin-login-controls{position:absolute;inset:0;z-index:3;margin:0;padding:0}
-#adminLogin #adminPassword{position:absolute;left:30.2%;top:47.4%;width:53.7%;height:13.5%;box-sizing:border-box;border:0!important;outline:0!important;border-radius:16px;background:transparent!important;color:#fff!important;font-size:clamp(15px,4vw,34px)!important;padding:0 4.2%!important;box-shadow:none!important}
-#adminLogin #adminPassword::placeholder{color:rgba(255,255,255,.82)}
-#adminLogin .admin-login-controls>button[type=submit]{position:absolute;left:31.3%;top:64.5%;width:37%;height:14.5%;border:0!important;border-radius:60px;background:transparent!important;box-shadow:none!important;cursor:pointer}
-#adminLogin .admin-login-controls>button[type=submit]:active{background:rgba(255,255,255,.12)!important}
-#adminLogin .admin-login-error{position:absolute;left:28%;top:80%;width:58%;margin:0;text-align:center;color:#ff7777;font-size:clamp(11px,2.4vw,16px);font-weight:800;text-shadow:0 1px 4px #180020}
-@media(max-width:760px){
- #sk-page-view #adminLogin.admin-login-screen{height:calc(100dvh - 18px)!important;min-height:440px!important}
- #adminLogin .admin-login-back{left:8px;top:8px;padding:7px 10px}
-}
-
-/* ADMIN LOGIN: use the uploaded golden Admin Panel artwork across the entire right pane. */
-#sk-page-view #adminLogin.admin-login-screen{isolation:isolate}
-#adminLogin .admin-login-art{object-fit:fill!important;object-position:center center!important}
-#adminLogin .admin-login-back{left:12px!important;top:12px!important;z-index:5!important}
-#adminLogin .admin-login-controls{pointer-events:none}
-#adminLogin #adminPassword{left:30.2%!important;top:47.4%!important;width:53.7%!important;height:13.5%!important;min-height:0!important;box-sizing:border-box!important;border:0!important;border-radius:16px!important;background:transparent!important;color:#fff!important;padding:0 4.2%!important;font-size:clamp(15px,4vw,34px)!important;box-shadow:none!important;pointer-events:auto!important}
-#adminLogin #adminPassword::placeholder{color:rgba(255,255,255,.82)}
-#adminLogin .admin-login-controls>button[type=submit]{left:31.3%!important;top:64.5%!important;width:37%!important;height:14.5%!important;min-height:0!important;border:0!important;border-radius:60px!important;background:transparent!important;color:transparent!important;font-size:0!important;box-shadow:none!important;pointer-events:auto!important}
-#adminLogin .admin-login-controls>button[type=submit]:active{background:rgba(255,255,255,.12)!important}
-#adminLogin .admin-login-error{left:28%!important;top:80%!important;width:58%!important;margin:0!important;color:#fff!important;background:rgba(70,0,0,.68);border-radius:8px;padding:4px;box-sizing:border-box;text-align:center}
-#adminLogin .admin-login-fallback-title{display:none!important}
-@media(max-width:760px){
- #sk-page-view #adminLogin.admin-login-screen{height:100%!important;min-height:0!important}
- #adminLogin .admin-login-back{left:8px!important;top:8px!important;padding:7px 10px!important}
-}
 
 </style>
 <!-- UPGRADE -->
@@ -3077,7 +2920,7 @@ class="hidden"
 >
 
 <h2>👤 ПРОФИЛЬ</h2>
-<div class="panel profile-identity-card"><div class="profile-banner" id="profileBanner" aria-hidden="true"></div><div class="small">ТВОЙ NICKNAME</div><span id="profileCustomAvatar" class="profile-custom-avatar" aria-hidden="true"></span><strong id="profileNickname" style="display:block;font-size:22px;margin:8px 0 12px">Player</strong><button class="secondary" onclick="changeNickname()">✏️ ИЗМЕНИТЬ NICKNAME</button><div id="officialInfiniteBalanceControl" style="display:none;margin-top:12px"><div class="small" id="officialInfiniteBalanceStatus">Бесконечный баланс выключен</div><button class="secondary" id="officialInfiniteBalanceButton" type="button" style="width:100%;margin-top:8px" onclick="toggleProtectedInfiniteBalance()">♾️ ВКЛЮЧИТЬ БЕСКОНЕЧНЫЙ БАЛАНС</button></div></div>
+<div class="panel profile-identity-card"><div class="profile-banner" id="profileBanner" aria-hidden="true"></div><div class="small">ТВОЙ NICKNAME</div><span id="profileCustomAvatar" class="profile-custom-avatar" aria-hidden="true"></span><strong id="profileNickname" style="display:block;font-size:22px;margin:8px 0 12px">Player</strong><button class="secondary" onclick="changeNickname()">✏️ ИЗМЕНИТЬ NICKNAME</button></div>
 <div id="specialAccountControls"></div>
 
 <div class="profile-hero">
@@ -3368,121 +3211,13 @@ class="hidden"
 <div class="settings-picture-ui" aria-label="Панель настроек SKEBOB CASINO">
   <img class="settings-picture-ui-image" src="https://raw.githubusercontent.com/burovm079-dot/skebobgamecasino/main/assets/games/assets/games/%D0%9D%D0%B5%D0%BE%D0%BD%D0%BE%D0%B2%D0%B0%D1%8F%20%D0%BF%D0%B0%D0%BD%D0%B5%D0%BB%D1%8C%20%D0%BD%D0%B0%D1%81%D1%82%D1%80%D0%BE%D0%B5%D0%BA%20SKEBOB%20CASINO.png" alt="SKEBOB CASINO — настройки" />
   <div class="settings-remove-theme" aria-hidden="true"></div>
+  <div class="settings-remove-extra-area" aria-hidden="true"></div>
 
   <button type="button" class="settings-picture-hit settings-currency-rub" aria-label="Выбрать рубли" onclick="setCurrency('RUB')"></button>
   <button type="button" class="settings-picture-hit settings-currency-usd" aria-label="Выбрать доллары" onclick="setCurrency('USD')"></button>
   <button type="button" class="settings-picture-hit settings-music-hit" id="settingsMusicButton" aria-label="Включить или выключить музыку" aria-pressed="false" onclick="toggleSettingsMusic()"></button>
-  <button type="button" class="settings-picture-hit settings-admin" aria-label="Открыть админ-панель" onclick="showPage('adminLogin')"></button>
-  <a class="settings-picture-hit settings-buy" href="https://t.me/ggggg06767" target="_blank" rel="noopener noreferrer" aria-label="Купить админ-панель"></a>
   <button type="button" class="settings-picture-hit settings-reset" aria-label="Сбросить прогресс" onclick="resetGame()"></button>
 </div>
-</section>
-
-<!-- ADMIN LOGIN -->
-
-<section id="adminLogin" class="hidden admin-login-screen">
-  <img class="admin-login-art" src="/skebobgamecasino/assets/games/assets/games/IMG_20261105_121746_442.jpg" alt="">
-  <button type="button" class="admin-login-back" onclick="showPage('settings')">← Назад</button>
-  <form class="admin-login-controls" onsubmit="event.preventDefault();checkAdminCode();">
-    <h2 class="admin-login-fallback-title">👑 ADMIN PANEL</h2>
-    <input type="password" id="adminPassword" placeholder="Введите код..." aria-label="Введите код" autocomplete="current-password">
-    <button type="submit" aria-label="Войти">ВОЙТИ</button>
-    <p id="adminError" class="admin-login-error" role="alert"></p>
-  </form>
-</section>
-
-<!-- ADMIN PANEL -->
-
-<section
-id="adminPanel"
-class="hidden"
->
-
-<button
-class="back"
-onclick="showPage('settings')"
->
-← Выйти
-</button>
-
-<h2>🛠 ADMIN PANEL</h2>
-
-<div class="panel">
-
-<h3>💰 Баланс</h3>
-
-<p>
-Баланс:
-<b id="adminBalance">
-0
-</b>
-🪙
-</p>
-
-<input
-id="adminAmount"
-type="number"
-placeholder="Сумма"
->
-
-<div class="admin-actions">
-
-<button
-class="admin-btn green"
-onclick="adminChange(1)"
->
-Зачислить
-</button>
-
-<button
-class="admin-btn red"
-onclick="adminChange(-1)"
->
-Списать
-</button>
-
-<button
-class="admin-btn blue admin-full"
-onclick="adminSet()"
->
-Установить баланс
-</button>
-
-</div>
-
-
-
-<div class="admin-toggle">
-
-<div>
-
-<b>
-🎯 Всегда выигрыш
-</b>
-
-<div class="small">
-Победа в игровых режимах
-</div>
-
-</div>
-
-<label class="switch">
-
-<input
-type="checkbox"
-id="adminAlwaysWin"
-onchange="setAlwaysWin(this.checked)"
->
-
-<span class="switch-slider"></span>
-
-</label>
-
-</div>
-
-
-</div>
-
 </section>
 
 </main>
@@ -3498,8 +3233,6 @@ const SKEBOB_TAP_WINDOW=60*60*1000;
 /* =========================
    DATA
 ========================= */
-
-const ADMIN_CODE="PASITO3_lirika";
 
 const PROMOCODES={
 SKEBOB:{reward:50}
@@ -3716,13 +3449,6 @@ inventory:[],
 
 stats:{...defaultStats},
 
-admin:{
-alwaysWin:false,
-manualLevel:null,
-infiniteBalance:false,
-balanceBeforeInfinite:null
-}
-
 };
 
 let hasExistingSave=false;
@@ -3746,14 +3472,6 @@ stats:{
 ...defaultStats,
 ...(saved.stats||{})
 },
-
-admin:{
-alwaysWin:false,
-manualLevel:null,
-infiniteBalance:false,
-balanceBeforeInfinite:null,
-...(saved.admin||{})
-}
 
 };
 
@@ -3783,12 +3501,8 @@ state.balance=Number.isFinite(Number(state.balance))?Math.max(0,Math.min(Number.
 if(!Array.isArray(state.inventory))state.inventory=[];
 state.inventory=state.inventory.filter(item=>item&&typeof item==="object").map((item,i)=>({...item,id:item.id??(Date.now()+i),value:Number.isFinite(Number(item.value))?Math.max(0,Number(item.value)):0,name:String(item.name||"Предмет")}));
 for(const key of Object.keys(defaultStats)){const value=Number(state.stats[key]);state.stats[key]=Number.isFinite(value)?Math.max(0,value):0;}
-if(!state.admin||typeof state.admin!=="object")state.admin={alwaysWin:false,manualLevel:null,infiniteBalance:false,balanceBeforeInfinite:null};
-state.admin.alwaysWin=state.admin.alwaysWin===true;
-state.admin.infiniteBalance=state.admin.infiniteBalance===true;
-if(!["vip","player","newbie",null].includes(state.admin.manualLevel))state.admin.manualLevel=null;
-if(state.admin.infiniteBalance)state.balance=Number.MAX_SAFE_INTEGER;
-if(state.dailyTasks&&typeof state.dailyTasks==="object"){
+delete state.admin;
+ if(state.dailyTasks&&typeof state.dailyTasks==="object"){
  if(!state.dailyTasks.progress||typeof state.dailyTasks.progress!=="object"||Array.isArray(state.dailyTasks.progress))state.dailyTasks.progress={};
  for(const [key,value] of Object.entries(state.dailyTasks.progress)){const n=Number(value);state.dailyTasks.progress[key]=Number.isFinite(n)?Math.max(0,n):0;}
  if(!Array.isArray(state.dailyTasks.claimed))state.dailyTasks.claimed=[];
@@ -3840,7 +3554,6 @@ function storageSet(key,value){try{window.localStorage.setItem(key,value);return
 
 function getCurrency(){return storageGet("skebobCurrency")==="USD"?"USD":"RUB";}
 function formatMoney(amount){
- if(state.admin&&state.admin.infiniteBalance)return "∞";
  const n=Number(amount)||0;
  return getCurrency()==="USD"?"$"+(n/80).toLocaleString("en-US",{minimumFractionDigits:2,maximumFractionDigits:2}):n.toLocaleString("ru-RU",{minimumFractionDigits:2,maximumFractionDigits:2})+" ₽";
 }
@@ -3932,7 +3645,7 @@ return "newbie";
 }
 
 function getCasinoLevel(){
-return state.admin.manualLevel || getAutomaticLevel();
+return getAutomaticLevel();
 }
 
 /*
@@ -3942,7 +3655,7 @@ JS ASI защита:
 
 function currentCasinoLevel(){
 
-return state.admin.manualLevel || getAutomaticLevel();
+return getAutomaticLevel();
 
 }
 
@@ -4064,13 +3777,7 @@ function render(){
 
 document.getElementById("balance").textContent=formatMoney(state.balance);
 const dashboardBalance=document.getElementById("dashboardBalance");if(dashboardBalance)dashboardBalance.textContent=formatMoney(state.balance);
-
-document.getElementById("adminBalance").textContent=formatMoney(state.balance);
-
 renderProfile();
-
-renderAdminSettings();
-
 }
 
 /* =========================
@@ -4097,12 +3804,12 @@ let pageView=work&&work.querySelector("#sk-page-view");
 if(work&&!pageView){pageView=document.createElement("div");pageView.id="sk-page-view";pageView.className="sk-page-view";if(games)games.insertAdjacentElement("afterend",pageView);else work.appendChild(pageView);}
 if(pageView){pageView.style.display=isDashboard?"none":"block";pageView.style.visibility="visible";pageView.style.opacity="1";pageView.style.width="100%";pageView.style.minWidth="0";pageView.style.minHeight="0";pageView.style.boxSizing="border-box";}
 const topBar=work&&work.querySelector(".sk-top");
-if(id==="skebobTap"||id==="adminLogin"){
+if(id==="skebobTap"){
  if(id==="skebobTap"&&shell)shell.classList.add("tap-workspace-active");
- if(work){work.style.setProperty("display","flex","important");work.style.setProperty("flex-direction","column","important");work.style.setProperty("grid-column","2","important");work.style.setProperty("min-width","0","important");work.style.setProperty("min-height","0","important");work.style.setProperty("height","100dvh","important");work.style.setProperty("overflow-y",id==="adminLogin"?"hidden":"auto","important");}
+ if(work){work.style.setProperty("display","flex","important");work.style.setProperty("flex-direction","column","important");work.style.setProperty("grid-column","2","important");work.style.setProperty("min-width","0","important");work.style.setProperty("min-height","0","important");work.style.setProperty("height","100dvh","important");work.style.setProperty("overflow-y","auto","important");}
  if(topBar)topBar.style.setProperty("display","none","important");
  if(games)games.style.setProperty("display","none","important");
- if(pageView){pageView.style.setProperty("display","flex","important");pageView.style.setProperty("flex","1 1 auto","important");pageView.style.setProperty("flex-direction","column","important");pageView.style.setProperty("align-items","stretch","important");pageView.style.setProperty("justify-content","flex-start","important");pageView.style.setProperty("width","100%","important");pageView.style.setProperty("min-width","0","important");pageView.style.setProperty("min-height","0","important");pageView.style.setProperty("height","100%","important");pageView.style.setProperty("margin","0","important");pageView.style.setProperty("padding","0","important");pageView.style.setProperty("overflow",id==="adminLogin"?"hidden":"visible","important");}
+ if(pageView){pageView.style.setProperty("display","flex","important");pageView.style.setProperty("flex","1 1 auto","important");pageView.style.setProperty("flex-direction","column","important");pageView.style.setProperty("align-items","stretch","important");pageView.style.setProperty("justify-content","flex-start","important");pageView.style.setProperty("width","100%","important");pageView.style.setProperty("min-width","0","important");pageView.style.setProperty("min-height","0","important");pageView.style.setProperty("height","100%","important");pageView.style.setProperty("margin","0","important");pageView.style.setProperty("padding","0","important");pageView.style.setProperty("overflow","visible","important");}
 }else{
  if(shell)shell.classList.remove("tap-workspace-active");
  [work,topBar,games,pageView].forEach(el=>{if(!el)return;["display","flex-direction","grid-column","min-width","min-height","height","overflow-y","flex","align-items","justify-content","width","margin","padding","overflow"].forEach(prop=>el.style.removeProperty(prop));});
@@ -4146,7 +3853,6 @@ console.warn("Страница не найдена:",id);
 document.querySelectorAll(".nav button").forEach(b=>b.classList.remove("active"));
 if(button)button.classList.add("active");
 if(id==="profile")renderProfile();
-if(id==="adminPanel")renderAdminSettings();
 window.scrollTo({top:0,behavior:"auto"});
 }
 
@@ -4381,12 +4087,7 @@ info.name
 
 setText(
 "profileLevelDescription",
-info.description+
-(
-state.admin.manualLevel
-?" • установлен администратором"
-:""
-)
+info.description
 );
 
 const total=
@@ -4513,7 +4214,7 @@ state.stats.turnover
 
 setText(
 "profileBalance",
-state.admin.infiniteBalance?"∞":Number(state.balance).toLocaleString("ru-RU",{minimumFractionDigits:2,maximumFractionDigits:2})+" 🪙"
+Number(state.balance).toLocaleString("ru-RU",{minimumFractionDigits:2,maximumFractionDigits:2})+" 🪙"
 );
 
 }
@@ -5589,7 +5290,7 @@ const commission=document.getElementById("commissionText");
 if(chanceText)chanceText.textContent=chance+"%";
 if(values)values.textContent=stake.toLocaleString("ru-RU")+" → "+Math.floor(stake*safeMultiplier).toLocaleString("ru-RU")+" 🪙";
 if(circle)circle.style.setProperty("--chance",chance+"%");
-if(commission)commission.textContent=state.admin?.alwaysWin?"🎯 ADMIN: всегда выигрыш":"Шанс успеха: "+chance+"%";
+if(commission)commission.textContent="Шанс успеха: "+chance+"%";
 }
 
 function spinUpgrade(){
@@ -5617,10 +5318,9 @@ addTurnover(stake);
 state.stats.upgrades++;
 save();
 
-const isAdminWin=Boolean(state.admin?.alwaysWin);
 const winningAngle=Math.random()*360;
-const won=isAdminWin||winningAngle<chance*3.6;
-const finalAngle=isAdminWin?Math.random()*chance*3.6:winningAngle;
+const won=winningAngle<chance*3.6;
+const finalAngle=winningAngle;
 
 arrow.style.transition="none";
 arrow.style.transform="rotate(0deg)";
@@ -5891,23 +5591,7 @@ mineMultiplier
 ","
 );
 
-document.getElementById(
-"mineChance"
-).textContent=
-state.admin.alwaysWin
-?
-"100%"
-:
-Math.round(
-(
-25-
-mineCount
-)
-/
-25*
-100
-)+
-"%";
+document.getElementById("mineChance").textContent=Math.round((25-mineCount)/25*100)+"%";
 
 updateMineControls();
 }
@@ -6019,16 +5703,9 @@ grid.appendChild(b);
 
 }
 
-document.getElementById(
-"mineStatus"
-).textContent=
-state.admin.alwaysWin
-?
-"🎯 ADMIN: всегда выигрыш включён."
-:
-"Игра началась.";
+document.getElementById("mineStatus").textContent="Игра началась.";
 
-updateMineStats();
+ updateMineStats();
 
 }
 
@@ -6041,15 +5718,7 @@ b.disabled
 
 b.disabled=true;
 
-/*
-При alwaysWin выбранная клетка
-никогда не считается миной.
-*/
-
-const hitMine=
-!state.admin.alwaysWin
-&&
-mines.includes(i);
+const hitMine=mines.includes(i);
 
 if(hitMine){
 
@@ -6765,98 +6434,6 @@ function loadCasinoMusicSetting(){
  }
 }
 /* =========================
-   ADMIN
-========================= */
-
-function checkAdminCode(){
-
-if(
-document.getElementById(
-"adminPassword"
-).value===
-ADMIN_CODE
-){
-
-document.getElementById(
-"adminPassword"
-).value="";
-
-document.getElementById(
-"adminError"
-).textContent="";
-
-showPage(
-"adminPanel"
-);
-
-}else{
-
-document.getElementById(
-"adminError"
-).textContent=
-"Неверный код.";
-
-}
-
-}
-
-function adminChange(sign){
- const input=document.getElementById("adminAmount");
- const n=Number(input?.value);
- if(!Number.isSafeInteger(n)||n<0||![1,-1].includes(sign))return;
- const delta=sign*n;
- state.balance=Math.max(0,Math.min(Number.MAX_SAFE_INTEGER,state.balance+delta));
- save();
-}
-
-function adminSet(){
- const input=document.getElementById("adminAmount");
- const n=Number(input?.value);
- if(!Number.isSafeInteger(n)||n<0)return;
- state.balance=n;
- save();
-}
-
-function setAlwaysWin(value){
-
-state.admin.alwaysWin=
-Boolean(value);
-
-save();
-
-updateUpgradeInfo();
-
-updateMineStats();
-
-}
-
-function toggleInfiniteBalance(){
- if(!state.admin.infiniteBalance){
-  state.admin.balanceBeforeInfinite=state.balance;
-  state.admin.infiniteBalance=true;
-  state.balance=Number.MAX_SAFE_INTEGER;
- }else{
-  state.admin.infiniteBalance=false;
-  const previous=Number(state.admin.balanceBeforeInfinite);
-  state.balance=Number.isFinite(previous)&&previous>=0?previous:20;
-  state.admin.balanceBeforeInfinite=null;
- }
- save();
- renderAdminSettings();
-}
-
-function renderAdminSettings(){
- const infiniteButton=document.getElementById("adminInfiniteBalanceBtn");
- if(infiniteButton){
-  infiniteButton.textContent=state.admin.infiniteBalance?"ВЫКЛЮЧИТЬ":"ВКЛЮЧИТЬ";
-  infiniteButton.classList.toggle("red",!!state.admin.infiniteBalance);
-  infiniteButton.classList.toggle("gold-admin",!state.admin.infiniteBalance);
- }
- const always=document.getElementById("adminAlwaysWin");
- if(always) always.checked=Boolean(state.admin.alwaysWin);
-}
-
-/* =========================
    RESET
 ========================= */
 
@@ -6873,7 +6450,6 @@ state={
  tapGame:{hourStartedAt:0,earnedCents:0,pendingCents:0,cooldownUntil:0},
  inventory:[],
  stats:{...defaultStats},
- admin:{alwaysWin:false,manualLevel:null,infiniteBalance:false,balanceBeforeInfinite:null},
  profileStyle:{frame:"classic",background:"default",accent:"gold",collapsed:false},
  dailyTasks:{dayKey:getDailyTaskDayKey(),progress:{},claimed:[]},
  createdAt:resetCreatedAt,
@@ -7415,9 +6991,9 @@ function renderSpecialAccountControls(){
  const isSpecial=bjIsSpecialAccount(nick);
  if(!isSpecial&&!isOfficial){host.innerHTML="";return;}
  let html='<div class="special-account-controls"><b>⭐ Управление аккаунтом</b>';
- if(isSpecial){
-  html+='<div class="small">Бесконечный баланс: '+(state.admin.infiniteBalance?"ВКЛЮЧЁН":"ВЫКЛЮЧЕН")+'</div><button class="secondary" type="button" onclick="toggleProtectedInfiniteBalance()">'+(state.admin.infiniteBalance?"Выключить бесконечный баланс":"Включить бесконечный баланс")+'</button>';
- }
+
+
+
  if(isOfficial){
   const selectedBadge=storageGet(BJ_OFFICIAL_BADGE_KEY)||"black";
   html+='<div class="small" style="margin-top:10px">Цвет официальной галочки</div>';
@@ -7430,25 +7006,6 @@ function renderSpecialAccountControls(){
  }
  host.innerHTML=html+'</div>';
 }
-function bjCanUseInfiniteBalance(nick){
- return bjIsSpecialAccount(nick)||bjIsOfficialNickname(nick);
-}
-function toggleProtectedInfiniteBalance(){
- if(!bjCanUseInfiniteBalance(getNickname()))return;
- if(state.admin.infiniteBalance){
-  const restore=Number(state.admin.balanceBeforeInfinite);
-  state.balance=Number.isFinite(restore)?Math.max(0,Math.floor(restore)):20;
-  state.admin.infiniteBalance=false;
-  state.admin.balanceBeforeInfinite=null;
- }else{
-  state.admin.balanceBeforeInfinite=Number(state.balance)||0;
-  state.admin.infiniteBalance=true;
-  state.balance=Number.MAX_SAFE_INTEGER;
- }
- save();
- renderSpecialAccountControls();
- updateNicknameUI();
-}
 function bjEscape(v){return String(v).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]))}
 function persistNickname(nick){
  const clean=String(nick||"").trim().replace(/\\s+/g," ").slice(0,18);
@@ -7458,8 +7015,6 @@ function persistNickname(nick){
  try{
   const p=document.getElementById("profileNickname");
   if(p)p.innerHTML=bjEscape(clean)+bjOfficialBadge(clean)+bjSpecialAccountBadge(clean);
-  const officialBalanceControl=document.getElementById("officialInfiniteBalanceControl");
-  if(officialBalanceControl)officialBalanceControl.style.display=bjIsOfficialNickname(clean)?"block":"none";
   if(typeof renderSpecialAccountControls==="function")renderSpecialAccountControls();
   if(typeof renderProfile==="function")renderProfile();
  }catch(error){console.warn("Nickname saved; profile refresh failed:",error);}
@@ -7469,15 +7024,6 @@ function updateNicknameUI(){
  const nick=getNickname();
  const p=document.getElementById("profileNickname");
  if(p)p.innerHTML=bjEscape(nick)+bjOfficialBadge(nick)+bjSpecialAccountBadge(nick);
- const officialBalanceControl=document.getElementById("officialInfiniteBalanceControl");
- if(officialBalanceControl){
-  const allowed=bjIsOfficialNickname(nick);
-  officialBalanceControl.style.display=allowed?"block":"none";
-  const status=document.getElementById("officialInfiniteBalanceStatus");
-  const button=document.getElementById("officialInfiniteBalanceButton");
-  if(status)status.textContent="Бесконечный баланс: "+(state.admin.infiniteBalance?"ВКЛЮЧЁН":"ВЫКЛЮЧЕН");
-  if(button)button.textContent=state.admin.infiniteBalance?"♾️ ВЫКЛЮЧИТЬ БЕСКОНЕЧНЫЙ БАЛАНС":"♾️ ВКЛЮЧИТЬ БЕСКОНЕЧНЫЙ БАЛАНС";
- }
  renderSpecialAccountControls();
 }
 async function initNickname(){
@@ -7491,13 +7037,7 @@ async function initNickname(){
  }
  if(nick&&bjIsSpecialAccount(nick)&&!(await bjRequestSpecialAccountPassword(nick))){
   nick=randomNickname();storageSet(NICKNAME_KEY,nick);
- }
- if(state.admin.infiniteBalance&&!bjCanUseInfiniteBalance(nick)){
-  const restore=Number(state.admin.balanceBeforeInfinite);
-  state.balance=Number.isFinite(restore)?Math.max(0,Math.floor(restore)):20;
-  state.admin.infiniteBalance=false;state.admin.balanceBeforeInfinite=null;save();
- }
- updateNicknameUI();
+ }updateNicknameUI();
 }
 async function saveFirstNickname(){
  const i=document.getElementById("nicknameInput"),nick=(i?.value||"").trim().replace(/\s+/g," ").slice(0,18);
@@ -7535,13 +7075,7 @@ async function changeNickname(){
    if(bjIsSpecialAccount(nick)&&!(await bjRequestSpecialAccountPassword(nick)))return;
    if(bjIsOfficialNickname(nick)&&!(await bjRequestOfficialCode()))return;
    await window.skebobChangeNickname(nick);
-   status.textContent="Ник сохранён!";
-   if(state.admin.infiniteBalance&&!bjIsSpecialAccount(nick)){
-    const restore=Number(state.admin.balanceBeforeInfinite);
-    state.balance=Number.isFinite(restore)?Math.max(0,Math.floor(restore)):20;
-    state.admin.infiniteBalance=false;state.admin.balanceBeforeInfinite=null;save();
-   }
-   close();
+   status.textContent="Ник сохранён!";close();
 
   }catch(error){
    console.error("Nickname save failed:",error);
@@ -7579,7 +7113,7 @@ function handleSkebobTap(){
   if(t.earnedCents>=SKEBOB_TAP_LIMIT)t.cooldownUntil=now+SKEBOB_TAP_WINDOW;
   const persisted=storageSet("skebobSave",JSON.stringify(state));
   const balanceText=formatMoney(state.balance);
-  ["balance","dashboardBalance","adminBalance"].forEach(id=>{const el=document.getElementById(id);if(el)el.textContent=balanceText;});
+  ["balance","dashboardBalance"].forEach(id=>{const el=document.getElementById(id);if(el)el.textContent=balanceText;});
   renderSkebobTap();
   const status=document.getElementById("tapStatus");
   if(status){status.textContent=persisted?"✅ +0,01 ₽ за тап добавлено к балансу!":"Тап засчитан, но сохранение браузера недоступно.";}
