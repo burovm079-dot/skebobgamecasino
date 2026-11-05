@@ -145,6 +145,8 @@ async function loadPlayerData(){
  if(typeof render==="function")render();
  if(typeof updateUpgradeInfo==="function")updateUpgradeInfo();
  if(typeof updateNicknameUI==="function")updateNicknameUI();
+ // Загружаем галочку именно текущего вошедшего игрока из Supabase и показываем её в профиле.
+ if(typeof window.refreshMyPlayerBadge==="function")await window.refreshMyPlayerBadge();
  window.dispatchEvent(new Event("skebob-auth-ready"));
  const modal=document.getElementById("skebobAuthModal");if(modal)modal.style.display="none";
 }
