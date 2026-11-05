@@ -2505,6 +2505,26 @@ body.tap-page #skebobDashboard #skebobTap .tap-main{display:block!important;marg
  body.tap-page #skebobDashboard #sk-page-view>section#skebobTap:not(.hidden){padding:10px!important;min-height:calc(100dvh - 12px)!important}
 }
 @media(max-width:380px){body.tap-page #skebobDashboard{grid-template-columns:76px minmax(0,1fr)!important}body.tap-page #skebobDashboard>.sk-side{width:76px!important}}
+
+/* ADMIN LOGIN ARTWORK WITH REAL INTERACTIVE CONTROLS */
+#sk-page-view #adminLogin.admin-login-screen{
+ position:relative!important;display:block!important;width:100%!important;max-width:100%!important;
+ height:calc(100dvh - 24px)!important;min-height:520px!important;max-height:none!important;
+ margin:0!important;padding:0!important;overflow:hidden!important;background:#100019!important;
+}
+#adminLogin .admin-login-art{position:absolute;inset:0;width:100%;height:100%;object-fit:fill;display:block;z-index:1;pointer-events:none}
+#adminLogin .admin-login-back{position:absolute;z-index:4;left:12px;top:12px;padding:9px 14px;border:1px solid rgba(255,204,75,.9);border-radius:12px;background:rgba(30,0,48,.88);color:#ffd66b;font-weight:800;font-size:clamp(12px,2.4vw,18px);cursor:pointer}
+#adminLogin .admin-login-controls{position:absolute;inset:0;z-index:3;margin:0;padding:0}
+#adminLogin #adminPassword{position:absolute;left:30.2%;top:47.4%;width:53.7%;height:13.5%;box-sizing:border-box;border:0!important;outline:0!important;border-radius:16px;background:transparent!important;color:#fff!important;font-size:clamp(15px,4vw,34px)!important;padding:0 4.2%!important;box-shadow:none!important}
+#adminLogin #adminPassword::placeholder{color:rgba(255,255,255,.82)}
+#adminLogin .admin-login-controls>button[type=submit]{position:absolute;left:31.3%;top:64.5%;width:37%;height:14.5%;border:0!important;border-radius:60px;background:transparent!important;box-shadow:none!important;cursor:pointer}
+#adminLogin .admin-login-controls>button[type=submit]:active{background:rgba(255,255,255,.12)!important}
+#adminLogin .admin-login-error{position:absolute;left:28%;top:80%;width:58%;margin:0;text-align:center;color:#ff7777;font-size:clamp(11px,2.4vw,16px);font-weight:800;text-shadow:0 1px 4px #180020}
+@media(max-width:760px){
+ #sk-page-view #adminLogin.admin-login-screen{height:calc(100dvh - 18px)!important;min-height:440px!important}
+ #adminLogin .admin-login-back{left:8px;top:8px;padding:7px 10px}
+}
+
 </style>
 <!-- CASES -->
 
@@ -3563,42 +3583,14 @@ class="hidden"
 
 <!-- ADMIN LOGIN -->
 
-<section
-id="adminLogin"
-class="hidden"
->
-
-<button
-class="back"
-onclick="showPage('settings')"
->
-← Назад
-</button>
-
-<div class="panel">
-
-<h2>🔐 ADMIN</h2>
-
-<input
-type="password"
-id="adminPassword"
-placeholder="Код"
->
-
-<button
-class="goldbtn"
-onclick="checkAdminCode()"
->
-ВОЙТИ
-</button>
-
-<p
-id="adminError"
-class="small"
-></p>
-
-</div>
-
+<section id="adminLogin" class="hidden admin-login-screen">
+  <img class="admin-login-art" src="/skebobgamecasino/assets/games/assets/games/admin-panel-login.jpg" alt="ADMIN PANEL">
+  <button type="button" class="admin-login-back" onclick="showPage('settings')">← Назад</button>
+  <form class="admin-login-controls" onsubmit="event.preventDefault();checkAdminCode();">
+    <input type="password" id="adminPassword" placeholder="" aria-label="Введите код" autocomplete="current-password">
+    <button type="submit" aria-label="Войти"></button>
+    <p id="adminError" class="admin-login-error" role="alert"></p>
+  </form>
 </section>
 
 <!-- ADMIN PANEL -->
