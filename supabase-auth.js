@@ -39,25 +39,15 @@ async function changeAccountNickname(value){
  if(problem)throw new Error(problem);
  if(!session||!session.user||!session.user.id)throw new Error("Сначала войди в аккаунт.");
  if(nick.toLocaleLowerCase("ru")===String(currentNickname).toLocaleLowerCase("ru"))return true;
- const oldEmail=emailForNickname(currentNickname);
- const newEmail=emailForNickname(nick);
- const updated=await authUpdateUser({email:newEmail,data:{nickname:nick}});
- if(!updated||!updated.email||updated.email.toLowerCase()!==newEmail.toLowerCase()){
-  throw new Error("Supabase ожидает подтверждение смены Email. Проверь настройки Email change confirmation / Secure email change в Authentication.");
- }
- try{
-  const rows=await rest("player_profiles?user_id=eq."+encodeURIComponent(session.user.id),{
-   method:"PATCH",
-   headers:{"Prefer":"return=representation"},
-   body:JSON.stringify({nickname:nick})
-  });
-  if(!Array.isArray(rows)||!rows.length)throw new Error("Профиль не обновился. Повтори попытку.");
- }catch(error){
-  try{await authUpdateUser({email:oldEmail,data:{nickname:currentNickname}});}catch(rollbackError){console.error("Nickname rollback failed:",rollbackError);}
-  throw error;
- }
+ const rows=await rest("player_profiles?user_id=eq."+encodeURIComponent(session.user.id),{
+  method:"PATCH",
+  headers:{"Prefer":"return=representation"},
+  body:JSON.stringify({nickname:nick})
+ });
+ if(!Array.isArray(rows)||!rows.length)throw new Error("Профиль не обновился. Возможно, этот ник уже занят.");
+ try{await authUpdateUser({data:{...(session.user.user_metadata||{}),nickname:nick}});}catch(error){console.warn("Nickname metadata update:",error);}
  currentNickname=nick;
- if(session.user){session.user.email=newEmail;session.user.user_metadata={...(session.user.user_metadata||{}),nickname:nick};}
+ if(session.user){session.user.user_metadata={...(session.user.user_metadata||{}),nickname:nick};}
  saveSession(session);
  try{localStorage.setItem("skebobNickname",nick);}catch(_){}
  if(typeof updateNicknameUI==="function")updateNicknameUI();
@@ -167,7 +157,13 @@ async function submitAuth(){
  if(button){button.disabled=true;button.textContent="ПОДОЖДИ…";}
  showMessage(authMode==="register"?"Создаём аккаунт…":"Выполняем вход…");
  try{
-  const email=emailForNickname(nick);
+  let email=emailForNickname(nick);
+  if(authMode==="login"){
+   const lookupResponse=await fetch(SB_URL+"/rest/v1/rpc/get_player_login_email",{method:"POST",headers:{"apikey":SB_KEY,"Content-Type":"application/json"},body:JSON.stringify({p_nickname:nick})});
+   const lookupData=await parseResponse(lookupResponse);
+   email=typeof lookupData==="string"?lookupData:"";
+   if(!email)throw new Error("Игрок с таким ником не найден.");
+  }
   if(authMode==="register"){
    const result=await authRequest("signup",{email,password,data:{nickname:nick}});
    if(!result.session){
