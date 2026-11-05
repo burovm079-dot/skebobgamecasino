@@ -66,7 +66,16 @@ function saveSession(value){
 }
 async function rest(path,options={}){
  if(!session||!session.access_token)throw new Error("Сессия не найдена. Войди в аккаунт ещё раз.");
- const send=()=>fetch(SB_URL+"/rest/v1/"+path,{...options,headers:{"apikey":SB_KEY,"Authorization":"Bearer "+session.access_token,"Content-Type":"application/json","Accept":"application/json",...(options.headers||{})}});
+ const send=async()=>{
+  const controller=new AbortController();
+  const timeout=setTimeout(()=>controller.abort(),15000);
+  try{
+   return await fetch(SB_URL+"/rest/v1/"+path,{...options,signal:controller.signal,headers:{"apikey":SB_KEY,"Authorization":"Bearer "+session.access_token,"Content-Type":"application/json","Accept":"application/json",...(options.headers||{})}});
+  }catch(error){
+   if(error&&error.name==="AbortError")throw new Error("Supabase не ответил за 15 секунд. Проверь подключение и настройки проекта.");
+   throw error;
+  }finally{clearTimeout(timeout);}
+ };
  let response=await send();
  // Если access token истёк во время игры, обновляем сессию и повторяем запрос.
  if(response.status===401&&await refreshSession())response=await send();
