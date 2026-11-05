@@ -16,6 +16,8 @@ const suits=['♠','♥','♦','♣'],ranks='23456789TJQKA'.split(''),rv=Object.
 const $=id=>document.getElementById(id);
 let deck=[],players=[],board=[],pot=0,street=0,currentBet=0,active=false,handOver=true,playerStack=1000;
 let current=0,acted=new Set(),turnTimer=null,botTimer=null,secondsLeft=15,turnToken=0;
+function readCasinoBalance(){try{return Math.max(0,Number(JSON.parse(localStorage.getItem('skebobSave')||'{}').balance)||0)}catch(e){return 0}}
+function saveCasinoBalance(n){try{const s=JSON.parse(localStorage.getItem('skebobSave')||'{}');s.balance=Math.max(0,Math.floor(n));localStorage.setItem('skebobSave',JSON.stringify(s));return true}catch(e){return false}}
 const roundName=['Префлоп','Флоп','Терн','Ривер','Шоудаун'];
 function shuffle(a){for(let i=a.length-1;i>0;i--){let j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a}
 function card(){return deck.pop()}
@@ -78,8 +80,11 @@ function beginStreet(first){
  msg(roundName[street]+'. Торговля идёт по очереди.');beginTurn(first);
 }
 function start(){
+ if(active)return;
+ playerStack=readCasinoBalance();if(playerStack<20){msg('Недостаточно фишек: нужно минимум 20.');return;}
  stopClocks();makeDeck();pot=0;board=[];street=0;currentBet=20;active=true;handOver=false;acted.clear();
- players=names.map((name,i)=>({id:i,name,stack:i===0?playerStack:1000,hand:[card(),card()],put:0,fold:false,allin:false}));
+ const botStack=Math.max(1000,playerStack);
+ players=names.map((name,i)=>({id:i,name,stack:i===0?playerStack:botStack,hand:[card(),card()],put:0,totalPut:0,fold:false,allin:false}));
  money(players[1],10);money(players[2],20);
  msg('Префлоп: малый блайнд 10, большой блайнд 20. Первым действует игрок слева от большого блайнда.');
  beginTurn(2);
@@ -130,17 +135,16 @@ function closeStreet(){
  street++;beginStreet(0);
 }
 function showdown(){
- stopClocks();const contenders=players.filter(p=>!p.fold);
- const scored=contenders.map(p=>({p,v:best([...p.hand,...board])})).sort((a,b)=>cmp(b.v,a.v));
- const winners=scored.filter(x=>cmp(x.v,scored[0].v)===0),share=Math.floor(pot/winners.length),remainder=pot-share*winners.length;
- winners.forEach((x,i)=>x.p.stack+=share+(i===0?remainder:0));
- const result=winners.map(x=>x.p.name+' ('+rankName(x.v)+')').join(', ');
- finish('Шоудаун! Победитель: '+result+'. Банк разделён по силе комбинаций.',true);
+ stopClocks();while(board.length<5)board.push(card());
+ const levels=[...new Set(players.map(p=>p.totalPut||0).filter(n=>n>0))].sort((a,b)=>a-b);let prev=0;
+ for(const level of levels){const contributors=players.filter(p=>(p.totalPut||0)>=level),amount=(level-prev)*contributors.length;prev=level;const eligible=contributors.filter(p=>!p.fold);if(!eligible.length)continue;const scored=eligible.map(p=>({p,v:best([...p.hand,...board])})).sort((a,b)=>cmp(b.v,a.v));const winners=scored.filter(x=>cmp(x.v,scored[0].v)===0),share=Math.floor(amount/winners.length),rem=amount-share*winners.length;winners.forEach((x,i)=>x.p.stack+=share+(i===0?rem:0));}
+ const contenders=players.filter(p=>!p.fold),scored=contenders.map(p=>({p,v:best([...p.hand,...board])})).sort((a,b)=>cmp(b.v,a.v)),winners=scored.filter(x=>cmp(x.v,scored[0].v)===0);
+ finish('Шоудаун! Победитель: '+winners.map(x=>x.p.name+' ('+rankName(x.v)+')').join(', ')+'. Банк распределён с учётом олл-инов.',true);
 }
-function finish(t,reveal=false){stopClocks();active=false;handOver=true;playerStack=players[0].stack;msg(t);render(reveal);$('turnLabel').textContent='Раздача завершена'}
+function finish(t,reveal=false){stopClocks();active=false;handOver=true;playerStack=players[0].stack;saveCasinoBalance(playerStack);msg(t+' Баланс сохранён: '+playerStack+'.');render(reveal);$('turnLabel').textContent='Раздача завершена'}
 $('new').onclick=start;$('next').onclick=start;
 $('check').onclick=()=>applyAction('check');$('call').onclick=()=>applyAction('call');$('raiseBtn').onclick=()=>applyAction('raise');$('fold').onclick=()=>applyAction('fold');$('allin').onclick=()=>applyAction('allin');
 $('raise').oninput=()=>$('raiseVal').textContent=$('raise').value;
-render();
+$('stack').textContent=readCasinoBalance();render();
 })();
 </script></body></html>
