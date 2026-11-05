@@ -4108,13 +4108,13 @@ if(id==="skebobTap"||id==="adminLogin"){
 }
 if(games)games.classList.toggle("hidden",!isDashboard);
 if(isDashboard){
-document.querySelectorAll("section[id]").forEach(section=>section.classList.add("hidden"));
+document.querySelectorAll("section[id]").forEach(section=>{section.classList.add("hidden");section.style.removeProperty("display");});
 if(pageView){Array.from(pageView.children).forEach(section=>{if(section&&section.matches("section[id]")){section.classList.add("hidden");document.body.appendChild(section);}else{section.remove();}});}
 window.scrollTo({top:0,behavior:"auto"});
 return;
 }
 if(id==="tasks")renderDailyTasks();
-document.querySelectorAll("section[id]").forEach(section=>section.classList.add("hidden"));
+document.querySelectorAll("section[id]").forEach(section=>{section.classList.add("hidden");section.style.removeProperty("display");});
 const target=document.getElementById(id);
 if(target){
 if(pageView&&target.parentElement!==pageView)pageView.appendChild(target);
