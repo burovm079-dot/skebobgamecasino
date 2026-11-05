@@ -3740,88 +3740,6 @@ onchange="setAlwaysWin(this.checked)"
 
 </div>
 
-<h3>
-👑 Уровень казино
-</h3>
-
-<p class="small">
-Автоматически: Игрок от 10 000 🪙 выигрышей,
-VIP от 100 000 🪙. Администратор может
-установить уровень вручную.
-</p>
-
-<div class="admin-levels">
-
-<button
-id="adminLevelNewbie"
-onclick="adminSetLevel('newbie')"
->
-🌱 НОВИЧОК
-</button>
-
-<button
-id="adminLevelPlayer"
-onclick="adminSetLevel('player')"
->
-🎮 ИГРОК
-</button>
-
-<button
-id="adminLevelVip"
-onclick="adminSetLevel('vip')"
->
-👑 VIP
-</button>
-
-</div>
-
-<button
-class="secondary"
-style="width:100%;margin-top:8px"
-onclick="adminSetLevel('auto')"
->
-♻️ АВТОМАТИЧЕСКИЙ УРОВЕНЬ
-</button>
-
-<h3>
-🎁 Выдать предмет
-</h3>
-
-<select id="adminItem">
-
-<option value="0">
-👕 Футболка
-</option>
-
-<option value="1">
-👟 Кроссовки
-</option>
-
-<option value="2">
-📿 Золотая цепь
-</option>
-
-<option value="3">
-🧢 Кепка
-</option>
-
-<option value="4">
-🎧 Наушники
-</option>
-
-<option value="5">
-🎨 Редкий скин
-</option>
-
-</select>
-
-<button
-class="admin-btn purple"
-style="width:100%"
-onclick="adminGive()"
->
-ВЫДАТЬ
-</button>
 
 </div>
 
@@ -7187,24 +7105,6 @@ function adminSet(){
  save();
 }
 
-function adminGive(){
-const select=document.getElementById("adminItem");
-const index=Number(select?.value);
-if(!Number.isInteger(index)||index<0||index>=prizes.length||!prizes[index]){
- alert("Выбери корректный предмет.");
- return;
-}
-const p=prizes[index];
-state.inventory.push({...p,id:Date.now()});
-
-save();
-
-alert(
-"Предмет выдан!"
-);
-
-}
-
 function setAlwaysWin(value){
 
 state.admin.alwaysWin=
@@ -7215,27 +7115,6 @@ save();
 updateUpgradeInfo();
 
 updateMineStats();
-
-}
-
-function adminSetLevel(level){
-
-if(level==="auto"){
-
-state.admin.manualLevel=null;
-
-}else{
-
-state.admin.manualLevel=
-level;
-
-}
-
-save();
-
-renderAdminSettings();
-
-renderProfile();
 
 }
 
@@ -7255,76 +7134,14 @@ function toggleInfiniteBalance(){
 }
 
 function renderAdminSettings(){
-const infiniteButton=document.getElementById("adminInfiniteBalanceBtn");
-if(infiniteButton){
- infiniteButton.textContent=state.admin.infiniteBalance?"ВЫКЛЮЧИТЬ":"ВКЛЮЧИТЬ";
- infiniteButton.classList.toggle("red",!!state.admin.infiniteBalance);
- infiniteButton.classList.toggle("gold-admin",!state.admin.infiniteBalance);
-}
-
-const always=
-document.getElementById(
-"adminAlwaysWin"
-);
-
-if(always){
-
-always.checked=
-Boolean(
-state.admin.alwaysWin
-);
-
-}
-
-const buttons={
-newbie:
-document.getElementById(
-"adminLevelNewbie"
-),
-
-player:
-document.getElementById(
-"adminLevelPlayer"
-),
-
-vip:
-document.getElementById(
-"adminLevelVip"
-)
-};
-
-Object.values(
-buttons
-).forEach(
-b=>{
-
-if(b){
-
-b.classList.remove(
-"active"
-);
-
-}
-
-}
-);
-
-if(
-state.admin.manualLevel
-&&
-buttons[
-state.admin.manualLevel
-]
-){
-
-buttons[
-state.admin.manualLevel
-].classList.add(
-"active"
-);
-
-}
-
+ const infiniteButton=document.getElementById("adminInfiniteBalanceBtn");
+ if(infiniteButton){
+  infiniteButton.textContent=state.admin.infiniteBalance?"ВЫКЛЮЧИТЬ":"ВКЛЮЧИТЬ";
+  infiniteButton.classList.toggle("red",!!state.admin.infiniteBalance);
+  infiniteButton.classList.toggle("gold-admin",!state.admin.infiniteBalance);
+ }
+ const always=document.getElementById("adminAlwaysWin");
+ if(always) always.checked=Boolean(state.admin.alwaysWin);
 }
 
 /* =========================
