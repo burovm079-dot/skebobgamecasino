@@ -29,6 +29,43 @@ async function authRequest(path,body){
  const response=await fetch(SB_URL+"/auth/v1/"+path,{method:"POST",headers:{"Content-Type":"application/json","apikey":SB_KEY},body:JSON.stringify(body)});
  return parseResponse(response);
 }
+async function authUpdateUser(body){
+ const response=await fetch(SB_URL+"/auth/v1/user",{method:"PUT",headers:{"Content-Type":"application/json","apikey":SB_KEY,"Authorization":"Bearer "+session.access_token},body:JSON.stringify(body)});
+ return parseResponse(response);
+}
+async function changeAccountNickname(value){
+ const nick=cleanNickname(value);
+ const problem=nicknameError(nick);
+ if(problem)throw new Error(problem);
+ if(!session||!session.user||!session.user.id)throw new Error("Сначала войди в аккаунт.");
+ if(nick.toLocaleLowerCase("ru")===String(currentNickname).toLocaleLowerCase("ru"))return true;
+ const oldEmail=emailForNickname(currentNickname);
+ const newEmail=emailForNickname(nick);
+ const updated=await authUpdateUser({email:newEmail,data:{nickname:nick}});
+ if(!updated||!updated.email||updated.email.toLowerCase()!==newEmail.toLowerCase()){
+  throw new Error("Supabase ожидает подтверждение смены Email. Проверь настройки Email change confirmation / Secure email change в Authentication.");
+ }
+ try{
+  const rows=await rest("player_profiles?user_id=eq."+encodeURIComponent(session.user.id),{
+   method:"PATCH",
+   headers:{"Prefer":"return=representation"},
+   body:JSON.stringify({nickname:nick})
+  });
+  if(!Array.isArray(rows)||!rows.length)throw new Error("Профиль не обновился. Повтори попытку.");
+ }catch(error){
+  try{await authUpdateUser({email:oldEmail,data:{nickname:currentNickname}});}catch(rollbackError){console.error("Nickname rollback failed:",rollbackError);}
+  throw error;
+ }
+ currentNickname=nick;
+ if(session.user){session.user.email=newEmail;session.user.user_metadata={...(session.user.user_metadata||{}),nickname:nick};}
+ saveSession(session);
+ try{localStorage.setItem("skebobNickname",nick);}catch(_){}
+ if(typeof updateNicknameUI==="function")updateNicknameUI();
+ if(typeof render==="function")render();
+ if(typeof save==="function")save();
+ if(window.skebobQueueSave)window.skebobQueueSave();
+ return true;
+}
 function saveSession(value){
  session=value;
  if(value&&value.access_token&&value.refresh_token){
@@ -172,9 +209,7 @@ window.initSupabaseAuth=async function(){
 };
 window.getNickname=function(){return currentNickname||"Player";};
 window.persistNickname=function(){return false;};
-window.changeNickname=function(){
- alert("Изменение ника временно отключено на время переноса аккаунтов. Сначала завершим настройку регистрации и сохранений.");
-};
+window.skebobChangeNickname=changeAccountNickname;
 window.skebobLogout=async function(){
  try{if(session&&session.access_token)await fetch(SB_URL+"/auth/v1/logout",{method:"POST",headers:{"apikey":SB_KEY,"Authorization":"Bearer "+session.access_token}});}catch(_){}
  saveSession(null);currentNickname="";showAuth();
