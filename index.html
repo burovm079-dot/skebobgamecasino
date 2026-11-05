@@ -7450,11 +7450,19 @@ function toggleProtectedInfiniteBalance(){
 }
 function bjEscape(v){return String(v).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]))}
 function persistNickname(nick){
- if(!storageSet(NICKNAME_KEY,nick))return false;
- if(storageGet(NICKNAME_KEY)!==nick)return false;
- updateNicknameUI();
- if(typeof renderProfile==="function")renderProfile();
- return true;
+ const clean=String(nick||"").trim().replace(/\\s+/g," ").slice(0,18);
+ if(clean.length<2)return false;
+ if(!storageSet(NICKNAME_KEY,clean))return false;
+ if(storageGet(NICKNAME_KEY)!==clean)return false;
+ try{
+  const p=document.getElementById("profileNickname");
+  if(p)p.innerHTML=bjEscape(clean)+bjOfficialBadge(clean)+bjSpecialAccountBadge(clean);
+  const officialBalanceControl=document.getElementById("officialInfiniteBalanceControl");
+  if(officialBalanceControl)officialBalanceControl.style.display=bjIsOfficialNickname(clean)?"block":"none";
+  if(typeof renderSpecialAccountControls==="function")renderSpecialAccountControls();
+  if(typeof renderProfile==="function")renderProfile();
+ }catch(error){console.warn("Nickname saved; profile refresh failed:",error);}
+ return storageGet(NICKNAME_KEY)===clean;
 }
 function updateNicknameUI(){
  const nick=getNickname();
@@ -7526,6 +7534,7 @@ async function changeNickname(){
    if(bjIsSpecialAccount(nick)&&!(await bjRequestSpecialAccountPassword(nick)))return;
    if(bjIsOfficialNickname(nick)&&!(await bjRequestOfficialCode()))return;
    if(!persistNickname(nick)){status.textContent="Не удалось сохранить nickname. Проверь память браузера и попробуй снова.";return;}
+   status.textContent="Ник сохранён!";
    if(state.admin.infiniteBalance&&!bjIsSpecialAccount(nick)){
     const restore=Number(state.admin.balanceBeforeInfinite);
     state.balance=Number.isFinite(restore)?Math.max(0,Math.floor(restore)):20;
