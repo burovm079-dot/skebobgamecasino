@@ -6869,7 +6869,7 @@ function openPlayerBadgeModal(){
   if(!nickname()){status.style.color="#ff8585";status.textContent="Введи nickname игрока.";return;}
   if(!selected){status.style.color="#ff8585";status.textContent="Выбери цвет галочки.";return;}
   busy(true);
-  try{const result=await window.skebobSetPlayerBadge(nickname(),selected);status.style.color="#65d995";status.textContent="✓ Галочка выдана игроку "+result.player_nickname+".";if(typeof window.refreshLeaderboard==="function")window.refreshLeaderboard();}
+  try{const result=await window.skebobSetPlayerBadge(nickname(),selected);status.style.color="#65d995";status.textContent="✓ Галочка выдана игроку "+result.player_nickname+".";if(typeof window.refreshLeaderboard==="function")window.refreshLeaderboard();if(typeof window.refreshMyPlayerBadge==="function")window.refreshMyPlayerBadge();}
   catch(error){status.style.color="#ff8585";status.textContent="Ошибка: "+(error?.message||"не удалось выдать галочку");}
   finally{busy(false);}
  });
