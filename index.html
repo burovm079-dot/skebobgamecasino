@@ -2583,52 +2583,6 @@ body.tap-page #skebobDashboard #skebobTap .tap-main{display:block!important;marg
  #adminLogin .admin-login-back{left:8px!important;top:8px!important;padding:7px 10px!important}
 }
 
-/* SKEBOB ADMIN PANEL — decorative artwork behind live controls */
-#sk-page-view #adminPanel{
- position:relative!important;isolation:isolate!important;overflow:hidden!important;
- min-height:calc(100dvh - 24px)!important;padding:22px 16px 36px!important;
- border:1px solid rgba(190,75,255,.9)!important;border-radius:24px!important;
- background:#100018 url('/skebobgamecasino/assets/games/assets/games/admin-panel-bg.jpg') center top/100% 100% no-repeat!important;
-}
-#sk-page-view #adminPanel::before{
- content:"";position:absolute;inset:0;z-index:-1;
- background:linear-gradient(180deg,rgba(12,0,24,.08),rgba(12,0,24,.48));
- pointer-events:none;
-}
-#sk-page-view #adminPanel>.back,
-#sk-page-view #adminPanel>h2,
-#sk-page-view #adminPanel>.panel{position:relative;z-index:1}
-#sk-page-view #adminPanel>h2{
- margin:72px 0 22px!important;text-align:center!important;color:#ffe5ff!important;
- font-size:clamp(25px,6vw,38px)!important;font-weight:900!important;
- text-shadow:0 3px 12px #a000ff,0 0 24px #ffb52e!important;
-}
-#sk-page-view #adminPanel>.panel{
- max-width:680px!important;margin:0 auto!important;padding:22px!important;
- border:2px solid rgba(255,190,65,.9)!important;border-radius:24px!important;
- background:rgba(20,3,31,.88)!important;
- box-shadow:0 0 22px #d000ff88,inset 0 0 24px #7a16a055!important;
- backdrop-filter:blur(5px);
-}
-#sk-page-view #adminPanel>.panel h3{color:#ffe3a0!important}
-#sk-page-view #adminPanel #adminAmount{
- width:100%!important;box-sizing:border-box!important;border:1px solid #d98cff!important;
- background:rgba(20,4,34,.94)!important;color:#fff!important;border-radius:14px!important;
-}
-#sk-page-view #adminPanel .admin-actions{display:grid!important;grid-template-columns:1fr 1fr!important;gap:10px!important}
-#sk-page-view #adminPanel .admin-actions .admin-full{grid-column:1/-1!important}
-#sk-page-view #adminPanel .admin-btn{min-height:58px!important;border-radius:15px!important;font-weight:900!important}
-#sk-page-view #adminPanel .admin-toggle{
- margin-top:22px!important;padding:18px!important;border:1px solid #bd65ed!important;
- border-radius:18px!important;background:rgba(30,10,46,.94)!important;
-}
-#sk-page-view #adminPanel button,#sk-page-view #adminPanel input,#sk-page-view #adminPanel label{position:relative;z-index:2}
-@media(max-width:760px){
- #sk-page-view #adminPanel{padding:16px 10px 28px!important;min-height:calc(100dvh - 18px)!important}
- #sk-page-view #adminPanel>h2{margin-top:58px!important}
- #sk-page-view #adminPanel>.panel{padding:16px!important}
-}
-
 </style>
 <!-- CASES -->
 
