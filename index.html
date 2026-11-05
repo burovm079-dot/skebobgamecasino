@@ -2525,6 +2525,17 @@ body.tap-page #skebobDashboard #skebobTap .tap-main{display:block!important;marg
  #adminLogin .admin-login-back{left:8px;top:8px;padding:7px 10px}
 }
 
+/* Usable login fallback while the artwork file is not yet present in the repository. */
+#adminLogin.admin-art-missing{background:radial-gradient(ellipse at 50% 20%,#3a0759 0%,#170023 62%,#09000f 100%)!important;display:flex!important;align-items:center!important;justify-content:center!important;padding:24px!important;box-sizing:border-box!important}
+#adminLogin.admin-art-missing .admin-login-controls{position:relative!important;inset:auto!important;width:min(100%,560px)!important;display:flex!important;flex-direction:column!important;gap:18px!important;padding:28px!important;box-sizing:border-box!important;border:2px solid #9c35d7;border-radius:24px;background:rgba(18,0,31,.92);box-shadow:0 0 32px #8d1ed455}
+#adminLogin.admin-art-missing .admin-login-fallback-title{display:block!important;margin:20px 0!important;text-align:center!important;color:#f4d8ff!important;font-size:clamp(24px,5vw,42px)!important}
+#adminLogin.admin-art-missing #adminPassword{position:relative!important;inset:auto!important;width:100%!important;height:64px!important;border:2px solid #a34bd0!important;border-radius:14px!important;background:#10051b!important;color:#fff!important;padding:0 18px!important;font-size:20px!important;box-sizing:border-box!important}
+#adminLogin.admin-art-missing #adminPassword::placeholder{color:#bda8c8!important}
+#adminLogin.admin-art-missing .admin-login-controls>button[type=submit]{position:relative!important;inset:auto!important;width:100%!important;height:68px!important;border:0!important;border-radius:18px!important;background:linear-gradient(100deg,#a900ef,#e044ff)!important;color:#fff!important;font-size:23px!important;font-weight:900!important;box-shadow:0 7px 24px #ad13dd55!important}
+#adminLogin.admin-art-missing .admin-login-error{position:static!important;width:100%!important;min-height:20px!important}
+#adminLogin.admin-art-missing .admin-login-back{z-index:5!important}
+#adminLogin:not(.admin-art-missing) .admin-login-fallback-title{display:none!important}
+@media(max-width:760px){#adminLogin.admin-art-missing{padding:14px!important}#adminLogin.admin-art-missing .admin-login-controls{padding:20px!important}}
 </style>
 <!-- CASES -->
 
@@ -3583,12 +3594,13 @@ class="hidden"
 
 <!-- ADMIN LOGIN -->
 
-<section id="adminLogin" class="hidden admin-login-screen">
-  <img class="admin-login-art" src="/skebobgamecasino/assets/games/assets/games/admin-panel-login.jpg" alt="ADMIN PANEL">
+<section id="adminLogin" class="hidden admin-login-screen admin-art-missing">
+  <img class="admin-login-art" src="/skebobgamecasino/assets/games/assets/games/admin-panel-login.jpg" alt="" onload="this.parentElement.classList.remove('admin-art-missing')" onerror="this.style.display='none';this.parentElement.classList.add('admin-art-missing')">
   <button type="button" class="admin-login-back" onclick="showPage('settings')">← Назад</button>
   <form class="admin-login-controls" onsubmit="event.preventDefault();checkAdminCode();">
-    <input type="password" id="adminPassword" placeholder="" aria-label="Введите код" autocomplete="current-password">
-    <button type="submit" aria-label="Войти"></button>
+    <h2 class="admin-login-fallback-title">👑 ADMIN PANEL</h2>
+    <input type="password" id="adminPassword" placeholder="Введите код..." aria-label="Введите код" autocomplete="current-password">
+    <button type="submit" aria-label="Войти">ВОЙТИ</button>
     <p id="adminError" class="admin-login-error" role="alert"></p>
   </form>
 </section>
