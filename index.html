@@ -6856,21 +6856,29 @@ function openPlayerBadgeModal(){
  const overlay=document.createElement("div");overlay.id="playerBadgeModal";
  overlay.style.cssText="position:fixed;inset:0;z-index:32002;background:rgba(0,0,0,.84);display:flex;align-items:center;justify-content:center;padding:18px";
  const panel=document.createElement("div");panel.style.cssText="width:100%;max-width:390px;background:var(--panel);color:var(--text);border:1px solid var(--gold);border-radius:18px;padding:20px;box-shadow:0 15px 50px #000b";
- panel.innerHTML='<h3 style="margin:0 0 15px;color:var(--gold)">✓ ВЫДАТЬ ГАЛОЧКУ</h3><label for="playerBadgeNickname" style="display:block;margin:0 0 6px;font-size:13px">Nickname игрока</label><input id="playerBadgeNickname" type="text" maxlength="18" autocomplete="off" placeholder="Введи nickname" style="width:100%;box-sizing:border-box;margin-bottom:13px"><div style="font-size:13px;margin-bottom:8px">Выбери галочку</div><div class="verified-choice-row"><button type="button" class="secondary verified-choice" data-badge="green">🟢 Зелёная</button><button type="button" class="secondary verified-choice" data-badge="blue">🔵 Синяя</button><button type="button" class="secondary verified-choice" data-badge="gold">🟡 Золотая</button></div><div style="display:flex;gap:9px;margin-top:14px"><button type="button" class="secondary" id="playerBadgeCancel" style="flex:1">ОТМЕНА</button><button type="button" class="goldbtn" id="playerBadgeSubmit" style="flex:1">ВЫДАТЬ ГАЛОЧКУ</button></div><p id="playerBadgeStatus" role="status" style="min-height:18px;margin:12px 0 0;font-size:13px"></p>';
+ panel.innerHTML='<h3 style="margin:0 0 15px;color:var(--gold)">✓ УПРАВЛЕНИЕ ГАЛОЧКАМИ</h3><label for="playerBadgeNickname" style="display:block;margin:0 0 6px;font-size:13px">Nickname игрока</label><input id="playerBadgeNickname" type="text" maxlength="18" autocomplete="off" placeholder="Введи nickname" style="width:100%;box-sizing:border-box;margin-bottom:13px"><div style="font-size:13px;margin-bottom:8px">Выбери галочку для выдачи</div><div class="verified-choice-row"><button type="button" class="secondary verified-choice" data-badge="green">🟢 Зелёная</button><button type="button" class="secondary verified-choice" data-badge="blue">🔵 Синяя</button><button type="button" class="secondary verified-choice" data-badge="gold">🟡 Золотая</button></div><div style="display:flex;gap:9px;margin-top:15px"><button type="button" class="secondary" id="playerBadgeRemove" style="flex:1;border-color:#e16b6b;color:#ffaaaa">ЗАБРАТЬ</button><button type="button" class="goldbtn" id="playerBadgeSubmit" style="flex:1">ВЫДАТЬ</button></div><button type="button" class="secondary" id="playerBadgeCancel" style="width:100%;margin-top:10px">ЗАКРЫТЬ</button><p id="playerBadgeStatus" role="status" style="min-height:18px;margin:12px 0 0;font-size:13px"></p>';
  overlay.appendChild(panel);document.body.appendChild(overlay);
  let selected="";const close=()=>overlay.remove();
  panel.querySelector("#playerBadgeCancel").addEventListener("click",close);
  overlay.addEventListener("click",e=>{if(e.target===overlay)close();});
- const status=panel.querySelector("#playerBadgeStatus"),submit=panel.querySelector("#playerBadgeSubmit");
+ const status=panel.querySelector("#playerBadgeStatus"),submit=panel.querySelector("#playerBadgeSubmit"),remove=panel.querySelector("#playerBadgeRemove");
  panel.querySelectorAll("[data-badge]").forEach(btn=>btn.addEventListener("click",()=>{selected=btn.dataset.badge;panel.querySelectorAll("[data-badge]").forEach(x=>x.classList.toggle("active",x===btn));}));
+ const nickname=()=>panel.querySelector("#playerBadgeNickname").value.trim();
+ const busy=value=>{submit.disabled=value;remove.disabled=value;submit.textContent=value?"ОБРАБОТКА…":"ВЫДАТЬ";remove.textContent=value?"ОБРАБОТКА…":"ЗАБРАТЬ";};
  submit.addEventListener("click",async()=>{
-  const nickname=panel.querySelector("#playerBadgeNickname").value.trim();
-  if(!nickname){status.style.color="#ff8585";status.textContent="Введи nickname игрока.";return;}
+  if(!nickname()){status.style.color="#ff8585";status.textContent="Введи nickname игрока.";return;}
   if(!selected){status.style.color="#ff8585";status.textContent="Выбери цвет галочки.";return;}
-  submit.disabled=true;submit.textContent="ВЫДАЁМ…";
-  try{const result=await window.skebobSetPlayerBadge(nickname,selected);status.style.color="#65d995";status.textContent="✓ Галочка выдана игроку "+result.player_nickname+".";if(typeof window.refreshLeaderboard==="function")window.refreshLeaderboard();}
+  busy(true);
+  try{const result=await window.skebobSetPlayerBadge(nickname(),selected);status.style.color="#65d995";status.textContent="✓ Галочка выдана игроку "+result.player_nickname+".";if(typeof window.refreshLeaderboard==="function")window.refreshLeaderboard();}
   catch(error){status.style.color="#ff8585";status.textContent="Ошибка: "+(error?.message||"не удалось выдать галочку");}
-  finally{submit.disabled=false;submit.textContent="ВЫДАТЬ ГАЛОЧКУ";}
+  finally{busy(false);}
+ });
+ remove.addEventListener("click",async()=>{
+  if(!nickname()){status.style.color="#ff8585";status.textContent="Введи nickname игрока.";return;}
+  busy(true);
+  try{const player=await window.skebobRemovePlayerBadge(nickname());status.style.color="#65d995";status.textContent="✓ Галочка снята у игрока "+player+".";if(typeof window.refreshLeaderboard==="function")window.refreshLeaderboard();if(String(getNickname()).toLowerCase()===player.toLowerCase()&&typeof window.refreshMyPlayerBadge==="function")window.refreshMyPlayerBadge();}
+  catch(error){status.style.color="#ff8585";status.textContent="Ошибка: "+(error?.message||"не удалось снять галочку");}
+  finally{busy(false);}
  });
  panel.querySelector("#playerBadgeNickname").focus();
 }
