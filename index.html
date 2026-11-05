@@ -1154,6 +1154,22 @@ body.light .settings-neon-danger{background:linear-gradient(120deg,#fff0f2,#fff)
 .settings-neon-reset:active,.settings-neon-button:active{transform:scale(.97)}
 @media(max-width:380px){.settings-neon-card{padding-left:11px;padding-right:11px}.settings-neon-copy{gap:8px}.settings-neon-icon{width:34px;height:34px;flex-basis:34px}.settings-neon-copy b{font-size:12px}.settings-neon-button{min-width:82px}}
  
+
+/* Profile account controls */
+.profile-account-controls{margin-top:16px;padding:16px;border:1px solid var(--border2);border-radius:18px;background:var(--panel)}
+.profile-account-controls h3{margin:0 0 8px;font-size:15px;letter-spacing:.6px}
+.profile-account-row{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:14px 0;border-bottom:1px solid var(--border2)}
+.profile-account-row:last-child{border-bottom:0}
+.profile-account-row>div:first-child{min-width:0}
+.profile-account-row b{display:block;font-size:14px}
+.profile-account-row .small{margin-top:4px;line-height:1.35}
+.profile-currency-options{display:flex;gap:7px;flex-shrink:0}
+.profile-currency-btn,.profile-account-action,.profile-reset-button{min-height:40px;padding:0 12px;border:1px solid #b77aff;border-radius:11px;background:linear-gradient(135deg,#7100b8,#39005e);color:#fff;font-weight:900;cursor:pointer;white-space:nowrap}
+.profile-currency-btn.is-selected{background:linear-gradient(135deg,#b000ef,#7100c8);border-color:#f0c1ff;box-shadow:0 0 12px #b000ef88}
+.profile-reset-button{border-color:#ff6678;background:linear-gradient(135deg,#b52343,#71152d)}
+.profile-account-action{min-width:96px}
+@media(max-width:390px){.profile-account-controls{padding:12px}.profile-account-row{gap:7px}.profile-currency-options{gap:5px}.profile-currency-btn{padding:0 8px;font-size:12px}.profile-account-row b{font-size:12px}.profile-account-row .small{font-size:11px}}
+
 /* PROFILE CUSTOMIZATION */
 .profile-hero.frame-gold{border:2px solid #f4c75e;box-shadow:0 0 0 3px #f4c75e22,0 0 22px #f4c75e35}
 .profile-hero.frame-neon{border:2px solid #c45cff;box-shadow:0 0 0 3px #c45cff22,0 0 24px #b52dff55}
@@ -2220,7 +2236,6 @@ window.prompt=(message,value)=>{void skebobDialog("prompt",message,value);return
 <button class="sk-menu-item" onclick="showPage('tasks')"><img src="/skebobgamecasino/assets/games/assets/games/menu/04-quests.png" alt=""><span>Задания</span></button>
 <button class="sk-menu-item" onclick="showPage('profile')"><img src="/skebobgamecasino/assets/games/assets/games/menu/07-profile.png" alt=""><span>Профиль</span></button>
 <button class="sk-menu-item" onclick="window.open('https://t.me/skebobcasino/5','_blank','noopener,noreferrer')"><img src="/skebobgamecasino/assets/games/assets/games/menu/08-media-partner.png" alt=""><span>Медиа партнёр</span></button>
-<button class="sk-menu-item" onclick="showPage('settings')"><img src="/skebobgamecasino/assets/games/assets/games/menu/09-settings.png" alt=""><span>Настройки</span></button>
 <div class="sk-side-crown">♛</div>
 </aside>
 <div class="sk-work">
@@ -2263,9 +2278,6 @@ SKEBOB <span>CASINO</span>
 
 <button onclick="showPage('profile')">👤 ПРОФИЛЬ</button>
 
-<button onclick="showPage('settings')">
-⚙
-</button>
 
 <button class="header-media-partner" type="button" onclick="window.open('https://t.me/skebobcasino/5','_blank','noopener,noreferrer')">📢 МЕДИА ПАРТНЁР</button>
 
@@ -3130,7 +3142,24 @@ id="profileBalance"
 
 </div>
 
-
+<div class="panel profile-account-controls">
+ <h3>⚙️ УПРАВЛЕНИЕ АККАУНТОМ</h3>
+ <div class="profile-account-row">
+  <div><b>Валюта</b><div class="small">Выбери отображение баланса</div></div>
+  <div class="profile-currency-options">
+   <button type="button" class="profile-currency-btn profile-currency-rub" aria-label="Выбрать рубли" aria-pressed="false" onclick="setCurrency('RUB')">₽ Рубли</button>
+   <button type="button" class="profile-currency-btn profile-currency-usd" aria-label="Выбрать доллары" aria-pressed="false" onclick="setCurrency('USD')">$ Доллары</button>
+  </div>
+ </div>
+ <div class="profile-account-row">
+  <div><b>Фоновая музыка</b><div class="small" id="profileMusicStatus">Музыка включена</div></div>
+  <button type="button" class="profile-account-action" id="profileMusicButton" aria-pressed="true" onclick="toggleSettingsMusic()">Выключить</button>
+ </div>
+ <div class="profile-account-row profile-reset-row">
+  <div><b>Сброс игрового прогресса</b><div class="small">Удалит баланс, предметы и статистику</div></div>
+  <button type="button" class="profile-reset-button" onclick="resetGame()">Сбросить</button>
+ </div>
+</div>
 
 </section>
 
@@ -3202,23 +3231,6 @@ id="profileBalance"
  <p class="daily-art-caption">Выполняй задания в игре — прогресс обновится автоматически. Нажми на кнопку задания, чтобы забрать 50 монет.</p>
 </section>
 
-<!-- SETTINGS -->
-
-<section
-id="settings"
-class="hidden"
->
-<div class="settings-picture-ui" aria-label="Панель настроек SKEBOB CASINO">
-  <img class="settings-picture-ui-image" src="https://raw.githubusercontent.com/burovm079-dot/skebobgamecasino/main/assets/games/assets/games/%D0%9D%D0%B5%D0%BE%D0%BD%D0%BE%D0%B2%D0%B0%D1%8F%20%D0%BF%D0%B0%D0%BD%D0%B5%D0%BB%D1%8C%20%D0%BD%D0%B0%D1%81%D1%82%D1%80%D0%BE%D0%B5%D0%BA%20SKEBOB%20CASINO.png" alt="SKEBOB CASINO — настройки" />
-  <div class="settings-remove-theme" aria-hidden="true"></div>
-  <div class="settings-remove-extra-area" aria-hidden="true"></div>
-
-  <button type="button" class="settings-picture-hit settings-currency-rub" aria-label="Выбрать рубли" onclick="setCurrency('RUB')"></button>
-  <button type="button" class="settings-picture-hit settings-currency-usd" aria-label="Выбрать доллары" onclick="setCurrency('USD')"></button>
-  <button type="button" class="settings-picture-hit settings-music-hit" id="settingsMusicButton" aria-label="Включить или выключить музыку" aria-pressed="false" onclick="toggleSettingsMusic()"></button>
-  <button type="button" class="settings-picture-hit settings-reset" aria-label="Сбросить прогресс" onclick="resetGame()"></button>
-</div>
-</section>
 
 </main>
 
@@ -3561,19 +3573,17 @@ function formatMoney(amount){
  const n=Number(amount)||0;
  return getCurrency()==="USD"?"$"+(n/80).toLocaleString("en-US",{minimumFractionDigits:2,maximumFractionDigits:2}):n.toLocaleString("ru-RU",{minimumFractionDigits:2,maximumFractionDigits:2})+" ₽";
 }
-function updateSettingsCurrencyVisual(){const currency=getCurrency();const rub=document.querySelector("#settings .settings-currency-rub");const usd=document.querySelector("#settings .settings-currency-usd");if(rub){rub.classList.toggle("is-selected",currency==="RUB");rub.setAttribute("aria-pressed",currency==="RUB"?"true":"false");}if(usd){usd.classList.toggle("is-selected",currency==="USD");usd.setAttribute("aria-pressed",currency==="USD"?"true":"false");}}
+function updateProfileCurrencyVisual(){const currency=getCurrency();const rub=document.querySelector("#profile .profile-currency-rub");const usd=document.querySelector("#profile .profile-currency-usd");if(rub){rub.classList.toggle("is-selected",currency==="RUB");rub.setAttribute("aria-pressed",currency==="RUB"?"true":"false");}if(usd){usd.classList.toggle("is-selected",currency==="USD");usd.setAttribute("aria-pressed",currency==="USD"?"true":"false");}}
 function setCurrency(value){
  const next=value==="USD"?"USD":"RUB";
  storageSet("skebobCurrency",next);
- updateSettingsCurrencyVisual();
- const select=document.getElementById("currencySelect");
- if(select)select.value=next;
+ updateProfileCurrencyVisual();
  try{render();}catch(error){console.warn("Currency display refresh:",error);}
  
  try{if(typeof updateUpgradeInfo==="function")updateUpgradeInfo();}catch(error){console.warn(error);}
  try{if(typeof renderDailyTasks==="function")renderDailyTasks();}catch(error){console.warn(error);}
 }
-function loadCurrency(){const e=document.getElementById("currencySelect");if(e)e.value=getCurrency();}
+function loadCurrency(){updateProfileCurrencyVisual();}
 function save(){
 
 updateDailyTasks(false);
@@ -3794,14 +3804,12 @@ document.body.classList.toggle("tap-page",id==="skebobTap");
 document.body.classList.toggle("dashboard-home",isDashboard);
 document.body.classList.toggle("legacy-page-active",!isDashboard);
 document.body.classList.toggle("promo-page",id==="promo");
-document.body.classList.toggle("settings-page",id==="settings");
 document.body.classList.toggle("tasks-page",id==="tasks");
-if(id==="settings"){if(typeof updateSettingsMusicVisual==="function")updateSettingsMusicVisual();if(typeof updateSettingsCurrencyVisual==="function")updateSettingsCurrencyVisual();}
+if(id==="profile"){if(typeof updateProfileMusicVisual==="function")updateProfileMusicVisual();if(typeof updateProfileCurrencyVisual==="function")updateProfileCurrencyVisual();}
 
 const shell=document.getElementById("skebobDashboard");
 const work=shell&&shell.querySelector(".sk-work");
 if(work)work.classList.toggle("promo-workspace",id==="promo");
-if(work)work.classList.toggle("settings-workspace",id==="settings");
 if(work)work.classList.toggle("tasks-workspace",id==="tasks");
 const games=work&&work.querySelector(".sk-games");
 let pageView=work&&work.querySelector("#sk-page-view");
@@ -6392,17 +6400,19 @@ function updateCasinoMusicText(){
  if(title)title.textContent=storageGet("skebobCasinoMusic")==="on"?"🎵 Музыка включена":"🔇 Музыка выключена";
 }
 
-function updateSettingsMusicVisual(){
- const button=document.getElementById("settingsMusicButton");
+function updateProfileMusicVisual(){
+ const button=document.getElementById("profileMusicButton");
+ const status=document.getElementById("profileMusicStatus");
  if(!button)return;
  const enabled=storageGet("skebobCasinoMusic")==="on";
- button.classList.toggle("is-on",enabled);
+ button.textContent=enabled?"Выключить":"Включить";
  button.setAttribute("aria-pressed",enabled?"true":"false");
+ if(status)status.textContent=enabled?"Музыка включена":"Музыка выключена";
 }
 async function toggleSettingsMusic(){
  const enabled=storageGet("skebobCasinoMusic")!=="on";
  storageSet("skebobCasinoMusic",enabled?"on":"off");
- updateSettingsMusicVisual();
+ updateProfileMusicVisual();
  updateCasinoMusicText();
  if(!enabled){
   if(casinoMusicTimer){clearInterval(casinoMusicTimer);casinoMusicTimer=null;}
