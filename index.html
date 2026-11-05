@@ -3852,7 +3852,7 @@ function setCurrency(value){
  const select=document.getElementById("currencySelect");
  if(select)select.value=next;
  try{render();}catch(error){console.warn("Currency display refresh:",error);}
- try{renderCases();}catch(error){console.warn("Cases currency refresh:",error);}
+ 
  try{if(typeof updateUpgradeInfo==="function")updateUpgradeInfo();}catch(error){console.warn(error);}
  try{if(typeof renderDailyTasks==="function")renderDailyTasks();}catch(error){console.warn(error);}
 }
@@ -4353,7 +4353,6 @@ function setProfileStyle(type,value){
 
 function renderProfile(){
 
-checkAllNftAchievement();
 const info=
 getLevelInfo();
 applyProfileStyle();
