@@ -104,7 +104,6 @@ function normalizeLoadedState(remote){
  if(!remote||typeof remote!=="object"||Array.isArray(remote))return;
  state={...state,...remote,
   stats:{...(typeof defaultStats!=="undefined"?defaultStats:{}),...(remote.stats||{})},
-  admin:{alwaysWin:false,manualLevel:null,infiniteBalance:false,balanceBeforeInfinite:null,...(remote.admin||{})}
  };
  if(!state.inventory||!Array.isArray(state.inventory))state.inventory=[];
  if(!state.tapGame||typeof state.tapGame!=="object")state.tapGame={hourStartedAt:0,earnedCents:0,pendingCents:0,cooldownUntil:0};
