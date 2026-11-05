@@ -2225,7 +2225,7 @@ window.prompt=(message,value)=>{void skebobDialog("prompt",message,value);return
  <symbol id="art-dice" viewBox="0 0 200 160"><g filter="url(#artShadow)" transform="rotate(-12 100 80)"><rect x="26" y="30" width="90" height="90" rx="17" fill="#f5f3f0" stroke="#9ba5b5" stroke-width="6"/><rect x="90" y="48" width="83" height="83" rx="16" fill="#e43d53" stroke="#8b1b32" stroke-width="6"/><g fill="#263044"><circle cx="49" cy="53" r="8"/><circle cx="92" cy="53" r="8"/><circle cx="49" cy="96" r="8"/><circle cx="92" cy="96" r="8"/></g><g fill="#fff"><circle cx="111" cy="69" r="7"/><circle cx="153" cy="69" r="7"/><circle cx="132" cy="90" r="7"/><circle cx="111" cy="111" r="7"/><circle cx="153" cy="111" r="7"/></g></g></symbol>
  <symbol id="art-ttt" viewBox="0 0 200 160"><g filter="url(#artShadow)" stroke-linecap="round" fill="none"><path d="M70 27v106M130 27v106M38 65h124M38 103h124" stroke="#d9a5ff" stroke-width="9"/><circle cx="54" cy="46" r="17" stroke="#ffce4b" stroke-width="9"/><path d="m88 80 26 26m0-26-26 26" stroke="#53cfff" stroke-width="10"/><circle cx="146" cy="122" r="16" stroke="#ffce4b" stroke-width="9"/></g></symbol>
  <symbol id="art-billiards" viewBox="0 0 200 160"><g filter="url(#artShadow)"><rect x="18" y="25" width="164" height="112" rx="17" fill="#145b3b" stroke="#a46a32" stroke-width="10"/><path d="M31 39h138v84H31Z" fill="#19764a"/><circle cx="77" cy="78" r="22" fill="#f4d23e" stroke="#fff0a5" stroke-width="4"/><path d="M77 56a22 22 0 0 1 0 44Z" fill="#111"/><circle cx="133" cy="99" r="19" fill="#ec3347" stroke="#ffc1c7" stroke-width="4"/><path d="M40 128 153 32" stroke="#e7c18a" stroke-width="7" opacity=".8"/></g></symbol>
- <symbol id="art-chicken" viewBox="0 0 200 160"><g filter="url(#artShadow)"><path d="M59 117q-17-23 2-51 18-25 51-12 26 10 29 41l-5 34H66Z" fill="#fff0d0" stroke="#c88b48" stroke-width="5"/><path d="m76 58 4-24 16 17 13-24 10 29" fill="#e93843" stroke="#9e1d2b" stroke-width="5"/><circle cx="118" cy="77" r="6" fill="#18202b"/><path d="m139 90 28 12-28 9" fill="#ffad25" stroke="#bd6813" stroke-width="4"/><path d="M72 126 57 146m49-18 4 20" stroke="#e59a28" stroke-width="8" stroke-linecap="round"/></g></symbol>
+
  <symbol id="art-tap" viewBox="0 0 200 160"><g filter="url(#artShadow)"><rect x="55" y="10" width="90" height="140" rx="19" fill="#20263c" stroke="#d4b5ff" stroke-width="6"/><rect x="64" y="22" width="72" height="112" rx="9" fill="url(#artPurple)"/><path d="M91 104V64q0-9 8-9t8 9v19-34q0-9 8-9t8 9v45q14-13 20-3 4 6-3 14l-23 28H94Z" fill="#ffd2ad" stroke="#9a4b84" stroke-width="4"/><circle cx="100" cy="141" r="4" fill="#fff"/></g></symbol>
 </defs></svg>
 <div id="skebobDashboard">
@@ -2257,7 +2257,7 @@ window.prompt=(message,value)=>{void skebobDialog("prompt",message,value);return
 <button class="sk-game" onclick="showPage('dice')"><span class="sk-art"><img src="/skebobgamecasino/assets/games/assets/games/dice.webp" alt="Кости" loading="eager"></span><span class="sk-game-name">Кости</span><span class="sk-play">Играть →</span></button>
 <button class="sk-game" onclick="showPage('tictactoe')"><span class="sk-art"><img src="/skebobgamecasino/assets/games/assets/games/tictactoe.webp" alt="Крестики-нолики" loading="eager"></span><span class="sk-game-name">Крестики-нолики</span><span class="sk-play">Играть →</span></button>
 <button class="sk-game" onclick="showPage('billiards')"><span class="sk-art"><img src="/skebobgamecasino/assets/games/assets/games/billiards.webp" alt="Бильярд" loading="eager"></span><span class="sk-game-name">Бильярд</span><span class="sk-play">Играть →</span></button>
-<button class="sk-game" onclick="showPage('chickenroad')"><span class="sk-art"><img src="/skebobgamecasino/assets/games/assets/games/chicken-road.webp" alt="Chicken Road" loading="eager"></span><span class="sk-game-name">Chicken Road</span><span class="sk-play">Играть →</span></button>
+
 <button class="sk-game" onclick="showPage('skebobTap')"><span class="sk-art"><img src="/skebobgamecasino/assets/games/assets/games/skebob-tap.webp" alt="Skebob Tap" loading="eager"></span><span class="sk-game-name">Skebob Tap</span><span class="sk-play">Играть →</span></button>
 </div></div></div>
 
@@ -2333,7 +2333,6 @@ SKEBOB <span>CASINO</span>
 
 <button onclick="showPage('billiards',this)">🎱 БИЛЬЯРД</button>
 
-<button onclick="showPage('chickenroad',this)">🐔 CHICKEN ROAD</button>
 <button onclick="showPage('skebobTap',this)">👆 SKEBOB TAP</button>
 
 
@@ -2371,19 +2370,7 @@ SKEBOB <span>CASINO</span>
 <canvas id="poolCanvas" class="real-game-canvas pool-scene" aria-label="Бильярдный стол: нажми на стол для прицеливания"></canvas>
 <div class="game-actions"><button class="goldbtn" onclick="poolStart()">НОВАЯ ПАРТИЯ</button><button class="goldbtn" id="poolHitBtn" onclick="poolShot()" disabled>УДАРИТЬ КИЕМ</button></div><div id="poolResult" class="small">Начни партию, затем нажми на стол для прицеливания.</div>
 </div></section>
-<section id="chickenroad" class="hidden">
-<h2>🐔 CHICKEN ROAD</h2><div class="panel chicken-panel">
-<p class="small">Проведи курицу через скоростное шоссе. Следи за потоком машин, продвигайся по полосам и фиксируй выигрыш в любой момент.</p>
-<div class="ch-hud"><div><span>МНОЖИТЕЛЬ</span><b id="chMultiplier">x1.00</b></div><div><span>ПОЛОСЫ</span><b id="chDistance">0 / 12</b></div><div><span>ВОЗМОЖНЫЙ ВЫИГРЫШ</span><b id="chPotential">—</b></div></div>
-<div class="ch-canvas-wrap"><canvas id="chCanvas" aria-label="Анимированное шоссе с машинами и курицей"></canvas><div class="ch-scene-tag" id="chScene">ГОТОВ К СТАРТУ</div></div><div class="ch-sound-row"><button type="button" class="secondary" id="chSoundToggle" onclick="chToggleSound()">🔊 ЗВУК ВКЛ</button><span class="small">Машины гудят, курица кричит «Ко-ко-ко!»</span></div>
-<div class="ch-controls"><label>Ставка</label><input id="chBet" type="number" min="100" step="100" value="100"><button class="goldbtn" id="chStart" onclick="chickenStart()">▶ НАЧАТЬ ПЕРЕХОД</button><button class="goldbtn" id="chStep" onclick="chickenStep()" disabled>🐔 СЛЕДУЮЩАЯ ПОЛОСА</button><button class="secondary" id="chCash" onclick="chickenCash()" disabled>ЗАБРАТЬ ВЫИГРЫШ</button></div>
-<div id="chResult" class="small ch-result">Выбери ставку и начни игру.</div>
-</div></section>
 <style>
-.chicken-panel{max-width:900px;margin:auto}.ch-hud{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin:14px 0}.ch-hud>div{background:var(--panel2);border:1px solid var(--border);border-radius:12px;padding:10px}.ch-hud span{display:block;font-size:10px;color:var(--muted);letter-spacing:1px}.ch-hud b{display:block;color:var(--gold);font-size:22px;margin-top:4px}.ch-canvas-wrap{position:relative;overflow:hidden;border:1px solid #52634b;border-radius:16px;background:#233d2a;box-shadow:inset 0 0 35px #0008}.ch-canvas-wrap canvas{display:block;width:100%;height:300px}.ch-scene-tag{position:absolute;left:12px;top:12px;padding:6px 10px;border-radius:8px;background:#07120dcc;color:#fff;font-size:11px;font-weight:900;letter-spacing:1px}.ch-sound-row{display:flex;align-items:center;gap:10px;margin:10px 0}.ch-sound-row button{font-weight:900}.ch-sound-row span{font-size:11px}
-.ch-controls{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-top:14px;text-align:left}.ch-controls label,.ch-controls input{grid-column:1/-1}.ch-controls button{width:100%;min-height:44px}.ch-result{min-height:24px;margin-top:12px}@media(max-width:560px){.ch-canvas-wrap canvas{height:240px}.ch-hud b{font-size:17px}.ch-hud span{font-size:8px}.ch-controls{grid-template-columns:1fr}}
-
-
 /* REALISM PASS: only the final six arcade games */
 #tictactoe #tttGrid{max-width:360px!important;padding:12px;background:linear-gradient(145deg,#172b3b,#0b1722);border:1px solid #496175;border-radius:18px;box-shadow:inset 0 0 25px #0008}
 #tttGrid button{font-family:Arial,sans-serif!important;font-weight:900;min-height:82px;color:#e9f5ff!important;background:linear-gradient(145deg,#263c50,#172638)!important;border:1px solid #64809a!important;box-shadow:inset 0 1px #ffffff25,0 5px 9px #0005;transition:transform .16s,background .16s}
@@ -2391,9 +2378,7 @@ SKEBOB <span>CASINO</span>
 .real-game-canvas{display:block;width:100%;height:auto;aspect-ratio:16/10;margin:14px 0;border-radius:15px;border:2px solid #65778a;box-shadow:0 12px 26px #0008,inset 0 0 25px #0008;background:#101820}
 .pool-scene{aspect-ratio:16/9;background:#075333}
 #billiards input[type=range]{accent-color:#e8b84f}
-#chickenroad .ch-canvas-wrap{border:2px solid #6b806b;box-shadow:0 15px 32px #0008,inset 0 0 40px #0009}
-#chickenroad .ch-hud>div{background:linear-gradient(145deg,#273646,#121e2b);border-color:#53687a;box-shadow:inset 0 1px #ffffff18,0 5px 12px #0004}
-#chickenroad .ch-hud b{font-variant-numeric:tabular-nums;text-shadow:0 2px 8px #e9b94a44}
+
 @media(max-width:480px){#tttGrid button{min-height:68px}.real-game-canvas{border-radius:11px}}
 
 /* Final mobile alignment: cover the full printed button face, not just its center. */
@@ -3843,7 +3828,7 @@ if(id==="skebobTap"){
  target.style.setProperty("opacity","1","important");
  renderSkebobTap();
 }
-const gamePages=new Set(["skebobTap","tictactoe","billiards","chickenroad","cases","secretDrop","battles","upgrade","mines","plane","plinko","race","slots","poker","dice"]);
+const gamePages=new Set(["skebobTap","tictactoe","billiards","cases","secretDrop","battles","upgrade","mines","plane","plinko","race","slots","poker","dice"]);
 if(gamePages.has(id)){
 let back=target.querySelector(":scope > .game-list-back");
 if(!back){
@@ -6490,96 +6475,6 @@ function tttMove(i){if(!tttActive||ttt[i])return;ttt[i]="X";let w=tttWinner(ttt)
 
 function poolShot(){const b=gameBet("poolBet");if(!b){alert("Нужна ставка от 100");return}state.balance-=b;const a=+document.getElementById("poolAngle").value,p=+document.getElementById("poolPower").value;const chance=Math.max(5,65-Math.abs(a-90)*.45-Math.abs(p-65)*.35);const ok=Math.random()*100<chance;const m=ok?(p>85?3:2):0;const w=m?gamePay(b,m):0;if(!m)save();poolAnimFrame=0;const tick=()=>{poolAnimFrame++;drawPoolScene(true,a,p);if(poolAnimFrame<30)requestAnimationFrame(tick)};requestAnimationFrame(tick);document.getElementById("poolResult").textContent=ok?"🎱 Шар в лузе! Выплата "+w+" 🪙":"Шар не попал в лузу. Попробуй ещё!";}
 
-let chBetValue=0,chMult=1,chActive=false,chStepCount=0,chAnim=0,chCrash=false,chStepLock=false;
-let chAudio=null,chSoundOn=true,chTrafficNodes=null;
-function chAudioReady(){if(!chSoundOn)return null;try{if(!chAudio){const AC=window.AudioContext||window.webkitAudioContext;if(!AC)return null;chAudio=new AC()}if(chAudio.state==="suspended")chAudio.resume().catch(()=>{});return chAudio}catch(e){return null}}
-function chTone(freq,duration,gain,type="sine",when=0,endFreq=null){const a=chAudioReady();if(!a)return;const o=a.createOscillator(),g=a.createGain(),t=a.currentTime+when;o.type=type;o.frequency.setValueAtTime(freq,t);if(endFreq)o.frequency.exponentialRampToValueAtTime(endFreq,t+duration);g.gain.setValueAtTime(.0001,t);g.gain.exponentialRampToValueAtTime(gain,t+.018);g.gain.exponentialRampToValueAtTime(.0001,t+duration);o.connect(g);g.connect(a.destination);o.start(t);o.stop(t+duration+.03)}
-function chCluck(){if(!chSoundOn)return;chTone(980,.105,.19,"sawtooth",0,430);chTone(1450,.075,.075,"triangle",0,720);chTone(820,.12,.2,"sawtooth",.13,360);chTone(1250,.085,.07,"triangle",.13,620);chTone(900,.15,.19,"sawtooth",.29,390);chTone(1380,.1,.065,"triangle",.29,680)}
-function chStartTraffic(){const a=chAudioReady();if(!a||chTrafficNodes)return;const master=a.createGain(),filter=a.createBiquadFilter(),o1=a.createOscillator(),o2=a.createOscillator(),lfo=a.createOscillator(),lfoGain=a.createGain();filter.type="lowpass";filter.frequency.value=260;filter.Q.value=.7;master.gain.value=.0001;o1.type="sawtooth";o1.frequency.value=62;o2.type="triangle";o2.frequency.value=91;lfo.type="sine";lfo.frequency.value=.22;lfoGain.gain.value=22;lfo.connect(lfoGain);lfoGain.connect(o1.frequency);o1.connect(filter);o2.connect(filter);filter.connect(master);master.connect(a.destination);const t=a.currentTime;master.gain.setTargetAtTime(.075,t,.3);o1.start();o2.start();lfo.start();chTrafficNodes={o1,o2,lfo,master};}
-function chStopTraffic(){if(!chTrafficNodes)return;try{const n=chTrafficNodes,t=chAudio.currentTime;n.master.gain.setTargetAtTime(.0001,t,.12);n.o1.stop(t+.55);n.o2.stop(t+.55);n.lfo.stop(t+.55)}catch(e){}chTrafficNodes=null}
-function chToggleSound(){chSoundOn=!chSoundOn;const b=document.getElementById("chSoundToggle");if(b)b.textContent=chSoundOn?"🔊 ЗВУК ВКЛ":"🔇 ЗВУК ВЫКЛ";if(!chSoundOn)chStopTraffic();else{chAudioReady();chCluck();if(chActive)chStartTraffic()}}
-
-function chRoundRect(c,x,y,w,h,r){c.beginPath();c.roundRect(x,y,w,h,r);c.fill()}
-function chDraw(){
- const cv=document.getElementById("chCanvas");if(!cv)return;const w=cv.clientWidth||700,h=cv.clientHeight||300,dpr=Math.min(devicePixelRatio||1,2);if(cv.width!==Math.round(w*dpr)||cv.height!==Math.round(h*dpr)){cv.width=Math.round(w*dpr);cv.height=Math.round(h*dpr)}const c=cv.getContext("2d");c.setTransform(dpr,0,0,dpr,0,0);
- const grass=c.createLinearGradient(0,0,w,h);grass.addColorStop(0,"#315d35");grass.addColorStop(.5,"#527c3b");grass.addColorStop(1,"#203e2b");c.fillStyle=grass;c.fillRect(0,0,w,h);
- for(let i=0;i<170;i++){const x=(i*97)%w,y=(i*53)%h;c.strokeStyle=i%2?"#b7d17a22":"#091b1028";c.lineWidth=1;c.beginPath();c.moveTo(x,y);c.lineTo(x+3,y-5);c.stroke()}
- const roadTop=h*.08,roadBottom=h*.91,roadH=roadBottom-roadTop,laneH=roadH/5;
- const asphalt=c.createLinearGradient(0,roadTop,0,roadBottom);asphalt.addColorStop(0,"#454b50");asphalt.addColorStop(.5,"#292f34");asphalt.addColorStop(1,"#3c4246");c.fillStyle=asphalt;c.fillRect(0,roadTop,w,roadH);
- c.fillStyle="#d7d1b5";c.fillRect(0,roadTop,w,3);c.fillRect(0,roadBottom-3,w,3);
- for(let i=1;i<5;i++){let y=roadTop+i*laneH;c.setLineDash([w*.035,w*.025]);c.strokeStyle="#e9e5d2a0";c.lineWidth=2;c.beginPath();c.moveTo(0,y);c.lineTo(w,y);c.stroke()}c.setLineDash([]);
- for(let i=0;i<150;i++){const x=(i*67)%w,y=roadTop+((i*41)%roadH);c.fillStyle=i%3?"#ffffff0b":"#0000000c";c.fillRect(x,y,2,1)}
- for(let i=0;i<5;i++){
-  const y=roadTop+i*laneH+laneH*.5,dir=i%2?1:-1,speed=.72+i*.16,carW=Math.max(34,Math.min(68,w*.082)),carH=Math.max(10,laneH*.43);
-  // Two compact cars per lane leave a clear gap for the chicken to cross.
-  for(let j=0;j<2;j++){let raw=(j*(w*.62)+chAnim*speed*dir*1.65)%(w+carW+90);if(raw<0)raw+=w+carW+90;let x=dir>0?raw-carW:w-raw;
-   c.save();c.translate(x,y);
-   c.fillStyle="#0007";c.beginPath();c.ellipse(carW*.5,carH*.66,carW*.48,carH*.28,0,0,Math.PI*2);c.fill();
-   const colors=["#a9342d","#c69a36","#286b91","#c9d0d2","#414c58"],color=colors[(i*3+j)%colors.length];
-   // Rounded body, hood and trunk highlights
-   const paint=c.createLinearGradient(0,-carH*.65,0,carH*.65);paint.addColorStop(0,"#ffffffb8");paint.addColorStop(.2,color);paint.addColorStop(.72,color);paint.addColorStop(1,"#151b20");
-   c.fillStyle=paint;c.beginPath();c.roundRect(0,-carH*.48,carW,carH*.9,Math.max(3,carH*.25));c.fill();
-   c.fillStyle="#111a20";c.beginPath();c.roundRect(carW*.25,-carH*.39,carW*.48,carH*.78,Math.max(2,carH*.2));c.fill();
-   c.fillStyle="#83b4c8";c.beginPath();c.roundRect(carW*.31,-carH*.34,carW*.36,carH*.68,Math.max(2,carH*.18));c.fill();
-   c.fillStyle="#d9f0f4aa";c.fillRect(carW*.35,-carH*.29,carW*.055,carH*.55);
-   // Small wheels
-   c.fillStyle="#101214";for(const wy of [-1,1]){c.beginPath();c.roundRect(carW*.17,wy*(carH*.4)-2,carW*.19,4,2);c.fill();c.beginPath();c.roundRect(carW*.65,wy*(carH*.4)-2,carW*.19,4,2);c.fill()}
-   // Headlights and rear lamps
-   c.fillStyle="#fff1bd";c.fillRect(dir>0?carW-2:0,-carH*.28,2,Math.max(2,carH*.2));c.fillRect(dir>0?carW-2:0,carH*.08,2,Math.max(2,carH*.2));
-   c.fillStyle="#ff5548";c.fillRect(dir>0?0:carW-2,-carH*.28,2,Math.max(2,carH*.2));c.fillRect(dir>0?0:carW-2,carH*.08,2,Math.max(2,carH*.2));
-   c.restore();
-  }
- }
- const progress=Math.min(chStepCount,5),startY=h*.96,endY=h*.025,cy=startY-(startY-endY)*(progress/5),cx=w*.5,scale=.8+progress/12*.18;
- c.save();c.translate(cx,cy);c.scale(scale,scale);
- c.fillStyle="#0007";c.beginPath();c.ellipse(0,18,22,7,0,0,Math.PI*2);c.fill();
- c.strokeStyle="#b77a28";c.lineWidth=4;c.beginPath();c.moveTo(-7,10);c.lineTo(-9,22);c.moveTo(7,10);c.lineTo(9,22);c.stroke();
- c.strokeStyle="#e7a72f";c.lineWidth=3;c.beginPath();c.moveTo(-9,22);c.lineTo(-14,22);c.moveTo(9,22);c.lineTo(14,22);c.stroke();
- const feather=c.createRadialGradient(-5,-7,2,0,0,23);feather.addColorStop(0,"#fffef3");feather.addColorStop(.65,"#e9e3d5");feather.addColorStop(1,"#aaa99e");
- c.fillStyle=feather;c.beginPath();c.ellipse(0,0,15,19,-.12,0,Math.PI*2);c.fill();
- c.fillStyle="#f7f2e6";for(let k=0;k<5;k++){c.beginPath();c.ellipse(-13+k*5,2+k%2*3,5,9,-.7+k*.25,0,Math.PI*2);c.fill()}
- c.fillStyle="#fffaf0";c.beginPath();c.arc(1,-17,12,0,Math.PI*2);c.fill();
- c.fillStyle="#c33b32";c.beginPath();c.arc(-6,-27,4.5,0,Math.PI*2);c.arc(0,-30,5,0,Math.PI*2);c.arc(7,-27,4,0,Math.PI*2);c.fill();
- c.fillStyle="#e7a52d";c.beginPath();c.moveTo(10,-17);c.lineTo(22,-13);c.lineTo(10,-10);c.closePath();c.fill();
- c.fillStyle="#171717";c.beginPath();c.arc(5,-20,2,0,Math.PI*2);c.fill();c.fillStyle="#fff";c.beginPath();c.arc(5.5,-20.7,.7,0,Math.PI*2);c.fill();
- c.restore();
- if(chCrash){c.fillStyle="#0009";c.fillRect(0,0,w,h);c.fillStyle="#fff";c.font="900 26px sans-serif";c.textAlign="center";c.fillText("СТОЛКНОВЕНИЕ",w/2,h/2)}
-}
-function chAnimate(){chAnim+=1;chDraw()}setInterval(chAnimate,45);
-function chickenStart(){if(chActive)return;const b=gameBet("chBet");if(!b){alert("Нужна ставка от 100 и достаточно средств");return}chAudioReady();chStartTraffic();state.balance-=b;addTurnover(b);chBetValue=b;chMult=1;chStepCount=0;chActive=true;chCrash=false;save();document.getElementById("chMultiplier").textContent="x1.00";document.getElementById("chDistance").textContent="0 / 5";document.getElementById("chPotential").textContent=b.toLocaleString("ru-RU")+" ₽";document.getElementById("chScene").textContent="ДОРОГА ОТКРЫТА";document.getElementById("chStart").disabled=true;document.getElementById("chStep").disabled=false;document.getElementById("chCash").disabled=true;document.getElementById("chResult").textContent="Поток машин движется. Выбери момент для следующего шага.";chDraw()}
-function chickenStep(){
- if(!chActive||chStepLock)return;
- chStepLock=true;
- try{
-  chCluck();
-  const cv=document.getElementById("chCanvas"),w=cv?cv.clientWidth||700:700,carW=Math.max(34,Math.min(68,w*.082));
-  const lane=4-chStepCount,dir=lane%2?1:-1,speed=.72+lane*.16,period=w+carW+90,center=w*.5;
-  let collision=false;
-  for(let j=0;j<2;j++){
-   let raw=(j*(w*.62)+chAnim*speed*dir*1.65)%period;if(raw<0)raw+=period;
-   const x=dir>0?raw-carW:w-raw;
-   const carCenter=x+carW*.5;
-   if(carCenter+carW*.38>center-17&&carCenter-carW*.38<center+17)collision=true;
-  }
-  if(collision){
-   chActive=false;chStopTraffic();chTone(95,.45,.2,"sawtooth");chCrash=true;
-   document.getElementById("chScene").textContent="АВАРИЯ";
-   document.getElementById("chResult").textContent="🚨 Машина проехала слишком близко. Ставка потеряна.";
-   document.getElementById("chStep").disabled=true;document.getElementById("chCash").disabled=true;document.getElementById("chStart").disabled=false;save();chDraw();return;
-  }
-  chStepCount++;chMult=+(chMult*1.35).toFixed(2);
-  document.getElementById("chMultiplier").textContent="x"+chMult.toFixed(2);
-  document.getElementById("chDistance").textContent=chStepCount+" / 5";
-  document.getElementById("chPotential").textContent=Math.floor(chBetValue*chMult).toLocaleString("ru-RU")+" ₽";
-  document.getElementById("chCash").disabled=false;
-  document.getElementById("chResult").textContent="Полоса пройдена! Продолжить или забрать выигрыш?";
-  document.getElementById("chScene").textContent="БЕЗОПАСНО · "+chStepCount+"/5";
-  chDraw();if(chStepCount>=5)chickenCash();
- }finally{chStepLock=false}
-}
-function chickenCash(){if(!chActive)return;chActive=false;chStopTraffic();chTone(880,.12,.09,"sine");chTone(1175,.22,.08,"sine",.12);const w=gamePay(chBetValue,chMult);document.getElementById("chResult").textContent="🏆 Выигрыш зачислен: "+w.toLocaleString("ru-RU")+" 🪙";document.getElementById("chStep").disabled=true;document.getElementById("chCash").disabled=true;document.getElementById("chStart").disabled=false;document.getElementById("chScene").textContent="ПЕРЕХОД ЗАВЕРШЁН"}
-
-
 /* Detailed arcade scene renderers */
 function sceneCanvas(id){const c=document.getElementById(id);if(!c)return null;const w=c.clientWidth||640,h=Math.round(w*(id==="poolCanvas" ? .5625 : .625)),d=Math.min(window.devicePixelRatio||1,2);c.width=Math.round(w*d);c.height=Math.round(h*d);const x=c.getContext("2d");x.setTransform(d,0,0,d,0,0);return {c,x,w,h}}
 
@@ -6776,7 +6671,39 @@ function poolResolveMatch(p,who){
  if(poolMatch.turn==="bot")setTimeout(poolBotMove,650);else document.getElementById("poolHitBtn").disabled=false;
 }
 function poolEndMatch(who){poolRollSound(false);poolMatch.over=true;document.getElementById("poolHitBtn").disabled=true;if(who==="player"){const prize=gamePay(poolMatch.bet,2);document.getElementById("poolResult").textContent="Победа! Выплата "+prize+" 🪙"}else{save();document.getElementById("poolResult").textContent="Бот выиграл партию. Начни новую игру."}}
-function poolBotMove(){if(!poolMatch||poolMatch.over)return;poolCueStrike();poolRollSound(true);const q=poolBodies[0],t=poolBodies.filter(b=>b.active&&b.kind==="bot").sort((a,b)=>Math.hypot(a.x-q.x,a.y-q.y)-Math.hypot(b.x-q.x,b.y-q.y))[0];if(!t){poolEndMatch("player");return}const a=Math.atan2(-(t.y-q.y),t.x-q.x)+(Math.random()-.5)*.16;q.vx=Math.cos(a)*.007;q.vy=-Math.sin(a)*.007;poolRunMatch("bot")}
+function poolBotMove(){
+ if(!poolMatch||poolMatch.over||poolMatch.moving||poolMatch.turn!=="bot")return;
+ const cue=poolBodies[0],r=.021,pockets=[[.035,.05],[.5,.05],[.965,.05],[.035,.95],[.5,.95],[.965,.95]];
+ const targets=poolBodies.filter(b=>b.active&&(b.kind==="bot"||(b.kind==="eight"&&poolMatch.leftBot===0)));
+ if(!targets.length){poolEndMatch("player");return}
+ const pointSegDist=(p,a,b)=>{const dx=b.x-a.x,dy=b.y-a.y,l=dx*dx+dy*dy||1,t=Math.max(0,Math.min(1,((p.x-a.x)*dx+(p.y-a.y)*dy)/l));return Math.hypot(p.x-(a.x+t*dx),p.y-(a.y+t*dy))};
+ let best=null;
+ for(const target of targets)for(const pocket of pockets){
+  const dx=pocket[0]-target.x,dy=pocket[1]-target.y,len=Math.hypot(dx,dy);if(len<.001)continue;
+  const ux=dx/len,uy=dy/len,ghost={x:target.x-ux*r*2.08,y:target.y-uy*r*2.08};
+  if(ghost.x<.055||ghost.x>.945||ghost.y<.055||ghost.y>.945)continue;
+  let blockers=0;
+  for(const b of poolBodies){if(!b.active||b===cue||b===target)continue;
+   if(pointSegDist(b,cue,ghost)<r*2.12)blockers+=1.7;
+   if(pointSegDist(b,target,{x:pocket[0],y:pocket[1]})<r*2.05)blockers+=2.4;
+  }
+  const cueDist=Math.hypot(ghost.x-cue.x,ghost.y-cue.y),potDist=len;
+  const score=blockers*8+cueDist*.8+potDist*.35+(ghost.x<.08||ghost.x>.92||ghost.y<.08||ghost.y>.92?1:0);
+  if(!best||score<best.score)best={score,ghost,target,pocket,blockers};
+ }
+ if(!best){
+  const target=targets.sort((a,b)=>Math.hypot(a.x-cue.x,a.y-cue.y)-Math.hypot(b.x-cue.x,b.y-cue.y))[0];
+  const a=Math.atan2(-(target.y-cue.y),target.x-cue.x);
+  document.getElementById("poolResult").textContent="🤖 Бот рассчитывает сложный удар…";
+  poolCueStrike();poolRollSound(true);cue.vx=Math.cos(a)*.0132;cue.vy=-Math.sin(a)*.0132;poolRunMatch("bot");return;
+ }
+ const a=Math.atan2(-(best.ghost.y-cue.y),best.ghost.x-cue.x);
+ document.getElementById("poolResult").textContent=best.blockers<1?"🤖 Бот выбрал точный удар по лузе.":"🤖 Бот рассчитывает удар с обходом шаров.";
+ poolCueStrike();poolRollSound(true);
+ const power=Math.min(.0145,Math.max(.0118,.0108+Math.hypot(best.ghost.x-cue.x,best.ghost.y-cue.y)*.004));
+ cue.vx=Math.cos(a)*power;cue.vy=-Math.sin(a)*power;
+ poolRunMatch("bot");
+}
 
 
 
