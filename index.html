@@ -6828,7 +6828,7 @@ function renderSpecialAccountControls(){
   
  }
  if(String(nick).trim().toLowerCase()==="skebob"){
-  html+='<div style="margin-top:14px"><button type="button" class="goldbtn" style="width:100%" onclick="openMoneyGrantModal()">💰 ВЫДАТЬ ДЕНЬГИ</button></div>';
+  html+='<div style="display:grid;grid-template-columns:1fr;gap:9px;margin-top:14px"><button type="button" class="goldbtn" style="width:100%" onclick="openMoneyGrantModal()">💰 ВЫДАТЬ ДЕНЬГИ</button><button type="button" class="goldbtn" style="width:100%;background:linear-gradient(135deg,#6335bd,#35116e)" onclick="openProfileLookupModal()">🔎 ПРОВЕРИТЬ ПРОФИЛЬ</button></div>';
  }
  host.innerHTML=html+'</div>';
 }
@@ -6861,6 +6861,36 @@ function openMoneyGrantModal(){
  });
  nickInput.focus();
 }
+function openProfileLookupModal(){
+ const old=document.getElementById("profileLookupModal");if(old)old.remove();
+ const overlay=document.createElement("div");
+ overlay.id="profileLookupModal";
+ overlay.style.cssText="position:fixed;inset:0;z-index:32001;background:rgba(0,0,0,.84);display:flex;align-items:center;justify-content:center;padding:18px";
+ const panel=document.createElement("div");
+ panel.style.cssText="width:100%;max-width:390px;max-height:85vh;overflow:auto;background:var(--panel);color:var(--text);border:1px solid #a96bff;border-radius:18px;padding:20px;box-shadow:0 15px 50px #000b";
+ panel.innerHTML='<h3 style="margin:0 0 15px;color:var(--gold)">🔎 ПРОВЕРИТЬ ПРОФИЛЬ</h3><label for="profileLookupNickname" style="display:block;margin:0 0 6px;font-size:13px">Nickname игрока</label><input id="profileLookupNickname" type="text" maxlength="18" autocomplete="off" placeholder="Введи nickname" style="width:100%;box-sizing:border-box;margin-bottom:12px"><button type="button" class="goldbtn" id="profileLookupSubmit" style="width:100%">ПРОВЕРИТЬ</button><div id="profileLookupStatus" role="status" style="margin-top:12px;font-size:13px"></div><div id="profileLookupResult" style="margin-top:12px"></div><button type="button" class="secondary" id="profileLookupClose" style="width:100%;margin-top:14px">ЗАКРЫТЬ</button>';
+ overlay.appendChild(panel);document.body.appendChild(overlay);
+ const close=()=>overlay.remove();
+ panel.querySelector("#profileLookupClose").addEventListener("click",close);
+ overlay.addEventListener("click",e=>{if(e.target===overlay)close();});
+ const input=panel.querySelector("#profileLookupNickname"),button=panel.querySelector("#profileLookupSubmit"),status=panel.querySelector("#profileLookupStatus"),result=panel.querySelector("#profileLookupResult");
+ button.addEventListener("click",async()=>{
+  if(button.disabled)return;
+  const nickname=input.value.trim();
+  if(nickname.length<2){status.style.color="#ff8585";status.textContent="Введи nickname игрока.";input.focus();return;}
+  button.disabled=true;button.textContent="ПРОВЕРЯЕМ…";status.style.color="var(--text)";status.textContent="Ищем игрока…";result.innerHTML="";
+  try{
+   const player=await window.skebobLookupPlayer(nickname);
+   const online=player.is_online===true;
+   const balance=Number(player.player_balance)||0;
+   status.textContent="Профиль найден.";status.style.color="#65d995";
+   result.innerHTML='<div style="border:1px solid var(--border2);border-radius:13px;padding:12px;background:var(--panel2)"><table style="width:100%;border-collapse:collapse;font-size:14px"><tbody><tr><td style="padding:9px 4px;color:var(--muted)">Nickname</td><td style="padding:9px 4px;text-align:right;font-weight:900;overflow-wrap:anywhere">'+bjEscape(player.player_nickname)+'</td></tr><tr style="border-top:1px solid var(--border2)"><td style="padding:9px 4px;color:var(--muted)">Статус</td><td style="padding:9px 4px;text-align:right;font-weight:900;color:'+(online?"#65d995":"#ff8585")+'">'+(online?"🟢 В сети":"🔴 Не в сети")+'</td></tr><tr style="border-top:1px solid var(--border2)"><td style="padding:9px 4px;color:var(--muted)">Баланс</td><td style="padding:9px 4px;text-align:right;font-weight:900;color:var(--gold)">'+balance.toLocaleString("ru-RU",{maximumFractionDigits:2})+' ₽</td></tr></tbody></table></div>';
+  }catch(error){status.style.color="#ff8585";status.textContent="Ошибка: "+(error?.message||"не удалось проверить профиль");}
+  finally{button.disabled=false;button.textContent="ПРОВЕРИТЬ";}
+ });
+ input.focus();
+}
+
 function bjEscape(v){return String(v).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]))}
 function persistNickname(nick){
  const clean=String(nick||"").trim().replace(/\\s+/g," ").slice(0,18);
@@ -7030,7 +7060,7 @@ function pokerFinish(winner,msg){let g=pokerGame;g.active=false;g.done=true;if(!
 </div>
 
 <div id="skebobDialog" role="dialog" aria-modal="true" style="display:none;position:fixed;inset:0;z-index:30000;background:rgba(0,0,0,.78);align-items:center;justify-content:center;padding:20px"><div style="width:100%;max-width:430px;background:var(--panel);color:var(--text);border:1px solid var(--gold);border-radius:22px;padding:24px;box-shadow:0 18px 60px #000b"><h2 data-dialog-title style="margin:0 0 16px;color:var(--gold)">Уведомление</h2><div data-dialog-message style="font-size:16px;line-height:1.55;white-space:pre-wrap;overflow-wrap:anywhere"></div><input data-dialog-input type="text" style="display:none;margin-top:16px"><div style="display:flex;gap:10px;justify-content:flex-end;margin-top:22px"><button data-dialog-cancel type="button" class="secondary">Отмена</button><button data-dialog-ok type="button" class="goldbtn" style="width:auto;min-width:110px;margin:0;padding:12px 20px">ОК</button></div></div></div>
-<script src="./supabase-auth.js?v=6" onload="if(typeof initSupabaseAuth==='function')initSupabaseAuth();"></script>
+<script src="./supabase-auth.js?v=7" onload="if(typeof initSupabaseAuth==='function')initSupabaseAuth();"></script>
 <script>window.addEventListener("load",()=>{if(typeof initNickname==="function")initNickname();});</script>
 </body>
     </html>
