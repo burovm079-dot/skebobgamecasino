@@ -2304,20 +2304,18 @@ SKEBOB <span>CASINO</span>
 
 <div class="balance">
 
-<div>
+<div style="display:flex;flex-direction:column;align-items:flex-start;gap:8px;min-width:0">
 <div class="small">ТВОЙ БАЛАНС</div>
 <strong id="balance">1000</strong> 🪙
+<button id="leaderboardToggle" type="button" aria-expanded="false" onclick="toggleLeaderboard()" style="display:inline-flex!important;visibility:visible!important;opacity:1!important;align-items:center;justify-content:center;position:relative;z-index:50;border:1px solid #ffd66b;border-radius:10px;padding:10px 14px;background:linear-gradient(135deg,#69400c,#32134e);color:#ffe7a5;font-size:12px;font-weight:900;white-space:nowrap;cursor:pointer">🏆 ЛИДЕРБОРД <span id="leaderboardArrow" style="margin-left:6px">▼</span></button>
+<div id="leaderboardPanel" class="leaderboard-panel" aria-label="Топ 20 игроков" style="width:min(340px,calc(100vw - 70px));box-sizing:border-box">
+  <div class="leaderboard-head"><span>ТОП-20 ПО БАЛАНСУ</span><button class="secondary leaderboard-refresh" type="button" onclick="refreshLeaderboard()">↻</button></div>
+  <div id="leaderboardRows" class="leaderboard-note">Нажми, чтобы загрузить рейтинг.</div>
+ </div>
 </div>
 
 <div class="small">
 Виртуальные монеты
-</div>
-<div class="leaderboard-widget">
- <button id="leaderboardToggle" class="leaderboard-toggle" type="button" aria-expanded="false" onclick="toggleLeaderboard()">🏆 ЛИДЕРБОРД <span id="leaderboardArrow">▼</span></button>
- <div id="leaderboardPanel" class="leaderboard-panel" aria-label="Топ 20 игроков">
-  <div class="leaderboard-head"><span>ТОП-20 ПО БАЛАНСУ</span><button class="secondary leaderboard-refresh" type="button" onclick="refreshLeaderboard()">↻</button></div>
-  <div id="leaderboardRows" class="leaderboard-note">Нажми, чтобы загрузить рейтинг.</div>
- </div>
 </div>
 
 </div>
