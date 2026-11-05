@@ -66,16 +66,7 @@ function saveSession(value){
 }
 async function rest(path,options={}){
  if(!session||!session.access_token)throw new Error("Сессия не найдена. Войди в аккаунт ещё раз.");
- const send=async()=>{
-  const controller=new AbortController();
-  const timeout=setTimeout(()=>controller.abort(),15000);
-  try{
-   return await fetch(SB_URL+"/rest/v1/"+path,{...options,signal:controller.signal,headers:{"apikey":SB_KEY,"Authorization":"Bearer "+session.access_token,"Content-Type":"application/json","Accept":"application/json",...(options.headers||{})}});
-  }catch(error){
-   if(error&&error.name==="AbortError")throw new Error("Supabase не ответил за 15 секунд. Проверь подключение и настройки проекта.");
-   throw error;
-  }finally{clearTimeout(timeout);}
- };
+ const send=()=>fetch(SB_URL+"/rest/v1/"+path,{...options,headers:{"apikey":SB_KEY,"Authorization":"Bearer "+session.access_token,"Content-Type":"application/json","Accept":"application/json",...(options.headers||{})}});
  let response=await send();
  // Если access token истёк во время игры, обновляем сессию и повторяем запрос.
  if(response.status===401&&await refreshSession())response=await send();
@@ -119,13 +110,11 @@ function normalizeLoadedState(remote){
   remote.balance=Number.isFinite(previous)&&previous>=0?previous:20;
  }
  delete remote.admin;
- const current=window.skebobGetGameState();
- window.skebobSetGameState({...current,...remote,
-  stats:{...(current.stats||{}),...(remote.stats||{})},
- });
- const loaded=window.skebobGetGameState();
- if(!loaded.inventory||!Array.isArray(loaded.inventory))loaded.inventory=[];
- if(!loaded.tapGame||typeof loaded.tapGame!=="object")loaded.tapGame={hourStartedAt:0,earnedCents:0,pendingCents:0,cooldownUntil:0};
+ state={...state,...remote,
+  stats:{...(typeof defaultStats!=="undefined"?defaultStats:{}),...(remote.stats||{})},
+ };
+ if(!state.inventory||!Array.isArray(state.inventory))state.inventory=[];
+ if(!state.tapGame||typeof state.tapGame!=="object")state.tapGame={hourStartedAt:0,earnedCents:0,pendingCents:0,cooldownUntil:0};
 }
 async function loadPlayerData(){
  // Не даём отложенному сохранению предыдущего аккаунта попасть в новый.
@@ -140,16 +129,16 @@ async function loadPlayerData(){
   normalizeLoadedState(remote);
  }else{
   // Новый аккаунт получает чистое начальное сохранение, а не баланс прошлого аккаунта с устройства.
-  window.skebobSetGameState({
+  state={
    balance:20,
    tapGame:{hourStartedAt:0,earnedCents:0,pendingCents:0,cooldownUntil:0},
    inventory:[],
    stats:{...(typeof defaultStats!=="undefined"?defaultStats:{})},
    createdAt:Date.now(),
    profileStyle:{frame:"classic",background:"default",accent:"gold",collapsed:false}
-   });
+  };
  }
- try{localStorage.setItem("skebobSave",JSON.stringify(window.skebobGetGameState()));}catch(_){}
+ try{localStorage.setItem("skebobSave",JSON.stringify(state));}catch(_){}
  try{localStorage.setItem("skebobNickname",currentNickname);}catch(_){}
  await writePlayerSave();
  startPlayerPresence();
@@ -161,7 +150,7 @@ async function loadPlayerData(){
 }
 async function writePlayerSave(){
  if(!session||!session.user||!session.user.id)return;
- const response=await fetch(SB_URL+"/rest/v1/player_saves?on_conflict=user_id",{method:"POST",headers:{"apikey":SB_KEY,"Authorization":"Bearer "+session.access_token,"Content-Type":"application/json","Prefer":"resolution=merge-duplicates,return=minimal"},body:JSON.stringify({user_id:session.user.id,game_state:window.skebobGetGameState()})});
+ const response=await fetch(SB_URL+"/rest/v1/player_saves?on_conflict=user_id",{method:"POST",headers:{"apikey":SB_KEY,"Authorization":"Bearer "+session.access_token,"Content-Type":"application/json","Prefer":"resolution=merge-duplicates,return=minimal"},body:JSON.stringify({user_id:session.user.id,game_state:state})});
  if(response.status===401&&await refreshSession())return writePlayerSave();
  if(!response.ok){let msg="Не удалось сохранить прогресс";try{const d=await response.json();msg=d.message||d.details||msg;}catch(_){}throw new Error(msg);}
 }
