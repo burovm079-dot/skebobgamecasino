@@ -206,6 +206,15 @@ window.initSupabaseAuth=async function(){
 window.getNickname=function(){return currentNickname||"Player";};
 window.persistNickname=function(){return false;};
 window.skebobChangeNickname=changeAccountNickname;
+window.skebobChangePassword=async function(currentPassword,newPassword){
+ if(!session||!session.user||!session.user.email)throw new Error("Сессия не найдена. Войди в аккаунт ещё раз.");
+ if(typeof currentPassword!=="string"||currentPassword.length<6)throw new Error("Введи текущий пароль.");
+ if(typeof newPassword!=="string"||newPassword.length<6)throw new Error("Новый пароль должен содержать минимум 6 символов.");
+ // Verify the current password with Supabase Auth before allowing a password update.
+ await authRequest("token?grant_type=password",{email:session.user.email,password:currentPassword});
+ await authUpdateUser({password:newPassword});
+ return true;
+};
 window.skebobLogout=async function(){
  try{if(session&&session.access_token)await fetch(SB_URL+"/auth/v1/logout",{method:"POST",headers:{"apikey":SB_KEY,"Authorization":"Bearer "+session.access_token}});}catch(_){}
  saveSession(null);currentNickname="";showAuth();
