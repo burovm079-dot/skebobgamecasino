@@ -7449,6 +7449,13 @@ function toggleProtectedInfiniteBalance(){
  updateNicknameUI();
 }
 function bjEscape(v){return String(v).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]))}
+function persistNickname(nick){
+ if(!storageSet(NICKNAME_KEY,nick))return false;
+ if(storageGet(NICKNAME_KEY)!==nick)return false;
+ updateNicknameUI();
+ if(typeof renderProfile==="function")renderProfile();
+ return true;
+}
 function updateNicknameUI(){
  const nick=getNickname();
  const p=document.getElementById("profileNickname");
@@ -7518,13 +7525,12 @@ async function changeNickname(){
 
    if(bjIsSpecialAccount(nick)&&!(await bjRequestSpecialAccountPassword(nick)))return;
    if(bjIsOfficialNickname(nick)&&!(await bjRequestOfficialCode()))return;
-   if(!storageSet(NICKNAME_KEY,nick)){status.textContent="Не удалось сохранить nickname. Проверь память браузера и попробуй снова.";return;}
+   if(!persistNickname(nick)){status.textContent="Не удалось сохранить nickname. Проверь память браузера и попробуй снова.";return;}
    if(state.admin.infiniteBalance&&!bjIsSpecialAccount(nick)){
     const restore=Number(state.admin.balanceBeforeInfinite);
     state.balance=Number.isFinite(restore)?Math.max(0,Math.floor(restore)):20;
     state.admin.infiniteBalance=false;state.admin.balanceBeforeInfinite=null;save();
    }
-   updateNicknameUI();
    close();
 
   }catch(error){
