@@ -277,11 +277,6 @@ window.skebobGetPopularGames=async function(){
  if(!Array.isArray(rows))throw new Error("Сервер вернул неверный рейтинг.");
  return rows;
 };
-window.skebobGetTopWinners=async function(){
- const rows=await rest("rpc/get_top_winners",{method:"POST",body:"{}"});
- if(!Array.isArray(rows))throw new Error("Сервер вернул неверный рейтинг победителей.");
- return rows;
-};
 window.skebobGetLeaderboard=async function(){
  const rows=await rest("rpc/get_player_leaderboard",{method:"POST",body:"{}"});
  if(!Array.isArray(rows))throw new Error("Не удалось загрузить рейтинг игроков.");
