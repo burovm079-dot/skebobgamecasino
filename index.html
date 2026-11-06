@@ -6847,7 +6847,7 @@ function renderSpecialAccountControls(){
   
  }
  if(String(nick).trim().toLowerCase()==="skebob"){
-  html+='<div style="display:grid;grid-template-columns:1fr;gap:9px;margin-top:14px"><button type="button" class="goldbtn" style="width:100%" onclick="openMoneyGrantModal()">💰 ВЫДАТЬ ДЕНЬГИ</button><button type="button" class="goldbtn" style="width:100%;background:linear-gradient(135deg,#6335bd,#35116e)" onclick="openProfileLookupModal()">🔎 ПРОВЕРИТЬ ПРОФИЛЬ</button><button type="button" class="goldbtn" style="width:100%;background:linear-gradient(135deg,#245fa8,#173c70)" onclick="openPlayerAccountsModal()">👥 ПРОСМОТР АККАУНТОВ</button><button type="button" class="goldbtn" style="width:100%;background:linear-gradient(135deg,#8b5bd6,#51258f)" onclick="openPlayerNotificationModal()">🔔 ОТПРАВИТЬ УВЕДОМЛЕНИЕ</button><button type="button" class="goldbtn" style="width:100%;background:linear-gradient(135deg,#b52f42,#701624)" onclick="openPlayerBanModal()">🚫 ЗАБАНИТЬ</button><button type="button" class="goldbtn" style="width:100%;background:linear-gradient(135deg,#168b57,#075b42)" onclick="openPlayerBadgeModal()">✓ ВЫДАТЬ ГАЛОЧКУ</button></div>';
+  html+='<div style="display:grid;grid-template-columns:1fr;gap:9px;margin-top:14px"><button type="button" class="goldbtn" style="width:100%" onclick="openMoneyGrantModal()">💰 ВЫДАТЬ ДЕНЬГИ</button><button type="button" class="goldbtn" style="width:100%;background:linear-gradient(135deg,#6335bd,#35116e)" onclick="openProfileLookupModal()">🔎 ПРОВЕРИТЬ ПРОФИЛЬ</button><button type="button" class="goldbtn" style="width:100%;background:linear-gradient(135deg,#245fa8,#173c70)" onclick="openPlayerAccountsModal()">👥 ПРОСМОТР АККАУНТОВ</button><button type="button" class="goldbtn" style="width:100%;background:linear-gradient(135deg,#8b5bd6,#51258f)" onclick="openPlayerNotificationModal()">🔔 ОТПРАВИТЬ УВЕДОМЛЕНИЕ</button><button type="button" class="goldbtn" style="width:100%;background:linear-gradient(135deg,#b52f42,#701624)" onclick="openPlayerBanModal()">🚫 ЗАБАНИТЬ</button><button type="button" class="goldbtn" style="width:100%;background:linear-gradient(135deg,#168b57,#075b42)" onclick="openPlayerUnbanModal()">🔓 РАЗБАНИТЬ</button><button type="button" class="goldbtn" style="width:100%;background:linear-gradient(135deg,#168b57,#075b42)" onclick="openPlayerBadgeModal()">✓ ВЫДАТЬ ГАЛОЧКУ</button></div>';
  }
  host.innerHTML=html+'</div>';
 }
@@ -6907,6 +6907,29 @@ function openPlayerBanModal(){
    nick.value="";
   }catch(e){status.style.color="#ff8585";status.textContent=e?.message||"Не удалось заблокировать игрока.";}
   finally{send.disabled=false;send.textContent="ЗАБАНИТЬ";}
+ });
+ nick.focus();
+}
+function openPlayerUnbanModal(){
+ const old=document.getElementById("playerUnbanModal");if(old)old.remove();
+ const overlay=document.createElement("div");overlay.id="playerUnbanModal";
+ overlay.style.cssText="position:fixed;inset:0;z-index:32005;background:rgba(0,0,0,.86);display:flex;align-items:center;justify-content:center;padding:18px";
+ const panel=document.createElement("div");panel.style.cssText="width:100%;max-width:390px;background:var(--panel);color:var(--text);border:1px solid #27b875;border-radius:18px;padding:20px;box-shadow:0 15px 50px #000b";
+ panel.innerHTML='<h3 style="margin:0 0 15px;color:#55d99a">🔓 РАЗБЛОКИРОВАТЬ ИГРОКА</h3><label for="playerUnbanNickname" style="display:block;margin:0 0 6px;font-size:13px">Ник игрока</label><input id="playerUnbanNickname" type="text" maxlength="18" autocomplete="off" placeholder="Введи ник игрока" style="width:100%;box-sizing:border-box;margin-bottom:14px"><div style="display:flex;gap:9px"><button type="button" class="secondary" id="playerUnbanCancel" style="flex:1">ОТМЕНА</button><button type="button" class="goldbtn" id="playerUnbanSubmit" style="flex:1;background:linear-gradient(135deg,#168b57,#075b42);color:#fff">РАЗБАН</button></div><p id="playerUnbanStatus" role="status" style="min-height:18px;margin:12px 0 0;font-size:13px"></p>';
+ overlay.appendChild(panel);document.body.appendChild(overlay);
+ const close=()=>overlay.remove(),nick=panel.querySelector("#playerUnbanNickname"),send=panel.querySelector("#playerUnbanSubmit"),status=panel.querySelector("#playerUnbanStatus");
+ panel.querySelector("#playerUnbanCancel").addEventListener("click",close);
+ overlay.addEventListener("click",e=>{if(e.target===overlay)close();});
+ send.addEventListener("click",async()=>{
+  if(send.disabled)return;
+  if(!nick.value.trim()){status.style.color="#ff8585";status.textContent="Введи ник игрока.";return;}
+  send.disabled=true;send.textContent="РАЗБЛОКИРУЕМ…";status.textContent="";
+  try{
+   const result=await window.skebobUnbanPlayer(nick.value.trim());
+   status.style.color="#8be0a8";status.textContent="Игрок "+result.player_nickname+" разблокирован.";
+   nick.value="";
+  }catch(e){status.style.color="#ff8585";status.textContent=e?.message||"Не удалось разблокировать игрока.";}
+  finally{send.disabled=false;send.textContent="РАЗБАН";}
  });
  nick.focus();
 }
