@@ -286,6 +286,13 @@ window.skebobBanPlayer=async function(nickname,months,days){
  if(!Array.isArray(rows)||!rows.length)throw new Error("Сервер не подтвердил блокировку.");
  return rows[0];
 };
+window.skebobUnbanPlayer=async function(nickname){
+ const nick=String(nickname||"").trim();
+ if(!nick)throw new Error("Введи ник игрока.");
+ const rows=await rest("rpc/admin_unban_player",{method:"POST",body:JSON.stringify({p_nickname:nick})});
+ if(!Array.isArray(rows)||!rows.length)throw new Error("Сервер не подтвердил разблокировку.");
+ return rows[0];
+};
 window.skebobSendPlayerNotification=async function(nickname,message){
  const nick=String(nickname||"").trim(),text=String(message||"").trim();
  if(!nick)throw new Error("Введи ник игрока.");
