@@ -4293,23 +4293,81 @@ return[];
 
 }
 
-async function activatePromo(){
- const input=document.getElementById("promoInput"),status=document.getElementById("promoStatus"),code=input.value.trim().toUpperCase();
- if(!code){status.style.color="#e34b55";status.textContent="❌ Введи промокод.";return;}
- if(Object.prototype.hasOwnProperty.call(PROMOCODES,code)){
-  const used=getUsedPromocodes();
-  if(code==="SKEBOB"&&Date.now()-Number(state.createdAt||0)>=24*60*60*1000){status.style.color="#e34b55";status.textContent="❌ Промокод SKEBOB доступен только в первые 24 часа после первого входа.";return;}
-  if(used.includes(code)){status.style.color="#e34b55";status.textContent="Ошибка вы уже вводили данный промокод";alert("Ошибка вы уже вводили данный промокод");return;}
-  used.push(code);storageSet("skebobUsedPromocodes",JSON.stringify(used));state.balance+=PROMOCODES[code].reward;save();
-  status.style.color="#24cf78";status.textContent="✅ Получено +"+formatMoney(PROMOCODES[code].reward);input.value="";return;
- }
- const button=document.getElementById("promoActivate");if(button)button.disabled=true;
- status.style.color="#ffe28a";status.textContent="Проверяем промокод…";
- try{
-  const result=await window.skebobRedeemPromoCode(code);state.balance=Number(result.new_balance);save();
-  status.style.color="#24cf78";status.textContent="✅ Получено +"+formatMoney(Number(result.reward))+" · Активаций: "+result.activations_used+"/"+result.activation_limit;input.value="";
- }catch(error){status.style.color="#e34b55";status.textContent="❌ "+(error?.message||"Не удалось активировать промокод.");}
- finally{if(button)button.disabled=false;}
+function activatePromo(){
+
+const input=
+document.getElementById(
+"promoInput"
+);
+
+const status=
+document.getElementById(
+"promoStatus"
+);
+
+const code=
+input.value
+.trim()
+.toUpperCase();
+
+if(!PROMOCODES[code]){
+
+status.style.color=
+"#e34b55";
+
+status.textContent=
+"❌ Неверный промокод.";
+
+return;
+
+}
+
+const used=
+getUsedPromocodes();
+
+if(code==="SKEBOB" && Date.now()-Number(state.createdAt||0)>=24*60*60*1000){
+ status.style.color="#e34b55";
+ status.textContent="❌ Промокод SKEBOB доступен только в первые 24 часа после первого входа.";
+ return;
+}
+
+if(
+used.includes(code)
+){
+
+status.style.color=
+"#e34b55";
+
+status.textContent=
+"Ошибка вы уже вводили данный промокод";
+
+alert(
+"Ошибка вы уже вводили данный промокод"
+);
+
+return;
+
+}
+
+used.push(code);
+
+storageSet(
+"skebobUsedPromocodes",
+JSON.stringify(used)
+);
+
+state.balance+=
+PROMOCODES[code].reward;
+
+save();
+
+status.style.color=
+"#24cf78";
+
+status.textContent="✅ Получено +"+formatMoney(PROMOCODES[code].reward);
+
+input.value="";
+
 }
 
 /* =========================
@@ -6789,29 +6847,11 @@ function renderSpecialAccountControls(){
   
  }
  if(String(nick).trim().toLowerCase()==="skebob"){
-  html+='<div style="display:grid;grid-template-columns:1fr;gap:9px;margin-top:14px"><button type="button" class="goldbtn" style="width:100%" onclick="openMoneyGrantModal()">💰 ВЫДАТЬ ДЕНЬГИ</button><button type="button" class="goldbtn" style="width:100%;background:linear-gradient(135deg,#6335bd,#35116e)" onclick="openProfileLookupModal()">🔎 ПРОВЕРИТЬ ПРОФИЛЬ</button><button type="button" class="goldbtn" style="width:100%;background:linear-gradient(135deg,#245fa8,#173c70)" onclick="openPlayerAccountsModal()">👥 ПРОСМОТР АККАУНТОВ</button><button type="button" class="goldbtn" style="width:100%;background:linear-gradient(135deg,#8b5bd6,#51258f)" onclick="openPlayerNotificationModal()">🔔 ОТПРАВИТЬ УВЕДОМЛЕНИЕ</button><button type="button" class="goldbtn" style="width:100%;background:linear-gradient(135deg,#b87918,#70420b)" onclick="openGlobalAnnouncementModal()">📢 ГЛОБАЛЬНОЕ ОБЪЯВЛЕНИЕ</button><button type="button" class="goldbtn" style="width:100%;background:linear-gradient(135deg,#b52f42,#701624)" onclick="openPlayerBanModal()">🚫 ЗАБАНИТЬ</button><button type="button" class="goldbtn" style="width:100%;background:linear-gradient(135deg,#168b57,#075b42)" onclick="openPlayerUnbanModal()">🔓 РАЗБАНИТЬ</button><button type="button" class="goldbtn" style="width:100%;background:linear-gradient(135deg,#168b57,#075b42)" onclick="openPlayerBadgeModal()">✓ ВЫДАТЬ ГАЛОЧКУ</button><button type="button" class="goldbtn" style="width:100%;background:linear-gradient(135deg,#287c9b,#16475f)" onclick="openPopularGamesModal()">🎮 ПОПУЛЯРНЫЕ ИГРЫ</button><button type="button" class="goldbtn" style="width:100%;background:linear-gradient(135deg,#a8781c,#67420b)" onclick="openCreatePromoModal()">🎟️ СОЗДАТЬ ПРОМОКОД</button><button type="button" class="goldbtn" style="width:100%;background:linear-gradient(135deg,#9b3348,#55172a)" onclick="openResetProgressModal()">🧹 СБРОСИТЬ ПРОГРЕСС</button></div>';
+  html+='<div style="display:grid;grid-template-columns:1fr;gap:9px;margin-top:14px"><button type="button" class="goldbtn" style="width:100%" onclick="openMoneyGrantModal()">💰 ВЫДАТЬ ДЕНЬГИ</button><button type="button" class="goldbtn" style="width:100%;background:linear-gradient(135deg,#6335bd,#35116e)" onclick="openProfileLookupModal()">🔎 ПРОВЕРИТЬ ПРОФИЛЬ</button><button type="button" class="goldbtn" style="width:100%;background:linear-gradient(135deg,#245fa8,#173c70)" onclick="openPlayerAccountsModal()">👥 ПРОСМОТР АККАУНТОВ</button><button type="button" class="goldbtn" style="width:100%;background:linear-gradient(135deg,#8b5bd6,#51258f)" onclick="openPlayerNotificationModal()">🔔 ОТПРАВИТЬ УВЕДОМЛЕНИЕ</button><button type="button" class="goldbtn" style="width:100%;background:linear-gradient(135deg,#b87918,#70420b)" onclick="openGlobalAnnouncementModal()">📢 ГЛОБАЛЬНОЕ ОБЪЯВЛЕНИЕ</button><button type="button" class="goldbtn" style="width:100%;background:linear-gradient(135deg,#b52f42,#701624)" onclick="openPlayerBanModal()">🚫 ЗАБАНИТЬ</button><button type="button" class="goldbtn" style="width:100%;background:linear-gradient(135deg,#168b57,#075b42)" onclick="openPlayerUnbanModal()">🔓 РАЗБАНИТЬ</button><button type="button" class="goldbtn" style="width:100%;background:linear-gradient(135deg,#168b57,#075b42)" onclick="openPlayerBadgeModal()">✓ ВЫДАТЬ ГАЛОЧКУ</button><button type="button" class="goldbtn" style="width:100%;background:linear-gradient(135deg,#287c9b,#16475f)" onclick="openPopularGamesModal()">🎮 ПОПУЛЯРНЫЕ ИГРЫ</button><button type="button" class="goldbtn" style="width:100%;background:linear-gradient(135deg,#9b3348,#55172a)" onclick="openResetProgressModal()">🧹 СБРОСИТЬ ПРОГРЕСС</button></div>';
  }
  host.innerHTML=html+'</div>';
 }
 
-function openCreatePromoModal(){
- const old=document.getElementById("createPromoModal");if(old)old.remove();
- const overlay=document.createElement("div");overlay.id="createPromoModal";
- overlay.style.cssText="position:fixed;inset:0;z-index:32020;background:rgba(0,0,0,.88);display:flex;align-items:center;justify-content:center;padding:18px";
- const panel=document.createElement("div");panel.style.cssText="width:100%;max-width:390px;background:var(--panel);color:var(--text);border:1px solid #b78b35;border-radius:18px;padding:20px;box-shadow:0 15px 50px #000b";
- panel.innerHTML='<h3 style="margin:0 0 8px;color:#f2c45c">🎟️ СОЗДАТЬ ПРОМОКОД</h3><p style="font-size:13px;color:var(--muted);line-height:1.45;margin:0 0 14px">Укажи код, награду в рублях и сколько раз его смогут активировать игроки.</p><label style="display:block;font-size:13px;margin-bottom:5px">Промокод</label><input id="newPromoCode" maxlength="32" autocomplete="off" placeholder="НАПРИМЕР SKEBOB2026" style="width:100%;box-sizing:border-box;margin-bottom:11px;text-transform:uppercase"><label style="display:block;font-size:13px;margin-bottom:5px">Награда (₽)</label><input id="newPromoReward" type="number" min="1" max="1000000" step="1" value="50" style="width:100%;box-sizing:border-box;margin-bottom:11px"><label style="display:block;font-size:13px;margin-bottom:5px">Лимит активаций</label><input id="newPromoLimit" type="number" min="1" max="1000000" step="1" value="100" style="width:100%;box-sizing:border-box;margin-bottom:14px"><div style="display:flex;gap:9px"><button type="button" class="secondary" id="createPromoCancel" style="flex:1">ОТМЕНА</button><button type="button" class="goldbtn" id="createPromoSubmit" style="flex:1;margin:0">СОЗДАТЬ</button></div><p id="createPromoStatus" role="status" style="min-height:18px;margin:12px 0 0;font-size:13px;line-height:1.45"></p>';
- overlay.appendChild(panel);document.body.appendChild(overlay);
- const close=()=>overlay.remove(),code=panel.querySelector("#newPromoCode"),reward=panel.querySelector("#newPromoReward"),limit=panel.querySelector("#newPromoLimit"),send=panel.querySelector("#createPromoSubmit"),status=panel.querySelector("#createPromoStatus");
- panel.querySelector("#createPromoCancel").addEventListener("click",close);overlay.addEventListener("click",e=>{if(e.target===overlay)close();});
- code.addEventListener("input",()=>{code.value=code.value.toUpperCase().replace(/\s+/g,"");});
- send.addEventListener("click",async()=>{
-  if(send.disabled)return;send.disabled=true;send.textContent="СОЗДАЁМ…";status.textContent="";
-  try{const result=await window.skebobCreatePromoCode(code.value,reward.value,limit.value);status.style.color="#8be0a8";status.textContent="✅ Промокод "+result.promo_code+" создан! Награда: "+formatMoney(Number(result.reward))+". Лимит: "+result.activation_limit+" активаций.";code.disabled=reward.disabled=limit.disabled=true;}
-  catch(error){status.style.color="#ff8585";status.textContent=error?.message||"Не удалось создать промокод.";}
-  finally{send.disabled=false;send.textContent="СОЗДАТЬ";}
- });
- code.focus();
-}
 function openResetProgressModal(){
  const old=document.getElementById("resetProgressModal");if(old)old.remove();
  const overlay=document.createElement("div");overlay.id="resetProgressModal";
@@ -7291,7 +7331,7 @@ window.refreshLeaderboard=async function(){
 </div>
 
 <div id="skebobDialog" role="dialog" aria-modal="true" style="display:none;position:fixed;inset:0;z-index:30000;background:rgba(0,0,0,.78);align-items:center;justify-content:center;padding:20px"><div style="width:100%;max-width:430px;background:var(--panel);color:var(--text);border:1px solid var(--gold);border-radius:22px;padding:24px;box-shadow:0 18px 60px #000b"><h2 data-dialog-title style="margin:0 0 16px;color:var(--gold)">Уведомление</h2><div data-dialog-message style="font-size:16px;line-height:1.55;white-space:pre-wrap;overflow-wrap:anywhere"></div><input data-dialog-input type="text" style="display:none;margin-top:16px"><div style="display:flex;gap:10px;justify-content:flex-end;margin-top:22px"><button data-dialog-cancel type="button" class="secondary">Отмена</button><button data-dialog-ok type="button" class="goldbtn" style="width:auto;min-width:110px;margin:0;padding:12px 20px">ОК</button></div></div></div>
-<script src="./supabase-auth.js?v=18" onload="if(typeof initSupabaseAuth==='function')initSupabaseAuth();"></script>
+<script src="./supabase-auth.js?v=17" onload="if(typeof initSupabaseAuth==='function')initSupabaseAuth();"></script>
 <script>window.addEventListener("load",()=>{if(typeof initNickname==="function")initNickname();});</script>
 
 <script>
