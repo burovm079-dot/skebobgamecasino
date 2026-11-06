@@ -3246,9 +3246,7 @@ const SKEBOB_TAP_WINDOW=60*60*1000;
    DATA
 ========================= */
 
-const PROMOCODES={
-SKEBOB:{reward:50}
-};
+const PROMOCODES={};
 
 // NFT-кейсы: 80 🪙 = $1. Стоимости — игровые ориентиры коллекций.
 const nftImage = id => "https://www.larvalabs.com/public/images/cryptopunks/punk" + String(id).padStart(4,"0") + ".png";
@@ -4324,12 +4322,6 @@ return;
 
 const used=
 getUsedPromocodes();
-
-if(code==="SKEBOB" && Date.now()-Number(state.createdAt||0)>=24*60*60*1000){
- status.style.color="#e34b55";
- status.textContent="❌ Промокод SKEBOB доступен только в первые 24 часа после первого входа.";
- return;
-}
 
 if(
 used.includes(code)
