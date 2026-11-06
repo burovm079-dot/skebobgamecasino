@@ -261,6 +261,35 @@ window.initSupabaseAuth=async function(){
  }catch(e){console.warn("Auth restore:",e);}
  showAuth();
 };
+
+window.skebobCreateStarsInvoice=async function(stars){
+ const allowed=[50,100,250,500,1000];
+ const amount=Number(stars);
+ if(!allowed.includes(amount))throw new Error("Недопустимое количество звёзд.");
+ if(!session||!session.access_token)throw new Error("Сначала войди в игровой аккаунт.");
+ if(Number(session.expires_at||0)<=Math.floor(Date.now()/1000)+60){
+  const refreshed=await refreshSession();
+  if(!refreshed||!session||!session.access_token)throw new Error("Сессия истекла. Войди в игру ещё раз.");
+ }
+ const response=await fetch(SB_URL+"/functions/v1/telegram-stars",{
+  method:"POST",
+  headers:{
+   "apikey":SB_KEY,
+   "Authorization":"Bearer "+session.access_token,
+   "Content-Type":"application/json"
+  },
+  body:JSON.stringify({stars:amount})
+ });
+ const data=await parseResponse(response);
+ if(!data||typeof data.invoice_url!=="string"||!data.invoice_url)throw new Error("Сервер не вернул ссылку на оплату.");
+ return data.invoice_url;
+};
+window.skebobRefreshAfterStarsPayment=async function(){
+ if(!session||!session.user)throw new Error("Сессия игрока не найдена.");
+ await loadPlayerData();
+ return Number(state.balance);
+};
+
 window.getNickname=function(){return currentNickname||"Player";};
 window.persistNickname=function(){return false;};
 window.skebobResetPlayerProgress=async function(nickname){
