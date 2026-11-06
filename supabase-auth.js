@@ -148,6 +148,7 @@ async function loadPlayerData(){
  // Загружаем галочку именно текущего вошедшего игрока из Supabase и показываем её в профиле.
  if(typeof window.refreshMyPlayerBadge==="function")await window.refreshMyPlayerBadge();
  window.dispatchEvent(new Event("skebob-auth-ready"));
+ if(typeof window.skebobShowPendingNotifications==="function")await window.skebobShowPendingNotifications();
  const modal=document.getElementById("skebobAuthModal");if(modal)modal.style.display="none";
 }
 async function writePlayerSave(){
@@ -264,6 +265,24 @@ window.skebobRemovePlayerBadge=async function(nickname){
  const result=await rest("rpc/admin_remove_player_badge",{method:"POST",body:JSON.stringify({p_nickname:nick})});
  if(typeof result!=="string"||!result)throw new Error("Сервер не подтвердил снятие галочки.");
  return result;
+};
+window.skebobSendPlayerNotification=async function(nickname,message){
+ const nick=String(nickname||"").trim(),text=String(message||"").trim();
+ if(!nick)throw new Error("Введи ник игрока.");
+ if(!text)throw new Error("Напиши текст уведомления.");
+ if(text.length>1000)throw new Error("Сообщение слишком длинное (максимум 1000 символов).");
+ const rows=await rest("rpc/admin_send_player_notification",{method:"POST",body:JSON.stringify({p_nickname:nick,p_message:text})});
+ if(!Array.isArray(rows)||!rows.length)throw new Error("Игрок не найден или сервер не подтвердил отправку.");
+ return rows[0];
+};
+window.skebobShowPendingNotifications=async function(){
+ try{
+  const rows=await rest("rpc/get_my_player_notifications",{method:"POST",body:"{}"});
+  if(!Array.isArray(rows)||!rows.length)return;
+  for(const item of rows){
+   if(typeof window.showPlayerNotification==="function")await window.showPlayerNotification(item.message||"");
+  }
+ }catch(e){console.warn("Player notifications:",e);}
 };
 window.skebobGetAllPlayerAccounts=async function(){
  const rows=await rest("rpc/admin_get_all_player_accounts",{method:"POST",body:"{}"});
