@@ -6847,11 +6847,40 @@ function renderSpecialAccountControls(){
   
  }
  if(String(nick).trim().toLowerCase()==="skebob"){
-  html+='<div style="display:grid;grid-template-columns:1fr;gap:9px;margin-top:14px"><button type="button" class="goldbtn" style="width:100%" onclick="openMoneyGrantModal()">💰 ВЫДАТЬ ДЕНЬГИ</button><button type="button" class="goldbtn" style="width:100%;background:linear-gradient(135deg,#6335bd,#35116e)" onclick="openProfileLookupModal()">🔎 ПРОВЕРИТЬ ПРОФИЛЬ</button><button type="button" class="goldbtn" style="width:100%;background:linear-gradient(135deg,#245fa8,#173c70)" onclick="openPlayerAccountsModal()">👥 ПРОСМОТР АККАУНТОВ</button><button type="button" class="goldbtn" style="width:100%;background:linear-gradient(135deg,#8b5bd6,#51258f)" onclick="openPlayerNotificationModal()">🔔 ОТПРАВИТЬ УВЕДОМЛЕНИЕ</button><button type="button" class="goldbtn" style="width:100%;background:linear-gradient(135deg,#b87918,#70420b)" onclick="openGlobalAnnouncementModal()">📢 ГЛОБАЛЬНОЕ ОБЪЯВЛЕНИЕ</button><button type="button" class="goldbtn" style="width:100%;background:linear-gradient(135deg,#b52f42,#701624)" onclick="openPlayerBanModal()">🚫 ЗАБАНИТЬ</button><button type="button" class="goldbtn" style="width:100%;background:linear-gradient(135deg,#168b57,#075b42)" onclick="openPlayerUnbanModal()">🔓 РАЗБАНИТЬ</button><button type="button" class="goldbtn" style="width:100%;background:linear-gradient(135deg,#168b57,#075b42)" onclick="openPlayerBadgeModal()">✓ ВЫДАТЬ ГАЛОЧКУ</button><button type="button" class="goldbtn" style="width:100%;background:linear-gradient(135deg,#287c9b,#16475f)" onclick="openPopularGamesModal()">🎮 ПОПУЛЯРНЫЕ ИГРЫ</button></div>';
+  html+='<div style="display:grid;grid-template-columns:1fr;gap:9px;margin-top:14px"><button type="button" class="goldbtn" style="width:100%" onclick="openMoneyGrantModal()">💰 ВЫДАТЬ ДЕНЬГИ</button><button type="button" class="goldbtn" style="width:100%;background:linear-gradient(135deg,#6335bd,#35116e)" onclick="openProfileLookupModal()">🔎 ПРОВЕРИТЬ ПРОФИЛЬ</button><button type="button" class="goldbtn" style="width:100%;background:linear-gradient(135deg,#245fa8,#173c70)" onclick="openPlayerAccountsModal()">👥 ПРОСМОТР АККАУНТОВ</button><button type="button" class="goldbtn" style="width:100%;background:linear-gradient(135deg,#8b5bd6,#51258f)" onclick="openPlayerNotificationModal()">🔔 ОТПРАВИТЬ УВЕДОМЛЕНИЕ</button><button type="button" class="goldbtn" style="width:100%;background:linear-gradient(135deg,#b87918,#70420b)" onclick="openGlobalAnnouncementModal()">📢 ГЛОБАЛЬНОЕ ОБЪЯВЛЕНИЕ</button><button type="button" class="goldbtn" style="width:100%;background:linear-gradient(135deg,#b52f42,#701624)" onclick="openPlayerBanModal()">🚫 ЗАБАНИТЬ</button><button type="button" class="goldbtn" style="width:100%;background:linear-gradient(135deg,#168b57,#075b42)" onclick="openPlayerUnbanModal()">🔓 РАЗБАНИТЬ</button><button type="button" class="goldbtn" style="width:100%;background:linear-gradient(135deg,#168b57,#075b42)" onclick="openPlayerBadgeModal()">✓ ВЫДАТЬ ГАЛОЧКУ</button><button type="button" class="goldbtn" style="width:100%;background:linear-gradient(135deg,#287c9b,#16475f)" onclick="openPopularGamesModal()">🎮 ПОПУЛЯРНЫЕ ИГРЫ</button><button type="button" class="goldbtn" style="width:100%;background:linear-gradient(135deg,#9b3348,#55172a)" onclick="openResetProgressModal()">🧹 СБРОСИТЬ ПРОГРЕСС</button></div>';
  }
  host.innerHTML=html+'</div>';
 }
 
+function openResetProgressModal(){
+ const old=document.getElementById("resetProgressModal");if(old)old.remove();
+ const overlay=document.createElement("div");overlay.id="resetProgressModal";
+ overlay.style.cssText="position:fixed;inset:0;z-index:32012;background:rgba(0,0,0,.88);display:flex;align-items:center;justify-content:center;padding:18px";
+ const panel=document.createElement("div");panel.style.cssText="width:100%;max-width:390px;background:var(--panel);color:var(--text);border:1px solid #c84a60;border-radius:18px;padding:20px;box-shadow:0 15px 50px #000b";
+ panel.innerHTML='<h3 style="margin:0 0 8px;color:#ff7188">🧹 СБРОСИТЬ ПРОГРЕСС</h3><p style="font-size:13px;color:var(--muted);line-height:1.5;margin:0 0 13px">Введи ник игрока. Будут сброшены баланс до стартовых 20 ₽, инвентарь, статистика и игровой прогресс. Сам аккаунт, никнейм и галочка останутся.</p><label for="resetProgressNickname" style="display:block;margin:0 0 6px;font-size:13px">Ник игрока</label><input id="resetProgressNickname" type="text" maxlength="18" autocomplete="off" placeholder="Введи ник игрока" style="width:100%;box-sizing:border-box;margin-bottom:12px"><div id="resetProgressConfirm" style="display:none;padding:11px;border:1px solid #a53c50;border-radius:11px;background:rgba(150,35,55,.12);font-size:13px;line-height:1.45;margin-bottom:12px">⚠️ Это действие необратимо. Точно сбросить весь игровой прогресс выбранного аккаунта?</div><div style="display:flex;gap:9px"><button type="button" class="secondary" id="resetProgressCancel" style="flex:1">ОТМЕНА</button><button type="button" class="goldbtn" id="resetProgressSubmit" style="flex:1;margin:0;background:linear-gradient(135deg,#c94a61,#791c32);color:#fff">ПРОВЕРИТЬ</button></div><p id="resetProgressStatus" role="status" style="min-height:18px;margin:12px 0 0;font-size:13px"></p>';
+ overlay.appendChild(panel);document.body.appendChild(overlay);
+ const close=()=>overlay.remove(),nick=panel.querySelector("#resetProgressNickname"),send=panel.querySelector("#resetProgressSubmit"),status=panel.querySelector("#resetProgressStatus"),confirmBox=panel.querySelector("#resetProgressConfirm");
+ let confirmed=false;
+ panel.querySelector("#resetProgressCancel").addEventListener("click",close);
+ overlay.addEventListener("click",e=>{if(e.target===overlay)close();});
+ send.addEventListener("click",async()=>{
+  const value=nick.value.trim();
+  if(!value){status.style.color="#ff8585";status.textContent="Введи ник игрока.";return;}
+  if(!confirmed){
+   confirmed=true;confirmBox.style.display="block";send.textContent="ДА, СБРОСИТЬ";status.style.color="#ffc85c";status.textContent="Проверь никнейм и подтверди действие.";return;
+  }
+  if(send.disabled)return;
+  send.disabled=true;send.textContent="СБРАСЫВАЕМ…";status.textContent="";
+  try{
+   const result=await window.skebobResetPlayerProgress(value);
+   status.style.color="#8be0a8";status.textContent="Игровой прогресс игрока "+result.player_nickname+" сброшен. При следующем входе загрузится новый прогресс.";
+   nick.disabled=true;confirmBox.style.display="none";
+  }catch(error){status.style.color="#ff8585";status.textContent=error?.message||"Не удалось сбросить прогресс.";}
+  finally{send.disabled=false;if(!nick.disabled)send.textContent="ДА, СБРОСИТЬ";}
+ });
+ nick.addEventListener("input",()=>{if(confirmed){confirmed=false;confirmBox.style.display="none";send.textContent="ПРОВЕРИТЬ";status.textContent="Ник изменён. Проверь его и подтверди заново."; }});
+ nick.focus();
+}
 function openPopularGamesModal(){
  const old=document.getElementById("popularGamesModal");if(old)old.remove();
  const overlay=document.createElement("div");overlay.id="popularGamesModal";
@@ -7302,7 +7331,7 @@ window.refreshLeaderboard=async function(){
 </div>
 
 <div id="skebobDialog" role="dialog" aria-modal="true" style="display:none;position:fixed;inset:0;z-index:30000;background:rgba(0,0,0,.78);align-items:center;justify-content:center;padding:20px"><div style="width:100%;max-width:430px;background:var(--panel);color:var(--text);border:1px solid var(--gold);border-radius:22px;padding:24px;box-shadow:0 18px 60px #000b"><h2 data-dialog-title style="margin:0 0 16px;color:var(--gold)">Уведомление</h2><div data-dialog-message style="font-size:16px;line-height:1.55;white-space:pre-wrap;overflow-wrap:anywhere"></div><input data-dialog-input type="text" style="display:none;margin-top:16px"><div style="display:flex;gap:10px;justify-content:flex-end;margin-top:22px"><button data-dialog-cancel type="button" class="secondary">Отмена</button><button data-dialog-ok type="button" class="goldbtn" style="width:auto;min-width:110px;margin:0;padding:12px 20px">ОК</button></div></div></div>
-<script src="./supabase-auth.js?v=16" onload="if(typeof initSupabaseAuth==='function')initSupabaseAuth();"></script>
+<script src="./supabase-auth.js?v=17" onload="if(typeof initSupabaseAuth==='function')initSupabaseAuth();"></script>
 <script>window.addEventListener("load",()=>{if(typeof initNickname==="function")initNickname();});</script>
 
 <script>
