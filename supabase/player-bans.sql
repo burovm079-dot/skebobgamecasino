@@ -98,3 +98,54 @@ grant execute on function public.admin_ban_player(text, integer, integer) to aut
 grant execute on function public.get_my_player_ban_status() to authenticated;
 
 notify pgrst, 'reload schema';
+
+ 
+-- Администраторская разблокировка игрока по никнейму.
+create or replace function public.admin_unban_player(p_nickname text)
+returns table(player_nickname text)
+language plpgsql
+security definer
+set search_path = ''
+as $$
+declare
+  target_user_id uuid;
+  target_nickname text;
+begin
+  if auth.uid() is null or not exists (
+    select 1 from public.game_admins a where a.user_id = auth.uid()
+  ) then
+    raise exception 'Недостаточно прав.';
+  end if;
+
+  select u.id,
+         coalesce(nullif(trim(p.nickname), ''),
+                  nullif(trim(u.raw_user_meta_data ->> 'nickname'), ''),
+                  'Игрок')
+    into target_user_id, target_nickname
+  from auth.users u
+  left join public.player_profiles p on p.user_id = u.id
+  where lower(coalesce(nullif(trim(p.nickname), ''),
+                       nullif(trim(u.raw_user_meta_data ->> 'nickname'), ''),
+                       'Игрок')) = lower(trim(coalesce(p_nickname, '')))
+  limit 1;
+
+  if target_user_id is null then
+    raise exception 'Игрок с таким ником не найден.';
+  end if;
+
+  delete from public.player_bans b
+  where b.user_id = target_user_id;
+
+  if not found then
+    raise exception 'У этого игрока нет активной блокировки.';
+  end if;
+
+  player_nickname := target_nickname;
+  return next;
+end;
+$$;
+
+revoke all on function public.admin_unban_player(text) from public, anon;
+grant execute on function public.admin_unban_player(text) to authenticated;
+
+notify pgrst, 'reload schema';
