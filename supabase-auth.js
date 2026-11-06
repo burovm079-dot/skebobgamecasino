@@ -160,6 +160,7 @@ async function loadPlayerData(){
  // Загружаем галочку именно текущего вошедшего игрока из Supabase и показываем её в профиле.
  if(typeof window.refreshMyPlayerBadge==="function")await window.refreshMyPlayerBadge();
  window.dispatchEvent(new Event("skebob-auth-ready"));
+ if(typeof window.skebobShowPendingGlobalAnnouncements==="function")await window.skebobShowPendingGlobalAnnouncements();
  if(typeof window.skebobShowPendingNotifications==="function")await window.skebobShowPendingNotifications();
  const modal=document.getElementById("skebobAuthModal");if(modal)modal.style.display="none";
 }
@@ -301,6 +302,31 @@ window.skebobSendPlayerNotification=async function(nickname,message){
  const rows=await rest("rpc/admin_send_player_notification",{method:"POST",body:JSON.stringify({p_nickname:nick,p_message:text})});
  if(!Array.isArray(rows)||!rows.length)throw new Error("Игрок не найден или сервер не подтвердил отправку.");
  return rows[0];
+};
+window.skebobPublishGlobalAnnouncement=async function(message){
+ const text=String(message||"").trim();
+ if(!text)throw new Error("Напиши текст объявления.");
+ if(text.length>1000)throw new Error("Объявление слишком длинное (максимум 1000 символов).");
+ const rows=await rest("rpc/admin_publish_global_announcement",{method:"POST",body:JSON.stringify({p_message:text})});
+ if(!Array.isArray(rows)||!rows.length)throw new Error("Сервер не подтвердил отправку объявления.");
+ return rows[0];
+};
+window.skebobShowPendingGlobalAnnouncements=async function(){
+ try{
+  const rows=await rest("rpc/get_my_global_announcements",{method:"POST",body:"{}"});
+  if(!Array.isArray(rows)||!rows.length)return;
+  for(const item of rows){
+   const overlay=document.createElement("div");overlay.id="incomingGlobalAnnouncement";
+   overlay.style.cssText="position:fixed;inset:0;z-index:33001;background:rgba(0,0,0,.86);display:flex;align-items:center;justify-content:center;padding:20px";
+   const panel=document.createElement("div");panel.style.cssText="width:100%;max-width:390px;background:var(--panel);color:var(--text);border:1px solid #e6a52e;border-radius:20px;padding:22px;box-shadow:0 15px 50px #000b;text-align:center";
+   const title=document.createElement("h3");title.textContent="📢 ГЛОБАЛЬНОЕ ОБЪЯВЛЕНИЕ";title.style.cssText="margin:0 0 15px;color:#ffc85c";
+   const body=document.createElement("div");body.textContent=item.message||"";body.style.cssText="white-space:pre-wrap;overflow-wrap:anywhere;line-height:1.5;font-size:15px;margin:0 0 20px";
+   const close=document.createElement("button");close.type="button";close.className="goldbtn";close.textContent="ПОНЯТНО";close.style.width="100%";
+   close.addEventListener("click",()=>overlay.remove());
+   panel.append(title,body,close);overlay.appendChild(panel);document.body.appendChild(overlay);
+   await new Promise(resolve=>close.addEventListener("click",resolve,{once:true}));
+  }
+ }catch(e){console.warn("Global announcements:",e);}
 };
 window.skebobShowPendingNotifications=async function(){
  try{
