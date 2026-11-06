@@ -6847,7 +6847,7 @@ function renderSpecialAccountControls(){
   
  }
  if(String(nick).trim().toLowerCase()==="skebob"){
-  html+='<div style="display:grid;grid-template-columns:1fr;gap:9px;margin-top:14px"><button type="button" class="goldbtn" style="width:100%" onclick="openMoneyGrantModal()">💰 ВЫДАТЬ ДЕНЬГИ</button><button type="button" class="goldbtn" style="width:100%;background:linear-gradient(135deg,#6335bd,#35116e)" onclick="openProfileLookupModal()">🔎 ПРОВЕРИТЬ ПРОФИЛЬ</button><button type="button" class="goldbtn" style="width:100%;background:linear-gradient(135deg,#245fa8,#173c70)" onclick="openPlayerAccountsModal()">👥 ПРОСМОТР АККАУНТОВ</button><button type="button" class="goldbtn" style="width:100%;background:linear-gradient(135deg,#8b5bd6,#51258f)" onclick="openPlayerNotificationModal()">🔔 ОТПРАВИТЬ УВЕДОМЛЕНИЕ</button><button type="button" class="goldbtn" style="width:100%;background:linear-gradient(135deg,#b87918,#70420b)" onclick="openGlobalAnnouncementModal()">📢 ГЛОБАЛЬНОЕ ОБЪЯВЛЕНИЕ</button><button type="button" class="goldbtn" style="width:100%;background:linear-gradient(135deg,#b52f42,#701624)" onclick="openPlayerBanModal()">🚫 ЗАБАНИТЬ</button><button type="button" class="goldbtn" style="width:100%;background:linear-gradient(135deg,#168b57,#075b42)" onclick="openPlayerUnbanModal()">🔓 РАЗБАНИТЬ</button><button type="button" class="goldbtn" style="width:100%;background:linear-gradient(135deg,#168b57,#075b42)" onclick="openPlayerBadgeModal()">✓ ВЫДАТЬ ГАЛОЧКУ</button><button type="button" class="goldbtn" style="width:100%;background:linear-gradient(135deg,#287c9b,#16475f)" onclick="openPopularGamesModal()">🎮 ПОПУЛЯРНЫЕ ИГРЫ</button><button type="button" class="goldbtn" style="width:100%;background:linear-gradient(135deg,#6b4bc3,#39236f)" onclick="openGameStatisticsModal()">📊 СТАТИСТИКА ИГРЫ</button><button type="button" class="goldbtn" style="width:100%;background:linear-gradient(135deg,#237d76,#124a48)" onclick="openBalanceHistoryModal()">📜 ИСТОРИЯ БАЛАНСА</button><button type="button" class="goldbtn" style="width:100%;background:linear-gradient(135deg,#9b3348,#55172a)" onclick="openResetProgressModal()">🧹 СБРОСИТЬ ПРОГРЕСС</button></div>';
+  html+='<div style="display:grid;grid-template-columns:1fr;gap:9px;margin-top:14px"><button type="button" class="goldbtn" style="width:100%" onclick="openMoneyGrantModal()">💰 ВЫДАТЬ ДЕНЬГИ</button><button type="button" class="goldbtn" style="width:100%;background:linear-gradient(135deg,#6335bd,#35116e)" onclick="openProfileLookupModal()">🔎 ПРОВЕРИТЬ ПРОФИЛЬ</button><button type="button" class="goldbtn" style="width:100%;background:linear-gradient(135deg,#245fa8,#173c70)" onclick="openPlayerAccountsModal()">👥 ПРОСМОТР АККАУНТОВ</button><button type="button" class="goldbtn" style="width:100%;background:linear-gradient(135deg,#8b5bd6,#51258f)" onclick="openPlayerNotificationModal()">🔔 ОТПРАВИТЬ УВЕДОМЛЕНИЕ</button><button type="button" class="goldbtn" style="width:100%;background:linear-gradient(135deg,#b87918,#70420b)" onclick="openGlobalAnnouncementModal()">📢 ГЛОБАЛЬНОЕ ОБЪЯВЛЕНИЕ</button><button type="button" class="goldbtn" style="width:100%;background:linear-gradient(135deg,#b52f42,#701624)" onclick="openPlayerBanModal()">🚫 ЗАБАНИТЬ</button><button type="button" class="goldbtn" style="width:100%;background:linear-gradient(135deg,#168b57,#075b42)" onclick="openPlayerUnbanModal()">🔓 РАЗБАНИТЬ</button><button type="button" class="goldbtn" style="width:100%;background:linear-gradient(135deg,#168b57,#075b42)" onclick="openPlayerBadgeModal()">✓ ВЫДАТЬ ГАЛОЧКУ</button><button type="button" class="goldbtn" style="width:100%;background:linear-gradient(135deg,#287c9b,#16475f)" onclick="openPopularGamesModal()">🎮 ПОПУЛЯРНЫЕ ИГРЫ</button><button type="button" class="goldbtn" style="width:100%;background:linear-gradient(135deg,#6b4bc3,#39236f)" onclick="openGameStatisticsModal()">📊 СТАТИСТИКА ИГРЫ</button><button type="button" class="goldbtn" style="width:100%;background:linear-gradient(135deg,#9b3348,#55172a)" onclick="openResetProgressModal()">🧹 СБРОСИТЬ ПРОГРЕСС</button></div>';
  }
  host.innerHTML=html+'</div>';
 }
@@ -6936,40 +6936,6 @@ function openGameStatisticsModal(){
   finally{refresh.disabled=false;refresh.textContent="↻ ОБНОВИТЬ";}
  };
  refresh.addEventListener("click",load);load();
-}
-
-function openBalanceHistoryModal(){
- const old=document.getElementById("balanceHistoryModal");if(old)old.remove();
- const overlay=document.createElement("div");overlay.id="balanceHistoryModal";
- overlay.style.cssText="position:fixed;inset:0;z-index:32007;background:rgba(0,0,0,.88);display:flex;align-items:center;justify-content:center;padding:14px";
- const panel=document.createElement("div");panel.style.cssText="width:100%;max-width:480px;max-height:88vh;overflow:hidden;display:flex;flex-direction:column;background:var(--panel);color:var(--text);border:1px solid #29998d;border-radius:18px;padding:18px;box-shadow:0 15px 50px #000b";
- panel.innerHTML='<h3 style="margin:0 0 6px;color:#62d5c5">📜 ИСТОРИЯ БАЛАНСА</h3><div style="font-size:12px;opacity:.72;margin-bottom:12px">Все сохранённые начисления и списания выбранного игрока</div><label for="balanceHistoryNickname" style="font-size:13px">Ник игрока</label><input id="balanceHistoryNickname" type="text" maxlength="18" autocomplete="off" placeholder="Введи ник игрока" style="width:100%;box-sizing:border-box;margin:6px 0 10px"><div style="display:flex;gap:8px"><button type="button" class="goldbtn" id="balanceHistorySearch" style="flex:1;margin:0;background:linear-gradient(135deg,#237d76,#124a48);color:#fff">ПОСМОТРЕТЬ</button><button type="button" class="secondary" id="balanceHistoryClose">ЗАКРЫТЬ</button></div><p id="balanceHistoryStatus" role="status" style="min-height:18px;margin:10px 0;font-size:13px"></p><div id="balanceHistoryRows" style="overflow-y:auto;min-height:0;max-height:48vh;padding-right:3px"></div><div id="balanceHistoryFoot" style="font-size:11px;opacity:.62;margin-top:8px"></div>';
- overlay.appendChild(panel);document.body.appendChild(overlay);
- const close=()=>overlay.remove(),nick=panel.querySelector("#balanceHistoryNickname"),send=panel.querySelector("#balanceHistorySearch"),status=panel.querySelector("#balanceHistoryStatus"),rows=panel.querySelector("#balanceHistoryRows"),foot=panel.querySelector("#balanceHistoryFoot");
- panel.querySelector("#balanceHistoryClose").addEventListener("click",close);
- overlay.addEventListener("click",e=>{if(e.target===overlay)close();});
- const load=async()=>{
-  const value=nick.value.trim();
-  if(!value){status.style.color="#ff8585";status.textContent="Введи ник игрока.";nick.focus();return;}
-  send.disabled=true;send.textContent="ЗАГРУЖАЕМ…";status.style.color="var(--text)";status.textContent="Получаем историю…";rows.innerHTML="";foot.textContent="";
-  try{
-   const result=await window.skebobGetBalanceHistory(value);
-   const items=Array.isArray(result)?result:(result?.entries||[]);
-   if(!items.length){status.textContent="Для игрока "+value+" пока нет записей истории.";return;}
-   status.textContent="Записей: "+items.length+" · показаны последние "+items.length;
-   rows.innerHTML=items.map(item=>{
-    const amount=Number(item.amount_delta)||0,positive=amount>0,sign=positive?"+":"−",color=positive?"#45d48b":"#ff737d";
-    const date=item.created_at?new Date(item.created_at).toLocaleString("ru-RU"):"Дата неизвестна";
-    const after=Number(item.balance_after);
-    return '<div style="display:flex;align-items:center;gap:9px;padding:10px 2px;border-bottom:1px solid var(--border2)"><div style="font-size:20px">'+(positive?"🟢":"🔴")+'</div><div style="flex:1;min-width:0"><div style="font-weight:800;font-size:13px;color:'+color+'">'+(positive?"Начисление":"Списание")+'</div><div style="font-size:11px;opacity:.68">'+date+'</div></div><div style="text-align:right;white-space:nowrap"><div style="font-weight:900;color:'+color+'">'+sign+Math.abs(amount).toLocaleString("ru-RU",{maximumFractionDigits:2})+' ₽</div><div style="font-size:10px;opacity:.65">Баланс: '+(Number.isFinite(after)?after.toLocaleString("ru-RU",{maximumFractionDigits:2}):"—")+' ₽</div></div></div>';
-   }).join("");
-   foot.textContent="Показываются последние 200 операций. История ведётся с момента включения журнала.";
-  }catch(error){status.style.color="#ff8585";status.textContent=error?.message||"Не удалось загрузить историю баланса.";}
-  finally{send.disabled=false;send.textContent="ПОСМОТРЕТЬ";}
- };
- send.addEventListener("click",load);
- nick.addEventListener("keydown",e=>{if(e.key==="Enter"){e.preventDefault();load();}});
- nick.focus();
 }
 
 function openPlayerNotificationModal(){
@@ -7397,7 +7363,7 @@ window.refreshLeaderboard=async function(){
 </div>
 
 <div id="skebobDialog" role="dialog" aria-modal="true" style="display:none;position:fixed;inset:0;z-index:30000;background:rgba(0,0,0,.78);align-items:center;justify-content:center;padding:20px"><div style="width:100%;max-width:430px;background:var(--panel);color:var(--text);border:1px solid var(--gold);border-radius:22px;padding:24px;box-shadow:0 18px 60px #000b"><h2 data-dialog-title style="margin:0 0 16px;color:var(--gold)">Уведомление</h2><div data-dialog-message style="font-size:16px;line-height:1.55;white-space:pre-wrap;overflow-wrap:anywhere"></div><input data-dialog-input type="text" style="display:none;margin-top:16px"><div style="display:flex;gap:10px;justify-content:flex-end;margin-top:22px"><button data-dialog-cancel type="button" class="secondary">Отмена</button><button data-dialog-ok type="button" class="goldbtn" style="width:auto;min-width:110px;margin:0;padding:12px 20px">ОК</button></div></div></div>
-<script src="./supabase-auth.js?v=19" onload="if(typeof initSupabaseAuth==='function')initSupabaseAuth();"></script>
+<script src="./supabase-auth.js?v=18" onload="if(typeof initSupabaseAuth==='function')initSupabaseAuth();"></script>
 <script>window.addEventListener("load",()=>{if(typeof initNickname==="function")initNickname();});</script>
 
 <script>
