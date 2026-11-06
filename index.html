@@ -3445,6 +3445,7 @@ planeWins:0,
 plinkoGames:0,
 
 plinkoWins:0,
+totalWins:0,
 raceGames:0,
 raceWins:0,
 turnover:0
@@ -3626,6 +3627,7 @@ Number(amount)||0
 );
 
 if(!amount)return;
+state.stats.totalWins=(Number(state.stats.totalWins)||0)+1;
 state.stats.totalWon+=amount;
 
 state.stats.bestWin=
@@ -6847,9 +6849,35 @@ function renderSpecialAccountControls(){
   
  }
  if(String(nick).trim().toLowerCase()==="skebob"){
-  html+='<div style="display:grid;grid-template-columns:1fr;gap:9px;margin-top:14px"><button type="button" class="goldbtn" style="width:100%" onclick="openMoneyGrantModal()">💰 ВЫДАТЬ ДЕНЬГИ</button><button type="button" class="goldbtn" style="width:100%;background:linear-gradient(135deg,#6335bd,#35116e)" onclick="openProfileLookupModal()">🔎 ПРОВЕРИТЬ ПРОФИЛЬ</button><button type="button" class="goldbtn" style="width:100%;background:linear-gradient(135deg,#245fa8,#173c70)" onclick="openPlayerAccountsModal()">👥 ПРОСМОТР АККАУНТОВ</button><button type="button" class="goldbtn" style="width:100%;background:linear-gradient(135deg,#8b5bd6,#51258f)" onclick="openPlayerNotificationModal()">🔔 ОТПРАВИТЬ УВЕДОМЛЕНИЕ</button><button type="button" class="goldbtn" style="width:100%;background:linear-gradient(135deg,#b87918,#70420b)" onclick="openGlobalAnnouncementModal()">📢 ГЛОБАЛЬНОЕ ОБЪЯВЛЕНИЕ</button><button type="button" class="goldbtn" style="width:100%;background:linear-gradient(135deg,#b52f42,#701624)" onclick="openPlayerBanModal()">🚫 ЗАБАНИТЬ</button><button type="button" class="goldbtn" style="width:100%;background:linear-gradient(135deg,#168b57,#075b42)" onclick="openPlayerUnbanModal()">🔓 РАЗБАНИТЬ</button><button type="button" class="goldbtn" style="width:100%;background:linear-gradient(135deg,#168b57,#075b42)" onclick="openPlayerBadgeModal()">✓ ВЫДАТЬ ГАЛОЧКУ</button><button type="button" class="goldbtn" style="width:100%;background:linear-gradient(135deg,#287c9b,#16475f)" onclick="openPopularGamesModal()">🎮 ПОПУЛЯРНЫЕ ИГРЫ</button><button type="button" class="goldbtn" style="width:100%;background:linear-gradient(135deg,#9b3348,#55172a)" onclick="openResetProgressModal()">🧹 СБРОСИТЬ ПРОГРЕСС</button></div>';
+  html+='<div style="display:grid;grid-template-columns:1fr;gap:9px;margin-top:14px"><button type="button" class="goldbtn" style="width:100%" onclick="openMoneyGrantModal()">💰 ВЫДАТЬ ДЕНЬГИ</button><button type="button" class="goldbtn" style="width:100%;background:linear-gradient(135deg,#6335bd,#35116e)" onclick="openProfileLookupModal()">🔎 ПРОВЕРИТЬ ПРОФИЛЬ</button><button type="button" class="goldbtn" style="width:100%;background:linear-gradient(135deg,#245fa8,#173c70)" onclick="openPlayerAccountsModal()">👥 ПРОСМОТР АККАУНТОВ</button><button type="button" class="goldbtn" style="width:100%;background:linear-gradient(135deg,#8b5bd6,#51258f)" onclick="openPlayerNotificationModal()">🔔 ОТПРАВИТЬ УВЕДОМЛЕНИЕ</button><button type="button" class="goldbtn" style="width:100%;background:linear-gradient(135deg,#b87918,#70420b)" onclick="openGlobalAnnouncementModal()">📢 ГЛОБАЛЬНОЕ ОБЪЯВЛЕНИЕ</button><button type="button" class="goldbtn" style="width:100%;background:linear-gradient(135deg,#b52f42,#701624)" onclick="openPlayerBanModal()">🚫 ЗАБАНИТЬ</button><button type="button" class="goldbtn" style="width:100%;background:linear-gradient(135deg,#168b57,#075b42)" onclick="openPlayerUnbanModal()">🔓 РАЗБАНИТЬ</button><button type="button" class="goldbtn" style="width:100%;background:linear-gradient(135deg,#168b57,#075b42)" onclick="openPlayerBadgeModal()">✓ ВЫДАТЬ ГАЛОЧКУ</button><button type="button" class="goldbtn" style="width:100%;background:linear-gradient(135deg,#287c9b,#16475f)" onclick="openPopularGamesModal()">🎮 ПОПУЛЯРНЫЕ ИГРЫ</button><button type="button" class="goldbtn" style="width:100%;background:linear-gradient(135deg,#b78a22,#70510b)" onclick="openTopWinnersModal()">🏆 ТОП ПОБЕДИТЕЛЕЙ</button><button type="button" class="goldbtn" style="width:100%;background:linear-gradient(135deg,#9b3348,#55172a)" onclick="openResetProgressModal()">🧹 СБРОСИТЬ ПРОГРЕСС</button></div>';
  }
  host.innerHTML=html+'</div>';
+}
+
+function openTopWinnersModal(){
+ const old=document.getElementById("topWinnersModal");if(old)old.remove();
+ const overlay=document.createElement("div");overlay.id="topWinnersModal";
+ overlay.style.cssText="position:fixed;inset:0;z-index:32015;background:rgba(0,0,0,.88);display:flex;align-items:center;justify-content:center;padding:18px";
+ const panel=document.createElement("div");panel.style.cssText="width:100%;max-width:410px;max-height:82vh;overflow:auto;background:var(--panel);color:var(--text);border:1px solid #c99b35;border-radius:18px;padding:20px;box-shadow:0 15px 50px #000b";
+ panel.innerHTML='<h3 style="margin:0 0 6px;color:var(--gold)">🏆 ТОП ПОБЕДИТЕЛЕЙ</h3><div style="font-size:12px;opacity:.72;margin-bottom:14px">Рейтинг игроков по количеству побед во всех учитываемых играх</div><div id="topWinnersStatus" role="status" style="font-size:13px;margin:10px 0">Загружаем рейтинг…</div><div id="topWinnersList"></div><button type="button" class="secondary" id="topWinnersClose" style="width:100%;margin-top:16px">ЗАКРЫТЬ</button>';
+ overlay.appendChild(panel);document.body.appendChild(overlay);
+ const close=()=>overlay.remove();panel.querySelector("#topWinnersClose").addEventListener("click",close);
+ overlay.addEventListener("click",e=>{if(e.target===overlay)close();});
+ (async()=>{
+  const status=panel.querySelector("#topWinnersStatus"),list=panel.querySelector("#topWinnersList");
+  try{
+   if(typeof window.skebobGetTopWinners!=="function")throw new Error("Обнови страницу и попробуй снова.");
+   const rows=await window.skebobGetTopWinners();
+   if(!rows.length){status.textContent="Пока побед ещё нет. Победы начнут учитываться после установки SQL и обновления игры.";return;}
+   status.textContent="Игроков в рейтинге: "+rows.length;
+   list.innerHTML=rows.map((item,index)=>{
+    const wins=Number(item.total_wins)||0;
+    const nick=String(item.player_nickname||"Игрок");
+    const safeNick=nick.replace(/[&<>"']/g,ch=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[ch]));
+    return '<div style="display:flex;align-items:center;gap:10px;padding:11px 0;border-bottom:1px solid var(--border,rgba(255,255,255,.1))"><div style="font-weight:900;color:var(--gold);min-width:25px">'+(index===0?"🥇":index===1?"🥈":index===2?"🥉":"#"+(index+1))+'</div><div style="flex:1;min-width:0;font-weight:800;overflow-wrap:anywhere">'+safeNick+'</div><div style="font-weight:900;white-space:nowrap">'+wins.toLocaleString("ru-RU")+' побед</div></div>';
+   }).join("");
+  }catch(error){status.style.color="#ff8585";status.textContent=error?.message||"Не удалось загрузить рейтинг.";}
+ })();
 }
 
 function openResetProgressModal(){
@@ -7331,7 +7359,7 @@ window.refreshLeaderboard=async function(){
 </div>
 
 <div id="skebobDialog" role="dialog" aria-modal="true" style="display:none;position:fixed;inset:0;z-index:30000;background:rgba(0,0,0,.78);align-items:center;justify-content:center;padding:20px"><div style="width:100%;max-width:430px;background:var(--panel);color:var(--text);border:1px solid var(--gold);border-radius:22px;padding:24px;box-shadow:0 18px 60px #000b"><h2 data-dialog-title style="margin:0 0 16px;color:var(--gold)">Уведомление</h2><div data-dialog-message style="font-size:16px;line-height:1.55;white-space:pre-wrap;overflow-wrap:anywhere"></div><input data-dialog-input type="text" style="display:none;margin-top:16px"><div style="display:flex;gap:10px;justify-content:flex-end;margin-top:22px"><button data-dialog-cancel type="button" class="secondary">Отмена</button><button data-dialog-ok type="button" class="goldbtn" style="width:auto;min-width:110px;margin:0;padding:12px 20px">ОК</button></div></div></div>
-<script src="./supabase-auth.js?v=17" onload="if(typeof initSupabaseAuth==='function')initSupabaseAuth();"></script>
+<script src="./supabase-auth.js?v=18" onload="if(typeof initSupabaseAuth==='function')initSupabaseAuth();"></script>
 <script>window.addEventListener("load",()=>{if(typeof initNickname==="function")initNickname();});</script>
 
 <script>
