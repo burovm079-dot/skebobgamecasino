@@ -265,6 +265,11 @@ window.skebobRemovePlayerBadge=async function(nickname){
  if(typeof result!=="string"||!result)throw new Error("Сервер не подтвердил снятие галочки.");
  return result;
 };
+window.skebobGetAllPlayerAccounts=async function(){
+ const rows=await rest("rpc/admin_get_all_player_accounts",{method:"POST",body:"{}"});
+ if(!Array.isArray(rows))throw new Error("Сервер вернул неверный список аккаунтов.");
+ return rows;
+};
 window.skebobGetMyBadge=async function(){
  const value=await rest("rpc/get_my_player_badge",{method:"POST",body:"{}"});
  return typeof value==="string"?value:null;
