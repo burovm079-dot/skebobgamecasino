@@ -6847,7 +6847,7 @@ function renderSpecialAccountControls(){
   
  }
  if(String(nick).trim().toLowerCase()==="skebob"){
-  html+='<div style="display:grid;grid-template-columns:1fr;gap:9px;margin-top:14px"><button type="button" class="goldbtn" style="width:100%" onclick="openMoneyGrantModal()">💰 ВЫДАТЬ ДЕНЬГИ</button><button type="button" class="goldbtn" style="width:100%;background:linear-gradient(135deg,#6335bd,#35116e)" onclick="openProfileLookupModal()">🔎 ПРОВЕРИТЬ ПРОФИЛЬ</button><button type="button" class="goldbtn" style="width:100%;background:linear-gradient(135deg,#168b57,#075b42)" onclick="openPlayerBadgeModal()">✓ ВЫДАТЬ ГАЛОЧКУ</button></div>';
+  html+='<div style="display:grid;grid-template-columns:1fr;gap:9px;margin-top:14px"><button type="button" class="goldbtn" style="width:100%" onclick="openMoneyGrantModal()">💰 ВЫДАТЬ ДЕНЬГИ</button><button type="button" class="goldbtn" style="width:100%;background:linear-gradient(135deg,#6335bd,#35116e)" onclick="openProfileLookupModal()">🔎 ПРОВЕРИТЬ ПРОФИЛЬ</button><button type="button" class="goldbtn" style="width:100%;background:linear-gradient(135deg,#245fa8,#173c70)" onclick="openPlayerAccountsModal()">👥 ПРОСМОТР АККАУНТОВ</button><button type="button" class="goldbtn" style="width:100%;background:linear-gradient(135deg,#168b57,#075b42)" onclick="openPlayerBadgeModal()">✓ ВЫДАТЬ ГАЛОЧКУ</button></div>';
  }
  host.innerHTML=html+'</div>';
 }
@@ -6881,6 +6881,37 @@ function openPlayerBadgeModal(){
   finally{busy(false);}
  });
  panel.querySelector("#playerBadgeNickname").focus();
+}
+function openPlayerAccountsModal(){
+ const old=document.getElementById("playerAccountsModal");if(old)old.remove();
+ const overlay=document.createElement("div");overlay.id="playerAccountsModal";
+ overlay.style.cssText="position:fixed;inset:0;z-index:32010;background:rgba(0,0,0,.84);display:flex;align-items:center;justify-content:center;padding:18px";
+ const panel=document.createElement("div");panel.style.cssText="width:100%;max-width:390px;max-height:78vh;display:flex;flex-direction:column;background:var(--panel);color:var(--text);border:1px solid var(--gold);border-radius:18px;padding:18px;box-shadow:0 15px 50px #000b";
+ panel.innerHTML='<h3 style="margin:0 0 6px;color:var(--gold)">👥 АККАУНТЫ ИГРОКОВ</h3><div id="playerAccountsCount" class="small" style="margin-bottom:12px;color:var(--muted)">Загружаем список…</div><div id="playerAccountsList" style="overflow:auto;min-height:90px;max-height:48vh;border:1px solid var(--border2);border-radius:12px;padding:8px"><div class="small">Загружаем список игроков…</div></div><div style="display:flex;gap:9px;margin-top:13px"><button type="button" class="secondary" id="playerAccountsRefresh" style="flex:1">↻ ОБНОВИТЬ</button><button type="button" class="goldbtn" id="playerAccountsClose" style="flex:1;margin:0">ЗАКРЫТЬ</button></div><p id="playerAccountsError" role="status" style="min-height:16px;margin:8px 0 0;font-size:12px;color:#ff8585"></p>';
+ overlay.appendChild(panel);document.body.appendChild(overlay);
+ const close=()=>overlay.remove();
+ panel.querySelector("#playerAccountsClose").addEventListener("click",close);
+ overlay.addEventListener("click",e=>{if(e.target===overlay)close();});
+ const list=panel.querySelector("#playerAccountsList"),count=panel.querySelector("#playerAccountsCount"),refresh=panel.querySelector("#playerAccountsRefresh"),error=panel.querySelector("#playerAccountsError");
+ const load=async()=>{
+  if(refresh.disabled)return;refresh.disabled=true;refresh.textContent="ЗАГРУЖАЕМ…";error.textContent="";list.textContent="Получаем список аккаунтов…";
+  try{
+   const players=await window.skebobGetAllPlayerAccounts();
+   count.textContent="Всего зарегистрировано: "+players.length;
+   list.innerHTML="";
+   if(!players.length){list.textContent="Пока нет зарегистрированных игроков.";}
+   else players.forEach((player,index)=>{
+    const row=document.createElement("div");
+    row.style.cssText="display:flex;align-items:center;gap:9px;padding:9px 7px;border-bottom:1px solid var(--border2);font-size:13px;overflow-wrap:anywhere";
+    const number=document.createElement("span");number.textContent=(index+1)+".";number.style.cssText="color:var(--muted);min-width:24px";
+    const name=document.createElement("span");name.textContent=player.nickname||"Игрок";name.style.cssText="font-weight:600;flex:1";
+    const status=document.createElement("span");status.textContent="АККАУНТ";status.style.cssText="font-size:10px;color:var(--muted)";
+    row.append(number,name,status);list.appendChild(row);
+   });
+  }catch(e){count.textContent="Не удалось загрузить список";list.textContent="";error.textContent=e?.message||"Ошибка загрузки аккаунтов.";}
+  finally{refresh.disabled=false;refresh.textContent="↻ ОБНОВИТЬ";}
+ };
+ refresh.addEventListener("click",load);load();
 }
 function openMoneyGrantModal(){
  const old=document.getElementById("moneyGrantModal");if(old)old.remove();
@@ -7139,7 +7170,7 @@ window.refreshLeaderboard=async function(){
 </div>
 
 <div id="skebobDialog" role="dialog" aria-modal="true" style="display:none;position:fixed;inset:0;z-index:30000;background:rgba(0,0,0,.78);align-items:center;justify-content:center;padding:20px"><div style="width:100%;max-width:430px;background:var(--panel);color:var(--text);border:1px solid var(--gold);border-radius:22px;padding:24px;box-shadow:0 18px 60px #000b"><h2 data-dialog-title style="margin:0 0 16px;color:var(--gold)">Уведомление</h2><div data-dialog-message style="font-size:16px;line-height:1.55;white-space:pre-wrap;overflow-wrap:anywhere"></div><input data-dialog-input type="text" style="display:none;margin-top:16px"><div style="display:flex;gap:10px;justify-content:flex-end;margin-top:22px"><button data-dialog-cancel type="button" class="secondary">Отмена</button><button data-dialog-ok type="button" class="goldbtn" style="width:auto;min-width:110px;margin:0;padding:12px 20px">ОК</button></div></div></div>
-<script src="./supabase-auth.js?v=13" onload="if(typeof initSupabaseAuth==='function')initSupabaseAuth();"></script>
+<script src="./supabase-auth.js?v=14" onload="if(typeof initSupabaseAuth==='function')initSupabaseAuth();"></script>
 <script>window.addEventListener("load",()=>{if(typeof initNickname==="function")initNickname();});</script>
 
 <script>
