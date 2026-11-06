@@ -7468,7 +7468,8 @@ window.refreshLeaderboard=async function(){
      }
      if(typeof window.skebobCreateStarsInvoice!=="function")throw new Error("Функция пополнения ещё не загружена. Обнови игру.");
      const invoiceUrl=await window.skebobCreateStarsInvoice(stars);
-     window.Telegram.WebApp.openInvoice(invoiceUrl,async function(paymentStatus){
+     const tg=window.Telegram.WebApp;
+     try{tg.openInvoice(invoiceUrl,async function(paymentStatus){
       if(paymentStatus==="paid"){
        status.textContent="Оплата получена! Проверяем начисление…";
        try{
@@ -7488,7 +7489,15 @@ window.refreshLeaderboard=async function(){
       busy=false;
       options.querySelectorAll("button").forEach(b=>b.disabled=false);
       close.disabled=false;
-     });
+     });}catch(openError){
+      if(String(openError&&openError.message||openError).includes("WebAppMethodUnsupported")){
+       status.textContent="Открываем счёт через Telegram… После оплаты вернись в игру.";
+       busy=false;options.querySelectorAll("button").forEach(b=>b.disabled=false);close.disabled=false;
+       if(typeof tg.openTelegramLink==="function")tg.openTelegramLink(invoiceUrl);else window.location.href=invoiceUrl;
+       return;
+      }
+      throw openError;
+     }
     }catch(error){
      status.textContent=error&&error.message?error.message:"Не удалось создать счёт.";
      busy=false;
