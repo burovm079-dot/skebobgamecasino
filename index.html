@@ -3847,8 +3847,8 @@ if(id==="skebobTap"){
  target.style.setProperty("opacity","1","important");
  renderSkebobTap();
 }
-const gamePages=new Set(["skebobTap","tictactoe","billiards","cases","secretDrop","battles","upgrade","mines","plane","plinko","race","slots"]);
-if(gamePages.has(id)){
+const gamePages=new Set(["skebobTap","tictactoe","billiards","cases","secretDrop","battles","upgrade","mines","plane","plinko","race","slots","dice"]);
+if(gamePages.has(id)){ if(typeof window.skebobTrackGameLaunch==="function")window.skebobTrackGameLaunch(id).catch(error=>console.warn("Game launch tracking:",error));
 let back=target.querySelector(":scope > .game-list-back");
 if(!back){
 back=document.createElement("button");
@@ -6847,10 +6847,36 @@ function renderSpecialAccountControls(){
   
  }
  if(String(nick).trim().toLowerCase()==="skebob"){
-  html+='<div style="display:grid;grid-template-columns:1fr;gap:9px;margin-top:14px"><button type="button" class="goldbtn" style="width:100%" onclick="openMoneyGrantModal()">💰 ВЫДАТЬ ДЕНЬГИ</button><button type="button" class="goldbtn" style="width:100%;background:linear-gradient(135deg,#6335bd,#35116e)" onclick="openProfileLookupModal()">🔎 ПРОВЕРИТЬ ПРОФИЛЬ</button><button type="button" class="goldbtn" style="width:100%;background:linear-gradient(135deg,#245fa8,#173c70)" onclick="openPlayerAccountsModal()">👥 ПРОСМОТР АККАУНТОВ</button><button type="button" class="goldbtn" style="width:100%;background:linear-gradient(135deg,#8b5bd6,#51258f)" onclick="openPlayerNotificationModal()">🔔 ОТПРАВИТЬ УВЕДОМЛЕНИЕ</button><button type="button" class="goldbtn" style="width:100%;background:linear-gradient(135deg,#b87918,#70420b)" onclick="openGlobalAnnouncementModal()">📢 ГЛОБАЛЬНОЕ ОБЪЯВЛЕНИЕ</button><button type="button" class="goldbtn" style="width:100%;background:linear-gradient(135deg,#b52f42,#701624)" onclick="openPlayerBanModal()">🚫 ЗАБАНИТЬ</button><button type="button" class="goldbtn" style="width:100%;background:linear-gradient(135deg,#168b57,#075b42)" onclick="openPlayerUnbanModal()">🔓 РАЗБАНИТЬ</button><button type="button" class="goldbtn" style="width:100%;background:linear-gradient(135deg,#168b57,#075b42)" onclick="openPlayerBadgeModal()">✓ ВЫДАТЬ ГАЛОЧКУ</button></div>';
+  html+='<div style="display:grid;grid-template-columns:1fr;gap:9px;margin-top:14px"><button type="button" class="goldbtn" style="width:100%" onclick="openMoneyGrantModal()">💰 ВЫДАТЬ ДЕНЬГИ</button><button type="button" class="goldbtn" style="width:100%;background:linear-gradient(135deg,#6335bd,#35116e)" onclick="openProfileLookupModal()">🔎 ПРОВЕРИТЬ ПРОФИЛЬ</button><button type="button" class="goldbtn" style="width:100%;background:linear-gradient(135deg,#245fa8,#173c70)" onclick="openPlayerAccountsModal()">👥 ПРОСМОТР АККАУНТОВ</button><button type="button" class="goldbtn" style="width:100%;background:linear-gradient(135deg,#8b5bd6,#51258f)" onclick="openPlayerNotificationModal()">🔔 ОТПРАВИТЬ УВЕДОМЛЕНИЕ</button><button type="button" class="goldbtn" style="width:100%;background:linear-gradient(135deg,#b87918,#70420b)" onclick="openGlobalAnnouncementModal()">📢 ГЛОБАЛЬНОЕ ОБЪЯВЛЕНИЕ</button><button type="button" class="goldbtn" style="width:100%;background:linear-gradient(135deg,#b52f42,#701624)" onclick="openPlayerBanModal()">🚫 ЗАБАНИТЬ</button><button type="button" class="goldbtn" style="width:100%;background:linear-gradient(135deg,#168b57,#075b42)" onclick="openPlayerUnbanModal()">🔓 РАЗБАНИТЬ</button><button type="button" class="goldbtn" style="width:100%;background:linear-gradient(135deg,#168b57,#075b42)" onclick="openPlayerBadgeModal()">✓ ВЫДАТЬ ГАЛОЧКУ</button><button type="button" class="goldbtn" style="width:100%;background:linear-gradient(135deg,#287c9b,#16475f)" onclick="openPopularGamesModal()">🎮 ПОПУЛЯРНЫЕ ИГРЫ</button></div>';
  }
  host.innerHTML=html+'</div>';
 }
+
+function openPopularGamesModal(){
+ const old=document.getElementById("popularGamesModal");if(old)old.remove();
+ const overlay=document.createElement("div");overlay.id="popularGamesModal";
+ overlay.style.cssText="position:fixed;inset:0;z-index:32004;background:rgba(0,0,0,.86);display:flex;align-items:center;justify-content:center;padding:18px";
+ const panel=document.createElement("div");panel.style.cssText="width:100%;max-width:410px;max-height:82vh;overflow:auto;background:var(--panel);color:var(--text);border:1px solid #3c9fba;border-radius:18px;padding:20px;box-shadow:0 15px 50px #000b";
+ panel.innerHTML='<h3 style="margin:0 0 6px;color:var(--gold)">🎮 ПОПУЛЯРНЫЕ ИГРЫ</h3><div style="font-size:12px;opacity:.72;margin-bottom:14px">Рейтинг по количеству запусков · за всё время</div><div id="popularGamesStatus" role="status" style="font-size:13px;margin:10px 0">Загружаем статистику…</div><div id="popularGamesList"></div><button type="button" class="secondary" id="popularGamesClose" style="width:100%;margin-top:16px">ЗАКРЫТЬ</button>';
+ overlay.appendChild(panel);document.body.appendChild(overlay);
+ const close=()=>overlay.remove();panel.querySelector("#popularGamesClose").addEventListener("click",close);
+ overlay.addEventListener("click",e=>{if(e.target===overlay)close();});
+ (async()=>{
+  const status=panel.querySelector("#popularGamesStatus"),list=panel.querySelector("#popularGamesList");
+  try{
+   const rows=await window.skebobGetPopularGames();
+   if(!Array.isArray(rows)||!rows.length){status.textContent="Пока запусков игр не зарегистрировано.";return;}
+   status.textContent="Всего игр в рейтинге: "+rows.length;
+   list.innerHTML=rows.map((item,index)=>{
+    const names={skebobTap:"SKEBOB TAP",tictactoe:"Крестики-нолики",billiards:"Бильярд",cases:"Кейсы",secretDrop:"Секретный кейс",battles:"Батл кейсов",upgrade:"Апгрейд",mines:"Мины",plane:"Самолёт",plinko:"Плинко",race:"Гонки",slots:"Слоты",dice:"Кости"};
+    const name=names[item.game_id]||item.game_id;
+    const count=Number(item.launch_count)||0,players=Number(item.unique_players)||0;
+    return '<div style="display:flex;align-items:center;gap:10px;padding:11px 0;border-bottom:1px solid var(--border,rgba(255,255,255,.1))"><div style="font-weight:900;color:var(--gold);min-width:25px">#'+(index+1)+'</div><div style="flex:1;min-width:0"><div style="font-weight:800">'+name+'</div><div style="font-size:11px;opacity:.7">'+players+' игроков</div></div><div style="font-weight:900;white-space:nowrap">'+count.toLocaleString("ru-RU")+' запусков</div></div>';
+   }).join("");
+  }catch(error){status.style.color="#ff8585";status.textContent=error?.message||"Не удалось загрузить рейтинг.";}
+ })();
+}
+
 function openPlayerNotificationModal(){
  const old=document.getElementById("playerNotificationModal");if(old)old.remove();
  const overlay=document.createElement("div");overlay.id="playerNotificationModal";
