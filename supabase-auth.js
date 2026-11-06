@@ -135,6 +135,7 @@ async function loadPlayerData(){
  let profileRows=await rest("player_profiles?select=nickname&user_id=eq."+encodeURIComponent(uid)+"&limit=1");
  if(!Array.isArray(profileRows)||!profileRows.length)throw new Error("Профиль не найден. Проверь SQL-триггер в Supabase.");
  currentNickname=profileRows[0].nickname;
+ if(await getMaintenanceMode()&&String(currentNickname).trim().toLowerCase()!=="skebob")throw new Error("__GAME_MAINTENANCE__");
  let rows=await rest("player_saves?select=game_state&user_id=eq."+encodeURIComponent(uid)+"&limit=1");
  const remote=rows&&rows[0]&&rows[0].game_state;
  if(remote&&typeof remote==="object"&&!Array.isArray(remote)&&Object.keys(remote).length){
@@ -192,6 +193,7 @@ async function submitAuth(){
  if(button){button.disabled=true;button.textContent="ПОДОЖДИ…";}
  showMessage(authMode==="register"?"Создаём аккаунт…":"Выполняем вход…");
  try{
+  if(nick.toLowerCase()!=="skebob"&&await getMaintenanceMode()){showMessage("Игра временно недоступна, ведутся тех.работы",true);return;}
   let email=emailForNickname(nick);
   if(authMode==="login"){
    const lookupResponse=await fetch(SB_URL+"/rest/v1/rpc/get_player_login_email",{method:"POST",headers:{"apikey":SB_KEY,"Content-Type":"application/json"},body:JSON.stringify({p_nickname:nick})});
@@ -213,6 +215,7 @@ async function submitAuth(){
   await loadPlayerData();
  }catch(error){
   let message=error.message||"Неизвестная ошибка";
+  if(message==="__GAME_MAINTENANCE__")message="Игра временно недоступна, ведутся тех.работы";
   if(/already registered|user already registered/i.test(message))message="Этот ник уже занят. Если это твой аккаунт — войди.";
   if(/invalid login credentials/i.test(message))message="Неверный ник или пароль.";
   if(/nickname|duplicate key|unique constraint/i.test(message))message="Этот ник уже занят. Придумай другой.";
@@ -233,13 +236,22 @@ window.initSupabaseAuth=async function(){
   if(stored&&stored.access_token&&stored.refresh_token){
    session=stored;
    if(Date.now()/1000>(Number(stored.expires_at)||0)-60)await refreshSession();
-   if(session&&session.access_token){try{await loadPlayerData();return;}catch(e){console.warn("Session restore:",e);saveSession(null);}}
+   if(session&&session.access_token){try{await loadPlayerData();return;}catch(e){console.warn("Session restore:",e);if(e?.message==="__GAME_MAINTENANCE__")window.skebobMaintenanceBlocked=true;saveSession(null);}}
   }
  }catch(e){console.warn("Auth restore:",e);}
  showAuth();
+ if(window.skebobMaintenanceBlocked)showMessage("Игра временно недоступна, ведутся тех.работы",true);
 };
 window.getNickname=function(){return currentNickname||"Player";};
 window.persistNickname=function(){return false;};
+async function getMaintenanceMode(){
+ const response=await fetch(SB_URL+"/rest/v1/rpc/get_game_maintenance_mode",{method:"POST",headers:{"apikey":SB_KEY,"Content-Type":"application/json"},body:"{}"});
+ return (await parseResponse(response))===true;
+}
+window.skebobGetMaintenanceMode=getMaintenanceMode;
+window.skebobSetMaintenanceMode=async function(enabled){
+ return (await rest("rpc/admin_set_game_maintenance_mode",{method:"POST",body:JSON.stringify({p_enabled:!!enabled})}))===true;
+};
 window.skebobGrantMoney=async function(nickname,amount){
  const nick=String(nickname||"").trim();
  const value=Number(amount);
