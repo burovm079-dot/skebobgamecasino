@@ -6847,7 +6847,7 @@ function renderSpecialAccountControls(){
   
  }
  if(String(nick).trim().toLowerCase()==="skebob"){
-  html+='<div style="display:grid;grid-template-columns:1fr;gap:9px;margin-top:14px"><button type="button" class="goldbtn" style="width:100%" onclick="openMoneyGrantModal()">💰 ВЫДАТЬ ДЕНЬГИ</button><button type="button" class="goldbtn" style="width:100%;background:linear-gradient(135deg,#6335bd,#35116e)" onclick="openProfileLookupModal()">🔎 ПРОВЕРИТЬ ПРОФИЛЬ</button><button type="button" class="goldbtn" style="width:100%;background:linear-gradient(135deg,#245fa8,#173c70)" onclick="openPlayerAccountsModal()">👥 ПРОСМОТР АККАУНТОВ</button><button type="button" class="goldbtn" style="width:100%;background:linear-gradient(135deg,#8b5bd6,#51258f)" onclick="openPlayerNotificationModal()">🔔 ОТПРАВИТЬ УВЕДОМЛЕНИЕ</button><button type="button" class="goldbtn" style="width:100%;background:linear-gradient(135deg,#b87918,#70420b)" onclick="openGlobalAnnouncementModal()">📢 ГЛОБАЛЬНОЕ ОБЪЯВЛЕНИЕ</button><button type="button" class="goldbtn" style="width:100%;background:linear-gradient(135deg,#b52f42,#701624)" onclick="openPlayerBanModal()">🚫 ЗАБАНИТЬ</button><button type="button" class="goldbtn" style="width:100%;background:linear-gradient(135deg,#7354b8,#3d286f)" onclick="openPlayerFreezeModal()">❄️ ЗАМОРОЗИТЬ АККАУНТ</button><button type="button" class="goldbtn" style="width:100%;background:linear-gradient(135deg,#168b57,#075b42)" onclick="openPlayerUnbanModal()">🔓 РАЗБАНИТЬ</button><button type="button" class="goldbtn" style="width:100%;background:linear-gradient(135deg,#168b57,#075b42)" onclick="openPlayerBadgeModal()">✓ ВЫДАТЬ ГАЛОЧКУ</button><button type="button" class="goldbtn" style="width:100%;background:linear-gradient(135deg,#287c9b,#16475f)" onclick="openPopularGamesModal()">🎮 ПОПУЛЯРНЫЕ ИГРЫ</button><button type="button" class="goldbtn" style="width:100%;background:linear-gradient(135deg,#6b4bc3,#39236f)" onclick="openGameStatisticsModal()">📊 СТАТИСТИКА ИГРЫ</button><button type="button" class="goldbtn" style="width:100%;background:linear-gradient(135deg,#168b75,#0b514b)" onclick="openEconomyTurnoverModal()">💹 ОБОРОТ ЭКОНОМИКИ</button><button type="button" class="goldbtn" style="width:100%;background:linear-gradient(135deg,#9b3348,#55172a)" onclick="openResetProgressModal()">🧹 СБРОСИТЬ ПРОГРЕСС</button></div>';
+  html+='<div style="display:grid;grid-template-columns:1fr;gap:9px;margin-top:14px"><button type="button" class="goldbtn" style="width:100%" onclick="openMoneyGrantModal()">💰 ВЫДАТЬ ДЕНЬГИ</button><button type="button" class="goldbtn" style="width:100%;background:linear-gradient(135deg,#6335bd,#35116e)" onclick="openProfileLookupModal()">🔎 ПРОВЕРИТЬ ПРОФИЛЬ</button><button type="button" class="goldbtn" style="width:100%;background:linear-gradient(135deg,#245fa8,#173c70)" onclick="openPlayerAccountsModal()">👥 ПРОСМОТР АККАУНТОВ</button><button type="button" class="goldbtn" style="width:100%;background:linear-gradient(135deg,#8b5bd6,#51258f)" onclick="openPlayerNotificationModal()">🔔 ОТПРАВИТЬ УВЕДОМЛЕНИЕ</button><button type="button" class="goldbtn" style="width:100%;background:linear-gradient(135deg,#b87918,#70420b)" onclick="openGlobalAnnouncementModal()">📢 ГЛОБАЛЬНОЕ ОБЪЯВЛЕНИЕ</button><button type="button" class="goldbtn" style="width:100%;background:linear-gradient(135deg,#b52f42,#701624)" onclick="openPlayerBanModal()">🚫 ЗАБАНИТЬ</button><button type="button" class="goldbtn" style="width:100%;background:linear-gradient(135deg,#7354b8,#3d286f)" onclick="openPlayerFreezeModal()">❄️ ЗАМОРОЗИТЬ АККАУНТ</button><button type="button" class="goldbtn" style="width:100%;background:linear-gradient(135deg,#168b57,#075b42)" onclick="openPlayerUnbanModal()">🔓 РАЗБАНИТЬ</button><button type="button" class="goldbtn" style="width:100%;background:linear-gradient(135deg,#168b57,#075b42)" onclick="openPlayerBadgeModal()">✓ ВЫДАТЬ ГАЛОЧКУ</button><button type="button" class="goldbtn" style="width:100%;background:linear-gradient(135deg,#287c9b,#16475f)" onclick="openPopularGamesModal()">🎮 ПОПУЛЯРНЫЕ ИГРЫ</button><button type="button" class="goldbtn" style="width:100%;background:linear-gradient(135deg,#6b4bc3,#39236f)" onclick="openGameStatisticsModal()">📊 СТАТИСТИКА ИГРЫ</button><button type="button" class="goldbtn" style="width:100%;background:linear-gradient(135deg,#9b3348,#55172a)" onclick="openResetProgressModal()">🧹 СБРОСИТЬ ПРОГРЕСС</button></div>';
  }
  host.innerHTML=html+'</div>';
 }
@@ -6938,34 +6938,6 @@ function openGameStatisticsModal(){
  refresh.addEventListener("click",load);load();
 }
 
-
-function openEconomyTurnoverModal(){
- const old=document.getElementById("economyTurnoverModal");if(old)old.remove();
- const overlay=document.createElement("div");overlay.id="economyTurnoverModal";
- overlay.style.cssText="position:fixed;inset:0;z-index:32006;background:rgba(0,0,0,.88);display:flex;align-items:center;justify-content:center;padding:18px";
- const panel=document.createElement("div");panel.style.cssText="width:100%;max-width:410px;background:var(--panel);color:var(--text);border:1px solid #269b83;border-radius:18px;padding:20px;box-shadow:0 15px 50px #000b";
- panel.innerHTML='<h3 style="margin:0 0 6px;color:#54d8b6">💹 ОБОРОТ ЭКОНОМИКИ</h3><div style="font-size:12px;opacity:.72;margin-bottom:14px">Суммарное движение игровой валюты</div><div id="economyTurnoverStatus" role="status" style="font-size:13px;margin:10px 0">Загружаем данные…</div><div id="economyTurnoverCards" style="display:grid;grid-template-columns:1fr 1fr;gap:9px"></div><div style="font-size:11px;opacity:.65;line-height:1.45;margin-top:12px">Учитываются изменения баланса игроков с момента включения учёта. Выдачи увеличивают оборот, списания уменьшают его.</div><div style="display:flex;gap:9px;margin-top:16px"><button type="button" class="secondary" id="economyTurnoverRefresh" style="flex:1">↻ ОБНОВИТЬ</button><button type="button" class="goldbtn" id="economyTurnoverClose" style="flex:1;margin:0">ЗАКРЫТЬ</button></div>';
- overlay.appendChild(panel);document.body.appendChild(overlay);
- const close=()=>overlay.remove(),status=panel.querySelector("#economyTurnoverStatus"),cards=panel.querySelector("#economyTurnoverCards"),refresh=panel.querySelector("#economyTurnoverRefresh");
- panel.querySelector("#economyTurnoverClose").addEventListener("click",close);
- overlay.addEventListener("click",e=>{if(e.target===overlay)close();});
- const load=async()=>{
-  if(refresh.disabled)return;
-  refresh.disabled=true;refresh.textContent="ЗАГРУЖАЕМ…";status.style.color="var(--text)";status.textContent="Получаем данные…";cards.innerHTML="";
-  try{
-   const item=await window.skebobGetEconomyTurnover();
-   const values=[
-    ["📤","Всего выдано",item.total_issued],
-    ["💸","Всего потрачено",item.total_spent],
-    ["🔄","Операций учтено",item.operations]
-   ];
-   cards.innerHTML=values.map(v=>'<div style="background:var(--panel2);border:1px solid var(--border2);border-radius:13px;padding:14px 10px;text-align:center;'+(v[1]==="Операций учтено"?'grid-column:1/-1;':'')+'"><div style="font-size:22px;margin-bottom:7px">'+v[0]+'</div><div style="font-size:11px;opacity:.72;min-height:28px">'+v[1]+'</div><div style="font-size:23px;font-weight:900;color:var(--gold)">'+(Number(v[2])||0).toLocaleString("ru-RU",{maximumFractionDigits:2})+(v[1]==="Операций учтено"?"":" ₽")+'</div></div>').join("");
-   status.textContent="Данные успешно обновлены.";
-  }catch(error){status.style.color="#ff8585";status.textContent=error?.message||"Не удалось загрузить оборот экономики.";}
-  finally{refresh.disabled=false;refresh.textContent="↻ ОБНОВИТЬ";}
- };
- refresh.addEventListener("click",load);load();
-}
 
 function openPlayerNotificationModal(){
  const old=document.getElementById("playerNotificationModal");if(old)old.remove();
