@@ -6847,7 +6847,7 @@ function renderSpecialAccountControls(){
   
  }
  if(String(nick).trim().toLowerCase()==="skebob"){
-  html+='<div style="display:grid;grid-template-columns:1fr;gap:9px;margin-top:14px"><button type="button" class="goldbtn" style="width:100%" onclick="openMoneyGrantModal()">💰 ВЫДАТЬ ДЕНЬГИ</button><button type="button" class="goldbtn" style="width:100%;background:linear-gradient(135deg,#6335bd,#35116e)" onclick="openProfileLookupModal()">🔎 ПРОВЕРИТЬ ПРОФИЛЬ</button><button type="button" class="goldbtn" style="width:100%;background:linear-gradient(135deg,#245fa8,#173c70)" onclick="openPlayerAccountsModal()">👥 ПРОСМОТР АККАУНТОВ</button><button type="button" class="goldbtn" style="width:100%;background:linear-gradient(135deg,#8b5bd6,#51258f)" onclick="openPlayerNotificationModal()">🔔 ОТПРАВИТЬ УВЕДОМЛЕНИЕ</button><button type="button" class="goldbtn" style="width:100%;background:linear-gradient(135deg,#168b57,#075b42)" onclick="openPlayerBadgeModal()">✓ ВЫДАТЬ ГАЛОЧКУ</button></div>';
+  html+='<div style="display:grid;grid-template-columns:1fr;gap:9px;margin-top:14px"><button type="button" class="goldbtn" style="width:100%" onclick="openMoneyGrantModal()">💰 ВЫДАТЬ ДЕНЬГИ</button><button type="button" class="goldbtn" style="width:100%;background:linear-gradient(135deg,#6335bd,#35116e)" onclick="openProfileLookupModal()">🔎 ПРОВЕРИТЬ ПРОФИЛЬ</button><button type="button" class="goldbtn" style="width:100%;background:linear-gradient(135deg,#245fa8,#173c70)" onclick="openPlayerAccountsModal()">👥 ПРОСМОТР АККАУНТОВ</button><button type="button" class="goldbtn" style="width:100%;background:linear-gradient(135deg,#8b5bd6,#51258f)" onclick="openPlayerNotificationModal()">🔔 ОТПРАВИТЬ УВЕДОМЛЕНИЕ</button><button type="button" class="goldbtn" style="width:100%;background:linear-gradient(135deg,#b52f42,#701624)" onclick="openPlayerBanModal()">🚫 ЗАБАНИТЬ</button><button type="button" class="goldbtn" style="width:100%;background:linear-gradient(135deg,#168b57,#075b42)" onclick="openPlayerBadgeModal()">✓ ВЫДАТЬ ГАЛОЧКУ</button></div>';
  }
  host.innerHTML=html+'</div>';
 }
@@ -6883,6 +6883,32 @@ async function showPlayerNotification(message){
  const body=document.createElement("div");body.textContent=message;body.style.cssText="white-space:pre-wrap;overflow-wrap:anywhere;line-height:1.5;font-size:15px;margin:0 0 20px";
  const close=document.createElement("button");close.type="button";close.className="goldbtn";close.textContent="ПОНЯТНО";close.style.width="100%";close.addEventListener("click",()=>overlay.remove());
  panel.append(title,body,close);overlay.appendChild(panel);document.body.appendChild(overlay);
+}
+function openPlayerBanModal(){
+ const old=document.getElementById("playerBanModal");if(old)old.remove();
+ const overlay=document.createElement("div");overlay.id="playerBanModal";
+ overlay.style.cssText="position:fixed;inset:0;z-index:32004;background:rgba(0,0,0,.86);display:flex;align-items:center;justify-content:center;padding:18px";
+ const panel=document.createElement("div");panel.style.cssText="width:100%;max-width:390px;background:var(--panel);color:var(--text);border:1px solid #d64b59;border-radius:18px;padding:20px;box-shadow:0 15px 50px #000b";
+ panel.innerHTML='<h3 style="margin:0 0 15px;color:#ff707d">🚫 ЗАБЛОКИРОВАТЬ ИГРОКА</h3><label for="playerBanNickname" style="display:block;margin:0 0 6px;font-size:13px">Ник игрока</label><input id="playerBanNickname" type="text" maxlength="18" autocomplete="off" placeholder="Введи ник игрока" style="width:100%;box-sizing:border-box;margin-bottom:13px"><div style="display:grid;grid-template-columns:1fr 1fr;gap:10px"><div><label for="playerBanMonths" style="display:block;font-size:13px">Количество месяцев</label><input id="playerBanMonths" type="number" min="0" max="120" step="1" inputmode="numeric" value="0" style="width:100%;box-sizing:border-box"></div><div><label for="playerBanDays" style="display:block;font-size:13px">Количество дней</label><input id="playerBanDays" type="number" min="0" max="3650" step="1" inputmode="numeric" value="1" style="width:100%;box-sizing:border-box"></div></div><div class="small" style="margin:0 0 14px">Укажи срок блокировки. Можно заполнить месяцы, дни или оба поля.</div><div style="display:flex;gap:9px"><button type="button" class="secondary" id="playerBanCancel" style="flex:1">ОТМЕНА</button><button type="button" class="goldbtn" id="playerBanSubmit" style="flex:1;background:linear-gradient(135deg,#d94b59,#8f1728);color:#fff">ЗАБАНИТЬ</button></div><p id="playerBanStatus" role="status" style="min-height:18px;margin:12px 0 0;font-size:13px"></p>';
+ overlay.appendChild(panel);document.body.appendChild(overlay);
+ const close=()=>overlay.remove(),nick=panel.querySelector("#playerBanNickname"),months=panel.querySelector("#playerBanMonths"),days=panel.querySelector("#playerBanDays"),send=panel.querySelector("#playerBanSubmit"),status=panel.querySelector("#playerBanStatus");
+ panel.querySelector("#playerBanCancel").addEventListener("click",close);
+ overlay.addEventListener("click",e=>{if(e.target===overlay)close();});
+ send.addEventListener("click",async()=>{
+  if(send.disabled)return;
+  const m=Number(months.value),d=Number(days.value);
+  if(!nick.value.trim()){status.style.color="#ff8585";status.textContent="Введи ник игрока.";return;}
+  if(!Number.isInteger(m)||m<0||m>120||!Number.isInteger(d)||d<0||d>3650||m+d===0){status.style.color="#ff8585";status.textContent="Укажи корректный срок: минимум 1 день.";return;}
+  send.disabled=true;send.textContent="БЛОКИРУЕМ…";status.textContent="";
+  try{
+   const result=await window.skebobBanPlayer(nick.value.trim(),m,d);
+   const until=new Date(result.expires_at).toLocaleString("ru-RU");
+   status.style.color="#8be0a8";status.textContent="Игрок "+result.player_nickname+" заблокирован до "+until+".";
+   nick.value="";
+  }catch(e){status.style.color="#ff8585";status.textContent=e?.message||"Не удалось заблокировать игрока.";}
+  finally{send.disabled=false;send.textContent="ЗАБАНИТЬ";}
+ });
+ nick.focus();
 }
 function openPlayerBadgeModal(){
  const old=document.getElementById("playerBadgeModal");if(old)old.remove();
