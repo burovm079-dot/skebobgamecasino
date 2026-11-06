@@ -272,11 +272,6 @@ window.skebobTrackGameLaunch=async function(gameId){
  await rest("rpc/track_game_launch",{method:"POST",body:JSON.stringify({p_game_id:String(gameId)})});
  return true;
 };
-window.skebobGetBalanceHistory=async function(nickname){
- const rows=await rest("rpc/admin_get_balance_history",{method:"POST",body:JSON.stringify({p_nickname:String(nickname||"").trim()})});
- if(!Array.isArray(rows))throw new Error("Сервер вернул неверную историю баланса.");
- return rows;
-};
 window.skebobGetGameStatistics=async function(){
  const rows=await rest("rpc/admin_get_game_statistics",{method:"POST",body:"{}"});
  if(!Array.isArray(rows)||!rows.length)throw new Error("Не удалось получить статистику игры.");
