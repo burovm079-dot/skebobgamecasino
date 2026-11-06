@@ -259,6 +259,17 @@ window.skebobLookupPlayer=async function(nickname){
  if(!Array.isArray(rows)||!rows.length)throw new Error("Игрок не найден.");
  return rows[0];
 };
+window.skebobTrackGameLaunch=async function(gameId){
+ const allowed=["skebobTap","tictactoe","billiards","cases","secretDrop","battles","upgrade","mines","plane","plinko","race","slots","dice"];
+ if(!allowed.includes(String(gameId)))return false;
+ await rest("rpc/track_game_launch",{method:"POST",body:JSON.stringify({p_game_id:String(gameId)})});
+ return true;
+};
+window.skebobGetPopularGames=async function(){
+ const rows=await rest("rpc/get_popular_games",{method:"POST",body:"{}"});
+ if(!Array.isArray(rows))throw new Error("Сервер вернул неверный рейтинг.");
+ return rows;
+};
 window.skebobGetLeaderboard=async function(){
  const rows=await rest("rpc/get_player_leaderboard",{method:"POST",body:"{}"});
  if(!Array.isArray(rows))throw new Error("Не удалось загрузить рейтинг игроков.");
