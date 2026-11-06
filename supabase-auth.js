@@ -5,6 +5,8 @@ const SB_URL="https://pvlkcgdayxvxzvbnbuih.supabase.co";
 const SB_KEY="sb_publishable_abz-qQOtxrQ8pLJh5lo0LQ_ylXsjiFh";
 const SESSION_KEY="skebobSupabaseSession";
 let session=null, authMode="login", currentNickname="",presenceTimer=null;
+// Balance baseline prevents an old full-state save from overwriting a server-side top-up.
+let lastSyncedBalance=20,saveQueue=Promise.resolve();
 
 function emailForNickname(nickname){
  const bytes=new TextEncoder().encode(String(nickname).trim().toLocaleLowerCase("ru"));
@@ -150,6 +152,10 @@ async function loadPlayerData(){
    profileStyle:{frame:"classic",background:"default",accent:"gold",collapsed:false}
   };
  }
+ // Запоминаем серверный баланс как базу для последующих изменений из игры.
+ lastSyncedBalance=Number(state.balance);
+ if(!Number.isFinite(lastSyncedBalance)||lastSyncedBalance<0)lastSyncedBalance=20;
+ saveQueue=Promise.resolve();
  try{localStorage.setItem("skebobSave",JSON.stringify(state));}catch(_){}
  try{localStorage.setItem("skebobNickname",currentNickname);}catch(_){}
  await writePlayerSave();
@@ -166,9 +172,26 @@ async function loadPlayerData(){
 }
 async function writePlayerSave(){
  if(!session||!session.user||!session.user.id)return;
- const response=await fetch(SB_URL+"/rest/v1/player_saves?on_conflict=user_id",{method:"POST",headers:{"apikey":SB_KEY,"Authorization":"Bearer "+session.access_token,"Content-Type":"application/json","Prefer":"resolution=merge-duplicates,return=minimal"},body:JSON.stringify({user_id:session.user.id,game_state:state})});
- if(response.status===401&&await refreshSession())return writePlayerSave();
- if(!response.ok){let msg="Не удалось сохранить прогресс";try{const d=await response.json();msg=d.message||d.details||msg;}catch(_){}throw new Error(msg);}
+ // Выполняем сохранения последовательно: каждое следующее вычисляет разницу
+ // уже от последнего подтверждённого сервером баланса.
+ const task=saveQueue.catch(()=>{}).then(async()=>{
+  if(!session||!session.user||!session.user.id)return;
+  const snapshot=JSON.parse(JSON.stringify(state));
+  const snapshotBalance=Number(snapshot.balance);
+  if(!Number.isFinite(snapshotBalance)||snapshotBalance<0)throw new Error("Некорректный баланс игрока.");
+  const delta=Math.round((snapshotBalance-lastSyncedBalance)*100)/100;
+  const saved=await rest("rpc/save_player_game_state",{
+   method:"POST",
+   body:JSON.stringify({p_game_state:snapshot,p_balance_delta:delta})
+  });
+  const serverBalance=Number(saved);
+  if(!Number.isFinite(serverBalance)||serverBalance<0)throw new Error("Сервер вернул некорректный баланс.");
+  lastSyncedBalance=serverBalance;
+  // Не затираем более новые изменения, сделанные во время сетевого запроса.
+  if(Number(state.balance)===snapshotBalance)state.balance=serverBalance;
+ });
+ saveQueue=task;
+ return task;
 }
 let saveTimer=null;
 async function pingPlayerPresence(){if(!session||!session.user)return;try{await rest("rpc/player_presence_ping",{method:"POST",body:"{}"});}catch(e){console.warn("Presence ping:",e);}}
@@ -383,6 +406,6 @@ window.skebobLogout=async function(){
  stopPlayerPresence();
  if(saveTimer){clearTimeout(saveTimer);saveTimer=null;}
  try{if(session&&session.access_token)await fetch(SB_URL+"/auth/v1/logout",{method:"POST",headers:{"apikey":SB_KEY,"Authorization":"Bearer "+session.access_token}});}catch(_){}
- saveSession(null);currentNickname="";showAuth();
+ saveSession(null);currentNickname="";lastSyncedBalance=20;saveQueue=Promise.resolve();showAuth();
 };
 })();
