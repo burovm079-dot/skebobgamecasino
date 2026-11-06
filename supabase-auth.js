@@ -277,6 +277,12 @@ window.skebobGetGameStatistics=async function(){
  if(!Array.isArray(rows)||!rows.length)throw new Error("Не удалось получить статистику игры.");
  return rows[0];
 };
+window.skebobGetEconomyTurnover=async function(){
+ const rows=await rest("rpc/admin_get_economy_turnover",{method:"POST",body:"{}"});
+ if(!Array.isArray(rows)||!rows.length)throw new Error("Не удалось получить оборот экономики. Проверь, что SQL-скрипт выполнен в Supabase.");
+ return rows[0];
+};
+
 window.skebobGetPopularGames=async function(){
  const rows=await rest("rpc/get_popular_games",{method:"POST",body:"{}"});
  if(!Array.isArray(rows))throw new Error("Сервер вернул неверный рейтинг.");
