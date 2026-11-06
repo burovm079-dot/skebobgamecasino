@@ -47,7 +47,7 @@ drop trigger if exists player_saves_balance_history on public.player_saves;
 create trigger player_saves_balance_history
 after update of game_state on public.player_saves
 for each row
-when (old.game_state ->> 'balance' is distinct from new.game_state ->> 'balance')
+when ((old.game_state ->> 'balance') is distinct from (new.game_state ->> 'balance'))
 execute function public.log_player_balance_change();
 
 create or replace function public.admin_get_balance_history(p_nickname text)
