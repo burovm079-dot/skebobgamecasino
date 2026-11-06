@@ -120,6 +120,18 @@ async function loadPlayerData(){
  // Не даём отложенному сохранению предыдущего аккаунта попасть в новый.
  if(saveTimer){clearTimeout(saveTimer);saveTimer=null;}
  const uid=session.user.id;
+ // Проверяем активную блокировку до загрузки и сохранения игрового прогресса.
+ try{
+  const banRows=await rest("rpc/get_my_player_ban_status",{method:"POST",body:"{}"});
+  if(Array.isArray(banRows)&&banRows[0]&&banRows[0].is_banned){
+   const until=banRows[0].expires_at?new Date(banRows[0].expires_at).toLocaleString("ru-RU"):"";
+   throw new Error("Твой аккаунт заблокирован"+(until?" до "+until:"")+".");
+  }
+ }catch(error){
+  if(/get_my_player_ban_status|schema cache|could not find the function/i.test(error?.message||"")){
+   console.warn("Ban check SQL is not installed yet:",error);
+  }else throw error;
+ }
  let profileRows=await rest("player_profiles?select=nickname&user_id=eq."+encodeURIComponent(uid)+"&limit=1");
  if(!Array.isArray(profileRows)||!profileRows.length)throw new Error("Профиль не найден. Проверь SQL-триггер в Supabase.");
  currentNickname=profileRows[0].nickname;
@@ -265,6 +277,14 @@ window.skebobRemovePlayerBadge=async function(nickname){
  const result=await rest("rpc/admin_remove_player_badge",{method:"POST",body:JSON.stringify({p_nickname:nick})});
  if(typeof result!=="string"||!result)throw new Error("Сервер не подтвердил снятие галочки.");
  return result;
+};
+window.skebobBanPlayer=async function(nickname,months,days){
+ const nick=String(nickname||"").trim(),m=Number(months),d=Number(days);
+ if(!nick)throw new Error("Введи ник игрока.");
+ if(!Number.isInteger(m)||m<0||m>120||!Number.isInteger(d)||d<0||d>3650||m+d===0)throw new Error("Укажи корректный срок блокировки.");
+ const rows=await rest("rpc/admin_ban_player",{method:"POST",body:JSON.stringify({p_nickname:nick,p_months:m,p_days:d})});
+ if(!Array.isArray(rows)||!rows.length)throw new Error("Сервер не подтвердил блокировку.");
+ return rows[0];
 };
 window.skebobSendPlayerNotification=async function(nickname,message){
  const nick=String(nickname||"").trim(),text=String(message||"").trim();
