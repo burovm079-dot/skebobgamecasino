@@ -2271,7 +2271,7 @@ window.prompt=(message,value)=>{void skebobDialog("prompt",message,value);return
 <div class="sk-work">
 <div class="sk-top">
 
-<div class="sk-coins"><span class="sk-coin">🪙</span><span id="dashboardBalance">1,000</span></div><a id="topupWithdrawButton" class="topup-withdraw-button" href="https://t.me/ggggg06767" target="_blank" rel="noopener noreferrer">💸 ПОПОЛНЕНИЕ / ВЫВОД</a><div id="leaderboardWidget" class="leaderboard-widget"><button id="leaderboardToggle" class="leaderboard-toggle" type="button" aria-expanded="false">🏆 ЛИДЕРБОРД <span id="leaderboardArrow">▼</span></button><div id="leaderboardPanel" class="leaderboard-panel" aria-label="Топ 20 игроков"><div class="leaderboard-head"><span>ТОП-20 ПО БАЛАНСУ</span></div><div id="leaderboardRows" class="leaderboard-note">Загружаем рейтинг…</div></div></div>
+<div class="sk-coins"><span class="sk-coin">🪙</span><span id="dashboardBalance">1,000</span></div><button id="topupWithdrawButton" class="topup-withdraw-button" type="button">⭐ ПОПОЛНЕНИЕ</button><div id="leaderboardWidget" class="leaderboard-widget"><button id="leaderboardToggle" class="leaderboard-toggle" type="button" aria-expanded="false">🏆 ЛИДЕРБОРД <span id="leaderboardArrow">▼</span></button><div id="leaderboardPanel" class="leaderboard-panel" aria-label="Топ 20 игроков"><div class="leaderboard-head"><span>ТОП-20 ПО БАЛАНСУ</span></div><div id="leaderboardRows" class="leaderboard-note">Загружаем рейтинг…</div></div></div>
 
 
 </div>
@@ -7420,5 +7420,91 @@ window.refreshLeaderboard=async function(){
  document.addEventListener("visibilitychange",()=>{if(!document.hidden)updateLeaderboardAutomatically();});
 })();;
 </script>
+
+<script>
+/* Telegram Stars top-up UI */
+(function(){
+ "use strict";
+ const topupButton=document.getElementById("topupWithdrawButton");
+ if(!topupButton)return;
+ const packages=[50,100,250,500,1000];
+ let overlay=null,busy=false;
+ function closeDialog(){if(overlay){overlay.remove();overlay=null;}busy=false;}
+ topupButton.addEventListener("click",function(){
+  if(overlay)return;
+  overlay=document.createElement("div");
+  overlay.style.cssText="position:fixed;inset:0;z-index:32000;background:rgba(0,0,0,.82);display:flex;align-items:center;justify-content:center;padding:18px";
+  const panel=document.createElement("div");
+  panel.style.cssText="width:100%;max-width:390px;background:var(--panel,#191a20);color:var(--text,#fff);border:1px solid var(--gold,#f4c75e);border-radius:20px;padding:20px;box-shadow:0 18px 55px #000b";
+  const title=document.createElement("h2");
+  title.textContent="⭐ ПОПОЛНЕНИЕ";
+  title.style.cssText="margin:0 0 8px;color:var(--gold,#f4c75e);text-align:center";
+  const subtitle=document.createElement("div");
+  subtitle.textContent="Выбери количество Telegram Stars. 1 ⭐ = 1,4 ₽";
+  subtitle.style.cssText="font-size:13px;color:var(--muted,#aaa);text-align:center;line-height:1.5;margin-bottom:14px";
+  const status=document.createElement("div");
+  status.style.cssText="min-height:22px;margin:10px 0;color:var(--gold,#f4c75e);font-size:13px;text-align:center;line-height:1.4";
+  const options=document.createElement("div");
+  options.style.cssText="display:grid;grid-template-columns:1fr 1fr;gap:9px";
+  const close=document.createElement("button");
+  close.type="button";close.textContent="ЗАКРЫТЬ";
+  close.style.cssText="width:100%;margin-top:12px;padding:12px;border-radius:11px;border:1px solid var(--border2,#444);background:var(--panel2,#292929);color:var(--text,#fff);font-weight:900";
+  close.addEventListener("click",closeDialog);
+  packages.forEach(function(stars){
+   const rubles=(stars*1.4).toLocaleString("ru-RU",{maximumFractionDigits:2});
+   const option=document.createElement("button");
+   option.type="button";
+   option.textContent=stars+" ⭐\n"+rubles+" ₽";
+   option.style.cssText="white-space:pre-line;min-height:64px;padding:10px 6px;border:1px solid var(--gold,#f4c75e);border-radius:12px;background:linear-gradient(145deg,#493819,#261b11);color:#ffe4a0;font-weight:900;font-size:15px";
+   option.addEventListener("click",async function(){
+    if(busy)return;
+    busy=true;
+    options.querySelectorAll("button").forEach(b=>b.disabled=true);
+    close.disabled=true;
+    status.textContent="Создаём счёт на "+stars+" ⭐…";
+    try{
+     if(!window.Telegram||!window.Telegram.WebApp||typeof window.Telegram.WebApp.openInvoice!=="function"){
+      throw new Error("Открой SKEBOB GAME через Telegram, чтобы оплатить звёздами.");
+     }
+     if(typeof window.skebobCreateStarsInvoice!=="function")throw new Error("Функция пополнения ещё не загружена. Обнови игру.");
+     const invoiceUrl=await window.skebobCreateStarsInvoice(stars);
+     window.Telegram.WebApp.openInvoice(invoiceUrl,async function(paymentStatus){
+      if(paymentStatus==="paid"){
+       status.textContent="Оплата получена! Проверяем начисление…";
+       try{
+        await new Promise(resolve=>setTimeout(resolve,1800));
+        const balance=await window.skebobRefreshAfterStarsPayment();
+        status.textContent="Успешно! Баланс обновлён: "+Number(balance).toLocaleString("ru-RU")+" ₽";
+       }catch(error){
+        status.textContent="Telegram подтвердил оплату. Баланс скоро обновится; перезайди в игру, если сумма пока не изменилась.";
+       }
+      }else if(paymentStatus==="cancelled"){
+       status.textContent="Оплата отменена. Деньги не списаны.";
+      }else if(paymentStatus==="failed"){
+       status.textContent="Не удалось завершить оплату. Попробуй ещё раз.";
+      }else{
+       status.textContent="Платёж обрабатывается. Баланс обновится после подтверждения Telegram.";
+      }
+      busy=false;
+      options.querySelectorAll("button").forEach(b=>b.disabled=false);
+      close.disabled=false;
+     });
+    }catch(error){
+     status.textContent=error&&error.message?error.message:"Не удалось создать счёт.";
+     busy=false;
+     options.querySelectorAll("button").forEach(b=>b.disabled=false);
+     close.disabled=false;
+    }
+   });
+   options.appendChild(option);
+  });
+  panel.append(title,subtitle,options,status,close);
+  overlay.appendChild(panel);
+  overlay.addEventListener("click",function(event){if(event.target===overlay&&!busy)closeDialog();});
+  document.body.appendChild(overlay);
+ });
+})();
+</script>
+
 </body>
     </html>
