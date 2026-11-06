@@ -6847,7 +6847,7 @@ function renderSpecialAccountControls(){
   
  }
  if(String(nick).trim().toLowerCase()==="skebob"){
-  html+='<div style="display:grid;grid-template-columns:1fr;gap:9px;margin-top:14px"><button type="button" class="goldbtn" style="width:100%" onclick="openMoneyGrantModal()">💰 ВЫДАТЬ ДЕНЬГИ</button><button type="button" class="goldbtn" style="width:100%;background:linear-gradient(135deg,#6335bd,#35116e)" onclick="openProfileLookupModal()">🔎 ПРОВЕРИТЬ ПРОФИЛЬ</button><button type="button" class="goldbtn" style="width:100%;background:linear-gradient(135deg,#245fa8,#173c70)" onclick="openPlayerAccountsModal()">👥 ПРОСМОТР АККАУНТОВ</button><button type="button" class="goldbtn" style="width:100%;background:linear-gradient(135deg,#8b5bd6,#51258f)" onclick="openPlayerNotificationModal()">🔔 ОТПРАВИТЬ УВЕДОМЛЕНИЕ</button><button type="button" class="goldbtn" style="width:100%;background:linear-gradient(135deg,#b52f42,#701624)" onclick="openPlayerBanModal()">🚫 ЗАБАНИТЬ</button><button type="button" class="goldbtn" style="width:100%;background:linear-gradient(135deg,#168b57,#075b42)" onclick="openPlayerUnbanModal()">🔓 РАЗБАНИТЬ</button><button type="button" class="goldbtn" style="width:100%;background:linear-gradient(135deg,#168b57,#075b42)" onclick="openPlayerBadgeModal()">✓ ВЫДАТЬ ГАЛОЧКУ</button></div>';
+  html+='<div style="display:grid;grid-template-columns:1fr;gap:9px;margin-top:14px"><button type="button" class="goldbtn" style="width:100%" onclick="openMoneyGrantModal()">💰 ВЫДАТЬ ДЕНЬГИ</button><button type="button" class="goldbtn" style="width:100%;background:linear-gradient(135deg,#6335bd,#35116e)" onclick="openProfileLookupModal()">🔎 ПРОВЕРИТЬ ПРОФИЛЬ</button><button type="button" class="goldbtn" style="width:100%;background:linear-gradient(135deg,#245fa8,#173c70)" onclick="openPlayerAccountsModal()">👥 ПРОСМОТР АККАУНТОВ</button><button type="button" class="goldbtn" style="width:100%;background:linear-gradient(135deg,#8b5bd6,#51258f)" onclick="openPlayerNotificationModal()">🔔 ОТПРАВИТЬ УВЕДОМЛЕНИЕ</button><button type="button" class="goldbtn" style="width:100%;background:linear-gradient(135deg,#b87918,#70420b)" onclick="openGlobalAnnouncementModal()">📢 ГЛОБАЛЬНОЕ ОБЪЯВЛЕНИЕ</button><button type="button" class="goldbtn" style="width:100%;background:linear-gradient(135deg,#b52f42,#701624)" onclick="openPlayerBanModal()">🚫 ЗАБАНИТЬ</button><button type="button" class="goldbtn" style="width:100%;background:linear-gradient(135deg,#168b57,#075b42)" onclick="openPlayerUnbanModal()">🔓 РАЗБАНИТЬ</button><button type="button" class="goldbtn" style="width:100%;background:linear-gradient(135deg,#168b57,#075b42)" onclick="openPlayerBadgeModal()">✓ ВЫДАТЬ ГАЛОЧКУ</button></div>';
  }
  host.innerHTML=html+'</div>';
 }
@@ -6932,6 +6932,30 @@ function openPlayerUnbanModal(){
   finally{send.disabled=false;send.textContent="РАЗБАН";}
  });
  nick.focus();
+}
+function openGlobalAnnouncementModal(){
+ const old=document.getElementById("globalAnnouncementModal");if(old)old.remove();
+ const overlay=document.createElement("div");overlay.id="globalAnnouncementModal";
+ overlay.style.cssText="position:fixed;inset:0;z-index:32006;background:rgba(0,0,0,.88);display:flex;align-items:center;justify-content:center;padding:18px";
+ const panel=document.createElement("div");panel.style.cssText="width:100%;max-width:410px;background:var(--panel);color:var(--text);border:1px solid #e6a52e;border-radius:18px;padding:20px;box-shadow:0 15px 50px #000b";
+ panel.innerHTML='<h3 style="margin:0 0 8px;color:#ffc85c">📢 ГЛОБАЛЬНОЕ ОБЪЯВЛЕНИЕ</h3><p style="font-size:13px;color:var(--muted);margin:0 0 13px">Сообщение получат все зарегистрированные игроки при следующем входе, включая тех, кто сейчас офлайн.</p><label for="globalAnnouncementMessage" style="display:block;margin:0 0 6px;font-size:13px">Текст объявления</label><textarea id="globalAnnouncementMessage" maxlength="1000" rows="5" placeholder="Напиши объявление для всех игроков..." style="width:100%;box-sizing:border-box;resize:vertical;margin-bottom:14px"></textarea><div style="display:flex;gap:9px"><button type="button" class="secondary" id="globalAnnouncementCancel" style="flex:1">ОТМЕНА</button><button type="button" class="goldbtn" id="globalAnnouncementSubmit" style="flex:1;background:linear-gradient(135deg,#b87918,#70420b)">ОТПРАВИТЬ ВСЕМ</button></div><p id="globalAnnouncementStatus" role="status" style="min-height:18px;margin:12px 0 0;font-size:13px"></p>';
+ overlay.appendChild(panel);document.body.appendChild(overlay);
+ const close=()=>overlay.remove(),message=panel.querySelector("#globalAnnouncementMessage"),send=panel.querySelector("#globalAnnouncementSubmit"),status=panel.querySelector("#globalAnnouncementStatus");
+ panel.querySelector("#globalAnnouncementCancel").addEventListener("click",close);
+ overlay.addEventListener("click",e=>{if(e.target===overlay)close();});
+ send.addEventListener("click",async()=>{
+  if(send.disabled)return;
+  const text=message.value.trim();
+  if(!text){status.style.color="#ff8585";status.textContent="Напиши текст объявления.";return;}
+  send.disabled=true;send.textContent="РАССЫЛАЕМ…";status.textContent="";
+  try{
+   const result=await window.skebobPublishGlobalAnnouncement(text);
+   status.style.color="#8be0a8";status.textContent="Объявление отправлено. Получателей: "+result.recipients_count+".";
+   message.value="";
+  }catch(e){status.style.color="#ff8585";status.textContent=e?.message||"Не удалось отправить объявление.";}
+  finally{send.disabled=false;send.textContent="ОТПРАВИТЬ ВСЕМ";}
+ });
+ message.focus();
 }
 function openPlayerBadgeModal(){
  const old=document.getElementById("playerBadgeModal");if(old)old.remove();
