@@ -240,6 +240,13 @@ window.initSupabaseAuth=async function(){
 };
 window.getNickname=function(){return currentNickname||"Player";};
 window.persistNickname=function(){return false;};
+window.skebobResetPlayerProgress=async function(nickname){
+ const nick=String(nickname||"").trim();
+ if(nick.length<2||nick.length>18)throw new Error("Введи корректный никнейм игрока.");
+ const rows=await rest("rpc/admin_reset_player_progress",{method:"POST",body:JSON.stringify({p_nickname:nick})});
+ if(!Array.isArray(rows)||!rows.length)throw new Error("Сервер не подтвердил сброс прогресса.");
+ return rows[0];
+};
 window.skebobGrantMoney=async function(nickname,amount){
  const nick=String(nickname||"").trim();
  const value=Number(amount);
