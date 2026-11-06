@@ -240,19 +240,6 @@ window.initSupabaseAuth=async function(){
 };
 window.getNickname=function(){return currentNickname||"Player";};
 window.persistNickname=function(){return false;};
-window.skebobCreatePromoCode=async function(code,reward,limit){
- const normalized=String(code||"").trim().toUpperCase(),amount=Number(reward),max=Number(limit);
- if(!/^[A-Z0-9_-]{3,32}$/.test(normalized))throw new Error("Код: 3–32 символа, только латинские буквы, цифры, дефис и подчёркивание.");
- if(!Number.isInteger(amount)||amount<1||amount>1000000)throw new Error("Награда должна быть целым числом от 1 до 1 000 000 ₽.");
- if(!Number.isInteger(max)||max<1||max>1000000)throw new Error("Лимит должен быть целым числом от 1 до 1 000 000.");
- const rows=await rest("rpc/admin_create_promo_code",{method:"POST",body:JSON.stringify({p_code:normalized,p_reward:amount,p_activation_limit:max})});
- if(!Array.isArray(rows)||!rows.length)throw new Error("Сервер не подтвердил создание промокода.");return rows[0];
-};
-window.skebobRedeemPromoCode=async function(code){
- const normalized=String(code||"").trim().toUpperCase();
- const rows=await rest("rpc/redeem_promo_code",{method:"POST",body:JSON.stringify({p_code:normalized})});
- if(!Array.isArray(rows)||!rows.length)throw new Error("Промокод недействителен или лимит активаций исчерпан.");return rows[0];
-};
 window.skebobResetPlayerProgress=async function(nickname){
  const nick=String(nickname||"").trim();
  if(nick.length<2||nick.length>18)throw new Error("Введи корректный никнейм игрока.");
