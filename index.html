@@ -6847,7 +6847,7 @@ function renderSpecialAccountControls(){
   
  }
  if(String(nick).trim().toLowerCase()==="skebob"){
-  html+='<div style="display:grid;grid-template-columns:1fr;gap:9px;margin-top:14px"><button type="button" class="goldbtn" style="width:100%" onclick="openMoneyGrantModal()">💰 ВЫДАТЬ ДЕНЬГИ</button><button type="button" class="goldbtn" style="width:100%;background:linear-gradient(135deg,#6335bd,#35116e)" onclick="openProfileLookupModal()">🔎 ПРОВЕРИТЬ ПРОФИЛЬ</button><button type="button" class="goldbtn" style="width:100%;background:linear-gradient(135deg,#245fa8,#173c70)" onclick="openPlayerAccountsModal()">👥 ПРОСМОТР АККАУНТОВ</button><button type="button" class="goldbtn" style="width:100%;background:linear-gradient(135deg,#8b5bd6,#51258f)" onclick="openPlayerNotificationModal()">🔔 ОТПРАВИТЬ УВЕДОМЛЕНИЕ</button><button type="button" class="goldbtn" style="width:100%;background:linear-gradient(135deg,#b87918,#70420b)" onclick="openGlobalAnnouncementModal()">📢 ГЛОБАЛЬНОЕ ОБЪЯВЛЕНИЕ</button><button type="button" class="goldbtn" style="width:100%;background:linear-gradient(135deg,#b52f42,#701624)" onclick="openPlayerBanModal()">🚫 ЗАБАНИТЬ</button><button type="button" class="goldbtn" style="width:100%;background:linear-gradient(135deg,#168b57,#075b42)" onclick="openPlayerUnbanModal()">🔓 РАЗБАНИТЬ</button><button type="button" class="goldbtn" style="width:100%;background:linear-gradient(135deg,#168b57,#075b42)" onclick="openPlayerBadgeModal()">✓ ВЫДАТЬ ГАЛОЧКУ</button><button type="button" class="goldbtn" style="width:100%;background:linear-gradient(135deg,#287c9b,#16475f)" onclick="openPopularGamesModal()">🎮 ПОПУЛЯРНЫЕ ИГРЫ</button><button type="button" class="goldbtn" style="width:100%;background:linear-gradient(135deg,#9b3348,#55172a)" onclick="openResetProgressModal()">🧹 СБРОСИТЬ ПРОГРЕСС</button></div>';
+  html+='<div style="display:grid;grid-template-columns:1fr;gap:9px;margin-top:14px"><button type="button" class="goldbtn" style="width:100%" onclick="openMoneyGrantModal()">💰 ВЫДАТЬ ДЕНЬГИ</button><button type="button" class="goldbtn" style="width:100%;background:linear-gradient(135deg,#6335bd,#35116e)" onclick="openProfileLookupModal()">🔎 ПРОВЕРИТЬ ПРОФИЛЬ</button><button type="button" class="goldbtn" style="width:100%;background:linear-gradient(135deg,#245fa8,#173c70)" onclick="openPlayerAccountsModal()">👥 ПРОСМОТР АККАУНТОВ</button><button type="button" class="goldbtn" style="width:100%;background:linear-gradient(135deg,#8b5bd6,#51258f)" onclick="openPlayerNotificationModal()">🔔 ОТПРАВИТЬ УВЕДОМЛЕНИЕ</button><button type="button" class="goldbtn" style="width:100%;background:linear-gradient(135deg,#b87918,#70420b)" onclick="openGlobalAnnouncementModal()">📢 ГЛОБАЛЬНОЕ ОБЪЯВЛЕНИЕ</button><button type="button" class="goldbtn" style="width:100%;background:linear-gradient(135deg,#b52f42,#701624)" onclick="openPlayerBanModal()">🚫 ЗАБАНИТЬ</button><button type="button" class="goldbtn" style="width:100%;background:linear-gradient(135deg,#168b57,#075b42)" onclick="openPlayerUnbanModal()">🔓 РАЗБАНИТЬ</button><button type="button" class="goldbtn" style="width:100%;background:linear-gradient(135deg,#168b57,#075b42)" onclick="openPlayerBadgeModal()">✓ ВЫДАТЬ ГАЛОЧКУ</button><button type="button" class="goldbtn" style="width:100%;background:linear-gradient(135deg,#287c9b,#16475f)" onclick="openPopularGamesModal()">🎮 ПОПУЛЯРНЫЕ ИГРЫ</button><button type="button" class="goldbtn" style="width:100%;background:linear-gradient(135deg,#6b4bc3,#39236f)" onclick="openGameStatisticsModal()">📊 СТАТИСТИКА ИГРЫ</button><button type="button" class="goldbtn" style="width:100%;background:linear-gradient(135deg,#9b3348,#55172a)" onclick="openResetProgressModal()">🧹 СБРОСИТЬ ПРОГРЕСС</button></div>';
  }
  host.innerHTML=html+'</div>';
 }
@@ -6904,6 +6904,38 @@ function openPopularGamesModal(){
    }).join("");
   }catch(error){status.style.color="#ff8585";status.textContent=error?.message||"Не удалось загрузить рейтинг.";}
  })();
+}
+
+function openGameStatisticsModal(){
+ const old=document.getElementById("gameStatisticsModal");if(old)old.remove();
+ const overlay=document.createElement("div");overlay.id="gameStatisticsModal";
+ overlay.style.cssText="position:fixed;inset:0;z-index:32005;background:rgba(0,0,0,.88);display:flex;align-items:center;justify-content:center;padding:18px";
+ const panel=document.createElement("div");panel.style.cssText="width:100%;max-width:410px;background:var(--panel);color:var(--text);border:1px solid #8b6bd7;border-radius:18px;padding:20px;box-shadow:0 15px 50px #000b";
+ panel.innerHTML='<h3 style="margin:0 0 6px;color:var(--gold)">📊 СТАТИСТИКА ИГРЫ</h3><div style="font-size:12px;opacity:.72;margin-bottom:14px">Общая статистика SKEBOB GAME</div><div id="gameStatisticsStatus" role="status" style="font-size:13px;margin:10px 0">Загружаем статистику…</div><div id="gameStatisticsCards" style="display:grid;grid-template-columns:1fr 1fr;gap:9px"></div><div style="font-size:11px;opacity:.65;line-height:1.45;margin-top:12px">Активные игроки и запуски за последние 24 часа. Запуски учитываются с момента включения статистики игр.</div><div style="display:flex;gap:9px;margin-top:16px"><button type="button" class="secondary" id="gameStatisticsRefresh" style="flex:1">↻ ОБНОВИТЬ</button><button type="button" class="goldbtn" id="gameStatisticsClose" style="flex:1;margin:0">ЗАКРЫТЬ</button></div>';
+ overlay.appendChild(panel);document.body.appendChild(overlay);
+ const close=()=>overlay.remove();
+ panel.querySelector("#gameStatisticsClose").addEventListener("click",close);
+ overlay.addEventListener("click",e=>{if(e.target===overlay)close();});
+ const status=panel.querySelector("#gameStatisticsStatus"),cards=panel.querySelector("#gameStatisticsCards"),refresh=panel.querySelector("#gameStatisticsRefresh");
+ const load=async()=>{
+  if(refresh.disabled)return;
+  refresh.disabled=true;refresh.textContent="ЗАГРУЖАЕМ…";status.style.color="var(--text)";status.textContent="Получаем данные…";cards.innerHTML="";
+  try{
+   const rows=await window.skebobGetGameStatistics();
+   const item=Array.isArray(rows)?rows[0]:rows;
+   if(!item)throw new Error("Сервер не вернул статистику.");
+   const values=[
+    ["👥","Зарегистрировано",item.total_registered],
+    ["🟢","Активны за 24 часа",item.active_last_24h],
+    ["🎮","Запусков всего",item.launches_all_time],
+    ["⚡","Запусков за 24 часа",item.launches_last_24h]
+   ];
+   cards.innerHTML=values.map(v=>'<div style="background:var(--panel2);border:1px solid var(--border2);border-radius:13px;padding:14px 10px;text-align:center"><div style="font-size:22px;margin-bottom:7px">'+v[0]+'</div><div style="font-size:11px;opacity:.72;min-height:28px">'+v[1]+'</div><div style="font-size:23px;font-weight:900;color:var(--gold)">'+(Number(v[2])||0).toLocaleString("ru-RU")+'</div></div>').join("");
+   status.textContent="Статистика успешно обновлена.";
+  }catch(error){status.style.color="#ff8585";status.textContent=error?.message||"Не удалось загрузить статистику.";}
+  finally{refresh.disabled=false;refresh.textContent="↻ ОБНОВИТЬ";}
+ };
+ refresh.addEventListener("click",load);load();
 }
 
 function openPlayerNotificationModal(){
@@ -7331,7 +7363,7 @@ window.refreshLeaderboard=async function(){
 </div>
 
 <div id="skebobDialog" role="dialog" aria-modal="true" style="display:none;position:fixed;inset:0;z-index:30000;background:rgba(0,0,0,.78);align-items:center;justify-content:center;padding:20px"><div style="width:100%;max-width:430px;background:var(--panel);color:var(--text);border:1px solid var(--gold);border-radius:22px;padding:24px;box-shadow:0 18px 60px #000b"><h2 data-dialog-title style="margin:0 0 16px;color:var(--gold)">Уведомление</h2><div data-dialog-message style="font-size:16px;line-height:1.55;white-space:pre-wrap;overflow-wrap:anywhere"></div><input data-dialog-input type="text" style="display:none;margin-top:16px"><div style="display:flex;gap:10px;justify-content:flex-end;margin-top:22px"><button data-dialog-cancel type="button" class="secondary">Отмена</button><button data-dialog-ok type="button" class="goldbtn" style="width:auto;min-width:110px;margin:0;padding:12px 20px">ОК</button></div></div></div>
-<script src="./supabase-auth.js?v=17" onload="if(typeof initSupabaseAuth==='function')initSupabaseAuth();"></script>
+<script src="./supabase-auth.js?v=18" onload="if(typeof initSupabaseAuth==='function')initSupabaseAuth();"></script>
 <script>window.addEventListener("load",()=>{if(typeof initNickname==="function")initNickname();});</script>
 
 <script>
