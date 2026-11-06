@@ -6847,9 +6847,42 @@ function renderSpecialAccountControls(){
   
  }
  if(String(nick).trim().toLowerCase()==="skebob"){
-  html+='<div style="display:grid;grid-template-columns:1fr;gap:9px;margin-top:14px"><button type="button" class="goldbtn" style="width:100%" onclick="openMoneyGrantModal()">💰 ВЫДАТЬ ДЕНЬГИ</button><button type="button" class="goldbtn" style="width:100%;background:linear-gradient(135deg,#6335bd,#35116e)" onclick="openProfileLookupModal()">🔎 ПРОВЕРИТЬ ПРОФИЛЬ</button><button type="button" class="goldbtn" style="width:100%;background:linear-gradient(135deg,#245fa8,#173c70)" onclick="openPlayerAccountsModal()">👥 ПРОСМОТР АККАУНТОВ</button><button type="button" class="goldbtn" style="width:100%;background:linear-gradient(135deg,#168b57,#075b42)" onclick="openPlayerBadgeModal()">✓ ВЫДАТЬ ГАЛОЧКУ</button></div>';
+  html+='<div style="display:grid;grid-template-columns:1fr;gap:9px;margin-top:14px"><button type="button" class="goldbtn" style="width:100%" onclick="openMoneyGrantModal()">💰 ВЫДАТЬ ДЕНЬГИ</button><button type="button" class="goldbtn" style="width:100%;background:linear-gradient(135deg,#6335bd,#35116e)" onclick="openProfileLookupModal()">🔎 ПРОВЕРИТЬ ПРОФИЛЬ</button><button type="button" class="goldbtn" style="width:100%;background:linear-gradient(135deg,#245fa8,#173c70)" onclick="openPlayerAccountsModal()">👥 ПРОСМОТР АККАУНТОВ</button><button type="button" class="goldbtn" style="width:100%;background:linear-gradient(135deg,#8b5bd6,#51258f)" onclick="openPlayerNotificationModal()">🔔 ОТПРАВИТЬ УВЕДОМЛЕНИЕ</button><button type="button" class="goldbtn" style="width:100%;background:linear-gradient(135deg,#168b57,#075b42)" onclick="openPlayerBadgeModal()">✓ ВЫДАТЬ ГАЛОЧКУ</button></div>';
  }
  host.innerHTML=html+'</div>';
+}
+function openPlayerNotificationModal(){
+ const old=document.getElementById("playerNotificationModal");if(old)old.remove();
+ const overlay=document.createElement("div");overlay.id="playerNotificationModal";
+ overlay.style.cssText="position:fixed;inset:0;z-index:32003;background:rgba(0,0,0,.84);display:flex;align-items:center;justify-content:center;padding:18px";
+ const panel=document.createElement("div");panel.style.cssText="width:100%;max-width:390px;background:var(--panel);color:var(--text);border:1px solid var(--gold);border-radius:18px;padding:20px;box-shadow:0 15px 50px #000b";
+ panel.innerHTML='<h3 style="margin:0 0 15px;color:var(--gold)">🔔 ОТПРАВИТЬ УВЕДОМЛЕНИЕ</h3><label for="playerNotificationNickname" style="display:block;margin:0 0 6px;font-size:13px">Ник игрока</label><input id="playerNotificationNickname" type="text" maxlength="18" autocomplete="off" placeholder="Введи ник игрока" style="width:100%;box-sizing:border-box;margin-bottom:13px"><label for="playerNotificationMessage" style="display:block;margin:0 0 6px;font-size:13px">Сообщение</label><textarea id="playerNotificationMessage" maxlength="1000" rows="4" placeholder="Напиши уведомление..." style="width:100%;box-sizing:border-box;resize:vertical;margin-bottom:14px"></textarea><div style="display:flex;gap:9px"><button type="button" class="secondary" id="playerNotificationCancel" style="flex:1">ОТМЕНА</button><button type="button" class="goldbtn" id="playerNotificationSubmit" style="flex:1">ОТПРАВИТЬ</button></div><p id="playerNotificationStatus" role="status" style="min-height:18px;margin:12px 0 0;font-size:13px"></p>';
+ overlay.appendChild(panel);document.body.appendChild(overlay);
+ const close=()=>overlay.remove(),nick=panel.querySelector("#playerNotificationNickname"),message=panel.querySelector("#playerNotificationMessage"),send=panel.querySelector("#playerNotificationSubmit"),status=panel.querySelector("#playerNotificationStatus");
+ panel.querySelector("#playerNotificationCancel").addEventListener("click",close);
+ overlay.addEventListener("click",e=>{if(e.target===overlay)close();});
+ send.addEventListener("click",async()=>{
+  if(send.disabled)return;
+  if(!nick.value.trim()){status.style.color="#ff8585";status.textContent="Введи ник игрока.";return;}
+  if(!message.value.trim()){status.style.color="#ff8585";status.textContent="Напиши текст уведомления.";return;}
+  send.disabled=true;send.textContent="ОТПРАВЛЯЕМ…";status.textContent="";
+  try{
+   await window.skebobSendPlayerNotification(nick.value.trim(),message.value.trim());
+   status.style.color="#8be0a8";status.textContent="Уведомление отправлено. Игрок увидит его при следующем входе.";
+   nick.value="";message.value="";
+  }catch(e){status.style.color="#ff8585";status.textContent=e?.message||"Не удалось отправить уведомление.";}
+  finally{send.disabled=false;send.textContent="ОТПРАВИТЬ";}
+ });
+}
+async function showPlayerNotification(message){
+ const old=document.getElementById("incomingPlayerNotification");if(old)old.remove();
+ const overlay=document.createElement("div");overlay.id="incomingPlayerNotification";
+ overlay.style.cssText="position:fixed;inset:0;z-index:33000;background:rgba(0,0,0,.82);display:flex;align-items:center;justify-content:center;padding:20px";
+ const panel=document.createElement("div");panel.style.cssText="width:100%;max-width:390px;background:var(--panel);color:var(--text);border:1px solid var(--gold);border-radius:20px;padding:22px;box-shadow:0 15px 50px #000b;text-align:center";
+ const title=document.createElement("h3");title.textContent="🔔 УВЕДОМЛЕНИЕ";title.style.cssText="margin:0 0 15px;color:var(--gold)";
+ const body=document.createElement("div");body.textContent=message;body.style.cssText="white-space:pre-wrap;overflow-wrap:anywhere;line-height:1.5;font-size:15px;margin:0 0 20px";
+ const close=document.createElement("button");close.type="button";close.className="goldbtn";close.textContent="ПОНЯТНО";close.style.width="100%";close.addEventListener("click",()=>overlay.remove());
+ panel.append(title,body,close);overlay.appendChild(panel);document.body.appendChild(overlay);
 }
 function openPlayerBadgeModal(){
  const old=document.getElementById("playerBadgeModal");if(old)old.remove();
